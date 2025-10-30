@@ -5,9 +5,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
 @Component
 public class ApiTestClient {
 
@@ -20,12 +17,12 @@ public class ApiTestClient {
     }
 
     public ApiTestResponse post(String url, Object body) throws Exception {
-        return new ApiTestResponse(mockMvc.perform(post(url)
+        return new ApiTestResponse(mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post(url)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(body))), objectMapper);
     }
 
     public ApiTestResponse get(String url) throws Exception {
-        return new ApiTestResponse(mockMvc.perform(get(url)), objectMapper);
+        return new ApiTestResponse(mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get(url)), objectMapper);
     }
 }

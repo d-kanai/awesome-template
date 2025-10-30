@@ -12,9 +12,7 @@ spring:
     locations: classpath:db/migration
     placeholders:
       create_pgcrypto_extension: 'CREATE EXTENSION IF NOT EXISTS "pgcrypto";'
-      drop_users_id_sequence: 'DROP SEQUENCE IF EXISTS users_id_seq;'
-      users_id_uuid_type: 'TYPE UUID USING gen_random_uuid()'
-      users_id_uuid_default: 'gen_random_uuid()'
+      users_id_uuid_clause: ' DEFAULT gen_random_uuid()'
 
 server:
   port: 8080

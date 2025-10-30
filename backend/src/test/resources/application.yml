@@ -9,11 +9,9 @@ spring:
     locations: classpath:db/migration
     placeholders:
       create_pgcrypto_extension: ''
-      drop_users_id_sequence: ''
-      users_id_uuid_type: 'TYPE UUID USING RANDOM_UUID()'
-      users_id_uuid_default: 'RANDOM_UUID()'
+      users_id_uuid_clause: ''
   jooq:
-    sql-dialect: POSTGRES
+    sql-dialect: H2
 
 logging:
   level:
