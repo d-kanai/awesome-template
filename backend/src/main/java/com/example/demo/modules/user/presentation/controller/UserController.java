@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -152,7 +153,7 @@ public class UserController {
         @ApiResponse(responseCode = "400", description = "リクエストペイロードが不正です。", content = @Content)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SignupOutput> signup(@RequestBody final SignupInput input) {
+    public ResponseEntity<SignupOutput> signup(@Valid @RequestBody final SignupInput input) {
         try {
             final User user = signupCommand.execute(input);
             return ResponseEntity.status(HttpStatus.CREATED).body(SignupOutput.from(user));
@@ -180,7 +181,7 @@ public class UserController {
     public ResponseEntity<UpdateUserProfileOutput> updateUserProfile(
         @Parameter(description = "ユーザーの識別子", example = "2b6a4f95-4ddc-4af1-9f79-a6b3a9e3e1d4")
         @PathVariable final String id,
-        @RequestBody final UpdateUserProfileInput input
+        @Valid @RequestBody final UpdateUserProfileInput input
     ) {
         try {
             final UserId userId = UserId.fromString(id);

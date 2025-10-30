@@ -25,7 +25,31 @@ export async function fetcher<TData, TVariables = unknown>(
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(errorText || `Request failed with status ${response.status}`);
+    let errorMessage = `Request failed with status ${response.status}`;
+
+    try {
+      const errorJson = JSON.parse(errorText);
+      // Spring Bootのエラーレスポンス形式に対応
+      if (errorJson.message) {
+        errorMessage = errorJson.message;
+      } else if (errorJson.error) {
+        errorMessage = errorJson.error;
+      } else if (typeof errorJson === 'string') {
+        errorMessage = errorJson;
+      }
+    } catch {
+      // JSONパースに失敗した場合はテキストをそのまま使用
+      if (errorText) {
+        errorMessage = errorText;
+      }
+    }
+
+    const error = new Error(errorMessage);
+    // @ts-expect-error - statusを追加
+    error.status = response.status;
+    // @ts-expect-error - responseを追加
+    error.response = response;
+    throw error;
   }
 
   const rawBody = await response.text();
