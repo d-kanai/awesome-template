@@ -1,7 +1,12 @@
 package com.example.demo.modules.user.presentation.input;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(name = "ユーザー更新リクエスト", description = "既存ユーザーを更新するためのリクエストペイロードです")
 public class UpdateUserInput {
+    @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
     private String email;
+    @Schema(description = "ユーザーの表示名", example = "Jane Doe")
     private String name;
 
     public UpdateUserInput() {

@@ -15,6 +15,13 @@ import com.example.demo.modules.user.presentation.output.FindUserByEmailOutput;
 import com.example.demo.modules.user.presentation.output.FindUserByIdOutput;
 import com.example.demo.modules.user.presentation.output.SignupOutput;
 import com.example.demo.modules.user.presentation.output.UpdateUserOutput;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +33,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
+@Tag(name = "ユーザー", description = "ユーザーを管理するための操作です")
 @RestController
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
@@ -49,14 +58,47 @@ public class UserController {
         this.findUserByEmailQuery = findUserByEmailQuery;
     }
 
+    @Operation(
+        summary = "ユーザー一覧を取得",
+        description = "登録されているすべてのユーザーを取得します。",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "ユーザーの取得に成功しました。",
+                content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = FindAllUsersOutput.class)
+                )
+            )
+        }
+    )
     @GetMapping
     public ResponseEntity<FindAllUsersOutput> getAllUsers() {
         List<User> users = findAllUsersQuery.execute();
         return ResponseEntity.ok(FindAllUsersOutput.from(users));
     }
 
+    @Operation(
+        summary = "ID でユーザーを取得",
+        description = "指定した識別子のユーザーを取得します。"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "ユーザーが見つかりました。",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = FindUserByIdOutput.class)
+            )
+        ),
+        @ApiResponse(responseCode = "400", description = "ユーザー識別子が不正です。", content = @Content),
+        @ApiResponse(responseCode = "404", description = "ユーザーが見つかりません。", content = @Content)
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<FindUserByIdOutput> getUserById(@PathVariable String id) {
+    public ResponseEntity<FindUserByIdOutput> getUserById(
+        @Parameter(description = "ユーザーの識別子", example = "2b6a4f95-4ddc-4af1-9f79-a6b3a9e3e1d4")
+        @PathVariable String id
+    ) {
         try {
             UserId userId = UserId.fromString(id);
             return findUserByIdQuery.execute(userId)
@@ -68,14 +110,47 @@ public class UserController {
         }
     }
 
+    @Operation(
+        summary = "メールアドレスでユーザーを取得",
+        description = "指定したメールアドレスのユーザーを取得します。"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "ユーザーが見つかりました。",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = FindUserByEmailOutput.class)
+            )
+        ),
+        @ApiResponse(responseCode = "404", description = "ユーザーが見つかりません。", content = @Content)
+    })
     @GetMapping("/email/{email}")
-    public ResponseEntity<FindUserByEmailOutput> getUserByEmail(@PathVariable String email) {
+    public ResponseEntity<FindUserByEmailOutput> getUserByEmail(
+        @Parameter(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
+        @PathVariable String email
+    ) {
         return findUserByEmailQuery.execute(email)
             .map(FindUserByEmailOutput::from)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     }
 
+    @Operation(
+        summary = "ユーザーを登録",
+        description = "指定した情報で新しいユーザーを作成します。"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "201",
+            description = "ユーザーの作成に成功しました。",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = SignupOutput.class)
+            )
+        ),
+        @ApiResponse(responseCode = "400", description = "リクエストペイロードが不正です。", content = @Content)
+    })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SignupOutput> signup(@RequestBody SignupInput input) {
         try {
@@ -86,8 +161,27 @@ public class UserController {
         }
     }
 
+    @Operation(
+        summary = "ユーザーを更新",
+        description = "既存ユーザーのメールアドレスまたは氏名を更新します。"
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "ユーザーの更新に成功しました。",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = UpdateUserOutput.class)
+            )
+        ),
+        @ApiResponse(responseCode = "400", description = "リクエストペイロードまたは識別子が不正です。", content = @Content)
+    })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UpdateUserOutput> updateUser(@PathVariable String id, @RequestBody UpdateUserInput input) {
+    public ResponseEntity<UpdateUserOutput> updateUser(
+        @Parameter(description = "ユーザーの識別子", example = "2b6a4f95-4ddc-4af1-9f79-a6b3a9e3e1d4")
+        @PathVariable String id,
+        @RequestBody UpdateUserInput input
+    ) {
         try {
             UserId userId = UserId.fromString(id);
             User user = updateUserCommand.execute(userId, input);
@@ -97,8 +191,20 @@ public class UserController {
         }
     }
 
+    @Operation(
+        summary = "ユーザーを削除",
+        description = "指定した識別子のユーザーを削除します。"
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "ユーザーの削除に成功しました。", content = @Content),
+        @ApiResponse(responseCode = "400", description = "ユーザー識別子が不正です。", content = @Content),
+        @ApiResponse(responseCode = "404", description = "ユーザーが見つかりません。", content = @Content)
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Void> deleteUser(
+        @Parameter(description = "ユーザーの識別子", example = "2b6a4f95-4ddc-4af1-9f79-a6b3a9e3e1d4")
+        @PathVariable String id
+    ) {
         UserId userId;
         try {
             userId = UserId.fromString(id);
