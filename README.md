@@ -14,6 +14,7 @@
 - React Native
 - pnpm
 - Expo
+- Biome
 - TanStack Query
 - TanStack Form
 - Zod
