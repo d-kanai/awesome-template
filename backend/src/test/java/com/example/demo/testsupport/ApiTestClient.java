@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,13 +19,13 @@ public class ApiTestClient {
         this.objectMapper = objectMapper;
     }
 
-    public ResultActions post(String url, Object body) throws Exception {
-        return mockMvc.perform(post(url)
+    public ApiTestResponse post(String url, Object body) throws Exception {
+        return new ApiTestResponse(mockMvc.perform(post(url)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(body)));
+            .content(objectMapper.writeValueAsString(body))), objectMapper);
     }
 
-    public ResultActions get(String url) throws Exception {
-        return mockMvc.perform(get(url));
+    public ApiTestResponse get(String url) throws Exception {
+        return new ApiTestResponse(mockMvc.perform(get(url)), objectMapper);
     }
 }

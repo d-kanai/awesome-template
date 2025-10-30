@@ -6,14 +6,11 @@ import com.example.demo.modules.user.domain.value_object.UserId;
 import com.example.demo.modules.user.presentation.input.SignupInput;
 import com.example.demo.testsupport.ApiTestClient;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.UUID;
 
@@ -24,9 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class UserControllerIntegrationTest {
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private UserRepository userRepository;
@@ -49,18 +43,14 @@ class UserControllerIntegrationTest {
         assertThat(userRepository.findAll()).isEmpty();
 
         // when
-        ResultActions response = apiTestClient.post("/users", request);
-
-        // then response
-        MvcResult result = response
+        JsonNode responseBody = apiTestClient.post("/users", request)
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").isNotEmpty())
             .andExpect(jsonPath("$.email").value(request.getEmail()))
             .andExpect(jsonPath("$.name").value(request.getName()))
-            .andReturn();
+            .andReturnBody();
 
         // then db
-        JsonNode responseBody = objectMapper.readTree(result.getResponse().getContentAsString());
         UUID persistedId = UUID.fromString(responseBody.get("id").asText());
 
         assertThat(userRepository.findById(UserId.reconstruct(persistedId)))
@@ -79,10 +69,7 @@ class UserControllerIntegrationTest {
         UUID userId = existingUser.getId().getValue();
 
         // when
-        ResultActions response = apiTestClient.get("/users/" + userId);
-
-        // then response
-        response
+        apiTestClient.get("/users/" + userId)
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(existingUser.getId().getValue().toString()))
             .andExpect(jsonPath("$.email").value(existingUser.getEmail()))
