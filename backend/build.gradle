@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.2.0'
     id 'io.spring.dependency-management' version '1.1.4'
     id 'nu.studer.jooq' version '8.2'
+    id 'org.flywaydb.flyway' version '9.22.3'
     id 'jacoco'
     id 'org.springdoc.openapi-gradle-plugin' version '1.8.0'
 }
@@ -71,9 +72,23 @@ jooq {
     }
 }
 
+flyway {
+    url = 'jdbc:postgresql://localhost:5432/demodb'
+    user = 'demo'
+    password = 'demo123'
+    schemas = ['public']
+    baselineOnMigrate = true
+    locations = ['filesystem:src/main/resources/db/migration']
+    placeholders = [
+        create_pgcrypto_extension: 'CREATE EXTENSION IF NOT EXISTS "pgcrypto";',
+        users_id_uuid_clause: ' DEFAULT gen_random_uuid()'
+    ]
+}
+
 sourceSets {
     main {
         java {
+            // jOOQ の生成物は CI / ローカル双方で最新スキーマから再生成する運用とし、Git 管理下には置かない
             srcDirs += 'build/generated-src/jooq'
         }
     }
@@ -81,6 +96,10 @@ sourceSets {
 
 tasks.named('compileJava') {
     dependsOn tasks.named('generateJooq')
+}
+
+tasks.named('generateJooq') {
+    dependsOn tasks.named('flywayMigrate')
 }
 
 tasks.named('test') {
