@@ -1,6 +1,6 @@
-package com.example.demo.modules.user.repository;
+package com.example.demo.modules.user.domain.repository;
 
-import com.example.demo.modules.user.domain.User;
+import com.example.demo.modules.user.domain.model.User;
 import java.util.List;
 import java.util.Optional;
 

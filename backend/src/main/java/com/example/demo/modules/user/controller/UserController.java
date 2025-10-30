@@ -2,7 +2,7 @@ package com.example.demo.modules.user.controller;
 
 import com.example.demo.modules.user.application.command.*;
 import com.example.demo.modules.user.application.query.*;
-import com.example.demo.modules.user.domain.User;
+import com.example.demo.modules.user.domain.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

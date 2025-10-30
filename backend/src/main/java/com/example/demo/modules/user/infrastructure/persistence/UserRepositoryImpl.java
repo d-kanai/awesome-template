@@ -2,8 +2,8 @@ package com.example.demo.modules.user.infrastructure.persistence;
 
 import com.example.demo.infrastructure.jooq.tables.Users;
 import com.example.demo.infrastructure.jooq.tables.records.UsersRecord;
-import com.example.demo.modules.user.domain.User;
-import com.example.demo.modules.user.repository.UserRepository;
+import com.example.demo.modules.user.domain.model.User;
+import com.example.demo.modules.user.domain.repository.UserRepository;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
@@ -92,7 +92,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private User mapToUser(UsersRecord record) {
-        return new User(
+        return User.reconstruct(
                 record.getId(),
                 record.getEmail(),
                 record.getName(),

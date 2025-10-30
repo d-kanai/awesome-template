@@ -1,7 +1,7 @@
 package com.example.demo.modules.user.application.command;
 
-import com.example.demo.modules.user.domain.User;
-import com.example.demo.modules.user.repository.UserRepository;
+import com.example.demo.modules.user.domain.model.User;
+import com.example.demo.modules.user.domain.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
