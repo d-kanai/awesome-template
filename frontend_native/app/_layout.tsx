@@ -15,7 +15,9 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
-          <Stack.Screen name="index" options={{ title: 'User Signup' }} />
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="users/index" options={{ title: 'ユーザー一覧' }} />
+          <Stack.Screen name="users/signup" options={{ title: 'ユーザー登録' }} />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>

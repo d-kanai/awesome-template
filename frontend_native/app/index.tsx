@@ -1,3 +1,5 @@
-import HelloScreen from './hello';
+import { Redirect } from 'expo-router';
 
-export default HelloScreen;
+export default function Index() {
+  return <Redirect href="/users" />;
+}
