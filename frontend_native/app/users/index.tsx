@@ -1,20 +1,13 @@
 import { useRouter } from 'expo-router';
+import { Suspense } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ErrorBoundary } from 'react-error-boundary';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useGetAllUsers } from '@/api/generated';
 import type { UserListItem } from '@/api/generated';
 
-const getErrorMessage = (error: unknown) => {
-  if (!error) return null;
-  if (typeof error === 'string') return error;
-  if (typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
-    return error.message;
-  }
-  return JSON.stringify(error);
-};
-
-export default function UserListScreen() {
+function UserList() {
   const router = useRouter();
 
   const usersQuery = useGetAllUsers({
@@ -31,9 +24,6 @@ export default function UserListScreen() {
       updatedAt: user.updatedAt ? new Date(user.updatedAt) : undefined,
     }),
   );
-  const usersError = usersQuery.isError
-    ? getErrorMessage(usersQuery.error) ?? 'ユーザー情報を取得できませんでした'
-    : null;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -56,38 +46,63 @@ export default function UserListScreen() {
           </Pressable>
         </View>
 
-        {usersQuery.isLoading ? (
-          <View style={styles.centered}>
-            <ActivityIndicator size="large" />
-          </View>
-        ) : usersQuery.isError ? (
-          <View style={styles.centered}>
-            <Text style={styles.error}>{usersError}</Text>
-          </View>
-        ) : (
-          <FlatList
-            data={users}
-            keyExtractor={(item) => item.id ?? ''}
-            contentContainerStyle={users.length === 0 && styles.emptyList}
-            ListEmptyComponent={
-              <View style={styles.centered}>
-                <Text style={styles.emptyMessage}>ユーザーがまだ登録されていません</Text>
-              </View>
-            }
-            renderItem={({ item }) => (
-              <View style={styles.userCard}>
-                <Text style={styles.userName}>{item.name}</Text>
-                <Text style={styles.userEmail}>{item.email}</Text>
-                <Text style={styles.userMeta}>
-                  作成日: {item.createdAt?.toLocaleString() ?? '不明'} / 更新日:{' '}
-                  {item.updatedAt?.toLocaleString() ?? '不明'}
-                </Text>
-              </View>
-            )}
-          />
-        )}
+        <FlatList
+          data={users}
+          keyExtractor={(item) => item.id ?? ''}
+          contentContainerStyle={users.length === 0 && styles.emptyList}
+          ListEmptyComponent={
+            <View style={styles.centered}>
+              <Text style={styles.emptyMessage}>ユーザーがまだ登録されていません</Text>
+            </View>
+          }
+          renderItem={({ item }) => (
+            <View style={styles.userCard}>
+              <Text style={styles.userName}>{item.name}</Text>
+              <Text style={styles.userEmail}>{item.email}</Text>
+              <Text style={styles.userMeta}>
+                作成日: {item.createdAt?.toLocaleString() ?? '不明'} / 更新日:{' '}
+                {item.updatedAt?.toLocaleString() ?? '不明'}
+              </Text>
+            </View>
+          )}
+        />
       </View>
     </SafeAreaView>
+  );
+}
+
+function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={[styles.content, styles.centered]}>
+        <Text style={styles.error}>ユーザー情報を取得できませんでした</Text>
+        <Text style={styles.errorDetail}>{error.message}</Text>
+        <Pressable style={styles.retryButton} onPress={resetErrorBoundary}>
+          <Text style={styles.retryButtonText}>再試行</Text>
+        </Pressable>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={[styles.content, styles.centered]}>
+        <ActivityIndicator size="large" />
+        <Text style={styles.loadingText}>読み込み中...</Text>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+export default function UserListScreen() {
+  return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <Suspense fallback={<LoadingFallback />}>
+        <UserList />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
 
@@ -187,5 +202,29 @@ const styles = StyleSheet.create({
   error: {
     color: '#c1121f',
     fontSize: 16,
+    textAlign: 'center',
+  },
+  errorDetail: {
+    color: '#666',
+    fontSize: 14,
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  retryButton: {
+    marginTop: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    backgroundColor: '#0077cc',
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#555',
   },
 });
