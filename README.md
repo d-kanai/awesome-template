@@ -7,9 +7,9 @@
 - Spring Boot 3.2.0
 - JOOQ 3.18.7
 - PostgreSQL 16
-- SpringDoc OpenAPI (Gradle plugin export)
+- SpringDoc OpenAPI
 
-## Frontend (frontend_native)
+## Frontend Native
 
 - React Native
 - Expo
