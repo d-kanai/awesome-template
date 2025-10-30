@@ -4,27 +4,12 @@ import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from '
 import { ErrorBoundary } from 'react-error-boundary';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useGetAllUsers } from '@/api/generated';
-import type { UserListItem as UserListItemType } from '@/api/generated';
 import { UserListItem } from '@/features/users/components/UserListItem';
+import { useUserList } from '@/features/users/hooks/useUserList';
 
 function UserList() {
   const router = useRouter();
-
-  const usersQuery = useGetAllUsers({
-    query: {
-      select: (response) => response.data?.users ?? [],
-      staleTime: 30_000,
-    },
-  });
-
-  const users: (UserListItemType & { createdAt?: Date; updatedAt?: Date })[] = (usersQuery.data ?? []).map(
-    (user) => ({
-      ...user,
-      createdAt: user.createdAt ? new Date(user.createdAt) : undefined,
-      updatedAt: user.updatedAt ? new Date(user.updatedAt) : undefined,
-    }),
-  );
+  const { users, refetch } = useUserList();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -41,7 +26,7 @@ function UserList() {
             <Text style={styles.addButtonText}>+ 新規ユーザー登録</Text>
           </Pressable>
           <Pressable
-            onPress={() => usersQuery.refetch()}
+            onPress={() => refetch()}
             style={({ pressed }) => [styles.reloadButton, pressed && styles.reloadPressed]}>
             <Text style={styles.reloadText}>再読み込み</Text>
           </Pressable>
