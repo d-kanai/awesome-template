@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 .PHONY: help \
-	backend-install backend-test backend-coverage backend-clean backend-up backend-down \
+	backend-install backend-test backend-coverage backend-coverage-open backend-clean backend-up backend-down \
 	frontend-install frontend-start frontend-start-local frontend-ios frontend-android frontend-lint
 
 help:
@@ -11,6 +11,7 @@ help:
 	@echo "  make backend-install      # Install backend dependencies (Gradle wrapper build)"
 	@echo "  make backend-test         # Run backend tests"
 	@echo "  make backend-coverage     # Generate backend coverage report"
+	@echo "  make backend-coverage-open # Generate backend coverage report and open HTML"
 	@echo "  make backend-clean        # Clean backend build artifacts"
 	@echo "  make backend-up           # Start backend Docker services"
 	@echo "  make backend-down         # Stop backend Docker services"
@@ -31,6 +32,9 @@ backend-test:
 
 backend-coverage:
 	cd backend && ./gradlew jacocoTestReport
+
+backend-coverage-open: backend-coverage
+	open backend/build/reports/jacoco/test/index.html
 
 backend-clean:
 	cd backend && ./gradlew clean

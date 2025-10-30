@@ -83,6 +83,13 @@ tasks.named('test') {
         exceptionFormat = 'short'
         showStandardStreams = false
     }
+    jacoco {
+        excludes = [
+            'com/example/demo/infrastructure/jooq/**',
+            'com/example/demo/DemoApplication*',
+            'com/example/demo/modules/health/**'
+        ]
+    }
 }
 
 jacoco {
@@ -96,4 +103,13 @@ tasks.named('jacocoTestReport') {
         csv.required = false
         html.outputLocation = layout.buildDirectory.dir("reports/jacoco/test")
     }
+    classDirectories.setFrom(
+        files(classDirectories.files.collect { dir ->
+            fileTree(dir: dir, exclude: [
+                'com/example/demo/infrastructure/jooq/**',
+                'com/example/demo/DemoApplication*',
+                'com/example/demo/modules/health/**'
+            ])
+        })
+    )
 }
