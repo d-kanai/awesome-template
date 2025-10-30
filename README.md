@@ -7,3 +7,11 @@
 - Java 21
 - JOOQ 3.18.7
 - PostgreSQL 16
+
+## Frontend (frontend_native)
+
+- React Native
+- Expo
+- TanStack Query
+- TanStack Form
+- Zod
