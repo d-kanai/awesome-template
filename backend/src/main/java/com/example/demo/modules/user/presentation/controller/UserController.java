@@ -7,6 +7,7 @@ import com.example.demo.modules.user.application.query.FindAllUsersQuery;
 import com.example.demo.modules.user.application.query.FindUserByEmailQuery;
 import com.example.demo.modules.user.application.query.FindUserByIdQuery;
 import com.example.demo.modules.user.domain.model.User;
+import com.example.demo.modules.user.domain.value_object.UserId;
 import com.example.demo.modules.user.presentation.input.SignupInput;
 import com.example.demo.modules.user.presentation.input.UpdateUserInput;
 import com.example.demo.modules.user.presentation.output.FindAllUsersOutput;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -48,11 +48,16 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FindUserByIdOutput> getUserById(@PathVariable UUID id) {
-        return findUserByIdQuery.execute(id)
-            .map(FindUserByIdOutput::from)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<FindUserByIdOutput> getUserById(@PathVariable String id) {
+        try {
+            UserId userId = UserId.fromString(id);
+            return findUserByIdQuery.execute(userId)
+                .map(FindUserByIdOutput::from)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/email/{email}")
@@ -74,9 +79,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UpdateUserOutput> updateUser(@PathVariable UUID id, @RequestBody UpdateUserInput input) {
+    public ResponseEntity<UpdateUserOutput> updateUser(@PathVariable String id, @RequestBody UpdateUserInput input) {
         try {
-            User user = updateUserCommand.execute(id, input);
+            UserId userId = UserId.fromString(id);
+            User user = updateUserCommand.execute(userId, input);
             return ResponseEntity.ok(UpdateUserOutput.from(user));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -84,9 +90,16 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+        UserId userId;
         try {
-            deleteUserCommand.execute(id);
+            userId = UserId.fromString(id);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            deleteUserCommand.execute(userId);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

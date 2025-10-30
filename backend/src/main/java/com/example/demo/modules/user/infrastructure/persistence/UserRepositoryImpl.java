@@ -4,13 +4,13 @@ import com.example.demo.infrastructure.jooq.tables.Users;
 import com.example.demo.infrastructure.jooq.tables.records.UsersRecord;
 import com.example.demo.modules.user.domain.model.User;
 import com.example.demo.modules.user.domain.repository.UserRepository;
+import com.example.demo.modules.user.domain.value_object.UserId;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -29,9 +29,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(UUID id) {
+    public Optional<User> findById(UserId id) {
         return dsl.selectFrom(USERS)
-                .where(USERS.ID.eq(id))
+                .where(USERS.ID.eq(id.getValue()))
                 .fetchOptional(this::mapToUser);
     }
 
@@ -43,10 +43,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean existsById(UUID id) {
+    public boolean existsById(UserId id) {
         return dsl.fetchExists(
                 dsl.selectFrom(USERS)
-                        .where(USERS.ID.eq(id))
+                        .where(USERS.ID.eq(id.getValue()))
         );
     }
 
@@ -66,7 +66,7 @@ public class UserRepositoryImpl implements UserRepository {
             LocalDateTime updatedAt = user.getUpdatedAt() != null ? user.getUpdatedAt() : createdAt;
 
             UsersRecord record = dsl.insertInto(USERS)
-                    .set(USERS.ID, user.getId())
+                    .set(USERS.ID, user.getId().getValue())
                     .set(USERS.EMAIL, user.getEmail())
                     .set(USERS.NAME, user.getName())
                     .set(USERS.CREATED_AT, createdAt)
@@ -81,22 +81,22 @@ public class UserRepositoryImpl implements UserRepository {
                 .set(USERS.EMAIL, user.getEmail())
                 .set(USERS.NAME, user.getName())
                 .set(USERS.UPDATED_AT, user.getUpdatedAt() != null ? user.getUpdatedAt() : LocalDateTime.now())
-                .where(USERS.ID.eq(user.getId()))
+                .where(USERS.ID.eq(user.getId().getValue()))
                 .execute();
 
         return findById(user.getId()).orElseThrow();
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteById(UserId id) {
         dsl.deleteFrom(USERS)
-                .where(USERS.ID.eq(id))
+                .where(USERS.ID.eq(id.getValue()))
                 .execute();
     }
 
     private User mapToUser(UsersRecord record) {
         return User.reconstruct(
-                record.getId(),
+                UserId.reconstruct(record.getId()),
                 record.getEmail(),
                 record.getName(),
                 record.getCreatedAt(),

@@ -1,10 +1,10 @@
 package com.example.demo.modules.user.presentation.output;
 
 import com.example.demo.modules.user.domain.model.User;
+import com.example.demo.modules.user.domain.value_object.UserId;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class FindAllUsersOutput {
@@ -26,13 +26,13 @@ public class FindAllUsersOutput {
     }
 
     public static class UserItem {
-        private final UUID id;
+        private final UserId id;
         private final String email;
         private final String name;
         private final LocalDateTime createdAt;
         private final LocalDateTime updatedAt;
 
-        public UserItem(UUID id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        public UserItem(UserId id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
             this.id = id;
             this.email = email;
             this.name = name;
@@ -50,7 +50,7 @@ public class FindAllUsersOutput {
             );
         }
 
-        public UUID getId() {
+        public UserId getId() {
             return id;
         }
 

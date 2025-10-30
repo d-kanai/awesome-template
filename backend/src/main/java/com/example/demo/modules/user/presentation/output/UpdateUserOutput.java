@@ -1,18 +1,18 @@
 package com.example.demo.modules.user.presentation.output;
 
 import com.example.demo.modules.user.domain.model.User;
+import com.example.demo.modules.user.domain.value_object.UserId;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public class UpdateUserOutput {
-    private final UUID id;
+    private final UserId id;
     private final String email;
     private final String name;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public UpdateUserOutput(UUID id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UpdateUserOutput(UserId id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -30,7 +30,7 @@ public class UpdateUserOutput {
         );
     }
 
-    public UUID getId() {
+    public UserId getId() {
         return id;
     }
 

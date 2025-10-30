@@ -1,10 +1,9 @@
 package com.example.demo.modules.user.application.command;
 
 import com.example.demo.modules.user.domain.repository.UserRepository;
+import com.example.demo.modules.user.domain.value_object.UserId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -15,7 +14,7 @@ public class DeleteUserCommand {
         this.userRepository = userRepository;
     }
 
-    public void execute(UUID id) {
+    public void execute(UserId id) {
         if (!userRepository.existsById(id)) {
             throw new IllegalArgumentException("User not found with id: " + id);
         }
