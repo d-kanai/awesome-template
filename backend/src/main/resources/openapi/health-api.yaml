@@ -1,0 +1,180 @@
+openapi: 3.0.3
+info:
+  title: Demo Service API
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      operationId: getHealth
+      responses:
+        '200':
+          description: Successful health check response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+  /users:
+    get:
+      summary: Retrieve every user
+      operationId: getUsers
+      responses:
+        '200':
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCollection'
+    post:
+      summary: Create a new user
+      operationId: signupUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+        '400':
+          description: Invalid signup payload
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Retrieve a user by identifier
+      operationId: getUserById
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+        '400':
+          description: Invalid user identifier
+        '404':
+          description: User not found
+    put:
+      summary: Update an existing user
+      operationId: updateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+        '400':
+          description: Invalid identifier or payload
+    delete:
+      summary: Delete a user
+      operationId: deleteUser
+      responses:
+        '204':
+          description: User deleted successfully
+        '400':
+          description: Invalid user identifier
+        '404':
+          description: User not found
+  /users/email/{email}:
+    parameters:
+      - name: email
+        in: path
+        required: true
+        schema:
+          type: string
+          format: email
+    get:
+      summary: Retrieve a user by email
+      operationId: getUserByEmail
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+        '404':
+          description: User not found
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          description: Service status indicator
+          example: UP
+    UserCollection:
+      type: object
+      required:
+        - users
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResource'
+    UserResource:
+      type: object
+      required:
+        - id
+        - email
+        - name
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    SignupRequest:
+      type: object
+      required:
+        - email
+        - name
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+    UpdateUserRequest:
+      type: object
+      required:
+        - email
+        - name
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string

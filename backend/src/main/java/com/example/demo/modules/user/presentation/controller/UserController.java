@@ -16,12 +16,20 @@ import com.example.demo.modules.user.presentation.output.FindUserByIdOutput;
 import com.example.demo.modules.user.presentation.output.SignupOutput;
 import com.example.demo.modules.user.presentation.output.UpdateUserOutput;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
     private final SignupCommand signupCommand;
     private final UpdateUserCommand updateUserCommand;
@@ -68,7 +76,7 @@ public class UserController {
             .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SignupOutput> signup(@RequestBody SignupInput input) {
         try {
             User user = signupCommand.execute(input);
@@ -78,7 +86,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UpdateUserOutput> updateUser(@PathVariable String id, @RequestBody UpdateUserInput input) {
         try {
             UserId userId = UserId.fromString(id);
