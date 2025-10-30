@@ -12,6 +12,7 @@
 ## Frontend Native
 
 - React Native
+- pnpm
 - Expo
 - TanStack Query
 - TanStack Form

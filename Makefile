@@ -21,7 +21,7 @@ help:
 	@echo "  make backend-down         # Stop backend Docker services"
 	@echo ""
 	@echo "Frontend Native:"
-	@echo "  make frontend-install     # Install frontend dependencies (npm install)"
+        @echo "  make frontend-install     # Install frontend dependencies (pnpm install)"
 	@echo "  make frontend-start       # Start Expo (default scripts)"
 	@echo "  make frontend-start-local # Start Expo with local env file"
 	@echo "  make frontend-ios         # Launch Expo iOS build"
@@ -69,24 +69,24 @@ backend-down:
 # Frontend-Native
 ###############################################################
 frontend-install:
-	cd frontend_native && npm install
+        cd frontend_native && pnpm install
 
 frontend-start:
-	cd frontend_native && npm run start
+        cd frontend_native && pnpm run start
 
 frontend-start-local:
-	cd frontend_native && npm run start:local
+        cd frontend_native && pnpm run start:local
 
 frontend-ios:
-	cd frontend_native && npm run ios
+        cd frontend_native && pnpm run ios
 
 frontend-android:
-	cd frontend_native && npm run android
+        cd frontend_native && pnpm run android
 
 frontend-lint:
-	cd frontend_native && npm run lint
+        cd frontend_native && pnpm run lint
 
 frontend-generate-api:
-	cd frontend_native && npm run generate:api
+        cd frontend_native && pnpm run generate:api
 
 openapi-client: backend-openapi frontend-generate-api
