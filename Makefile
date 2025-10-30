@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 .PHONY: help \
-	backend-install backend-test backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi \
+	backend-install backend-test backend-db-refresh backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi \
 	frontend-install frontend-start frontend-start-local frontend-ios frontend-android frontend-lint frontend-generate-api \
 	openapi-client
 
@@ -11,6 +11,7 @@ help:
 	@echo "Backend:"
 	@echo "  make backend-install      # Install backend dependencies (Gradle wrapper build)"
 	@echo "  make backend-test         # Run backend tests"
+	@echo "  make backend-db-refresh   # Run Flyway migrations then regenerate jOOQ sources"
 	@echo "  make backend-run          # Start backend application (Gradle bootRun)"
 	@echo "  make backend-coverage     # Generate backend coverage report"
 	@echo "  make backend-coverage-open # Generate backend coverage report and open HTML"
@@ -40,6 +41,9 @@ backend-install:
 
 backend-test:
 	cd backend && ./gradlew test
+
+backend-db-refresh:
+	cd backend && ./gradlew flywayMigrate generateJooq
 
 backend-run:
 	cd backend && ./gradlew bootRun

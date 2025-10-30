@@ -1,0 +1,78 @@
+# 🚀 このワークフローはバックエンドのテストを自動で実行して品質を守るための設定です
+name: Backend Test
+
+on:
+  # 🔁 main ブランチ向けの push と Pull Request に反応させて、デフォルト開発フローをカバーする
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  backend-test:
+    # 🧪 ジョブ名はわかりやすく「Run backend tests via Makefile」とする
+    name: Run backend tests via Makefile
+    runs-on: ubuntu-latest
+
+    # 🗄️ jOOQ のコード生成が PostgreSQL への接続を必要とするため、サービスとして起動する
+    services:
+      postgres:
+        image: postgres:15
+        # 🔐 Flyway / jOOQ で利用する資格情報を合わせて設定し、Makefile のテストでも再利用できるようにする
+        env:
+          POSTGRES_USER: demo
+          POSTGRES_PASSWORD: demo123
+          POSTGRES_DB: demodb
+        ports:
+          - 5432:5432
+        # ⏳ DB が起動しきる前にテストが走って失敗しないようヘルスチェックを厳しめに設定する
+        options: >-
+          --health-cmd "pg_isready -U demo"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      # 🐘 PostgreSQL のサービスコンテナ起動時に都度イメージを取得する待ち時間を減らすため、事前に docker pull してキャッシュする
+      - name: Pre-pull PostgreSQL service image
+        run: |
+          docker pull postgres:15
+
+      # ✅ リポジトリの完全なソースコードをチェックアウトして後続ステップで利用できるようにする
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ☕️ Java 21 の実行環境を構築し、Gradle ビルドやテストが正しいバージョンで動くように準備する
+      - name: Set up Temurin JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle  # 📦 Gradle の依存キャッシュを有効化してワークフローの実行時間を短縮する
+
+      # 🚄 Gradle Build Action を追加して依存キャッシュだけでなく、Wrapper や設定キャッシュも効かせてさらにビルドを高速化する
+      - name: Prepare Gradle build cache
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          # 🔁 main 以外ではキャッシュを読み取り専用にして PR 同士のキャッシュ競合を避けつつ、main では書き込みも許可する
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      # 🧱 jOOQ のコード生成が参照するスキーマを Flyway で最新化しておくと、生成とテストのどちらも安定する
+      - name: Run Flyway migrations and regenerate jOOQ sources via Makefile
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/demodb
+          SPRING_DATASOURCE_USERNAME: demo
+          SPRING_DATASOURCE_PASSWORD: demo123
+        run: |
+          make backend-db-refresh
+
+      # 🧰 make コマンドを利用できることを明示的に保証しつつ、バックエンド用の make ターゲットを実行する
+      - name: Run backend tests
+        env:
+          # 🌐 Gradle が localhost で起動した PostgreSQL に接続できるようにホスト名を明示する
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/demodb
+          SPRING_DATASOURCE_USERNAME: demo
+          SPRING_DATASOURCE_PASSWORD: demo123
+        run: |
+          # 🧪 Gradle ラッパーを通じてテストが実行されるため、Makefile の backend-test ターゲットを叩く
+          make backend-test
