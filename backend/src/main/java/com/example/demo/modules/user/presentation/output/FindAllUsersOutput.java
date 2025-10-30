@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.UUID;
 
-@Schema(name = "ユーザー一覧レスポンス", description = "登録済みユーザーの一覧を表します")
+@Schema(name = "FindAllUsersResponse", description = "登録済みユーザーの一覧を表します")
 public class FindAllUsersOutput {
     private final List<UserItem> users;
 
@@ -29,7 +29,7 @@ public class FindAllUsersOutput {
         return users;
     }
 
-    @Schema(name = "ユーザー一覧項目", description = "一覧レスポンス内のユーザー情報です")
+    @Schema(name = "UserListItem", description = "一覧レスポンス内のユーザー情報です")
     public static class UserItem {
         private final UUID id;
         private final String email;

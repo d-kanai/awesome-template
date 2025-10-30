@@ -2,7 +2,7 @@ package com.example.demo.modules.user.presentation.input;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "ユーザー登録リクエスト", description = "新しいユーザーを登録するためのリクエストペイロードです")
+@Schema(name = "SignupRequest", description = "新しいユーザーを登録するためのリクエストペイロードです")
 public class SignupInput {
     @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
     private String email;

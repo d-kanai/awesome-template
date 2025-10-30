@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Schema(name = "メールアドレス検索レスポンス", description = "メールアドレスで取得したユーザーを表します")
+@Schema(name = "FindUserByEmailResponse", description = "メールアドレスで取得したユーザーを表します")
 public class FindUserByEmailOutput {
     private final UUID id;
     private final String email;

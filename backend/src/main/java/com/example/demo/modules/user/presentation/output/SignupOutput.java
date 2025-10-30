@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Schema(name = "ユーザー登録レスポンス", description = "新しく作成されたユーザーを表します")
+@Schema(name = "SignupResponse", description = "新しく作成されたユーザーを表します")
 public class SignupOutput {
     private final UUID id;
     private final String email;

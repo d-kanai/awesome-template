@@ -1,5 +1,5 @@
 import { useForm } from '@tanstack/react-form';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import {
   ActivityIndicator,
@@ -14,19 +14,8 @@ import {
 } from 'react-native';
 import { z } from 'zod';
 
-import { USERS_ENDPOINT } from '@/constants/api';
-
-const userSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
-  name: z.string(),
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-});
-
-const usersResponseSchema = z.object({
-  users: z.array(userSchema),
-});
+import { useGetAllUsers, useSignup } from '@/api/generated';
+import type { SignupRequest, UserListItem } from '@/api/generated';
 
 const signupSchema = z.object({
   email: z.string().email('有効なメールアドレスを入力してください'),
@@ -42,57 +31,26 @@ const getErrorMessage = (error: unknown) => {
   return JSON.stringify(error);
 };
 
-type User = z.infer<typeof userSchema>;
 type SignupValues = z.infer<typeof signupSchema>;
-
 export default function HelloScreen() {
   const queryClient = useQueryClient();
 
-  const usersQuery = useQuery({
-    queryKey: ['users'],
-    queryFn: async (): Promise<User[]> => {
-      const response = await fetch(USERS_ENDPOINT);
-      if (!response.ok) {
-        throw new Error(`ユーザー一覧の取得に失敗しました (HTTP ${response.status})`);
-      }
-
-      const json = await response.json();
-      return usersResponseSchema.parse(json).users;
+  const usersQuery = useGetAllUsers({
+    query: {
+      select: (response) => response.data?.users ?? [],
+      staleTime: 30_000,
     },
-    staleTime: 30_000,
   });
 
-  const signupMutation = useMutation({
-    mutationFn: async (values: SignupValues) => {
-      const response = await fetch(USERS_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
-
-      const text = await response.text();
-
-      if (!response.ok) {
-        const fallbackMessage =
-          response.status === 400
-            ? '入力内容を確認してください。既に登録済みのメールアドレスかもしれません。'
-            : 'しばらくしてから再度お試しください。';
-
-        throw new Error(
-          `ユーザー登録に失敗しました (HTTP ${response.status})${
-            text ? `: ${text}` : `: ${fallbackMessage}`
-          }`,
-        );
-      }
-
-      const user = userSchema.parse(JSON.parse(text));
-      return user;
-    },
-    onSuccess: (user) => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      Alert.alert('登録完了', `${user.name}さんを登録しました`);
+  const signupMutation = useSignup({
+    mutation: {
+      onSuccess: (result, variables) => {
+        if (result.status === 201) {
+          queryClient.invalidateQueries({ queryKey: usersQuery.queryKey });
+          const name = result.data.name ?? variables.data.name ?? 'ユーザー';
+          Alert.alert('登録完了', `${name}さんを登録しました`);
+        }
+      },
     },
   });
 
@@ -104,7 +62,7 @@ export default function HelloScreen() {
     validatorAdapter: zodValidator(),
     onSubmit: async ({ value, formApi }) => {
       try {
-        await signupMutation.mutateAsync(value);
+        await signupMutation.mutateAsync({ data: value as SignupRequest });
         formApi.reset();
       } catch (err) {
         console.error(err);
@@ -112,13 +70,17 @@ export default function HelloScreen() {
     },
   });
 
-  const users = usersQuery.data ?? [];
-  const usersError =
-    usersQuery.isError && (usersQuery.error as Error | undefined)?.message
-      ? (usersQuery.error as Error).message
-      : 'ユーザー情報を取得できませんでした';
-
-  const signupError = (signupMutation.error as Error | undefined)?.message;
+  const users: (UserListItem & { createdAt?: Date; updatedAt?: Date })[] = (usersQuery.data ?? []).map(
+    (user) => ({
+      ...user,
+      createdAt: user.createdAt ? new Date(user.createdAt) : undefined,
+      updatedAt: user.updatedAt ? new Date(user.updatedAt) : undefined,
+    }),
+  );
+  const usersError = usersQuery.isError
+    ? getErrorMessage(usersQuery.error) ?? 'ユーザー情報を取得できませんでした'
+    : null;
+  const signupError = getErrorMessage(signupMutation.error);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -214,7 +176,7 @@ export default function HelloScreen() {
         ) : (
           <FlatList
             data={users}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id ?? ''}
             contentContainerStyle={users.length === 0 && styles.emptyList}
             ListEmptyComponent={
               <Text style={styles.emptyMessage}>ユーザーがまだ登録されていません</Text>
@@ -224,7 +186,8 @@ export default function HelloScreen() {
                 <Text style={styles.userName}>{item.name}</Text>
                 <Text style={styles.userEmail}>{item.email}</Text>
                 <Text style={styles.userMeta}>
-                  作成日: {item.createdAt.toLocaleString()}
+                  作成日: {item.createdAt?.toLocaleString() ?? '不明'} / 更新日:{' '}
+                  {item.updatedAt?.toLocaleString() ?? '不明'}
                 </Text>
               </View>
             )}
@@ -290,6 +253,23 @@ const styles = StyleSheet.create({
     color: '#c1121f',
     fontSize: 15,
   },
+  button: {
+    paddingVertical: 12,
+    borderRadius: 8,
+    backgroundColor: '#0077cc',
+    alignItems: 'center',
+  },
+  buttonDisabled: {
+    opacity: 0.6,
+  },
+  buttonPressed: {
+    opacity: 0.85,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   listHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -299,6 +279,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: '#222',
+  },
+  reloadButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    backgroundColor: '#e0e7ff',
+  },
+  reloadPressed: {
+    opacity: 0.7,
+  },
+  reloadText: {
+    color: '#1d4ed8',
+    fontSize: 14,
+    fontWeight: '600',
   },
   emptyList: {
     flexGrow: 1,

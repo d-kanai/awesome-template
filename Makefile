@@ -1,8 +1,9 @@
 SHELL := /bin/bash
 
 .PHONY: help \
-	backend-install backend-test backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down \
-	frontend-install frontend-start frontend-start-local frontend-ios frontend-android frontend-lint
+	backend-install backend-test backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi \
+	frontend-install frontend-start frontend-start-local frontend-ios frontend-android frontend-lint frontend-generate-api \
+	openapi-client
 
 help:
 	@echo "Available targets:"
@@ -14,17 +15,22 @@ help:
 	@echo "  make backend-coverage     # Generate backend coverage report"
 	@echo "  make backend-coverage-open # Generate backend coverage report and open HTML"
 	@echo "  make backend-swagger-open # Open Swagger UI (http://localhost:8080/swagger-ui/index.html)"
+	@echo "  make backend-openapi      # Export OpenAPI spec to backend/build/openapi/openapi.json"
 	@echo "  make backend-clean        # Clean backend build artifacts"
 	@echo "  make backend-up           # Start backend Docker services"
 	@echo "  make backend-down         # Stop backend Docker services"
 	@echo ""
-	@echo "Frontend (frontend_native):"
+	@echo "Frontend Native:"
 	@echo "  make frontend-install     # Install frontend dependencies (npm install)"
 	@echo "  make frontend-start       # Start Expo (default scripts)"
 	@echo "  make frontend-start-local # Start Expo with local env file"
 	@echo "  make frontend-ios         # Launch Expo iOS build"
 	@echo "  make frontend-android     # Launch Expo Android build"
 	@echo "  make frontend-lint        # Run Expo lint"
+	@echo "  make frontend-generate-api # Generate frontend API client/hooks via orval"
+	@echo ""
+	@echo "Combined:"
+	@echo "  make openapi-client       # Export OpenAPI spec then generate frontend client/hooks"
 
 ###############################################################
 # Backend
@@ -46,6 +52,9 @@ backend-coverage-open: backend-coverage
 
 backend-swagger-open:
 	open http://localhost:8080/swagger-ui/index.html
+
+backend-openapi:
+	cd backend && ./gradlew generateOpenApiDocs
 
 backend-clean:
 	cd backend && ./gradlew clean
@@ -76,3 +85,8 @@ frontend-android:
 
 frontend-lint:
 	cd frontend_native && npm run lint
+
+frontend-generate-api:
+	cd frontend_native && npm run generate:api
+
+openapi-client: backend-openapi frontend-generate-api

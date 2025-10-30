@@ -2,7 +2,7 @@ package com.example.demo.modules.user.presentation.input;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "ユーザープロフィール更新リクエスト", description = "既存ユーザーのプロフィールを更新するためのリクエストペイロードです")
+@Schema(name = "UpdateUserProfileRequest", description = "既存ユーザーのプロフィールを更新するためのリクエストペイロードです")
 public class UpdateUserProfileInput {
     @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
     private String email;

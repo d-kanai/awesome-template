@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Schema(name = "ユーザープロフィール更新レスポンス", description = "更新後のユーザーを表します")
+@Schema(name = "UpdateUserProfileResponse", description = "更新後のユーザーを表します")
 public class UpdateUserProfileOutput {
     private final UUID id;
     private final String email;
