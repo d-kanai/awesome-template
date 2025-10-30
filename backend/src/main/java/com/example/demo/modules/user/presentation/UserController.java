@@ -1,4 +1,4 @@
-package com.example.demo.modules.user.controller;
+package com.example.demo.modules.user.presentation;
 
 import com.example.demo.modules.user.application.command.*;
 import com.example.demo.modules.user.application.query.*;
