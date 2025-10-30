@@ -1,12 +1,14 @@
 package com.example.demo.modules.user.presentation.output;
 
 import com.example.demo.modules.user.domain.model.User;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class FindAllUsersOutput {
-    private List<UserItem> users;
+    private final List<UserItem> users;
 
     public FindAllUsersOutput(List<UserItem> users) {
         this.users = users;
@@ -24,13 +26,13 @@ public class FindAllUsersOutput {
     }
 
     public static class UserItem {
-        private Long id;
-        private String email;
-        private String name;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
+        private final UUID id;
+        private final String email;
+        private final String name;
+        private final LocalDateTime createdAt;
+        private final LocalDateTime updatedAt;
 
-        public UserItem(Long id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        public UserItem(UUID id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
             this.id = id;
             this.email = email;
             this.name = name;
@@ -48,7 +50,7 @@ public class FindAllUsersOutput {
             );
         }
 
-        public Long getId() {
+        public UUID getId() {
             return id;
         }
 

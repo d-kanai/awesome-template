@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -47,7 +48,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FindUserByIdOutput> getUserById(@PathVariable Long id) {
+    public ResponseEntity<FindUserByIdOutput> getUserById(@PathVariable UUID id) {
         return findUserByIdQuery.execute(id)
             .map(FindUserByIdOutput::from)
             .map(ResponseEntity::ok)
@@ -73,7 +74,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UpdateUserOutput> updateUser(@PathVariable Long id, @RequestBody UpdateUserInput input) {
+    public ResponseEntity<UpdateUserOutput> updateUser(@PathVariable UUID id, @RequestBody UpdateUserInput input) {
         try {
             User user = updateUserCommand.execute(id, input);
             return ResponseEntity.ok(UpdateUserOutput.from(user));
@@ -83,7 +84,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         try {
             deleteUserCommand.execute(id);
             return ResponseEntity.noContent().build();

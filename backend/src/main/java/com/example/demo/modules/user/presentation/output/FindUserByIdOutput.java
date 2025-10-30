@@ -1,16 +1,18 @@
 package com.example.demo.modules.user.presentation.output;
 
 import com.example.demo.modules.user.domain.model.User;
+
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class FindUserByIdOutput {
-    private Long id;
-    private String email;
-    private String name;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private final UUID id;
+    private final String email;
+    private final String name;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
 
-    public FindUserByIdOutput(Long id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public FindUserByIdOutput(UUID id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -28,7 +30,7 @@ public class FindUserByIdOutput {
         );
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

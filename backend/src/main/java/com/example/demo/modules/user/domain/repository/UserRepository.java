@@ -3,13 +3,14 @@ package com.example.demo.modules.user.domain.repository;
 import com.example.demo.modules.user.domain.model.User;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface UserRepository {
     List<User> findAll();
-    Optional<User> findById(Long id);
+    Optional<User> findById(UUID id);
     Optional<User> findByEmail(String email);
-    boolean existsById(Long id);
+    boolean existsById(UUID id);
     boolean existsByEmail(String email);
     User save(User user);
-    void deleteById(Long id);
+    void deleteById(UUID id);
 }

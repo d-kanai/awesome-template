@@ -6,6 +6,8 @@ import com.example.demo.modules.user.domain.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @Transactional
 public class UpdateUserCommand {
@@ -15,7 +17,7 @@ public class UpdateUserCommand {
         this.userRepository = userRepository;
     }
 
-    public User execute(Long id, UpdateUserInput input) {
+    public User execute(UUID id, UpdateUserInput input) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
 

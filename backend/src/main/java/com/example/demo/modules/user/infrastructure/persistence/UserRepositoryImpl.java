@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -28,7 +29,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(Long id) {
+    public Optional<User> findById(UUID id) {
         return dsl.selectFrom(USERS)
                 .where(USERS.ID.eq(id))
                 .fetchOptional(this::mapToUser);
@@ -42,7 +43,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean existsById(Long id) {
+    public boolean existsById(UUID id) {
         return dsl.fetchExists(
                 dsl.selectFrom(USERS)
                         .where(USERS.ID.eq(id))
@@ -59,33 +60,35 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        if (user.getId() == null) {
-            // Insert new user
-            LocalDateTime now = LocalDateTime.now();
+        boolean exists = user.getId() != null && existsById(user.getId());
+        if (!exists) {
+            LocalDateTime createdAt = user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now();
+            LocalDateTime updatedAt = user.getUpdatedAt() != null ? user.getUpdatedAt() : createdAt;
+
             UsersRecord record = dsl.insertInto(USERS)
+                    .set(USERS.ID, user.getId())
                     .set(USERS.EMAIL, user.getEmail())
                     .set(USERS.NAME, user.getName())
-                    .set(USERS.CREATED_AT, now)
-                    .set(USERS.UPDATED_AT, now)
+                    .set(USERS.CREATED_AT, createdAt)
+                    .set(USERS.UPDATED_AT, updatedAt)
                     .returning()
                     .fetchOne();
 
             return mapToUser(record);
-        } else {
-            // Update existing user
-            dsl.update(USERS)
-                    .set(USERS.EMAIL, user.getEmail())
-                    .set(USERS.NAME, user.getName())
-                    .set(USERS.UPDATED_AT, LocalDateTime.now())
-                    .where(USERS.ID.eq(user.getId()))
-                    .execute();
-
-            return findById(user.getId()).orElseThrow();
         }
+
+        dsl.update(USERS)
+                .set(USERS.EMAIL, user.getEmail())
+                .set(USERS.NAME, user.getName())
+                .set(USERS.UPDATED_AT, user.getUpdatedAt() != null ? user.getUpdatedAt() : LocalDateTime.now())
+                .where(USERS.ID.eq(user.getId()))
+                .execute();
+
+        return findById(user.getId()).orElseThrow();
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(UUID id) {
         dsl.deleteFrom(USERS)
                 .where(USERS.ID.eq(id))
                 .execute();
