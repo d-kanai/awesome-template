@@ -2,6 +2,7 @@
   "name": "frontend_native",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "packageManager": "pnpm@9.15.4",
   "scripts": {
     "start": "expo start",
     "start:local": "dotenv -e .env.local -- expo start",
