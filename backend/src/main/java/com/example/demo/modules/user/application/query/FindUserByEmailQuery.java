@@ -11,11 +11,11 @@ import java.util.Optional;
 public class FindUserByEmailQuery {
     private final UserRepository userRepository;
 
-    public FindUserByEmailQuery(UserRepository userRepository) {
+    public FindUserByEmailQuery(final UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public Optional<User> execute(String email) {
+    public Optional<User> execute(final String email) {
         return userRepository.findByEmail(email);
     }
 }

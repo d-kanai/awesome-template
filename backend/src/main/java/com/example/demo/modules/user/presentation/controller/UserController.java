@@ -2,19 +2,19 @@ package com.example.demo.modules.user.presentation.controller;
 
 import com.example.demo.modules.user.application.command.DeleteUserCommand;
 import com.example.demo.modules.user.application.command.SignupCommand;
-import com.example.demo.modules.user.application.command.UpdateUserCommand;
+import com.example.demo.modules.user.application.command.UpdateUserProfileCommand;
 import com.example.demo.modules.user.application.query.FindAllUsersQuery;
 import com.example.demo.modules.user.application.query.FindUserByEmailQuery;
 import com.example.demo.modules.user.application.query.FindUserByIdQuery;
 import com.example.demo.modules.user.domain.model.User;
 import com.example.demo.modules.user.domain.value_object.UserId;
 import com.example.demo.modules.user.presentation.input.SignupInput;
-import com.example.demo.modules.user.presentation.input.UpdateUserInput;
+import com.example.demo.modules.user.presentation.input.UpdateUserProfileInput;
 import com.example.demo.modules.user.presentation.output.FindAllUsersOutput;
 import com.example.demo.modules.user.presentation.output.FindUserByEmailOutput;
 import com.example.demo.modules.user.presentation.output.FindUserByIdOutput;
 import com.example.demo.modules.user.presentation.output.SignupOutput;
-import com.example.demo.modules.user.presentation.output.UpdateUserOutput;
+import com.example.demo.modules.user.presentation.output.UpdateUserProfileOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -41,17 +41,17 @@ import java.util.List;
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
     private final SignupCommand signupCommand;
-    private final UpdateUserCommand updateUserCommand;
+    private final UpdateUserProfileCommand updateUserProfileCommand;
     private final DeleteUserCommand deleteUserCommand;
     private final FindAllUsersQuery findAllUsersQuery;
     private final FindUserByIdQuery findUserByIdQuery;
     private final FindUserByEmailQuery findUserByEmailQuery;
 
-    public UserController(SignupCommand signupCommand, UpdateUserCommand updateUserCommand,
-                          DeleteUserCommand deleteUserCommand, FindAllUsersQuery findAllUsersQuery,
-                          FindUserByIdQuery findUserByIdQuery, FindUserByEmailQuery findUserByEmailQuery) {
+    public UserController(final SignupCommand signupCommand, final UpdateUserProfileCommand updateUserProfileCommand,
+                          final DeleteUserCommand deleteUserCommand, final FindAllUsersQuery findAllUsersQuery,
+                          final FindUserByIdQuery findUserByIdQuery, final FindUserByEmailQuery findUserByEmailQuery) {
         this.signupCommand = signupCommand;
-        this.updateUserCommand = updateUserCommand;
+        this.updateUserProfileCommand = updateUserProfileCommand;
         this.deleteUserCommand = deleteUserCommand;
         this.findAllUsersQuery = findAllUsersQuery;
         this.findUserByIdQuery = findUserByIdQuery;
@@ -74,7 +74,7 @@ public class UserController {
     )
     @GetMapping
     public ResponseEntity<FindAllUsersOutput> getAllUsers() {
-        List<User> users = findAllUsersQuery.execute();
+        final List<User> users = findAllUsersQuery.execute();
         return ResponseEntity.ok(FindAllUsersOutput.from(users));
     }
 
@@ -97,15 +97,15 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<FindUserByIdOutput> getUserById(
         @Parameter(description = "ユーザーの識別子", example = "2b6a4f95-4ddc-4af1-9f79-a6b3a9e3e1d4")
-        @PathVariable String id
+        @PathVariable final String id
     ) {
         try {
-            UserId userId = UserId.fromString(id);
+            final UserId userId = UserId.fromString(id);
             return findUserByIdQuery.execute(userId)
                 .map(FindUserByIdOutput::from)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -128,7 +128,7 @@ public class UserController {
     @GetMapping("/email/{email}")
     public ResponseEntity<FindUserByEmailOutput> getUserByEmail(
         @Parameter(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
-        @PathVariable String email
+        @PathVariable final String email
     ) {
         return findUserByEmailQuery.execute(email)
             .map(FindUserByEmailOutput::from)
@@ -152,11 +152,11 @@ public class UserController {
         @ApiResponse(responseCode = "400", description = "リクエストペイロードが不正です。", content = @Content)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SignupOutput> signup(@RequestBody SignupInput input) {
+    public ResponseEntity<SignupOutput> signup(@RequestBody final SignupInput input) {
         try {
-            User user = signupCommand.execute(input);
+            final User user = signupCommand.execute(input);
             return ResponseEntity.status(HttpStatus.CREATED).body(SignupOutput.from(user));
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -171,22 +171,22 @@ public class UserController {
             description = "ユーザーの更新に成功しました。",
             content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = @Schema(implementation = UpdateUserOutput.class)
+                schema = @Schema(implementation = UpdateUserProfileOutput.class)
             )
         ),
         @ApiResponse(responseCode = "400", description = "リクエストペイロードまたは識別子が不正です。", content = @Content)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UpdateUserOutput> updateUser(
+    public ResponseEntity<UpdateUserProfileOutput> updateUserProfile(
         @Parameter(description = "ユーザーの識別子", example = "2b6a4f95-4ddc-4af1-9f79-a6b3a9e3e1d4")
-        @PathVariable String id,
-        @RequestBody UpdateUserInput input
+        @PathVariable final String id,
+        @RequestBody final UpdateUserProfileInput input
     ) {
         try {
-            UserId userId = UserId.fromString(id);
-            User user = updateUserCommand.execute(userId, input);
-            return ResponseEntity.ok(UpdateUserOutput.from(user));
-        } catch (IllegalArgumentException e) {
+            final UserId userId = UserId.fromString(id);
+            final User user = updateUserProfileCommand.execute(userId, input);
+            return ResponseEntity.ok(UpdateUserProfileOutput.from(user));
+        } catch (final IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
     }
@@ -203,19 +203,19 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(
         @Parameter(description = "ユーザーの識別子", example = "2b6a4f95-4ddc-4af1-9f79-a6b3a9e3e1d4")
-        @PathVariable String id
+        @PathVariable final String id
     ) {
-        UserId userId;
+        final UserId userId;
         try {
             userId = UserId.fromString(id);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
 
         try {
             deleteUserCommand.execute(userId);
             return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
     }

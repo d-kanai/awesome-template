@@ -8,7 +8,7 @@ import java.util.UUID;
 public class UserId extends ValueObject<UUID> {
     private final UUID value;
 
-    private UserId(UUID value) {
+    private UserId(final UUID value) {
         if (value == null) {
             throw new IllegalArgumentException("User id cannot be null");
         }
@@ -19,11 +19,11 @@ public class UserId extends ValueObject<UUID> {
         return new UserId(UUID.randomUUID());
     }
 
-    public static UserId reconstruct(UUID value) {
+    public static UserId reconstruct(final UUID value) {
         return new UserId(value);
     }
 
-    public static UserId fromString(String value) {
+    public static UserId fromString(final String value) {
         if (value == null) {
             throw new IllegalArgumentException("User id cannot be null");
         }

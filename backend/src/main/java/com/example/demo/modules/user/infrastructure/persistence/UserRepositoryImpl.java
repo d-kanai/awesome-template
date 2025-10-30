@@ -18,7 +18,7 @@ public class UserRepositoryImpl implements UserRepository {
     private final DSLContext dsl;
     private final Users USERS = Users.USERS;
 
-    public UserRepositoryImpl(DSLContext dsl) {
+    public UserRepositoryImpl(final DSLContext dsl) {
         this.dsl = dsl;
     }
 
@@ -29,21 +29,21 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(UserId id) {
+    public Optional<User> findById(final UserId id) {
         return dsl.selectFrom(USERS)
                 .where(USERS.ID.eq(id.getValue()))
                 .fetchOptional(this::mapToUser);
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
+    public Optional<User> findByEmail(final String email) {
         return dsl.selectFrom(USERS)
                 .where(USERS.EMAIL.eq(email))
                 .fetchOptional(this::mapToUser);
     }
 
     @Override
-    public boolean existsById(UserId id) {
+    public boolean existsById(final UserId id) {
         return dsl.fetchExists(
                 dsl.selectFrom(USERS)
                         .where(USERS.ID.eq(id.getValue()))
@@ -51,7 +51,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean existsByEmail(String email) {
+    public boolean existsByEmail(final String email) {
         return dsl.fetchExists(
                 dsl.selectFrom(USERS)
                         .where(USERS.EMAIL.eq(email))
@@ -59,13 +59,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User save(User user) {
-        boolean exists = user.getId() != null && existsById(user.getId());
+    public User save(final User user) {
+        final boolean exists = user.getId() != null && existsById(user.getId());
         if (!exists) {
-            LocalDateTime createdAt = user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now();
-            LocalDateTime updatedAt = user.getUpdatedAt() != null ? user.getUpdatedAt() : createdAt;
+            final LocalDateTime createdAt = user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now();
+            final LocalDateTime updatedAt = user.getUpdatedAt() != null ? user.getUpdatedAt() : createdAt;
 
-            UsersRecord record = dsl.insertInto(USERS)
+            final UsersRecord record = dsl.insertInto(USERS)
                     .set(USERS.ID, user.getId().getValue())
                     .set(USERS.EMAIL, user.getEmail())
                     .set(USERS.NAME, user.getName())
@@ -88,13 +88,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void deleteById(UserId id) {
+    public void deleteById(final UserId id) {
         dsl.deleteFrom(USERS)
                 .where(USERS.ID.eq(id.getValue()))
                 .execute();
     }
 
-    private User mapToUser(UsersRecord record) {
+    private User mapToUser(final UsersRecord record) {
         return User.reconstruct(
                 UserId.reconstruct(record.getId()),
                 record.getEmail(),

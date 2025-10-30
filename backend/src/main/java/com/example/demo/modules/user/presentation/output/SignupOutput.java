@@ -14,7 +14,7 @@ public class SignupOutput {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public SignupOutput(UUID id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public SignupOutput(final UUID id, final String email, final String name, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -22,7 +22,7 @@ public class SignupOutput {
         this.updatedAt = updatedAt;
     }
 
-    public static SignupOutput from(User user) {
+    public static SignupOutput from(final User user) {
         return new SignupOutput(
             user.getId().getValue(),
             user.getEmail(),

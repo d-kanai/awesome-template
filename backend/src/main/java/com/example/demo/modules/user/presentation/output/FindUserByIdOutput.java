@@ -14,7 +14,7 @@ public class FindUserByIdOutput {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public FindUserByIdOutput(UUID id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public FindUserByIdOutput(final UUID id, final String email, final String name, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -22,7 +22,7 @@ public class FindUserByIdOutput {
         this.updatedAt = updatedAt;
     }
 
-    public static FindUserByIdOutput from(User user) {
+    public static FindUserByIdOutput from(final User user) {
         return new FindUserByIdOutput(
             user.getId().getValue(),
             user.getEmail(),

@@ -13,12 +13,12 @@ import java.util.UUID;
 public class FindAllUsersOutput {
     private final List<UserItem> users;
 
-    public FindAllUsersOutput(List<UserItem> users) {
+    public FindAllUsersOutput(final List<UserItem> users) {
         this.users = users;
     }
 
-    public static FindAllUsersOutput from(List<User> users) {
-        List<UserItem> items = users.stream()
+    public static FindAllUsersOutput from(final List<User> users) {
+        final List<UserItem> items = users.stream()
             .map(UserItem::from)
             .collect(Collectors.toList());
         return new FindAllUsersOutput(items);
@@ -37,7 +37,7 @@ public class FindAllUsersOutput {
         private final LocalDateTime createdAt;
         private final LocalDateTime updatedAt;
 
-        public UserItem(UUID id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        public UserItem(final UUID id, final String email, final String name, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
             this.id = id;
             this.email = email;
             this.name = name;
@@ -45,7 +45,7 @@ public class FindAllUsersOutput {
             this.updatedAt = updatedAt;
         }
 
-        public static UserItem from(User user) {
+        public static UserItem from(final User user) {
             return new UserItem(
                 user.getId().getValue(),
                 user.getEmail(),

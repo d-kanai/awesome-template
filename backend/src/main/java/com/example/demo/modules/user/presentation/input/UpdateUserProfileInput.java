@@ -2,17 +2,17 @@ package com.example.demo.modules.user.presentation.input;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "ユーザー更新リクエスト", description = "既存ユーザーを更新するためのリクエストペイロードです")
-public class UpdateUserInput {
+@Schema(name = "ユーザープロフィール更新リクエスト", description = "既存ユーザーのプロフィールを更新するためのリクエストペイロードです")
+public class UpdateUserProfileInput {
     @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
     private String email;
     @Schema(description = "ユーザーの表示名", example = "Jane Doe")
     private String name;
 
-    public UpdateUserInput() {
+    public UpdateUserProfileInput() {
     }
 
-    public UpdateUserInput(String email, String name) {
+    public UpdateUserProfileInput(final String email, final String name) {
         this.email = email;
         this.name = name;
     }
@@ -21,7 +21,7 @@ public class UpdateUserInput {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
@@ -29,7 +29,7 @@ public class UpdateUserInput {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 }

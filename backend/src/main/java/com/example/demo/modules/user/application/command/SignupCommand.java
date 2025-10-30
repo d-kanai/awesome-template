@@ -11,15 +11,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class SignupCommand {
     private final UserRepository userRepository;
 
-    public SignupCommand(UserRepository userRepository) {
+    public SignupCommand(final UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public User execute(SignupInput input) {
+    public User execute(final SignupInput input) {
         if (userRepository.existsByEmail(input.getEmail())) {
             throw new IllegalArgumentException("Email already exists: " + input.getEmail());
         }
-        User user = User.signup(input.getEmail(), input.getName());
+        final User user = User.signup(input.getEmail(), input.getName());
         return userRepository.save(user);
     }
 }

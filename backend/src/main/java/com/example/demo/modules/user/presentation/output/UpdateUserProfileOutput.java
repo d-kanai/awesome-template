@@ -6,15 +6,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Schema(name = "ユーザー更新レスポンス", description = "更新後のユーザーを表します")
-public class UpdateUserOutput {
+@Schema(name = "ユーザープロフィール更新レスポンス", description = "更新後のユーザーを表します")
+public class UpdateUserProfileOutput {
     private final UUID id;
     private final String email;
     private final String name;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public UpdateUserOutput(UUID id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UpdateUserProfileOutput(final UUID id, final String email, final String name, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -22,8 +22,8 @@ public class UpdateUserOutput {
         this.updatedAt = updatedAt;
     }
 
-    public static UpdateUserOutput from(User user) {
-        return new UpdateUserOutput(
+    public static UpdateUserProfileOutput from(final User user) {
+        return new UpdateUserProfileOutput(
             user.getId().getValue(),
             user.getEmail(),
             user.getName(),

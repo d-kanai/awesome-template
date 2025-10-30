@@ -11,18 +11,18 @@ public class ApiTestClient {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
 
-    public ApiTestClient(MockMvc mockMvc, ObjectMapper objectMapper) {
+    public ApiTestClient(final MockMvc mockMvc, final ObjectMapper objectMapper) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
     }
 
-    public ApiTestResponse post(String url, Object body) throws Exception {
+    public ApiTestResponse post(final String url, final Object body) throws Exception {
         return new ApiTestResponse(mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post(url)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(body))), objectMapper);
     }
 
-    public ApiTestResponse get(String url) throws Exception {
+    public ApiTestResponse get(final String url) throws Exception {
         return new ApiTestResponse(mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get(url)), objectMapper);
     }
 }

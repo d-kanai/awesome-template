@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.UUID;
 
@@ -39,16 +38,16 @@ class UserControllerIntegrationTest {
     @Test
     void signup_createsUserAndReturnsCreatedResponse() throws Exception {
         // given input
-        SignupInput request = new SignupInput("john.doe@example.com", "John Doe");
+        final SignupInput request = new SignupInput("john.doe@example.com", "John Doe");
 
         // given db
         assertThat(userRepository.findAll()).isEmpty();
 
         // when
-        ApiTestResponse response = apiTestClient.post("/users", request);
+        final ApiTestResponse response = apiTestClient.post("/users", request);
 
         // then response
-        JsonNode responseBody = response
+        final JsonNode responseBody = response
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").isNotEmpty())
             .andExpect(jsonPath("$.email").value(request.getEmail()))
@@ -56,7 +55,7 @@ class UserControllerIntegrationTest {
             .andReturnBody();
 
         // then db
-        UUID persistedId = UUID.fromString(responseBody.get("id").asText());
+        final UUID persistedId = UUID.fromString(responseBody.get("id").asText());
         assertThat(userRepository.findById(UserId.reconstruct(persistedId)))
             .isPresent()
             .get()
@@ -67,13 +66,13 @@ class UserControllerIntegrationTest {
     @Test
     void findById_returnsUserDetails() throws Exception {
         // given db
-        User existingUser = userRepository.save(User.signup("jane.doe@example.com", "Jane Doe"));
+        final User existingUser = userRepository.save(User.signup("jane.doe@example.com", "Jane Doe"));
 
         // given input
-        UUID userId = existingUser.getId().getValue();
+        final UUID userId = existingUser.getId().getValue();
 
         // when
-        ResultActions response = apiTestClient.get("/users/" + userId);
+        final ApiTestResponse response = apiTestClient.get("/users/" + userId);
 
         // then response
         response

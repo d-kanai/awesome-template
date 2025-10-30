@@ -11,7 +11,7 @@ import java.util.List;
 public class FindAllUsersQuery {
     private final UserRepository userRepository;
 
-    public FindAllUsersQuery(UserRepository userRepository) {
+    public FindAllUsersQuery(final UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

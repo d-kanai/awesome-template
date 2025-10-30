@@ -12,7 +12,7 @@ public class SignupInput {
     public SignupInput() {
     }
 
-    public SignupInput(String email, String name) {
+    public SignupInput(final String email, final String name) {
         this.email = email;
         this.name = name;
     }
@@ -21,7 +21,7 @@ public class SignupInput {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
@@ -29,7 +29,7 @@ public class SignupInput {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 }

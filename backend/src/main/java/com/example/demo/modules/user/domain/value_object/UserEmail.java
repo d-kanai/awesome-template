@@ -10,7 +10,7 @@ public class UserEmail extends ValueObject<String> {
 
     private final String value;
 
-    private UserEmail(String value) {
+    private UserEmail(final String value) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException("Email cannot be null or empty");
         }
@@ -20,7 +20,7 @@ public class UserEmail extends ValueObject<String> {
         this.value = value;
     }
 
-    public static UserEmail of(String value) {
+    public static UserEmail of(final String value) {
         return new UserEmail(value);
     }
 

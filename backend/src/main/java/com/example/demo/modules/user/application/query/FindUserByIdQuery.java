@@ -12,11 +12,11 @@ import java.util.Optional;
 public class FindUserByIdQuery {
     private final UserRepository userRepository;
 
-    public FindUserByIdQuery(UserRepository userRepository) {
+    public FindUserByIdQuery(final UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public Optional<User> execute(UserId id) {
+    public Optional<User> execute(final UserId id) {
         return userRepository.findById(id);
     }
 }

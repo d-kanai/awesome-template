@@ -13,17 +13,17 @@ public class ApiTestResponse {
     private final ResultActions resultActions;
     private final ObjectMapper objectMapper;
 
-    ApiTestResponse(ResultActions resultActions, ObjectMapper objectMapper) {
+    ApiTestResponse(final ResultActions resultActions, final ObjectMapper objectMapper) {
         this.resultActions = resultActions;
         this.objectMapper = objectMapper;
     }
 
-    public ApiTestResponse andExpect(ResultMatcher matcher) throws Exception {
+    public ApiTestResponse andExpect(final ResultMatcher matcher) throws Exception {
         resultActions.andExpect(matcher);
         return this;
     }
 
-    public ApiTestResponse andDo(ResultHandler handler) throws Exception {
+    public ApiTestResponse andDo(final ResultHandler handler) throws Exception {
         resultActions.andDo(handler);
         return this;
     }
@@ -36,11 +36,11 @@ public class ApiTestResponse {
         return objectMapper.readTree(andReturn().getResponse().getContentAsString());
     }
 
-    public <T> T andReturnBody(Class<T> responseType) throws Exception {
+    public <T> T andReturnBody(final Class<T> responseType) throws Exception {
         return objectMapper.readValue(andReturn().getResponse().getContentAsString(), responseType);
     }
 
-    public <T> T andReturnBody(TypeReference<T> typeReference) throws Exception {
+    public <T> T andReturnBody(final TypeReference<T> typeReference) throws Exception {
         return objectMapper.readValue(andReturn().getResponse().getContentAsString(), typeReference);
     }
 

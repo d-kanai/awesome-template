@@ -26,6 +26,9 @@ help:
 	@echo "  make frontend-android     # Launch Expo Android build"
 	@echo "  make frontend-lint        # Run Expo lint"
 
+###############################################################
+# Backend
+###############################################################
 backend-install:
 	cd backend && ./gradlew build
 
@@ -53,6 +56,9 @@ backend-up:
 backend-down:
 	cd backend && docker-compose down
 
+###############################################################
+# Frontend-Native
+###############################################################
 frontend-install:
 	cd frontend_native && npm install
 

@@ -11,7 +11,7 @@ public class User {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    private User(UserId id, UserEmail email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private User(final UserId id, final UserEmail email, final String name, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -19,21 +19,17 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public static User signup(String email, String name) {
-        LocalDateTime now = LocalDateTime.now();
+    public static User signup(final String email, final String name) {
+        final LocalDateTime now = LocalDateTime.now();
         return new User(UserId.generate(), UserEmail.of(email), name, now, now);
     }
 
-    public static User reconstruct(UserId id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public static User reconstruct(final UserId id, final String email, final String name, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
         return new User(id, UserEmail.of(email), name, createdAt, updatedAt);
     }
 
-    public User updateName(String newName) {
-        return new User(this.id, this.email, newName, this.createdAt, LocalDateTime.now());
-    }
-
-    public User updateEmail(String newEmail) {
-        return new User(this.id, UserEmail.of(newEmail), this.name, this.createdAt, LocalDateTime.now());
+    public User updateProfile(final String newEmail, final String newName) {
+        return new User(this.id, UserEmail.of(newEmail), newName, this.createdAt, LocalDateTime.now());
     }
 
     public UserId getId() { return id; }
