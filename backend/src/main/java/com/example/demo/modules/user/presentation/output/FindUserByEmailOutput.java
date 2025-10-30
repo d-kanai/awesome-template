@@ -1,20 +1,20 @@
 package com.example.demo.modules.user.presentation.output;
 
 import com.example.demo.modules.user.domain.model.User;
-import com.example.demo.modules.user.domain.value_object.UserId;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Schema(name = "メールアドレス検索レスポンス", description = "メールアドレスで取得したユーザーを表します")
 public class FindUserByEmailOutput {
-    private final UserId id;
+    private final UUID id;
     private final String email;
     private final String name;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public FindUserByEmailOutput(UserId id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public FindUserByEmailOutput(UUID id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -24,7 +24,7 @@ public class FindUserByEmailOutput {
 
     public static FindUserByEmailOutput from(User user) {
         return new FindUserByEmailOutput(
-            user.getId(),
+            user.getId().getValue(),
             user.getEmail(),
             user.getName(),
             user.getCreatedAt(),
@@ -33,7 +33,7 @@ public class FindUserByEmailOutput {
     }
 
     @Schema(description = "ユーザーの一意な識別子", type = "string", format = "uuid")
-    public UserId getId() {
+    public UUID getId() {
         return id;
     }
 

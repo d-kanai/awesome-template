@@ -2,11 +2,9 @@ package com.example.demo.modules.user.domain.value_object;
 
 import com.example.demo.modules.shared.domain.ValueObject;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.UUID;
 
-@Schema(description = "ユーザーの一意な識別子", type = "string", format = "uuid", example = "2b6a4f95-4ddc-4af1-9f79-a6b3a9e3e1d4")
 public class UserId extends ValueObject<UUID> {
     private final UUID value;
 

@@ -1,20 +1,20 @@
 package com.example.demo.modules.user.presentation.output;
 
 import com.example.demo.modules.user.domain.model.User;
-import com.example.demo.modules.user.domain.value_object.UserId;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Schema(name = "ユーザー更新レスポンス", description = "更新後のユーザーを表します")
 public class UpdateUserOutput {
-    private final UserId id;
+    private final UUID id;
     private final String email;
     private final String name;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public UpdateUserOutput(UserId id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public UpdateUserOutput(UUID id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -24,7 +24,7 @@ public class UpdateUserOutput {
 
     public static UpdateUserOutput from(User user) {
         return new UpdateUserOutput(
-            user.getId(),
+            user.getId().getValue(),
             user.getEmail(),
             user.getName(),
             user.getCreatedAt(),
@@ -33,7 +33,7 @@ public class UpdateUserOutput {
     }
 
     @Schema(description = "ユーザーの一意な識別子", type = "string", format = "uuid")
-    public UserId getId() {
+    public UUID getId() {
         return id;
     }
 

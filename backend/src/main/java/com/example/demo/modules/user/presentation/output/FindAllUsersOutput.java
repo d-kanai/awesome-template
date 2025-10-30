@@ -1,13 +1,13 @@
 package com.example.demo.modules.user.presentation.output;
 
 import com.example.demo.modules.user.domain.model.User;
-import com.example.demo.modules.user.domain.value_object.UserId;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Schema(name = "ユーザー一覧レスポンス", description = "登録済みユーザーの一覧を表します")
 public class FindAllUsersOutput {
@@ -31,13 +31,13 @@ public class FindAllUsersOutput {
 
     @Schema(name = "ユーザー一覧項目", description = "一覧レスポンス内のユーザー情報です")
     public static class UserItem {
-        private final UserId id;
+        private final UUID id;
         private final String email;
         private final String name;
         private final LocalDateTime createdAt;
         private final LocalDateTime updatedAt;
 
-        public UserItem(UserId id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        public UserItem(UUID id, String email, String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
             this.id = id;
             this.email = email;
             this.name = name;
@@ -47,7 +47,7 @@ public class FindAllUsersOutput {
 
         public static UserItem from(User user) {
             return new UserItem(
-                user.getId(),
+                user.getId().getValue(),
                 user.getEmail(),
                 user.getName(),
                 user.getCreatedAt(),
@@ -56,7 +56,7 @@ public class FindAllUsersOutput {
         }
 
         @Schema(description = "ユーザーの一意な識別子", type = "string", format = "uuid")
-        public UserId getId() {
+        public UUID getId() {
             return id;
         }
 
