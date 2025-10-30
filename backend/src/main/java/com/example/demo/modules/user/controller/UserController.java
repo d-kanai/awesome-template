@@ -1,47 +1,53 @@
 package com.example.demo.modules.user.controller;
 
+import com.example.demo.modules.user.application.command.*;
+import com.example.demo.modules.user.application.query.*;
 import com.example.demo.modules.user.domain.User;
-import com.example.demo.modules.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    private final SignupCommand signupCommand;
+    private final UpdateUserCommand updateUserCommand;
+    private final DeleteUserCommand deleteUserCommand;
+    private final FindAllUsersQuery findAllUsersQuery;
+    private final FindUserByIdQuery findUserByIdQuery;
+    private final FindUserByEmailQuery findUserByEmailQuery;
 
-    private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(SignupCommand signupCommand, UpdateUserCommand updateUserCommand,
+                          DeleteUserCommand deleteUserCommand, FindAllUsersQuery findAllUsersQuery,
+                          FindUserByIdQuery findUserByIdQuery, FindUserByEmailQuery findUserByEmailQuery) {
+        this.signupCommand = signupCommand;
+        this.updateUserCommand = updateUserCommand;
+        this.deleteUserCommand = deleteUserCommand;
+        this.findAllUsersQuery = findAllUsersQuery;
+        this.findUserByIdQuery = findUserByIdQuery;
+        this.findUserByEmailQuery = findUserByEmailQuery;
     }
 
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+        return ResponseEntity.ok(findAllUsersQuery.execute());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return findUserByIdQuery.execute(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/email/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        return userService.getUserByEmail(email)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return findUserByEmailQuery.execute(email).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
-            User createdUser = userService.createUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body(signupCommand.execute(user));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -50,8 +56,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
         try {
-            User updatedUser = userService.updateUser(id, user);
-            return ResponseEntity.ok(updatedUser);
+            return ResponseEntity.ok(updateUserCommand.execute(id, user));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -60,7 +65,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         try {
-            userService.deleteUser(id);
+            deleteUserCommand.execute(id);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

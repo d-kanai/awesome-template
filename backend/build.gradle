@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.0'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'nu.studer.jooq' version '8.2'
 }
 
 group = 'com.example'
@@ -17,8 +18,50 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     runtimeOnly 'org.postgresql:postgresql'
+
+    jooqGenerator 'org.postgresql:postgresql'
+}
+
+jooq {
+    version = '3.18.7'
+    configurations {
+        main {
+            generationTool {
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = 'jdbc:postgresql://localhost:5432/demodb'
+                    user = 'demo'
+                    password = 'demo123'
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'public'
+                    }
+                    generate {
+                        pojos = false
+                        daos = false
+                    }
+                    target {
+                        packageName = 'com.example.demo.infrastructure.jooq'
+                        directory = 'build/generated-src/jooq'
+                    }
+                }
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += 'build/generated-src/jooq'
+        }
+    }
 }
 
 tasks.named('test') {
