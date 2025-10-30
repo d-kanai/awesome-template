@@ -10,7 +10,10 @@
     "android": "dotenv -e .env.local -- expo start --android",
     "ios": "dotenv -e .env.local -- expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint",
+    "lint": "biome check --write",
+    "lint:check": "biome check",
+    "format": "biome format",
+    "format:check": "biome format --check",
     "generate:api": "orval --config orval.config.ts"
   },
   "dependencies": {
@@ -48,9 +51,8 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
+    "@biomejs/biome": "^1.9.4",
     "dotenv-cli": "^11.0.0",
-    "eslint": "^9.25.0",
-    "eslint-config-expo": "~10.0.0",
     "orval": "^7.1.1",
     "typescript": "~5.9.2"
   },

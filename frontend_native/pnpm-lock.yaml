@@ -100,18 +100,15 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
     devDependencies:
+      @biomejs/biome:
+        specifier: ^1.9.4
+        version: 1.9.4
       @types/react:
         specifier: ~19.1.0
         version: 19.1.17
       dotenv-cli:
         specifier: ^11.0.0
         version: 11.0.0
-      eslint:
-        specifier: ^9.25.0
-        version: 9.38.0
-      eslint-config-expo:
-        specifier: ~10.0.0
-        version: 10.0.0
       orval:
         specifier: ^7.1.1
         version: 7.13.2
