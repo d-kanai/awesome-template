@@ -1,9 +1,9 @@
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+${create_pgcrypto_extension}
 
 ALTER TABLE users ALTER COLUMN id DROP DEFAULT;
-DROP SEQUENCE IF EXISTS users_id_seq;
+${drop_users_id_sequence}
 
 ALTER TABLE users
-    ALTER COLUMN id TYPE UUID USING gen_random_uuid();
+    ALTER COLUMN id ${users_id_uuid_type};
 
-ALTER TABLE users ALTER COLUMN id SET DEFAULT gen_random_uuid();
+ALTER TABLE users ALTER COLUMN id SET DEFAULT ${users_id_uuid_default};
