@@ -1,12 +1,11 @@
 import { useForm } from '@tanstack/react-form';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { zodValidator } from '@tanstack/zod-form-adapter';
-import { useMemo } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Button,
   FlatList,
+  Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -16,11 +15,6 @@ import {
 import { z } from 'zod';
 
 import { USERS_ENDPOINT } from '@/constants/api';
-
-const nameSchema = z.string().min(1, '名前を入力してください');
-
-// Expo のデバイスで利用される API エンドポイントをデバッグ用に表示
-console.log('USERS_ENDPOINT', USERS_ENDPOINT);
 
 const userSchema = z.object({
   id: z.string().uuid(),
@@ -34,20 +28,27 @@ const usersResponseSchema = z.object({
   users: z.array(userSchema),
 });
 
-type User = z.infer<typeof userSchema>;
+const signupSchema = z.object({
+  email: z.string().email('有効なメールアドレスを入力してください'),
+  name: z.string().min(1, '名前を入力してください'),
+});
 
-type FormValues = {
-  name: string;
+const getErrorMessage = (error: unknown) => {
+  if (!error) return null;
+  if (typeof error === 'string') return error;
+  if (typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
+    return error.message;
+  }
+  return JSON.stringify(error);
 };
 
+type User = z.infer<typeof userSchema>;
+type SignupValues = z.infer<typeof signupSchema>;
+
 export default function HelloScreen() {
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
+  const queryClient = useQueryClient();
+
+  const usersQuery = useQuery({
     queryKey: ['users'],
     queryFn: async (): Promise<User[]> => {
       const response = await fetch(USERS_ENDPOINT);
@@ -56,71 +57,160 @@ export default function HelloScreen() {
       }
 
       const json = await response.json();
-      const parsed = usersResponseSchema.parse(json);
-      return parsed.users;
+      return usersResponseSchema.parse(json).users;
     },
     staleTime: 30_000,
   });
 
-  const form = useForm<FormValues>({
-    defaultValues: { name: '' },
-    validatorAdapter: zodValidator(),
-    onSubmit: async ({ value }) => {
-      Alert.alert('こんにちは', `${value.name}さん、ようこそ 👋`);
+  const signupMutation = useMutation({
+    mutationFn: async (values: SignupValues) => {
+      const response = await fetch(USERS_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      const text = await response.text();
+
+      if (!response.ok) {
+        const fallbackMessage =
+          response.status === 400
+            ? '入力内容を確認してください。既に登録済みのメールアドレスかもしれません。'
+            : 'しばらくしてから再度お試しください。';
+
+        throw new Error(
+          `ユーザー登録に失敗しました (HTTP ${response.status})${
+            text ? `: ${text}` : `: ${fallbackMessage}`
+          }`,
+        );
+      }
+
+      const user = userSchema.parse(JSON.parse(text));
+      return user;
+    },
+    onSuccess: (user) => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      Alert.alert('登録完了', `${user.name}さんを登録しました`);
     },
   });
 
-  const greeting = useMemo(() => {
-    if (isLoading) {
-      return 'Loading users...';
-    }
-    if (isError) {
-      return 'Failed to load users';
-    }
-    return 'Hello World!';
-  }, [isError, isLoading]);
+  const form = useForm<SignupValues>({
+    defaultValues: {
+      email: '',
+      name: '',
+    },
+    validatorAdapter: zodValidator(),
+    onSubmit: async ({ value, formApi }) => {
+      try {
+        await signupMutation.mutateAsync(value);
+        formApi.reset();
+      } catch (err) {
+        console.error(err);
+      }
+    },
+  });
 
-  const errorMessage = isError
-    ? ((error as Error | undefined)?.message ?? 'ユーザー情報を取得できませんでした')
-    : null;
+  const users = usersQuery.data ?? [];
+  const usersError =
+    usersQuery.isError && (usersQuery.error as Error | undefined)?.message
+      ? (usersQuery.error as Error).message
+      : 'ユーザー情報を取得できませんでした';
 
-  const users = data ?? [];
+  const signupError = (signupMutation.error as Error | undefined)?.message;
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>{greeting}</Text>
-        <Text style={styles.subtitle}>Expo × TanStack Query × TanStack Form × Zod</Text>
-        <form.Field
-          name="name"
-          validators={{
-            onChange: nameSchema,
-          }}>
-          {(field) => (
-            <View style={styles.field}>
-              <TextInput
-                value={field.state.value}
-                onChangeText={field.handleChange}
-                onBlur={field.handleBlur}
-                placeholder="お名前を入力"
-                style={styles.input}
-              />
-              {field.state.meta.errors.length > 0 ? (
-                <Text style={styles.formError}>{field.state.meta.errors[0]}</Text>
-              ) : null}
-            </View>
-          )}
-        </form.Field>
-        <Button title="挨拶する" onPress={form.handleSubmit()} />
-        <View style={styles.divider} />
+        <View style={styles.header}>
+          <Text style={styles.title}>User Signup</Text>
+          <Text style={styles.subtitle}>メールアドレスと名前を登録できます</Text>
+        </View>
+
+        <View style={styles.form}>
+          <form.Field
+            name="email"
+            validators={{
+              onChange: signupSchema.shape.email,
+            }}>
+            {(field) => (
+              <View style={styles.field}>
+                <Text style={styles.label}>メールアドレス</Text>
+                <TextInput
+                  value={field.state.value}
+                  onChangeText={field.handleChange}
+                  onBlur={field.handleBlur}
+                  placeholder="example@email.com"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={styles.input}
+                />
+                {field.state.meta.errors.length > 0 ? (
+                  <Text style={styles.fieldError}>{getErrorMessage(field.state.meta.errors[0])}</Text>
+                ) : null}
+              </View>
+            )}
+          </form.Field>
+
+          <form.Field
+            name="name"
+            validators={{
+              onChange: signupSchema.shape.name,
+            }}>
+            {(field) => (
+              <View style={styles.field}>
+                <Text style={styles.label}>名前</Text>
+                <TextInput
+                  value={field.state.value}
+                  onChangeText={field.handleChange}
+                  onBlur={field.handleBlur}
+                  placeholder="山田 太郎"
+                  style={styles.input}
+                />
+                {field.state.meta.errors.length > 0 ? (
+                  <Text style={styles.fieldError}>{getErrorMessage(field.state.meta.errors[0])}</Text>
+                ) : null}
+              </View>
+            )}
+          </form.Field>
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.button,
+              signupMutation.isPending ? styles.buttonDisabled : null,
+              pressed ? styles.buttonPressed : null,
+            ]}
+            onPress={() => {
+              form
+                .handleSubmit()
+                .catch((err) => {
+                  console.error(err);
+                });
+            }}
+            disabled={signupMutation.isPending}>
+            <Text style={styles.buttonText}>
+              {signupMutation.isPending ? '登録中...' : 'ユーザーを登録する'}
+            </Text>
+          </Pressable>
+
+          {signupError ? <Text style={styles.mutationError}>{signupError}</Text> : null}
+        </View>
+
         <View style={styles.listHeader}>
           <Text style={styles.listTitle}>登録済みユーザー</Text>
-          <Button title="再読み込み" onPress={() => refetch()} />
+          <Pressable
+            onPress={() => usersQuery.refetch()}
+            style={({ pressed }) => [styles.reloadButton, pressed && styles.reloadPressed]}>
+            <Text style={styles.reloadText}>再読み込み</Text>
+          </Pressable>
         </View>
-        {isLoading ? (
+
+        {usersQuery.isLoading ? (
           <ActivityIndicator size="large" />
-        ) : isError ? (
-          <Text style={styles.error}>{errorMessage}</Text>
+        ) : usersQuery.isError ? (
+          <Text style={styles.error}>{usersError}</Text>
         ) : (
           <FlatList
             data={users}
@@ -153,22 +243,35 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 24,
-    gap: 16,
+    gap: 20,
+  },
+  header: {
+    gap: 8,
   },
   title: {
-    fontSize: 32,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontSize: 28,
+    fontWeight: '700',
     color: '#111',
-    marginTop: 12,
   },
   subtitle: {
-    fontSize: 18,
-    textAlign: 'center',
+    fontSize: 16,
     color: '#555',
+  },
+  form: {
+    gap: 16,
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e2e2e2',
   },
   field: {
     gap: 8,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
   },
   input: {
     borderWidth: 1,
@@ -179,14 +282,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: '#fff',
   },
-  formError: {
+  fieldError: {
     color: '#c1121f',
     fontSize: 14,
   },
-  divider: {
-    height: 1,
-    backgroundColor: '#e0e0e0',
-    marginVertical: 12,
+  mutationError: {
+    color: '#c1121f',
+    fontSize: 15,
   },
   listHeader: {
     flexDirection: 'row',
