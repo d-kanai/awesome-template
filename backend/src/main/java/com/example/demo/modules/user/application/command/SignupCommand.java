@@ -1,5 +1,6 @@
 package com.example.demo.modules.user.application.command;
 
+import com.example.demo.modules.user.presentation.input.SignupInput;
 import com.example.demo.modules.user.domain.model.User;
 import com.example.demo.modules.user.domain.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -14,10 +15,11 @@ public class SignupCommand {
         this.userRepository = userRepository;
     }
 
-    public User execute(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Email already exists: " + user.getEmail());
+    public User execute(SignupInput input) {
+        if (userRepository.existsByEmail(input.getEmail())) {
+            throw new IllegalArgumentException("Email already exists: " + input.getEmail());
         }
+        User user = User.signup(input.getEmail(), input.getName());
         return userRepository.save(user);
     }
 }

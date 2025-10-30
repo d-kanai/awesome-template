@@ -1,5 +1,6 @@
 package com.example.demo.modules.user.application.command;
 
+import com.example.demo.modules.user.presentation.input.UpdateUserInput;
 import com.example.demo.modules.user.domain.model.User;
 import com.example.demo.modules.user.domain.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -14,16 +15,16 @@ public class UpdateUserCommand {
         this.userRepository = userRepository;
     }
 
-    public User execute(Long id, User userDetails) {
+    public User execute(Long id, UpdateUserInput input) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
 
-        User updatedUser = user.updateName(userDetails.getName());
-        if (!user.getEmail().equals(userDetails.getEmail())) {
-            if (userRepository.existsByEmail(userDetails.getEmail())) {
-                throw new IllegalArgumentException("Email already exists: " + userDetails.getEmail());
+        User updatedUser = user.updateName(input.getName());
+        if (!user.getEmail().equals(input.getEmail())) {
+            if (userRepository.existsByEmail(input.getEmail())) {
+                throw new IllegalArgumentException("Email already exists: " + input.getEmail());
             }
-            updatedUser = updatedUser.updateEmail(userDetails.getEmail());
+            updatedUser = updatedUser.updateEmail(input.getEmail());
         }
         return userRepository.save(updatedUser);
     }
