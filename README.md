@@ -27,4 +27,3 @@
   - `@Schema`の`requiredMode`や`requiredProperties`では反映されない
   - SpringDocの設定でカスタマイザーを追加する必要がある
 
-
