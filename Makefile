@@ -3,7 +3,7 @@ SHELL := /bin/bash
 .PHONY: help \
         install \
         backend-install backend-ut backend-db-refresh backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
-        native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-devclient native-setup \
+        native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-setup \
         openapi-client lefthook-install
 
 help:
@@ -31,7 +31,7 @@ help:
 	@echo "  make native-typecheck     # Run Expo TypeScript type checking"
 	@echo "  make native-generate-api  # Generate native API client/hooks via orval"
 	@echo "  make native-prebuild      # Generate native iOS project via Expo prebuild"
-	@echo "  make native-devclient     # Build & install iOS dev client on default simulator"
+    @echo "  make native-run           # Build & install iOS dev client on default simulator"
 	@echo "  make native-ut            # Install dependencies and run Expo unit tests"
 	@echo "  make native-setup         # Install deps, prebuild, and install iOS dev client"
 	@echo ""
@@ -115,7 +115,7 @@ native-generate-api:
 native-prebuild:
 	cd frontend_native && CI=1 pnpm exec expo prebuild --platform ios
 
-native-devclient:
+native-run:
 	cd frontend_native && CI=1 pnpm exec expo run:ios --device "iPhone 16"
 
 native-typecheck:
@@ -125,6 +125,6 @@ native-ut:
 	cd frontend_native && pnpm install --frozen-lockfile --prefer-offline
 	cd frontend_native && pnpm test -- --ci
 
-native-setup: native-install native-prebuild native-devclient
+native-setup: native-install native-prebuild native-run
 
 openapi-client: backend-openapi native-generate-api
