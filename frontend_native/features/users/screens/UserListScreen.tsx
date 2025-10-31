@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
 import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import {
   ActivityIndicator,
   FlatList,
@@ -8,7 +9,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { ErrorBoundary } from "react-error-boundary";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { UserListItem } from "@/features/users/components/UserListItem";

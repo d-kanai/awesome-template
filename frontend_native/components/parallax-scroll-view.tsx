@@ -1,4 +1,4 @@
-import { useMemo, type PropsWithChildren, type ReactElement } from "react";
+import { type PropsWithChildren, type ReactElement, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import Animated, {
   interpolate,

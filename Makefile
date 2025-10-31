@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 .PHONY: help \
-        backend-install backend-test backend-db-refresh backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi \
+        backend-install backend-test backend-db-refresh backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
         frontend-install frontend-start frontend-start-local frontend-ios frontend-android frontend-lint frontend-format frontend-generate-api \
         openapi-client
 
@@ -20,7 +20,7 @@ help:
 	@echo "  make backend-clean        # Clean backend build artifacts"
 	@echo "  make backend-up           # Start backend Docker services"
 	@echo "  make backend-down         # Stop backend Docker services"
-	@echo "  make backend-checkstyle   # Run Checkstyle on main and test sources"
+	@echo "  make backend-lint         # Run Checkstyle on main and test sources"
 	@echo "  make backend-format       # Format Java sources with Spotless"
 	@echo ""
 	@echo "Frontend Native:"
@@ -72,7 +72,7 @@ backend-up:
 backend-down:
 	cd backend && docker-compose down
 
-backend-checkstyle:
+backend-lint:
 	cd backend && ./gradlew checkstyleMain checkstyleTest
 
 backend-format:
