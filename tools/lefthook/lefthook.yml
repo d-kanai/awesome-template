@@ -4,14 +4,14 @@ pre-commit:
     backend-format:
       glob: "backend/src/**/*.java"
       stage_fixed: true
-      run: ./scripts/hooks/backend_format.sh {staged_files}
+      run: ./tools/lefthook/backend_format.sh {staged_files}
     backend-lint:
       glob: "backend/src/**/*.java"
-      run: ./scripts/hooks/backend_lint.sh {staged_files}
+      run: ./tools/lefthook/backend_lint.sh {staged_files}
     native-format:
       glob: "frontend_native/**/*.{ts,tsx,js,jsx,json}"
       stage_fixed: true
-      run: ./scripts/hooks/frontend_format.sh {staged_files}
+      run: ./tools/lefthook/frontend_format.sh {staged_files}
     native-lint:
       glob: "frontend_native/**/*.{ts,tsx,js,jsx,json}"
-      run: ./scripts/hooks/frontend_lint.sh {staged_files}
+      run: ./tools/lefthook/frontend_lint.sh {staged_files}

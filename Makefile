@@ -2,8 +2,8 @@ SHELL := /bin/bash
 
 .PHONY: help \
         backend-install backend-test backend-db-refresh backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
-        frontend-install frontend-start frontend-start-local frontend-ios frontend-android frontend-lint frontend-format frontend-generate-api frontend-typecheck \
-        openapi-client
+        frontend-install frontend-start frontend-start-local frontend-ios frontend-android frontend-lint frontend-format frontend-typecheck frontend-generate-api \
+        openapi-client lefthook-install
 
 help:
 	@echo "Available targets:"
@@ -28,14 +28,15 @@ help:
 	@echo "  make frontend-start       # Start Expo (default scripts)"
 	@echo "  make frontend-start-local # Start Expo with local env file"
 	@echo "  make frontend-ios         # Launch Expo iOS build"
-        @echo "  make frontend-android     # Launch Expo Android build"
-        @echo "  make frontend-lint        # Run Expo lint"
-        @echo "  make frontend-format      # Format Expo codebase"
-        @echo "  make frontend-typecheck   # Run Expo TypeScript type checking"
-        @echo "  make frontend-generate-api # Generate frontend API client/hooks via orval"
+	@echo "  make frontend-android     # Launch Expo Android build"
+	@echo "  make frontend-lint        # Run Expo lint"
+	@echo "  make frontend-format      # Format Expo codebase"
+	@echo "  make frontend-typecheck   # Run Expo TypeScript type checking"
+	@echo "  make frontend-generate-api # Generate frontend API client/hooks via orval"
 	@echo ""
 	@echo "Combined:"
 	@echo "  make openapi-client       # Export OpenAPI spec then generate frontend client/hooks"
+	@echo "  make lefthook-install     # Install git hooks via Lefthook"
 
 ###############################################################
 # Backend
@@ -104,9 +105,16 @@ frontend-format:
 	cd frontend_native && pnpm run format
 
 frontend-generate-api:
-        cd frontend_native && pnpm run generate:api
+	cd frontend_native && pnpm run generate:api
 
 frontend-typecheck:
-        cd frontend_native && pnpm run typecheck
+	cd frontend_native && pnpm run typecheck
 
 openapi-client: backend-openapi frontend-generate-api
+
+lefthook-install:
+	@if command -v lefthook >/dev/null 2>&1; then \
+		LEFTHOOK_CONFIG=tools/lefthook/lefthook.yml lefthook install; \
+	else \
+		LEFTHOOK_CONFIG=tools/lefthook/lefthook.yml pnpm dlx @evilmartians/lefthook install; \
+	fi
