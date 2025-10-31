@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 
 .PHONY: help \
+        install \
         backend-install backend-test backend-db-refresh backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
         frontend-install frontend-start frontend-start-local frontend-ios frontend-android frontend-lint frontend-format frontend-typecheck frontend-generate-api \
         openapi-client lefthook-install
@@ -37,6 +38,9 @@ help:
 	@echo "Combined:"
 	@echo "  make openapi-client       # Export OpenAPI spec then generate frontend client/hooks"
 	@echo "  make lefthook-install     # Install git hooks via Lefthook"
+	@echo ""
+	@echo "Setup:"
+	@echo "  make install             # Install Lefthook hooks and frontend dependencies"
 
 ###############################################################
 # Backend
@@ -111,6 +115,8 @@ frontend-typecheck:
 	cd frontend_native && pnpm run typecheck
 
 openapi-client: backend-openapi frontend-generate-api
+
+install: lefthook-install frontend-install
 
 lefthook-install:
 	@if command -v lefthook >/dev/null 2>&1; then \
