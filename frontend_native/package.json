@@ -15,11 +15,8 @@
     "format": "biome format --write",
     "format:check": "biome format --check",
     "generate:api": "orval --config orval.config.ts",
-<<<<<<< HEAD
-    "typecheck": "tsc --noEmit"
-=======
+    "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js"
->>>>>>> 22db206 (Setup jest-expo testing for UserListScreen)
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

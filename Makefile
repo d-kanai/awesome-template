@@ -37,10 +37,22 @@ help:
 	@echo ""
 	@echo "Combined:"
 	@echo "  make openapi-client       # Export OpenAPI spec then generate frontend client/hooks"
-	@echo "  make lefthook-install     # Install git hooks via Lefthook"
 	@echo ""
 	@echo "Setup:"
 	@echo "  make install             # Install Lefthook hooks and frontend dependencies"
+	@echo "  make lefthook-install     # Install git hooks via Lefthook"
+
+###############################################################
+# Setup
+###############################################################
+install: lefthook-install frontend-install
+
+lefthook-install:
+	@if command -v lefthook >/dev/null 2>&1; then \
+		LEFTHOOK_CONFIG=tools/lefthook/lefthook.yml lefthook install; \
+	else \
+		LEFTHOOK_CONFIG=tools/lefthook/lefthook.yml pnpm dlx @evilmartians/lefthook install; \
+	fi
 
 ###############################################################
 # Backend
@@ -116,11 +128,3 @@ frontend-typecheck:
 
 openapi-client: backend-openapi frontend-generate-api
 
-install: lefthook-install frontend-install
-
-lefthook-install:
-	@if command -v lefthook >/dev/null 2>&1; then \
-		LEFTHOOK_CONFIG=tools/lefthook/lefthook.yml lefthook install; \
-	else \
-		LEFTHOOK_CONFIG=tools/lefthook/lefthook.yml pnpm dlx @evilmartians/lefthook install; \
-	fi
