@@ -3,7 +3,7 @@ SHELL := /bin/bash
 .PHONY: help \
         install \
         backend-install backend-ut backend-db-refresh backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
-        native-install native-start native-start-local native-ios native-android native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-devclient \
+        native-install native-start native-start-local native-ios native-android native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-devclient native-setup \
         openapi-client lefthook-install
 
 help:
@@ -37,6 +37,7 @@ help:
 	@echo "  make native-prebuild      # Generate native iOS project via Expo prebuild"
 	@echo "  make native-devclient     # Build & install iOS dev client on default simulator"
 	@echo "  make native-ut            # Install dependencies and run Expo unit tests"
+	@echo "  make native-setup         # Install deps, prebuild, and install iOS dev client"
 	@echo ""
 	@echo "Combined:"
 	@echo "  make openapi-client       # Export OpenAPI spec then generate native client/hooks"
@@ -139,5 +140,7 @@ native-typecheck:
 native-ut:
 	cd frontend_native && pnpm install --frozen-lockfile --prefer-offline
 	cd frontend_native && pnpm test -- --ci
+
+native-setup: native-install native-devclient
 
 openapi-client: backend-openapi native-generate-api
