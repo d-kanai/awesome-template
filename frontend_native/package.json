@@ -17,7 +17,7 @@
     "generate:api": "orval --config orval.config.ts",
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
-    "test:e2e": "maestro test e2e/app_launch.yaml"
+    "test:e2e": "start-server-and-test \"CI=1 pnpm exec expo start --host localhost --port 8081\" http-get://127.0.0.1:8081/status \"maestro test e2e/app_launch.yaml\""
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -62,6 +62,7 @@
     "jest-expo": "^54.0.13",
     "orval": "^7.1.1",
     "react-test-renderer": "19.1.0",
+    "start-server-and-test": "^2.1.2",
     "typescript": "~5.9.2"
   },
   "engines": {
