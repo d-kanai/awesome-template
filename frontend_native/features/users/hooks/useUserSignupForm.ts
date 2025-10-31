@@ -4,8 +4,11 @@ import { useRouter } from "expo-router";
 import { Alert } from "react-native";
 import { z } from "zod";
 
-import { getGetAllUsersQueryKey, useSignup } from "@/api/generated";
-import type { SignupRequest } from "@/api/generated/model";
+import {
+  getGetAllUsersQueryKey,
+  useSignup,
+} from "@/features/shared/api/generated";
+import type { SignupRequest } from "@/features/shared/api/generated/model";
 
 export const signupSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),

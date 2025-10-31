@@ -1,6 +1,6 @@
 import { StyleSheet, Text, type TextProps } from "react-native";
 
-import { useThemeColor } from "@/hooks/use-theme-color";
+import { useThemeColor } from "@/features/shared/hooks/use-theme-color";
 
 const linkColor = "#0a7ea4";
 

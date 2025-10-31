@@ -2,11 +2,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react-native";
 import type { ReactNode } from "react";
 
-import { fetcher } from "@/api/fetcher";
-import type { getAllUsersResponse } from "@/api/generated";
+import { fetcher } from "@/features/shared/api/fetcher";
+import type { getAllUsersResponse } from "@/features/shared/api/generated";
 import { UserListScreen } from "@/features/users/screens/UserListScreen";
 
-jest.mock("@/api/fetcher", () => ({
+jest.mock("@/features/shared/api/fetcher", () => ({
   fetcher: jest.fn(),
 }));
 

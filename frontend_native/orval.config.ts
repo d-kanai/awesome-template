@@ -17,14 +17,14 @@ export default defineConfig({
   awesomeTemplate: {
     input: OPENAPI_SPEC_PATH,
     output: {
-      target: "./api/generated/index.ts",
-      schemas: "./api/generated/model",
+      target: "./features/shared/api/generated/index.ts",
+      schemas: "./features/shared/api/generated/model",
       client: "react-query",
       httpClient: "fetch",
       clean: true,
       override: {
         mutator: {
-          path: "./api/fetcher.ts",
+          path: "./features/shared/api/fetcher.ts",
           name: "fetcher",
         },
         schemaName: (name: string) => schemaNameMap[name] ?? name,
