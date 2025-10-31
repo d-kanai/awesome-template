@@ -5,8 +5,12 @@ on:
   # 🔁 main ブランチ向けの push と Pull Request に反応させて、デフォルト開発フローをカバーする
   push:
     branches: ["main"]
+    paths:
+      - "backend/**"
   pull_request:
     branches: ["main"]
+    paths:
+      - "backend/**"
 
 jobs:
   backend-test:
