@@ -1,5 +1,5 @@
 # 🚀 このワークフローはバックエンドのテストを自動で実行して品質を守るための設定です
-name: Backend Test
+name: Backend UT
 
 on:
   # 🔁 main ブランチ向けの push と Pull Request に反応させて、デフォルト開発フローをカバーする
@@ -13,9 +13,9 @@ on:
       - "backend/**"
 
 jobs:
-  backend-test:
-    # 🧪 ジョブ名はわかりやすく「Run backend tests via Makefile」とする
-    name: Run backend tests via Makefile
+  backend-ut:
+    # 🧪 ジョブ名はわかりやすく「Run backend unit tests via Makefile」とする
+    name: Run backend unit tests via Makefile
     runs-on: ubuntu-latest
 
     # 🗄️ jOOQ のコード生成が PostgreSQL への接続を必要とするため、サービスとして起動する
@@ -71,12 +71,12 @@ jobs:
           make backend-db-refresh
 
       # 🧰 make コマンドを利用できることを明示的に保証しつつ、バックエンド用の make ターゲットを実行する
-      - name: Run backend tests
+      - name: Run backend unit tests
         env:
           # 🌐 Gradle が localhost で起動した PostgreSQL に接続できるようにホスト名を明示する
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/demodb
           SPRING_DATASOURCE_USERNAME: demo
           SPRING_DATASOURCE_PASSWORD: demo123
         run: |
-          # 🧪 Gradle ラッパーを通じてテストが実行されるため、Makefile の backend-test ターゲットを叩く
-          make backend-test
+          # 🧪 Gradle ラッパーを通じてテストが実行されるため、Makefile の backend-ut ターゲットを叩く
+          make backend-ut

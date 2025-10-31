@@ -2,8 +2,8 @@ SHELL := /bin/bash
 
 .PHONY: help \
         install \
-        backend-install backend-test backend-db-refresh backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
-        native-install native-start native-start-local native-ios native-android native-lint native-format native-typecheck native-generate-api \
+        backend-install backend-ut backend-db-refresh backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
+        native-install native-start native-start-local native-ios native-android native-lint native-format native-typecheck native-generate-api native-ut \
         openapi-client lefthook-install
 
 help:
@@ -11,7 +11,7 @@ help:
 	@echo ""
 	@echo "Backend:"
 	@echo "  make backend-install      # Install backend dependencies (Gradle wrapper build)"
-	@echo "  make backend-test         # Run backend tests"
+        @echo "  make backend-ut           # Run backend unit tests"
 	@echo "  make backend-db-refresh   # Run Flyway migrations then regenerate jOOQ sources"
 	@echo "  make backend-run          # Start backend application (Gradle bootRun)"
 	@echo "  make backend-coverage     # Generate backend coverage report"
@@ -30,10 +30,11 @@ help:
 	@echo "  make native-start-local   # Start Expo with local env file"
 	@echo "  make native-ios           # Launch Expo iOS build"
 	@echo "  make native-android       # Launch Expo Android build"
-	@echo "  make native-lint          # Run Expo lint"
-	@echo "  make native-format        # Format Expo codebase"
-	@echo "  make native-typecheck     # Run Expo TypeScript type checking"
-	@echo "  make native-generate-api  # Generate native API client/hooks via orval"
+        @echo "  make native-lint          # Run Expo lint"
+        @echo "  make native-format        # Format Expo codebase"
+        @echo "  make native-typecheck     # Run Expo TypeScript type checking"
+        @echo "  make native-generate-api  # Generate native API client/hooks via orval"
+        @echo "  make native-ut            # Install dependencies and run Expo unit tests"
 	@echo ""
 	@echo "Combined:"
 	@echo "  make openapi-client       # Export OpenAPI spec then generate native client/hooks"
@@ -61,8 +62,8 @@ lefthook-install:
 backend-install:
 	cd backend && ./gradlew build
 
-backend-test:
-	cd backend && ./gradlew test
+backend-ut:
+        cd backend && ./gradlew test
 
 backend-db-refresh:
 	cd backend && ./gradlew flywayMigrate generateJooq
@@ -125,6 +126,10 @@ native-generate-api:
 	cd frontend_native && pnpm run generate:api
 
 native-typecheck:
-	cd frontend_native && pnpm run typecheck
+        cd frontend_native && pnpm run typecheck
+
+native-ut:
+        cd frontend_native && pnpm install --frozen-lockfile --prefer-offline
+        cd frontend_native && pnpm test -- --ci
 
 openapi-client: backend-openapi native-generate-api
