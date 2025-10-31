@@ -5,7 +5,7 @@
  * Awesome Template バックエンドサービスの API ドキュメントです。
  * OpenAPI spec version: 1.0.0
  */
-import type { UserListItem } from './userListItem';
+import type { UserListItem } from "./userListItem";
 
 /**
  * 登録済みユーザーの一覧を表します

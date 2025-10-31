@@ -1,5 +1,5 @@
-import { useGetAllUsers } from '@/api/generated';
-import type { UserListItem } from '@/api/generated';
+import { useGetAllUsers } from "@/api/generated";
+import type { UserListItem } from "@/api/generated";
 
 export type User = UserListItem & { createdAt?: Date; updatedAt?: Date };
 

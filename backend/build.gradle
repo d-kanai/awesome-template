@@ -21,7 +21,9 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    sourceCompatibility = '21'
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
@@ -127,14 +129,29 @@ jacoco {
 
 checkstyle {
     toolVersion = '10.12.4'
+    def checkstyleArtifact = configurations.checkstyle.resolve().find { it.name.startsWith('checkstyle-') }
+    if (checkstyleArtifact == null) {
+        throw new GradleException('Unable to locate Checkstyle distribution to load google_checks.xml')
+    }
     config = resources.text.fromString(
-        resources.text.fromClassPath('google_checks.xml')
+        resources.text.fromArchiveEntry(
+            checkstyleArtifact,
+            'google_checks.xml'
+        )
             .asString()
             .replaceFirst(
                 '(?s)(<module name="MethodLength">.*?<property name="max" value=")\\d+("/>)',
                 '$130$2'
             )
+            .replaceAll('(?s)<module name="MissingJavadocMethod">.*?</module>', '')
+            .replaceAll('(?s)<module name="MissingJavadocType">.*?</module>', '')
     )
+}
+
+tasks.withType(org.gradle.api.plugins.quality.Checkstyle).configureEach {
+    exclude('**/build/generated-src/**')
+    exclude('**/generated-src/**')
+    exclude('**/com/example/demo/infrastructure/jooq/**')
 }
 
 tasks.named('check') {

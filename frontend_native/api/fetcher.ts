@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '@/constants/api';
+import { API_BASE_URL } from "@/constants/api";
 
 type FetcherOptions<TVariables> = RequestInit & {
   data?: TVariables;
@@ -12,7 +12,9 @@ export async function fetcher<TData, TVariables = unknown>(
 
   const body = data !== undefined ? JSON.stringify(data) : rest.body;
   const contentType =
-    body !== undefined && !(headers && 'Content-Type' in headers) ? { 'Content-Type': 'application/json' } : {};
+    body !== undefined && !(headers && "Content-Type" in headers)
+      ? { "Content-Type": "application/json" }
+      : {};
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...rest,
@@ -34,7 +36,7 @@ export async function fetcher<TData, TVariables = unknown>(
         errorMessage = errorJson.message;
       } else if (errorJson.error) {
         errorMessage = errorJson.error;
-      } else if (typeof errorJson === 'string') {
+      } else if (typeof errorJson === "string") {
         errorMessage = errorJson;
       }
     } catch {

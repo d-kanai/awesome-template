@@ -1,11 +1,15 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
-import { useUserSignupForm } from '@/features/users/hooks/useUserSignupForm';
+import { useUserSignupForm } from "@/features/users/hooks/useUserSignupForm";
 
 const getErrorMessage = (error: unknown) => {
   if (!error) return null;
-  if (typeof error === 'string') return error;
-  if (typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
+  if (typeof error === "string") return error;
+  if (
+    typeof error === "object" &&
+    "message" in error &&
+    typeof error.message === "string"
+  ) {
     return error.message;
   }
   return JSON.stringify(error);
@@ -21,7 +25,8 @@ export function UserSignupForm() {
         name="email"
         validators={{
           onChange: schema.shape.email,
-        }}>
+        }}
+      >
         {(field) => (
           <View style={styles.field}>
             <Text style={styles.label}>メールアドレス</Text>
@@ -36,7 +41,9 @@ export function UserSignupForm() {
               style={styles.input}
             />
             {field.state.meta.errors.length > 0 ? (
-              <Text style={styles.fieldError}>{getErrorMessage(field.state.meta.errors[0])}</Text>
+              <Text style={styles.fieldError}>
+                {getErrorMessage(field.state.meta.errors[0])}
+              </Text>
             ) : null}
           </View>
         )}
@@ -46,7 +53,8 @@ export function UserSignupForm() {
         name="name"
         validators={{
           onChange: schema.shape.name,
-        }}>
+        }}
+      >
         {(field) => (
           <View style={styles.field}>
             <Text style={styles.label}>名前</Text>
@@ -58,7 +66,9 @@ export function UserSignupForm() {
               style={styles.input}
             />
             {field.state.meta.errors.length > 0 ? (
-              <Text style={styles.fieldError}>{getErrorMessage(field.state.meta.errors[0])}</Text>
+              <Text style={styles.fieldError}>
+                {getErrorMessage(field.state.meta.errors[0])}
+              </Text>
             ) : null}
           </View>
         )}
@@ -71,17 +81,20 @@ export function UserSignupForm() {
           pressed ? styles.buttonPressed : null,
         ]}
         onPress={() => {
-          form
-            .handleSubmit()
-            .catch((err) => {
-              console.error(err);
-            });
+          form.handleSubmit().catch((err) => {
+            console.error(err);
+          });
         }}
-        disabled={isPending}>
-        <Text style={styles.buttonText}>{isPending ? '登録中...' : 'ユーザーを登録する'}</Text>
+        disabled={isPending}
+      >
+        <Text style={styles.buttonText}>
+          {isPending ? "登録中..." : "ユーザーを登録する"}
+        </Text>
       </Pressable>
 
-      {signupError ? <Text style={styles.mutationError}>{signupError}</Text> : null}
+      {signupError ? (
+        <Text style={styles.mutationError}>{signupError}</Text>
+      ) : null}
     </View>
   );
 }
@@ -91,40 +104,40 @@ const styles = StyleSheet.create({
     gap: 16,
     padding: 16,
     borderRadius: 12,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: '#e2e2e2',
+    borderColor: "#e2e2e2",
   },
   field: {
     gap: 8,
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   fieldError: {
-    color: '#c1121f',
+    color: "#c1121f",
     fontSize: 14,
   },
   mutationError: {
-    color: '#c1121f',
+    color: "#c1121f",
     fontSize: 15,
   },
   button: {
     paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: '#0077cc',
-    alignItems: 'center',
+    backgroundColor: "#0077cc",
+    alignItems: "center",
   },
   buttonDisabled: {
     opacity: 0.6,
@@ -133,8 +146,8 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

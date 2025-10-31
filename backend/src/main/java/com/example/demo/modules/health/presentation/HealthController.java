@@ -13,22 +13,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthController {
 
-    @Operation(
-        summary = "サービスの稼働状況",
-        description = "サービスの現在の状態を返します。",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "サービスは正常です。",
-                content = @Content(
+  @Operation(
+      summary = "サービスの稼働状況",
+      description = "サービスの現在の状態を返します。",
+      responses = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "サービスは正常です。",
+            content =
+                @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = HealthStatusResponse.class)
-                )
-            )
-        }
-    )
-    @GetMapping(value = "/health", produces = MediaType.APPLICATION_JSON_VALUE)
-    public HealthStatusResponse health() {
-        return new HealthStatusResponse("UP");
-    }
+                    schema = @Schema(implementation = HealthStatusResponse.class)))
+      })
+  @GetMapping(value = "/health", produces = MediaType.APPLICATION_JSON_VALUE)
+  public HealthStatusResponse health() {
+    return new HealthStatusResponse("UP");
+  }
 }

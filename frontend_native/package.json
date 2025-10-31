@@ -12,7 +12,7 @@
     "web": "expo start --web",
     "lint": "biome check --write",
     "lint:check": "biome check",
-    "format": "biome format",
+    "format": "biome format --write",
     "format:check": "biome format --check",
     "generate:api": "orval --config orval.config.ts"
   },

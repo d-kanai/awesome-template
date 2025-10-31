@@ -6,12 +6,12 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export * from './findAllUsersResponse';
-export * from './findUserByEmailResponse';
-export * from './findUserByIdResponse';
-export * from './healthStatusResponse';
-export * from './signupRequest';
-export * from './signupResponse';
-export * from './updateUserProfileRequest';
-export * from './updateUserProfileResponse';
-export * from './userListItem';
+export * from "./findAllUsersResponse";
+export * from "./findUserByEmailResponse";
+export * from "./findUserByIdResponse";
+export * from "./healthStatusResponse";
+export * from "./signupRequest";
+export * from "./signupResponse";
+export * from "./updateUserProfileRequest";
+export * from "./updateUserProfileResponse";
+export * from "./userListItem";

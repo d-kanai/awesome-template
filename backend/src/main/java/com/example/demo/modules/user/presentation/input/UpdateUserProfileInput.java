@@ -6,36 +6,35 @@ import jakarta.validation.constraints.NotBlank;
 
 @Schema(name = "UpdateUserProfileRequest", description = "既存ユーザーのプロフィールを更新するためのリクエストペイロードです")
 public class UpdateUserProfileInput {
-    @NotBlank(message = "メールアドレスは必須です")
-    @Email(message = "有効なメールアドレスを入力してください")
-    @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
-    private String email;
+  @NotBlank(message = "メールアドレスは必須です")
+  @Email(message = "有効なメールアドレスを入力してください")
+  @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
+  private String email;
 
-    @NotBlank(message = "名前は必須です")
-    @Schema(description = "ユーザーの表示名", example = "Jane Doe")
-    private String name;
+  @NotBlank(message = "名前は必須です")
+  @Schema(description = "ユーザーの表示名", example = "Jane Doe")
+  private String name;
 
-    public UpdateUserProfileInput() {
-    }
+  public UpdateUserProfileInput() {}
 
-    public UpdateUserProfileInput(final String email, final String name) {
-        this.email = email;
-        this.name = name;
-    }
+  public UpdateUserProfileInput(final String email, final String name) {
+    this.email = email;
+    this.name = name;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public void setEmail(final String email) {
-        this.email = email;
-    }
+  public void setEmail(final String email) {
+    this.email = email;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
+  public void setName(final String name) {
+    this.name = name;
+  }
 }

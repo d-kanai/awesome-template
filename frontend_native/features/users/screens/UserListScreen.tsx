@@ -1,11 +1,18 @@
-import { useRouter } from 'expo-router';
-import { Suspense } from 'react';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { ErrorBoundary } from 'react-error-boundary';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from "expo-router";
+import { Suspense } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { ErrorBoundary } from "react-error-boundary";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { UserListItem } from '@/features/users/components/UserListItem';
-import { useUserList } from '@/features/users/hooks/useUserList';
+import { UserListItem } from "@/features/users/components/UserListItem";
+import { useUserList } from "@/features/users/hooks/useUserList";
 
 function UserList() {
   const router = useRouter();
@@ -21,24 +28,34 @@ function UserList() {
 
         <View style={styles.actions}>
           <Pressable
-            style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
-            onPress={() => router.push('/users/signup')}>
+            style={({ pressed }) => [
+              styles.addButton,
+              pressed && styles.addButtonPressed,
+            ]}
+            onPress={() => router.push("/users/signup")}
+          >
             <Text style={styles.addButtonText}>+ 新規ユーザー登録</Text>
           </Pressable>
           <Pressable
             onPress={() => refetch()}
-            style={({ pressed }) => [styles.reloadButton, pressed && styles.reloadPressed]}>
+            style={({ pressed }) => [
+              styles.reloadButton,
+              pressed && styles.reloadPressed,
+            ]}
+          >
             <Text style={styles.reloadText}>再読み込み</Text>
           </Pressable>
         </View>
 
         <FlatList
           data={users}
-          keyExtractor={(item) => item.id ?? ''}
+          keyExtractor={(item) => item.id ?? ""}
           contentContainerStyle={users.length === 0 && styles.emptyList}
           ListEmptyComponent={
             <View style={styles.centered}>
-              <Text style={styles.emptyMessage}>ユーザーがまだ登録されていません</Text>
+              <Text style={styles.emptyMessage}>
+                ユーザーがまだ登録されていません
+              </Text>
             </View>
           }
           renderItem={({ item }) => <UserListItem user={item} />}
@@ -48,7 +65,10 @@ function UserList() {
   );
 }
 
-function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
+function ErrorFallback({
+  error,
+  resetErrorBoundary,
+}: { error: Error; resetErrorBoundary: () => void }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={[styles.content, styles.centered]}>
@@ -86,7 +106,7 @@ export function UserListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   content: {
     flex: 1,
@@ -98,17 +118,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
-    color: '#111',
+    fontWeight: "700",
+    color: "#111",
   },
   subtitle: {
     fontSize: 16,
-    color: '#555',
+    color: "#555",
   },
   actions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     gap: 12,
   },
   addButton: {
@@ -116,35 +136,35 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: '#0077cc',
-    alignItems: 'center',
+    backgroundColor: "#0077cc",
+    alignItems: "center",
   },
   addButtonPressed: {
     opacity: 0.85,
   },
   addButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   reloadButton: {
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: '#e0e7ff',
+    backgroundColor: "#e0e7ff",
   },
   reloadPressed: {
     opacity: 0.7,
   },
   reloadText: {
-    color: '#1d4ed8',
+    color: "#1d4ed8",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   centered: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 32,
   },
   emptyList: {
@@ -152,34 +172,34 @@ const styles = StyleSheet.create({
   },
   emptyMessage: {
     fontSize: 16,
-    color: '#555',
+    color: "#555",
   },
   error: {
-    color: '#c1121f',
+    color: "#c1121f",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
   errorDetail: {
-    color: '#666',
+    color: "#666",
     fontSize: 14,
     marginTop: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   retryButton: {
     marginTop: 16,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
-    backgroundColor: '#0077cc',
+    backgroundColor: "#0077cc",
   },
   retryButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    color: '#555',
+    color: "#555",
   },
 });
