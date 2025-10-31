@@ -1,3 +1,5 @@
+import org.gradle.api.plugins.quality.Checkstyle
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.0'
@@ -127,6 +129,24 @@ jacoco {
     toolVersion = "0.8.11"
 }
 
+def readFileProperty = { String propertyName ->
+    if (!project.hasProperty(propertyName)) {
+        return []
+    }
+
+    project.property(propertyName)
+        .toString()
+        .split(/[;:]/)
+        .collect { it.trim() }
+        .findAll { !it.isEmpty() }
+        .collect { file(it) }
+        .findAll { it.exists() }
+}
+
+def checkstyleMainFilesOverride = readFileProperty('checkstyleMainFiles')
+def checkstyleTestFilesOverride = readFileProperty('checkstyleTestFiles')
+def spotlessFilesOverride = readFileProperty('spotlessFiles')
+
 checkstyle {
     toolVersion = '10.12.4'
     def checkstyleArtifact = configurations.checkstyle.resolve().find { it.name.startsWith('checkstyle-') }
@@ -148,10 +168,24 @@ checkstyle {
     )
 }
 
-tasks.withType(org.gradle.api.plugins.quality.Checkstyle).configureEach {
+tasks.withType(Checkstyle).configureEach {
     exclude('**/build/generated-src/**')
     exclude('**/generated-src/**')
     exclude('**/com/example/demo/infrastructure/jooq/**')
+}
+
+tasks.named('checkstyleMain').configure {
+    if (!checkstyleMainFilesOverride.isEmpty()) {
+        source = files(checkstyleMainFilesOverride)
+        include('**/*.java')
+    }
+}
+
+tasks.named('checkstyleTest').configure {
+    if (!checkstyleTestFilesOverride.isEmpty()) {
+        source = files(checkstyleTestFilesOverride)
+        include('**/*.java')
+    }
 }
 
 tasks.named('check') {
@@ -161,7 +195,11 @@ tasks.named('check') {
 
 spotless {
     java {
-        target 'src/**/*.java'
+        if (!spotlessFilesOverride.isEmpty()) {
+            target spotlessFilesOverride
+        } else {
+            target 'src/**/*.java'
+        }
         googleJavaFormat('1.17.0')
         removeUnusedImports()
     }
