@@ -24,4 +24,4 @@ if [ "${#native_files[@]}" -eq 0 ]; then
   exit 0
 fi
 
-pnpm --dir frontend_native exec biome check --files "${native_files[@]}"
+pnpm --dir frontend_native exec biome check "${native_files[@]}"

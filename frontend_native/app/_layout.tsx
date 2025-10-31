@@ -17,9 +17,7 @@ export default function RootLayout() {
     () =>
       new QueryClient({
         defaultOptions: {
-          queries: {
-            suspense: true,
-          },
+          queries: {},
         },
       }),
   );

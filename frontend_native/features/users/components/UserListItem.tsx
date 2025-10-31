@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 
-import type { UserListItem as UserListItemType } from "@/api/generated";
+import type { User } from "@/features/users/hooks/useUserList";
 
 type Props = {
-  user: UserListItemType & { createdAt?: Date; updatedAt?: Date };
+  user: User;
 };
 
 export function UserListItem({ user }: Props) {

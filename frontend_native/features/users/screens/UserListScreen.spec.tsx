@@ -1,11 +1,10 @@
-import { render, screen, waitFor } from "@testing-library/react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render, screen, waitFor } from "@testing-library/react-native";
 import type { ReactNode } from "react";
-import { afterEach, describe, expect, it } from "@jest/globals";
 
+import { fetcher } from "@/api/fetcher";
 import type { getAllUsersResponse } from "@/api/generated";
 import { UserListScreen } from "@/features/users/screens/UserListScreen";
-import { fetcher } from "@/api/fetcher";
 
 jest.mock("@/api/fetcher", () => ({
   fetcher: jest.fn(),
@@ -17,7 +16,6 @@ function createQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        suspense: true,
         retry: false,
         gcTime: 0,
       },
