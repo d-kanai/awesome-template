@@ -1,0 +1,7 @@
+appId: host.exp.Exponent
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd
+- assertVisible:
+    text: "ユーザー一覧"

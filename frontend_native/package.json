@@ -16,7 +16,8 @@
     "format:check": "biome format --check",
     "generate:api": "orval --config orval.config.ts",
     "typecheck": "tsc --noEmit",
-    "test": "jest --config jest.config.js"
+    "test": "jest --config jest.config.js",
+    "test:e2e": "maestro test e2e/app_launch.yaml"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -62,6 +63,9 @@
     "orval": "^7.1.1",
     "react-test-renderer": "19.1.0",
     "typescript": "~5.9.2"
+  },
+  "engines": {
+    "node": ">=22.11.0 <23"
   },
   "private": true
 }
