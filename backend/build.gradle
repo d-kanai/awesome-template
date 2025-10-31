@@ -6,6 +6,8 @@ plugins {
     id 'org.flywaydb.flyway' version '9.22.3'
     id 'jacoco'
     id 'org.springdoc.openapi-gradle-plugin' version '1.8.0'
+    id 'checkstyle'
+    id 'com.diffplug.spotless' version '6.22.0'
 }
 
 openApi {
@@ -121,6 +123,31 @@ tasks.named('test') {
 
 jacoco {
     toolVersion = "0.8.11"
+}
+
+checkstyle {
+    toolVersion = '10.12.4'
+    config = resources.text.fromString(
+        resources.text.fromClassPath('google_checks.xml')
+            .asString()
+            .replaceFirst(
+                '(?s)(<module name="MethodLength">.*?<property name="max" value=")\\d+("/>)',
+                '$130$2'
+            )
+    )
+}
+
+tasks.named('check') {
+    dependsOn tasks.named('checkstyleMain')
+    dependsOn tasks.named('checkstyleTest')
+}
+
+spotless {
+    java {
+        target 'src/**/*.java'
+        googleJavaFormat('1.17.0')
+        removeUnusedImports()
+    }
 }
 
 tasks.named('jacocoTestReport') {
