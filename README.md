@@ -8,6 +8,7 @@
 - JOOQ 3.18.7
 - PostgreSQL 16
 - SpringDoc OpenAPI
+- Jacoco line coverage is collected in CI and published to GitHub Pages (latest push wins)
 
 ## Frontend Native
 

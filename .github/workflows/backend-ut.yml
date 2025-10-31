@@ -71,12 +71,116 @@ jobs:
           make backend-db-refresh
 
       # 🧰 make コマンドを利用できることを明示的に保証しつつ、バックエンド用の make ターゲットを実行する
-      - name: Run backend unit tests
+      - name: Run backend unit tests with coverage
         env:
           # 🌐 Gradle が localhost で起動した PostgreSQL に接続できるようにホスト名を明示する
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/demodb
           SPRING_DATASOURCE_USERNAME: demo
           SPRING_DATASOURCE_PASSWORD: demo123
         run: |
-          # 🧪 Gradle ラッパーを通じてテストが実行されるため、Makefile の backend-ut ターゲットを叩く
-          make backend-ut
+          # 🧪 jacocoTestReport タスクはテスト実行とカバレッジ収集の両方を行うので backend-coverage ターゲットを利用する
+          make backend-coverage
+
+      # 📊 Jacoco の XML レポートから行カバレッジ率を抽出し、後続ステップやサマリーで利用できるようにする
+      - name: Extract coverage summary
+        id: coverage
+        run: |
+          coverage_output=$(python3 <<'PY'
+from decimal import Decimal, ROUND_HALF_UP
+from pathlib import Path
+import xml.etree.ElementTree as ET
+
+report = Path("backend/build/reports/jacoco/test/jacocoTestReport.xml")
+if not report.is_file():
+    raise SystemExit(f"Jacoco report not found at {report}")
+
+root = ET.parse(report).getroot()
+covered = Decimal('0')
+missed = Decimal('0')
+for counter in root.iter('counter'):
+    if counter.get('type') == 'LINE':
+        covered += Decimal(counter.get('covered', '0'))
+        missed += Decimal(counter.get('missed', '0'))
+
+total = covered + missed
+if total == 0:
+    percent = Decimal('0.00')
+else:
+    percent = (covered / total * 100).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+
+print(f"covered={covered}")
+print(f"missed={missed}")
+print(f"total={total}")
+print(f"line_rate={percent}")
+PY
+)
+
+          while IFS='=' read -r key value; do
+            echo "${key}=${value}" >> "$GITHUB_OUTPUT"
+          done <<< "${coverage_output}"
+
+      # 🧾 Step Summary に PR 番号やブランチ情報と合わせてカバレッジを記録する
+      - name: Publish coverage summary
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          LINE_RATE: ${{ steps.coverage.outputs.line_rate }}
+        run: |
+          if [[ -n "${PR_NUMBER}" ]]; then
+            REF_LABEL="PR #${PR_NUMBER}"
+          else
+            REF_LABEL="${GITHUB_REF}"
+          fi
+
+          cat <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+### Backend Jacoco Coverage
+
+EOF
+          {
+            echo "- Reference: ${REF_LABEL}"
+            echo "- Line coverage: ${LINE_RATE}%"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # 💾 HTML レポート一式をアーティファクトとして保存し、後段の GitHub Pages デプロイや手動確認に備える
+      - name: Upload coverage report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jacoco-report
+          path: backend/build/reports/jacoco/test
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy-coverage:
+    name: Publish coverage to GitHub Pages
+    needs: backend-ut
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Download coverage report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jacoco-report
+          path: public
+
+      - name: Add branch metadata
+        run: |
+          cat <<EOF > public/metadata.json
+          {
+            "ref": "${GITHUB_REF}",
+            "sha": "${GITHUB_SHA}"
+          }
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
