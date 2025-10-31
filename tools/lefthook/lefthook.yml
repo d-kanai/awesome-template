@@ -15,3 +15,6 @@ pre-commit:
     native-lint:
       glob: "frontend_native/**/*.{ts,tsx,js,jsx,json}"
       run: ./tools/lefthook/frontend_lint.sh {staged_files}
+    native-typecheck:
+      glob: "frontend_native/**/*.{ts,tsx,js,jsx,json}"
+      run: ./tools/lefthook/frontend_typecheck.sh {staged_files}
