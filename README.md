@@ -26,4 +26,3 @@
   - バックエンドのOpenAPI定義に`required`配列が含まれていない
   - `@Schema`の`requiredMode`や`requiredProperties`では反映されない
   - SpringDocの設定でカスタマイザーを追加する必要がある
-
