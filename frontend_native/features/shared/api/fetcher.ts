@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/constants/api";
+import { API_BASE_URL } from "@/features/shared/constants/api";
 
 type FetcherOptions<TVariables> = RequestInit & {
   data?: TVariables;

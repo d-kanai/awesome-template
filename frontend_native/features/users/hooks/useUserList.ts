@@ -3,8 +3,11 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 
-import { type getAllUsers, getGetAllUsersQueryOptions } from "@/api/generated";
-import type { UserListItem } from "@/api/generated/model";
+import {
+  type getAllUsers,
+  getGetAllUsersQueryOptions,
+} from "@/features/shared/api/generated";
+import type { UserListItem } from "@/features/shared/api/generated/model";
 
 export type User = Omit<UserListItem, "createdAt" | "updatedAt"> & {
   createdAt?: Date;
