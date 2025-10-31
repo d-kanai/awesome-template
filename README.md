@@ -20,10 +20,18 @@
 - Zod
 - Orval (OpenAPI client generation)
 
+## Setup Native E2E
+
+- `brew install maestro-cli`
+- `corepack enable`
+- `cd frontend_native`
+- `pnpm install`
+- `pnpm start`
+- `maestro --version`
+
 ## TODO
 
 - orvalで生成される型がすべてオプショナル（`?`）になってしまう問題を修正
   - バックエンドのOpenAPI定義に`required`配列が含まれていない
   - `@Schema`の`requiredMode`や`requiredProperties`では反映されない
   - SpringDocの設定でカスタマイザーを追加する必要がある
-
