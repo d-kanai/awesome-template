@@ -48,11 +48,10 @@ help:
 install: lefthook-install frontend-install
 
 lefthook-install:
-	@if command -v lefthook >/dev/null 2>&1; then \
-		LEFTHOOK_CONFIG=tools/lefthook/lefthook.yml lefthook install; \
-	else \
-		LEFTHOOK_CONFIG=tools/lefthook/lefthook.yml pnpm dlx @evilmartians/lefthook install; \
-	fi
+	chmod +x tools/lefthook/lefthook
+	mkdir -p .git/hooks
+	cp tools/lefthook/pre-commit.sh .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
 
 ###############################################################
 # Backend
