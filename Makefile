@@ -48,10 +48,12 @@ help:
 install: lefthook-install frontend-install
 
 lefthook-install:
-	chmod +x tools/lefthook/lefthook
+	chmod +x tools/lefthook/lefthook tools/lefthook/run-hook.sh
 	mkdir -p .git/hooks
-	cp tools/lefthook/pre-commit.sh .git/hooks/pre-commit
-	chmod +x .git/hooks/pre-commit
+	for hook in pre-commit prepare-commit-msg; do \
+		cp tools/lefthook/run-hook.sh ".git/hooks/$$hook"; \
+		chmod +x ".git/hooks/$$hook"; \
+	done
 
 ###############################################################
 # Backend
@@ -126,4 +128,3 @@ frontend-typecheck:
 	cd frontend_native && pnpm run typecheck
 
 openapi-client: backend-openapi frontend-generate-api
-

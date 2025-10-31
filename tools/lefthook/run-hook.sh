@@ -10,6 +10,7 @@ if [ "${LEFTHOOK:-1}" = "0" ]; then
   exit 0
 fi
 
+hook_name="${LEFTHOOK_HOOK:-$(basename "$0")}"
 dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 lefthook_bin="${LEFTHOOK_BIN:-"$dir/tools/lefthook/lefthook"}"
 lefthook_config="${LEFTHOOK_CONFIG:-"$dir/tools/lefthook/lefthook.yml"}"
@@ -20,4 +21,4 @@ if [ ! -x "$lefthook_bin" ]; then
   exit 1
 fi
 
-LEFTHOOK_CONFIG="$lefthook_config" "$lefthook_bin" run pre-commit "$@"
+LEFTHOOK_CONFIG="$lefthook_config" "$lefthook_bin" run "$hook_name" "$@"
