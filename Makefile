@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 .PHONY: help \
         backend-install backend-test backend-db-refresh backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi \
-        frontend-install frontend-start frontend-start-local frontend-ios frontend-android frontend-lint frontend-generate-api \
+        frontend-install frontend-start frontend-start-local frontend-ios frontend-android frontend-lint frontend-format frontend-generate-api \
         openapi-client
 
 help:
@@ -28,6 +28,7 @@ help:
 	@echo "  make frontend-ios         # Launch Expo iOS build"
 	@echo "  make frontend-android     # Launch Expo Android build"
 	@echo "  make frontend-lint        # Run Expo lint"
+	@echo "  make frontend-format      # Format Expo codebase"
 	@echo "  make frontend-generate-api # Generate frontend API client/hooks via orval"
 	@echo ""
 	@echo "Combined:"
@@ -89,6 +90,9 @@ frontend-android:
 
 frontend-lint:
 	cd frontend_native && pnpm run lint
+
+frontend-format:
+	cd frontend_native && pnpm run format
 
 frontend-generate-api:
 	cd frontend_native && pnpm run generate:api
