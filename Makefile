@@ -20,6 +20,8 @@ help:
 	@echo "  make backend-clean        # Clean backend build artifacts"
 	@echo "  make backend-up           # Start backend Docker services"
 	@echo "  make backend-down         # Stop backend Docker services"
+	@echo "  make backend-checkstyle   # Run Checkstyle on main and test sources"
+	@echo "  make backend-format       # Format Java sources with Spotless"
 	@echo ""
 	@echo "Frontend Native:"
 	@echo "  make frontend-install     # Install frontend dependencies (pnpm install)"
@@ -69,6 +71,12 @@ backend-up:
 
 backend-down:
 	cd backend && docker-compose down
+
+backend-checkstyle:
+	cd backend && ./gradlew checkstyleMain checkstyleTest
+
+backend-format:
+	cd backend && ./gradlew spotlessApply
 
 ###############################################################
 # Frontend-Native
