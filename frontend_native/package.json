@@ -14,7 +14,8 @@
     "lint:check": "biome check",
     "format": "biome format --write",
     "format:check": "biome format --check",
-    "generate:api": "orval --config orval.config.ts"
+    "generate:api": "orval --config orval.config.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
