@@ -5,3 +5,23 @@ appId: con.example.awesome
 - waitForAnimationToEnd
 - assertVisible:
     text: "ユーザー一覧"
+- tapOn:
+    id: user-list-add
+- waitForAnimationToEnd
+- assertVisible:
+    text: "ユーザー登録"
+- tapOn:
+    id: signup-email
+- inputText: "${ENV:MAESTRO_SIGNUP_EMAIL}"
+- tapOn:
+    id: signup-name
+- inputText: "${ENV:MAESTRO_SIGNUP_NAME}"
+- tapOn:
+    id: signup-submit
+- assertVisible:
+    text: "登録完了"
+- tapOn:
+    text: "OK"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "${ENV:MAESTRO_SIGNUP_NAME}"

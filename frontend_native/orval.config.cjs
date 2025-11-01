@@ -1,8 +1,8 @@
-import { defineConfig } from "orval";
+const { defineConfig } = require("orval");
 
 const OPENAPI_SPEC_PATH = "../backend/build/openapi/openapi.json";
 
-const schemaNameMap: Record<string, string> = {
+const schemaNameMap = {
   "ID 検索レスポンス": "FindUserByIdResponse",
   メールアドレス検索レスポンス: "FindUserByEmailResponse",
   ユーザープロフィール更新リクエスト: "UpdateUserProfileRequest",
@@ -13,7 +13,7 @@ const schemaNameMap: Record<string, string> = {
   ユーザー登録レスポンス: "SignupResponse",
 };
 
-export default defineConfig({
+module.exports = defineConfig({
   awesomeTemplate: {
     input: OPENAPI_SPEC_PATH,
     output: {
@@ -27,7 +27,7 @@ export default defineConfig({
           path: "./features/shared/api/fetcher.ts",
           name: "fetcher",
         },
-        schemaName: (name: string) => schemaNameMap[name] ?? name,
+        schemaName: (name) => schemaNameMap[name] ?? name,
       },
     },
     reactQuery: {

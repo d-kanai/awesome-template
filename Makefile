@@ -2,8 +2,8 @@ SHELL := /bin/bash
 
 .PHONY: help \
         install \
-        backend-install backend-ut backend-db-refresh backend-run backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
-        native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-setup \
+        backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
+        native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-setup native-ios native-start native-stop \
         openapi-client lefthook-install
 
 help:
@@ -14,6 +14,8 @@ help:
 	@echo "  make backend-ut           # Run backend unit tests"
 	@echo "  make backend-db-refresh   # Run Flyway migrations then regenerate jOOQ sources"
 	@echo "  make backend-run          # Start backend application (Gradle bootRun)"
+	@echo "  make backend-start        # Start backend in background (logs/backend.log, PID file)"
+	@echo "  make backend-stop         # Stop background backend process"
 	@echo "  make backend-coverage     # Generate backend coverage report"
 	@echo "  make backend-coverage-open # Generate backend coverage report and open HTML"
 	@echo "  make backend-swagger-open # Open Swagger UI (http://localhost:8080/swagger-ui/index.html)"
@@ -32,6 +34,9 @@ help:
 	@echo "  make native-generate-api  # Generate native API client/hooks via orval"
 	@echo "  make native-prebuild      # Generate native iOS project via Expo prebuild"
 	@echo "  make native-run           # Build & install iOS dev client on default simulator"
+	@echo "  make native-ios           # Start Expo dev server and iOS simulator"
+	@echo "  make native-start         # Start Expo dev server in background (logs/native.log, PID file)"
+	@echo "  make native-stop          # Stop background Expo dev server"
 	@echo "  make native-ut            # Install dependencies and run Expo unit tests"
 	@echo "  make native-setup         # Install deps, prebuild, and install iOS dev client"
 	@echo ""
@@ -69,6 +74,23 @@ backend-db-refresh:
 
 backend-run:
 	cd backend && ./gradlew bootRun
+
+backend-start:
+	mkdir -p logs
+	cd backend && nohup ./gradlew bootRun > ../logs/backend.log 2>&1 & echo $$! > ../logs/backend.pid
+	@echo "Backend started (PID: $$(cat logs/backend.pid)) – logs/backend.log"
+
+backend-stop:
+	@if [ -f logs/backend.pid ]; then \
+		if kill "$$(cat logs/backend.pid)" >/dev/null 2>&1; then \
+			echo "Backend stopped."; \
+		else \
+			echo "Backend process not running (PID: $$(cat logs/backend.pid))."; \
+		fi; \
+		rm -f logs/backend.pid; \
+	else \
+		echo "No backend PID file found (logs/backend.pid)."; \
+	fi
 
 backend-coverage:
 	cd backend && ./gradlew jacocoTestReport
@@ -117,6 +139,26 @@ native-prebuild:
 
 native-run:
 	cd frontend_native && CI=1 pnpm exec expo run:ios --device "iPhone 16"
+
+native-ios:
+	cd frontend_native && pnpm run ios
+
+native-start:
+	mkdir -p logs
+	cd frontend_native && nohup pnpm run ios > ../logs/native.log 2>&1 & echo $$! > ../logs/native.pid
+	@echo "Expo iOS started (PID: $$(cat logs/native.pid)) – logs/native.log"
+
+native-stop:
+	@if [ -f logs/native.pid ]; then \
+		if kill "$$(cat logs/native.pid)" >/dev/null 2>&1; then \
+			echo "Expo iOS stopped."; \
+		else \
+			echo "Expo iOS process not running (PID: $$(cat logs/native.pid))."; \
+		fi; \
+		rm -f logs/native.pid; \
+	else \
+		echo "No Expo PID file found (logs/native.pid)."; \
+	fi
 
 native-typecheck:
 	cd frontend_native && pnpm run typecheck

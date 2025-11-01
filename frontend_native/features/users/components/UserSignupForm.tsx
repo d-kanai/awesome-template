@@ -35,6 +35,7 @@ export function UserSignupForm() {
               onChangeText={field.handleChange}
               onBlur={field.handleBlur}
               placeholder="example@email.com"
+              testID="signup-email"
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -63,6 +64,7 @@ export function UserSignupForm() {
               onChangeText={field.handleChange}
               onBlur={field.handleBlur}
               placeholder="山田 太郎"
+              testID="signup-name"
               style={styles.input}
             />
             {field.state.meta.errors.length > 0 ? (
@@ -80,6 +82,7 @@ export function UserSignupForm() {
           isPending ? styles.buttonDisabled : null,
           pressed ? styles.buttonPressed : null,
         ]}
+        testID="signup-submit"
         onPress={() => {
           form.handleSubmit().catch((err) => {
             console.error(err);

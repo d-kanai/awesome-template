@@ -1,4 +1,4 @@
-package com.example.demo.modules.user.presentation.output;
+package com.example.demo.modules.auth.presentation.output;
 
 import com.example.demo.modules.user.domain.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;

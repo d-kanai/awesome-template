@@ -1,19 +1,16 @@
 package com.example.demo.modules.user.presentation.controller;
 
 import com.example.demo.modules.user.application.command.DeleteUserCommand;
-import com.example.demo.modules.user.application.command.SignupCommand;
 import com.example.demo.modules.user.application.command.UpdateUserProfileCommand;
 import com.example.demo.modules.user.application.query.FindAllUsersQuery;
 import com.example.demo.modules.user.application.query.FindUserByEmailQuery;
 import com.example.demo.modules.user.application.query.FindUserByIdQuery;
 import com.example.demo.modules.user.domain.model.User;
 import com.example.demo.modules.user.domain.valueobject.UserId;
-import com.example.demo.modules.user.presentation.input.SignupInput;
 import com.example.demo.modules.user.presentation.input.UpdateUserProfileInput;
 import com.example.demo.modules.user.presentation.output.FindAllUsersOutput;
 import com.example.demo.modules.user.presentation.output.FindUserByEmailOutput;
 import com.example.demo.modules.user.presentation.output.FindUserByIdOutput;
-import com.example.demo.modules.user.presentation.output.SignupOutput;
 import com.example.demo.modules.user.presentation.output.UpdateUserProfileOutput;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,13 +21,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
-  private final SignupCommand signupCommand;
   private final UpdateUserProfileCommand updateUserProfileCommand;
   private final DeleteUserCommand deleteUserCommand;
   private final FindAllUsersQuery findAllUsersQuery;
@@ -48,13 +42,11 @@ public class UserController {
   private final FindUserByEmailQuery findUserByEmailQuery;
 
   public UserController(
-      final SignupCommand signupCommand,
       final UpdateUserProfileCommand updateUserProfileCommand,
       final DeleteUserCommand deleteUserCommand,
       final FindAllUsersQuery findAllUsersQuery,
       final FindUserByIdQuery findUserByIdQuery,
       final FindUserByEmailQuery findUserByEmailQuery) {
-    this.signupCommand = signupCommand;
     this.updateUserProfileCommand = updateUserProfileCommand;
     this.deleteUserCommand = deleteUserCommand;
     this.findAllUsersQuery = findAllUsersQuery;
@@ -129,27 +121,6 @@ public class UserController {
         .map(FindUserByEmailOutput::from)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
-  }
-
-  @Operation(summary = "ユーザーを登録", description = "指定した情報で新しいユーザーを作成します。")
-  @ApiResponses({
-    @ApiResponse(
-        responseCode = "201",
-        description = "ユーザーの作成に成功しました。",
-        content =
-            @Content(
-                mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = @Schema(implementation = SignupOutput.class))),
-    @ApiResponse(responseCode = "400", description = "リクエストペイロードが不正です。", content = @Content)
-  })
-  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<SignupOutput> signup(@Valid @RequestBody final SignupInput input) {
-    try {
-      final User user = signupCommand.execute(input);
-      return ResponseEntity.status(HttpStatus.CREATED).body(SignupOutput.from(user));
-    } catch (final IllegalArgumentException e) {
-      return ResponseEntity.badRequest().build();
-    }
   }
 
   @Operation(summary = "ユーザーを更新", description = "既存ユーザーのメールアドレスまたは氏名を更新します。")

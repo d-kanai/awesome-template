@@ -1,8 +1,8 @@
-package com.example.demo.modules.user.application.command;
+package com.example.demo.modules.auth.application.command;
 
+import com.example.demo.modules.auth.presentation.input.SignupInput;
 import com.example.demo.modules.user.domain.model.User;
 import com.example.demo.modules.user.domain.repository.UserRepository;
-import com.example.demo.modules.user.presentation.input.SignupInput;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

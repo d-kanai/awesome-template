@@ -1,4 +1,4 @@
-package com.example.demo.modules.user.presentation.input;
+package com.example.demo.modules.auth.presentation.input;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
