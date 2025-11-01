@@ -6,9 +6,21 @@
 // ============================================
 
 // Configuration
-const BACKEND_URL = "http://localhost:8080";
-const HEALTH_ENDPOINT = `${BACKEND_URL}/health`;
-const RESET_ENDPOINT = `${BACKEND_URL}/test/reset`;
+// BACKEND_URL can be set via environment variable for CI/CD
+let backendUrl = "http://localhost:8080";
+try {
+  // Try to use BACKEND_URL from environment if available
+  if (BACKEND_URL) {
+    backendUrl = BACKEND_URL;
+  }
+} catch (e) {
+  // BACKEND_URL not defined, use default
+}
+
+console.log(`[Config] Backend URL: ${backendUrl}`);
+
+const HEALTH_ENDPOINT = `${backendUrl}/health`;
+const RESET_ENDPOINT = `${backendUrl}/test/reset`;
 const MAX_HEALTH_ATTEMPTS = 30;
 const RETRY_DELAY_MS = 1000;
 
