@@ -21,10 +21,7 @@ function UserList() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>ユーザー一覧</Text>
-          <Text style={styles.subtitle}>登録済みのユーザーを確認できます</Text>
-        </View>
+        <Text style={styles.title}>ユーザー一覧</Text>
 
         <View style={styles.actions}>
           <Pressable
@@ -114,17 +111,10 @@ const styles = StyleSheet.create({
     padding: 24,
     gap: 20,
   },
-  header: {
-    gap: 8,
-  },
   title: {
     fontSize: 28,
     fontWeight: "700",
     color: "#111",
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "#555",
   },
   actions: {
     flexDirection: "row",
