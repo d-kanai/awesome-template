@@ -31,7 +31,7 @@ help:
 	@echo "  make native-typecheck     # Run Expo TypeScript type checking"
 	@echo "  make native-generate-api  # Generate native API client/hooks via orval"
 	@echo "  make native-prebuild      # Generate native iOS project via Expo prebuild"
-    @echo "  make native-run           # Build & install iOS dev client on default simulator"
+	@echo "  make native-run           # Build & install iOS dev client on default simulator"
 	@echo "  make native-ut            # Install dependencies and run Expo unit tests"
 	@echo "  make native-setup         # Install deps, prebuild, and install iOS dev client"
 	@echo ""
