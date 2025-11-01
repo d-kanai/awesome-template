@@ -30,7 +30,8 @@ class UserControllerIntegrationTest {
   @Test
   void findById_returnsUserDetails() throws Exception {
     // given db
-    final User existingUser = userRepository.save(User.signup("jane.doe@example.com", "Jane Doe"));
+    final User existingUser =
+        userRepository.save(User.signup("jane.doe@example.com", "SecurePassword123"));
 
     // given input
     final UUID userId = existingUser.getId().getValue();
@@ -43,7 +44,6 @@ class UserControllerIntegrationTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(existingUser.getId().getValue().toString()))
         .andExpect(jsonPath("$.email").value(existingUser.getEmail()))
-        .andExpect(jsonPath("$.name").value(existingUser.getName()))
         .andExpect(jsonPath("$.createdAt").isNotEmpty())
         .andExpect(jsonPath("$.updatedAt").isNotEmpty());
   }

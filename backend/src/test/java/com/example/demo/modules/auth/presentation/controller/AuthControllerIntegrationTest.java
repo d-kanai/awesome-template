@@ -34,7 +34,7 @@ class AuthControllerIntegrationTest {
   @Test
   void signup_createsUserAndReturnsCreatedResponse() throws Exception {
     // given input
-    final SignupInput request = new SignupInput("john.doe@example.com", "John Doe");
+    final SignupInput request = new SignupInput("john.doe@example.com", "SecurePassword123");
 
     // given db
     assertThat(userRepository.findAll()).isEmpty();
@@ -48,7 +48,6 @@ class AuthControllerIntegrationTest {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").isNotEmpty())
             .andExpect(jsonPath("$.email").value(request.getEmail()))
-            .andExpect(jsonPath("$.name").value(request.getName()))
             .andReturnBody();
 
     // then db
@@ -56,7 +55,7 @@ class AuthControllerIntegrationTest {
     assertThat(userRepository.findById(UserId.reconstruct(persistedId)))
         .isPresent()
         .get()
-        .extracting(User::getEmail, User::getName)
-        .containsExactly(request.getEmail(), request.getName());
+        .extracting(User::getEmail, User::getPassword)
+        .containsExactly(request.getEmail(), request.getPassword());
   }
 }

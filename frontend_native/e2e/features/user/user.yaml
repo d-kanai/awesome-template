@@ -19,4 +19,4 @@ onFlowStart:
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
-      VISIBLE_TEXT: "テストユーザー"
+      VISIBLE_TEXT: "test@example.com"

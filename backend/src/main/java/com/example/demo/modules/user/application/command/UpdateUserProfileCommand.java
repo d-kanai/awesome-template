@@ -26,7 +26,7 @@ public class UpdateUserProfileCommand {
         && userRepository.existsByEmail(input.getEmail())) {
       throw new IllegalArgumentException("Email already exists: " + input.getEmail());
     }
-    final User updatedUser = user.updateProfile(input.getEmail(), input.getName());
+    final User updatedUser = user.updateProfile(input.getEmail(), input.getPassword());
     return userRepository.save(updatedUser);
   }
 }

@@ -58,7 +58,7 @@ public class UserRepositoryImpl implements UserRepository {
           dsl.insertInto(USERS)
               .set(USERS.ID, user.getId().getValue())
               .set(USERS.EMAIL, user.getEmail())
-              .set(USERS.NAME, user.getName())
+              .set(USERS.PASSWORD, user.getPassword())
               .set(USERS.CREATED_AT, createdAt)
               .set(USERS.UPDATED_AT, updatedAt)
               .returning()
@@ -69,7 +69,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     dsl.update(USERS)
         .set(USERS.EMAIL, user.getEmail())
-        .set(USERS.NAME, user.getName())
+        .set(USERS.PASSWORD, user.getPassword())
         .set(
             USERS.UPDATED_AT,
             user.getUpdatedAt() != null ? user.getUpdatedAt() : LocalDateTime.now())
@@ -88,7 +88,7 @@ public class UserRepositoryImpl implements UserRepository {
     return User.reconstruct(
         UserId.reconstruct(record.getId()),
         record.getEmail(),
-        record.getName(),
+        record.getPassword(),
         record.getCreatedAt(),
         record.getUpdatedAt());
   }

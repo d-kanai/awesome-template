@@ -11,15 +11,15 @@ public class SignupInput {
   @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
   private String email;
 
-  @NotBlank(message = "名前は必須です")
-  @Schema(description = "ユーザーの表示名", example = "Jane Doe")
-  private String name;
+  @NotBlank(message = "パスワードは必須です")
+  @Schema(description = "ユーザーのパスワード", example = "SecurePassword123")
+  private String password;
 
   public SignupInput() {}
 
-  public SignupInput(final String email, final String name) {
+  public SignupInput(final String email, final String password) {
     this.email = email;
-    this.name = name;
+    this.password = password;
   }
 
   public String getEmail() {
@@ -30,11 +30,11 @@ public class SignupInput {
     this.email = email;
   }
 
-  public String getName() {
-    return name;
+  public String getPassword() {
+    return password;
   }
 
-  public void setName(final String name) {
-    this.name = name;
+  public void setPassword(final String password) {
+    this.password = password;
   }
 }

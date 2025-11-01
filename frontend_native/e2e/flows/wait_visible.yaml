@@ -3,4 +3,4 @@ appId: con.example.awesome
 - waitForAnimationToEnd
 - extendedWaitUntil:
     visible: "${VISIBLE_TEXT}"
-    timeout: ${WAIT_TIMEOUT}
+    timeout: ${WAIT_TIMEOUT:2000}

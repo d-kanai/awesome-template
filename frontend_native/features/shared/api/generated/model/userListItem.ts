@@ -14,8 +14,6 @@ export interface UserListItem {
   id?: string;
   /** ユーザーのメールアドレス */
   email?: string;
-  /** ユーザーの表示名 */
-  name?: string;
   /** ユーザーの作成日時 */
   createdAt?: string;
   /** ユーザーの最終更新日時 */

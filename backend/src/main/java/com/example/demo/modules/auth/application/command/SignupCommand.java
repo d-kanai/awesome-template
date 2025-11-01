@@ -19,7 +19,7 @@ public class SignupCommand {
     if (userRepository.existsByEmail(input.getEmail())) {
       throw new IllegalArgumentException("Email already exists: " + input.getEmail());
     }
-    final User user = User.signup(input.getEmail(), input.getName());
+    final User user = User.signup(input.getEmail(), input.getPassword());
     return userRepository.save(user);
   }
 }

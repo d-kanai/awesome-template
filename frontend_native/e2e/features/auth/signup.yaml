@@ -3,6 +3,7 @@ name: ユーザー登録
 onFlowStart:
   - runScript: ../../scripts/reset_backend.js
 ---
+- clearKeychain
 - launchApp:
     clearState: true
 - runFlow:
@@ -21,19 +22,15 @@ onFlowStart:
     text: "maestro@example.com"
     delayBetweenKeystrokes: 0
 - tapOn:
-    id: signup-name
+    id: signup-password
 - inputText:
-    text: "E2Eユーザー"
+    text: "SecurePassword123"
     delayBetweenKeystrokes: 0
 - tapOn:
     id: signup-submit
-- runFlow:
-    file: ../../flows/wait_visible.yaml
-    env:
-      VISIBLE_TEXT: "登録完了"
 - tapOn:
     text: "OK"
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
-      VISIBLE_TEXT: "E2Eユーザー"
+      VISIBLE_TEXT: "maestro@example.com"

@@ -41,7 +41,6 @@ describe("UserListScreen", () => {
         users: [
           {
             id: "user-1",
-            name: "山田 太郎",
             email: "taro@example.com",
             createdAt: "2024-01-01T12:34:56.000Z",
             updatedAt: "2024-01-02T12:34:56.000Z",
@@ -57,7 +56,6 @@ describe("UserListScreen", () => {
     renderWithClient(<UserListScreen />, client);
 
     await waitFor(() => {
-      expect(screen.getByText("山田 太郎")).toBeTruthy();
       expect(screen.getByText("taro@example.com")).toBeTruthy();
     });
 

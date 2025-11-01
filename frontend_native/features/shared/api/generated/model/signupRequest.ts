@@ -12,6 +12,6 @@
 export interface SignupRequest {
   /** ユーザーのメールアドレス */
   email: string;
-  /** ユーザーの表示名 */
-  name: string;
+  /** ユーザーのパスワード */
+  password: string;
 }

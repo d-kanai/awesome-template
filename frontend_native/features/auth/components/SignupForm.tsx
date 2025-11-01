@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
-import { useUserSignupForm } from "@/features/users/hooks/useUserSignupForm";
+import { useSignupForm } from "@/features/auth/hooks/useSignupForm";
 
 const getErrorMessage = (error: unknown) => {
   if (!error) return null;
@@ -15,8 +15,8 @@ const getErrorMessage = (error: unknown) => {
   return JSON.stringify(error);
 };
 
-export function UserSignupForm() {
-  const { form, isPending, error, schema } = useUserSignupForm();
+export function SignupForm() {
+  const { form, isPending, error, schema } = useSignupForm();
   const signupError = getErrorMessage(error);
 
   return (
@@ -29,7 +29,7 @@ export function UserSignupForm() {
       >
         {(field) => (
           <View style={styles.field}>
-            <Text style={styles.label}>メールアドレス</Text>
+            <Text style={styles.label}>Email</Text>
             <TextInput
               value={field.state.value}
               onChangeText={field.handleChange}
@@ -58,16 +58,17 @@ export function UserSignupForm() {
       >
         {(field) => (
           <View style={styles.field}>
-            <Text style={styles.label}>パスワード</Text>
+            <Text style={styles.label}>Password</Text>
             <TextInput
               value={field.state.value}
               onChangeText={field.handleChange}
               onBlur={field.handleBlur}
-              placeholder="パスワードを入力"
+              placeholder="Enter your password"
               testID="signup-password"
-              secureTextEntry
               autoCapitalize="none"
               autoCorrect={false}
+              autoComplete="off"
+              textContentType="none"
               style={styles.input}
             />
             {field.state.meta.errors.length > 0 ? (
@@ -94,7 +95,7 @@ export function UserSignupForm() {
         disabled={isPending}
       >
         <Text style={styles.buttonText}>
-          {isPending ? "登録中..." : "ユーザーを登録する"}
+          {isPending ? "Signing up..." : "Sign Up"}
         </Text>
       </Pressable>
 

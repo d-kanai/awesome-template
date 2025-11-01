@@ -32,30 +32,23 @@ public class FindAllUsersOutput {
   public static class UserItem {
     private final UUID id;
     private final String email;
-    private final String name;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
     public UserItem(
         final UUID id,
         final String email,
-        final String name,
         final LocalDateTime createdAt,
         final LocalDateTime updatedAt) {
       this.id = id;
       this.email = email;
-      this.name = name;
       this.createdAt = createdAt;
       this.updatedAt = updatedAt;
     }
 
     public static UserItem from(final User user) {
       return new UserItem(
-          user.getId().getValue(),
-          user.getEmail(),
-          user.getName(),
-          user.getCreatedAt(),
-          user.getUpdatedAt());
+          user.getId().getValue(), user.getEmail(), user.getCreatedAt(), user.getUpdatedAt());
     }
 
     @Schema(description = "ユーザーの一意な識別子", type = "string", format = "uuid")
@@ -66,11 +59,6 @@ public class FindAllUsersOutput {
     @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
     public String getEmail() {
       return email;
-    }
-
-    @Schema(description = "ユーザーの表示名", example = "Jane Doe")
-    public String getName() {
-      return name;
     }
 
     @Schema(description = "ユーザーの作成日時", type = "string", format = "date-time")

@@ -10,6 +10,7 @@ export * from './findAllUsersResponse';
 export * from './findUserByEmailResponse';
 export * from './findUserByIdResponse';
 export * from './healthStatusResponse';
+export * from './setupDataRequest';
 export * from './signupRequest';
 export * from './signupResponse';
 export * from './updateUserProfileRequest';

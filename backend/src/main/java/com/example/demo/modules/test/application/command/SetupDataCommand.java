@@ -43,7 +43,7 @@ public class SetupDataCommand {
     dsl.insertInto(USERS)
         .set(USERS.ID, userId)
         .set(USERS.EMAIL, "test@example.com")
-        .set(USERS.NAME, "テストユーザー")
+        .set(USERS.PASSWORD, "TestPassword123")
         .execute();
     logger.info("Created user: test@example.com (id: {})", userId);
   }

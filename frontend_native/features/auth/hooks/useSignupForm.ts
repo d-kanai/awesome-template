@@ -11,13 +11,13 @@ import {
 import type { SignupRequest } from "@/features/shared/api/generated/model";
 
 export const signupSchema = z.object({
-  email: z.string().email("有効なメールアドレスを入力してください"),
-  password: z.string().min(8, "パスワードは8文字以上で入力してください"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export type SignupFormValues = z.infer<typeof signupSchema>;
 
-export function useUserSignupForm() {
+export function useSignupForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -28,8 +28,8 @@ export function useUserSignupForm() {
           queryClient.invalidateQueries({
             queryKey: getGetAllUsersQueryKey(),
           });
-          const email = result.data.email ?? variables.data.email ?? "ユーザー";
-          Alert.alert("登録完了", `${email}を登録しました`, [
+          const email = result.data.email ?? variables.data.email ?? "User";
+          Alert.alert("Success", `Account created for ${email}`, [
             {
               text: "OK",
               onPress: () => router.back(),

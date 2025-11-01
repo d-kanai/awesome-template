@@ -9,7 +9,6 @@ type Props = {
 export function UserListItem({ user }: Props) {
   return (
     <View style={styles.userCard}>
-      <Text style={styles.userName}>{user.name}</Text>
       <Text style={styles.userEmail}>{user.email}</Text>
       <Text style={styles.userMeta}>
         作成日: {user.createdAt?.toLocaleString() ?? "不明"} / 更新日:{" "}

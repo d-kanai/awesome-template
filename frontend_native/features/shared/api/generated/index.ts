@@ -29,6 +29,7 @@ import type {
   FindUserByEmailResponse,
   FindUserByIdResponse,
   HealthStatusResponse,
+  SetupDataRequest,
   SignupRequest,
   SignupResponse,
   UpdateUserProfileRequest,
@@ -351,6 +352,175 @@ export const useDeleteUser = <TError = void,
       > => {
 
       const mutationOptions = getDeleteUserMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * 指定されたテーブルにテストデータを1レコード作成します。
+ * @summary テストデータをセットアップ
+ */
+export type setupResponse200 = {
+  data: void
+  status: 200
+}
+    
+export type setupResponseSuccess = (setupResponse200) & {
+  headers: Headers;
+};
+;
+
+export type setupResponse = (setupResponseSuccess)
+
+export const getSetupUrl = () => {
+
+
+  
+
+  return `/test/setup`
+}
+
+export const setup = async (setupDataRequest: SetupDataRequest, options?: RequestInit): Promise<setupResponse> => {
+  
+  return fetcher<setupResponse>(getSetupUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      setupDataRequest,)
+  }
+);}
+
+
+
+
+export const getSetupMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setup>>, TError,{data: SetupDataRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof setup>>, TError,{data: SetupDataRequest}, TContext> => {
+
+const mutationKey = ['setup'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof setup>>, {data: SetupDataRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  setup(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SetupMutationResult = NonNullable<Awaited<ReturnType<typeof setup>>>
+    export type SetupMutationBody = SetupDataRequest
+    export type SetupMutationError = unknown
+
+    /**
+ * @summary テストデータをセットアップ
+ */
+export const useSetup = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof setup>>, TError,{data: SetupDataRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof setup>>,
+        TError,
+        {data: SetupDataRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getSetupMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * アプリケーションが管理するテーブルからデータをすべて削除します。
+ * @summary DBをリセット
+ */
+export type resetResponse200 = {
+  data: void
+  status: 200
+}
+    
+export type resetResponseSuccess = (resetResponse200) & {
+  headers: Headers;
+};
+;
+
+export type resetResponse = (resetResponseSuccess)
+
+export const getResetUrl = () => {
+
+
+  
+
+  return `/test/reset`
+}
+
+export const reset = async ( options?: RequestInit): Promise<resetResponse> => {
+  
+  return fetcher<resetResponse>(getResetUrl(),
+  {      
+    ...options,
+    method: 'POST'
+    
+    
+  }
+);}
+
+
+
+
+export const getResetMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reset>>, TError,void, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof reset>>, TError,void, TContext> => {
+
+const mutationKey = ['reset'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof reset>>, void> = () => {
+          
+
+          return  reset(requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ResetMutationResult = NonNullable<Awaited<ReturnType<typeof reset>>>
+    
+    export type ResetMutationError = unknown
+
+    /**
+ * @summary DBをリセット
+ */
+export const useReset = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof reset>>, TError,void, TContext>, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof reset>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getResetMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }
