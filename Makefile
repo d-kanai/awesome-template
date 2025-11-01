@@ -85,15 +85,13 @@ backend-start:
 
 backend-stop:
 	@if [ -f logs/backend.pid ]; then \
-		if kill "$$(cat logs/backend.pid)" >/dev/null 2>&1; then \
-			echo "Backend stopped."; \
-		else \
-			echo "Backend process not running (PID: $$(cat logs/backend.pid))."; \
-		fi; \
+		kill "$$(cat logs/backend.pid)" >/dev/null 2>&1 && echo "Backend stopped (PID: $$(cat logs/backend.pid))." || echo "Backend process not running."; \
 		rm -f logs/backend.pid; \
 	else \
-		echo "No backend PID file found (logs/backend.pid)."; \
+		echo "No backend PID file found."; \
 	fi
+	@echo "Killing any remaining processes on port 8080..."
+	@lsof -ti :8080 | xargs kill -9 2>/dev/null && echo "Killed processes on port 8080." || echo "No processes found on port 8080."
 
 backend-start-test:
 	mkdir -p logs
@@ -102,15 +100,13 @@ backend-start-test:
 
 backend-stop-test:
 	@if [ -f logs/backend-test.pid ]; then \
-		if kill "$$(cat logs/backend-test.pid)" >/dev/null 2>&1; then \
-			echo "Test backend stopped."; \
-		else \
-			echo "Test backend process not running (PID: $$(cat logs/backend-test.pid))."; \
-		fi; \
+		kill "$$(cat logs/backend-test.pid)" >/dev/null 2>&1 && echo "Test backend stopped (PID: $$(cat logs/backend-test.pid))." || echo "Test backend process not running."; \
 		rm -f logs/backend-test.pid; \
 	else \
-		echo "No test backend PID file found (logs/backend-test.pid)."; \
+		echo "No test backend PID file found."; \
 	fi
+	@echo "Killing any remaining processes on port 8080..."
+	@lsof -ti :8080 | xargs kill -9 2>/dev/null && echo "Killed processes on port 8080." || echo "No processes found on port 8080."
 
 backend-coverage:
 	cd backend && ./gradlew jacocoTestReport
@@ -170,15 +166,13 @@ native-start:
 
 native-stop:
 	@if [ -f logs/native.pid ]; then \
-		if kill "$$(cat logs/native.pid)" >/dev/null 2>&1; then \
-			echo "Expo iOS stopped."; \
-		else \
-			echo "Expo iOS process not running (PID: $$(cat logs/native.pid))."; \
-		fi; \
+		kill "$$(cat logs/native.pid)" >/dev/null 2>&1 && echo "Expo iOS stopped (PID: $$(cat logs/native.pid))." || echo "Expo iOS process not running."; \
 		rm -f logs/native.pid; \
 	else \
-		echo "No Expo PID file found (logs/native.pid)."; \
+		echo "No Expo PID file found."; \
 	fi
+	@echo "Killing any remaining processes on port 8081..."
+	@lsof -ti :8081 | xargs kill -9 2>/dev/null && echo "Killed processes on port 8081." || echo "No processes found on port 8081."
 
 native-typecheck:
 	cd frontend_native && pnpm run typecheck

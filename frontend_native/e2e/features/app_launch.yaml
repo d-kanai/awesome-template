@@ -1,6 +1,4 @@
 appId: con.example.awesome
-onFlowStart:
-  - runScript: ../scripts/reset_backend.js
 ---
 - launchApp:
     clearState: true
