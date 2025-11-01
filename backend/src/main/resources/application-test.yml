@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    placeholders:
+      create_pgcrypto_extension: ''
+      users_id_uuid_clause: ''
+  jooq:
+    sql-dialect: H2
+
+logging:
+  level:
+    root: WARN
+    org.flywaydb.core: WARN

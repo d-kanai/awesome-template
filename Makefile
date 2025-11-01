@@ -3,7 +3,7 @@ ROOT_DIR := $(CURDIR)
 
 .PHONY: help \
         install \
-        backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
+        backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-setup native-ios native-start native-stop \
         openapi-client lefthook-install
 
@@ -17,6 +17,8 @@ help:
 	@echo "  make backend-run          # Start backend application (Gradle bootRun)"
 	@echo "  make backend-start        # Start backend in background (logs/backend.log, PID file)"
 	@echo "  make backend-stop         # Stop background backend process"
+	@echo "  make backend-start-test   # Start backend with test profile (H2) in background"
+	@echo "  make backend-stop-test    # Stop background backend (test profile)"
 	@echo "  make backend-coverage     # Generate backend coverage report"
 	@echo "  make backend-coverage-open # Generate backend coverage report and open HTML"
 	@echo "  make backend-swagger-open # Open Swagger UI (http://localhost:8080/swagger-ui/index.html)"
@@ -91,6 +93,23 @@ backend-stop:
 		rm -f logs/backend.pid; \
 	else \
 		echo "No backend PID file found (logs/backend.pid)."; \
+	fi
+
+backend-start-test:
+	mkdir -p logs
+	cd backend && SPRING_PROFILES_ACTIVE=test nohup ./gradlew bootRun > "$(ROOT_DIR)/logs/backend-test.log" 2>&1 & echo $$! > "$(ROOT_DIR)/logs/backend-test.pid"
+	@echo "Backend (test profile) started (PID: $$(cat logs/backend-test.pid)) – logs/backend-test.log"
+
+backend-stop-test:
+	@if [ -f logs/backend-test.pid ]; then \
+		if kill "$$(cat logs/backend-test.pid)" >/dev/null 2>&1; then \
+			echo "Test backend stopped."; \
+		else \
+			echo "Test backend process not running (PID: $$(cat logs/backend-test.pid))."; \
+		fi; \
+		rm -f logs/backend-test.pid; \
+	else \
+		echo "No test backend PID file found (logs/backend-test.pid)."; \
 	fi
 
 backend-coverage:

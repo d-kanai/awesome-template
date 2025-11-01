@@ -18,7 +18,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --config jest.config.js",
     "test:coverage": "jest --config jest.config.js --coverage",
-    "test:e2e": "start-server-and-test \"CI=1 pnpm exec expo start --host localhost --port 8081\" http-get://127.0.0.1:8081/status \"maestro test e2e/app_launch.yaml\""
+    "test:e2e": "maestro test e2e/app_launch.yaml"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

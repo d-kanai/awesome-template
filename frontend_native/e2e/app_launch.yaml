@@ -12,10 +12,12 @@ appId: con.example.awesome
     text: "ユーザー登録"
 - tapOn:
     id: signup-email
-- inputText: "${ENV:MAESTRO_SIGNUP_EMAIL}"
+- eraseText
+- inputText: "maestro@example.com"
 - tapOn:
     id: signup-name
-- inputText: "${ENV:MAESTRO_SIGNUP_NAME}"
+- eraseText
+- inputText: "E2Eユーザー"
 - tapOn:
     id: signup-submit
 - assertVisible:
@@ -24,4 +26,4 @@ appId: con.example.awesome
     text: "OK"
 - waitForAnimationToEnd
 - assertVisible:
-    text: "${ENV:MAESTRO_SIGNUP_NAME}"
+    text: "E2Eユーザー"
