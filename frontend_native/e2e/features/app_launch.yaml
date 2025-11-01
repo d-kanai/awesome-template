@@ -1,0 +1,36 @@
+appId: con.example.awesome
+---
+- launchApp:
+    clearState: true
+- runFlow:
+    file: ../flows/wait_visible.yaml
+    env:
+      VISIBLE_TEXT: "ユーザー一覧"
+- tapOn:
+    id: user-list-add
+- runFlow:
+    file: ../flows/wait_visible.yaml
+    env:
+      VISIBLE_TEXT: "ユーザー登録"
+- tapOn:
+    id: signup-email
+- inputText:
+    text: "maestro@example.com"
+    delayBetweenKeystrokes: 0
+- tapOn:
+    id: signup-name
+- inputText:
+    text: "E2Eユーザー"
+    delayBetweenKeystrokes: 0
+- tapOn:
+    id: signup-submit
+- runFlow:
+    file: ../flows/wait_visible.yaml
+    env:
+      VISIBLE_TEXT: "登録完了"
+- tapOn:
+    text: "OK"
+- runFlow:
+    file: ../flows/wait_visible.yaml
+    env:
+      VISIBLE_TEXT: "E2Eユーザー"
