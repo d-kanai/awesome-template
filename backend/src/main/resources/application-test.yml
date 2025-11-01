@@ -17,3 +17,4 @@ logging:
   level:
     root: WARN
     org.flywaydb.core: WARN
+    com.example.demo: INFO
