@@ -1,65 +1,98 @@
-# Backend reset flow - waits for backend health and resets the database
+# ============================================
+# Backend Reset Flow
+# ============================================
+# Resets the backend database before e2e tests
+# Uses Java HTTP Client API for reliable requests
+# ============================================
+
 appId: con.example.awesome
 ---
 - evalScript: |
-    var HttpClient = Java.type('java.net.http.HttpClient');
-    var HttpRequest = Java.type('java.net.http.HttpRequest');
-    var HttpResponse = Java.type('java.net.http.HttpResponse');
-    var URI = Java.type('java.net.URI');
-    var Duration = Java.type('java.time.Duration');
+    // ============================================
+    // Configuration
+    // ============================================
+    var BACKEND_URL = "http://localhost:8080";
+    var HEALTH_ENDPOINT = BACKEND_URL + "/health";
+    var RESET_ENDPOINT = BACKEND_URL + "/test/reset";
+    var MAX_HEALTH_ATTEMPTS = 30;
+    var HEALTH_TIMEOUT_SEC = 1;
+    var RESET_TIMEOUT_SEC = 5;
+
+    // ============================================
+    // Java HTTP Client Setup
+    // ============================================
+    var HttpClient = Java.type("java.net.http.HttpClient");
+    var HttpRequest = Java.type("java.net.http.HttpRequest");
+    var HttpResponse = Java.type("java.net.http.HttpResponse");
+    var URI = Java.type("java.net.URI");
+    var Duration = Java.type("java.time.Duration");
 
     var client = HttpClient.newBuilder()
       .connectTimeout(Duration.ofSeconds(10))
       .build();
 
-    // Wait for backend health endpoint (max 30 attempts)
+    // ============================================
+    // Health Check with Retry Logic
+    // ============================================
     var healthReady = false;
-    for (var attempt = 1; attempt <= 30; attempt++) {
+
+    for (var attempt = 1; attempt <= MAX_HEALTH_ATTEMPTS; attempt++) {
       try {
         var healthRequest = HttpRequest.newBuilder()
-          .uri(URI.create('http://localhost:8080/health'))
-          .timeout(Duration.ofSeconds(1))
+          .uri(URI.create(HEALTH_ENDPOINT))
+          .timeout(Duration.ofSeconds(HEALTH_TIMEOUT_SEC))
           .GET()
           .build();
 
-        var healthResponse = client.send(healthRequest, HttpResponse.BodyHandlers.ofString());
-        var statusCode = healthResponse.statusCode();
+        var healthResponse = client.send(
+          healthRequest,
+          HttpResponse.BodyHandlers.ofString()
+        );
 
-        console.log('Health check attempt ' + attempt + ': status ' + statusCode);
+        var statusCode = healthResponse.statusCode();
+        console.log("[Health Check] Attempt " + attempt + ": HTTP " + statusCode);
 
         if (statusCode == 200 || statusCode == 404) {
           healthReady = true;
-          console.log('Backend health endpoint is ready (status: ' + statusCode + ')');
+          console.log("[Health Check] Backend is ready (HTTP " + statusCode + ")");
           break;
         }
       } catch (e) {
-        console.log('Health check attempt ' + attempt + ' failed: ' + e);
-        if (attempt == 30) {
-          throw new Error('Backend health endpoint did not respond within 30 seconds: ' + e);
+        console.log("[Health Check] Attempt " + attempt + " failed: " + e.message);
+
+        if (attempt == MAX_HEALTH_ATTEMPTS) {
+          throw new Error("Backend health check failed after " + MAX_HEALTH_ATTEMPTS + " attempts: " + e.message);
         }
+
         java.lang.Thread.sleep(1000);
       }
     }
 
     if (!healthReady) {
-      throw new Error('Backend health check failed');
+      throw new Error("Backend health check failed - backend not responding");
     }
 
-    // Reset the backend database
-    console.log('Sending reset request to backend...');
+    // ============================================
+    // Database Reset
+    // ============================================
+    console.log("[Reset] Sending database reset request...");
+
     var resetRequest = HttpRequest.newBuilder()
-      .uri(URI.create('http://localhost:8080/test/reset'))
-      .timeout(Duration.ofSeconds(5))
+      .uri(URI.create(RESET_ENDPOINT))
+      .timeout(Duration.ofSeconds(RESET_TIMEOUT_SEC))
       .POST(HttpRequest.BodyPublishers.noBody())
       .build();
 
-    var resetResponse = client.send(resetRequest, HttpResponse.BodyHandlers.ofString());
-    var resetStatusCode = resetResponse.statusCode();
+    var resetResponse = client.send(
+      resetRequest,
+      HttpResponse.BodyHandlers.ofString()
+    );
 
-    console.log('Reset response status: ' + resetStatusCode);
+    var resetStatusCode = resetResponse.statusCode();
+    console.log("[Reset] Response: HTTP " + resetStatusCode);
 
     if (resetStatusCode != 204) {
-      throw new Error('Backend reset failed with status: ' + resetStatusCode);
+      throw new Error("Database reset failed with HTTP " + resetStatusCode);
     }
 
-    console.log('Backend reset completed successfully');
+    console.log("[Reset] Database reset completed successfully ✓");
