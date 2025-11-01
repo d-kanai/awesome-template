@@ -32,7 +32,7 @@ export default function RootLayout() {
             options={{ title: "ユーザー一覧" }}
           />
           <Stack.Screen
-            name="users/signup"
+            name="auth/signup/index"
             options={{ title: "ユーザー登録" }}
           />
         </Stack>

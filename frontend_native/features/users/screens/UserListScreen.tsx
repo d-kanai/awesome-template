@@ -30,7 +30,7 @@ function UserList() {
               pressed && styles.addButtonPressed,
             ]}
             testID="user-list-add"
-            onPress={() => router.push("/users/signup")}
+            onPress={() => router.push("/auth/signup")}
           >
             <Text style={styles.addButtonText}>+ 新規ユーザー登録</Text>
           </Pressable>
