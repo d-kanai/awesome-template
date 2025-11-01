@@ -1,0 +1,65 @@
+# Backend reset flow - waits for backend health and resets the database
+appId: con.example.awesome
+---
+- evalScript: |
+    var HttpClient = Java.type('java.net.http.HttpClient');
+    var HttpRequest = Java.type('java.net.http.HttpRequest');
+    var HttpResponse = Java.type('java.net.http.HttpResponse');
+    var URI = Java.type('java.net.URI');
+    var Duration = Java.type('java.time.Duration');
+
+    var client = HttpClient.newBuilder()
+      .connectTimeout(Duration.ofSeconds(10))
+      .build();
+
+    // Wait for backend health endpoint (max 30 attempts)
+    var healthReady = false;
+    for (var attempt = 1; attempt <= 30; attempt++) {
+      try {
+        var healthRequest = HttpRequest.newBuilder()
+          .uri(URI.create('http://localhost:8080/health'))
+          .timeout(Duration.ofSeconds(1))
+          .GET()
+          .build();
+
+        var healthResponse = client.send(healthRequest, HttpResponse.BodyHandlers.ofString());
+        var statusCode = healthResponse.statusCode();
+
+        console.log('Health check attempt ' + attempt + ': status ' + statusCode);
+
+        if (statusCode == 200 || statusCode == 404) {
+          healthReady = true;
+          console.log('Backend health endpoint is ready (status: ' + statusCode + ')');
+          break;
+        }
+      } catch (e) {
+        console.log('Health check attempt ' + attempt + ' failed: ' + e);
+        if (attempt == 30) {
+          throw new Error('Backend health endpoint did not respond within 30 seconds: ' + e);
+        }
+        java.lang.Thread.sleep(1000);
+      }
+    }
+
+    if (!healthReady) {
+      throw new Error('Backend health check failed');
+    }
+
+    // Reset the backend database
+    console.log('Sending reset request to backend...');
+    var resetRequest = HttpRequest.newBuilder()
+      .uri(URI.create('http://localhost:8080/test/reset'))
+      .timeout(Duration.ofSeconds(5))
+      .POST(HttpRequest.BodyPublishers.noBody())
+      .build();
+
+    var resetResponse = client.send(resetRequest, HttpResponse.BodyHandlers.ofString());
+    var resetStatusCode = resetResponse.statusCode();
+
+    console.log('Reset response status: ' + resetStatusCode);
+
+    if (resetStatusCode != 204) {
+      throw new Error('Backend reset failed with status: ' + resetStatusCode);
+    }
+
+    console.log('Backend reset completed successfully');

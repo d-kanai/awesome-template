@@ -1,4 +1,6 @@
 appId: con.example.awesome
+onFlowStart:
+  - runFlow: ../flows/reset_backend.yaml
 ---
 - launchApp:
     clearState: true
