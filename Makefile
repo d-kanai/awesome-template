@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+ROOT_DIR := $(CURDIR)
 
 .PHONY: help \
         install \
@@ -77,7 +78,7 @@ backend-run:
 
 backend-start:
 	mkdir -p logs
-	cd backend && nohup ./gradlew bootRun > ../logs/backend.log 2>&1 & echo $$! > ../logs/backend.pid
+	cd backend && nohup ./gradlew bootRun > "$(ROOT_DIR)/logs/backend.log" 2>&1 & echo $$! > "$(ROOT_DIR)/logs/backend.pid"
 	@echo "Backend started (PID: $$(cat logs/backend.pid)) – logs/backend.log"
 
 backend-stop:
@@ -145,7 +146,7 @@ native-ios:
 
 native-start:
 	mkdir -p logs
-	cd frontend_native && nohup pnpm run ios > ../logs/native.log 2>&1 & echo $$! > ../logs/native.pid
+	cd frontend_native && nohup pnpm run ios > "$(ROOT_DIR)/logs/native.log" 2>&1 & echo $$! > "$(ROOT_DIR)/logs/native.pid"
 	@echo "Expo iOS started (PID: $$(cat logs/native.pid)) – logs/native.log"
 
 native-stop:
