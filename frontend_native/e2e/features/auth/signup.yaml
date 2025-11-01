@@ -1,4 +1,5 @@
 appId: con.example.awesome
+name: ユーザー登録
 onFlowStart:
   - runScript: ../scripts/reset_backend.js
 ---

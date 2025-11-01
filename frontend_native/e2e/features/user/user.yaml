@@ -1,4 +1,5 @@
 appId: con.example.awesome
+name: ユーザー一覧表示
 onFlowStart:
   - runScript: ../../scripts/reset_backend.js
   - runScript:
@@ -6,15 +7,15 @@ onFlowStart:
       env:
         TABLE_NAME: user
 ---
-# Given: データベースをリセットしてユーザーレコードを作成
-# When: ユーザー一覧を表示
-# Then: ユーザーが表示される
+# Given: ユーザーレコードを作成
 - launchApp:
     clearState: true
+# When: ユーザー一覧を表示
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
       VISIBLE_TEXT: "ユーザー一覧"
+# Then: ユーザーが表示される
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
