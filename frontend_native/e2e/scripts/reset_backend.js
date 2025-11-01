@@ -46,7 +46,7 @@ for (let attempt = 1; attempt <= MAX_HEALTH_ATTEMPTS; attempt++) {
 
     if (statusCode === 200 || statusCode === 404) {
       healthReady = true;
-      console.log(`[Health Check] Backend is ready (HTTP ${statusCode})`);
+      console.log("[Health Check] Backend is ready");
       break;
     }
   } catch (e) {

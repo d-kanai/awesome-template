@@ -1,18 +1,18 @@
 appId: con.example.awesome
 name: ユーザー登録
 onFlowStart:
-  - runScript: ../scripts/reset_backend.js
+  - runScript: ../../scripts/reset_backend.js
 ---
 - launchApp:
     clearState: true
 - runFlow:
-    file: ../flows/wait_visible.yaml
+    file: ../../flows/wait_visible.yaml
     env:
       VISIBLE_TEXT: "ユーザー一覧"
 - tapOn:
     id: user-list-add
 - runFlow:
-    file: ../flows/wait_visible.yaml
+    file: ../../flows/wait_visible.yaml
     env:
       VISIBLE_TEXT: "ユーザー登録"
 - tapOn:
@@ -28,12 +28,12 @@ onFlowStart:
 - tapOn:
     id: signup-submit
 - runFlow:
-    file: ../flows/wait_visible.yaml
+    file: ../../flows/wait_visible.yaml
     env:
       VISIBLE_TEXT: "登録完了"
 - tapOn:
     text: "OK"
 - runFlow:
-    file: ../flows/wait_visible.yaml
+    file: ../../flows/wait_visible.yaml
     env:
       VISIBLE_TEXT: "E2Eユーザー"
