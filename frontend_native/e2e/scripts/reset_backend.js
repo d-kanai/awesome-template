@@ -44,8 +44,6 @@ for (let attempt = 1; attempt <= MAX_HEALTH_ATTEMPTS; attempt++) {
     const healthResponse = http.get(HEALTH_ENDPOINT);
     const statusCode = healthResponse.status;
 
-    console.log(`[Health Check] Attempt ${attempt}: HTTP ${statusCode}`);
-
     if (statusCode === 200 || statusCode === 404) {
       healthReady = true;
       console.log(`[Health Check] Backend is ready (HTTP ${statusCode})`);
@@ -77,8 +75,6 @@ console.log("[Reset] Sending database reset request...");
 
 const resetResponse = http.post(RESET_ENDPOINT, { body: "" });
 const resetStatusCode = resetResponse.status;
-
-console.log(`[Reset] Response: HTTP ${resetStatusCode}`);
 
 if (resetStatusCode !== 204) {
   throw new Error(`Database reset failed with HTTP ${resetStatusCode}`);

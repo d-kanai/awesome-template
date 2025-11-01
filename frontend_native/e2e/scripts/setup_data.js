@@ -44,8 +44,6 @@ const setupResponse = http.post(SETUP_ENDPOINT, {
 });
 const setupStatusCode = setupResponse.status;
 
-console.log(`[Setup] Response: HTTP ${setupStatusCode}`);
-
 if (setupStatusCode !== 204) {
   throw new Error(`Data setup failed with HTTP ${setupStatusCode}`);
 }
