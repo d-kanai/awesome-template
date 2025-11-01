@@ -4,3 +4,10 @@ platform:
     disableAnimations: true
   android:
     disableAnimations: true
+hooks:
+  onFlowStart:
+    - runCommand:
+        command:
+          - bash
+          - -lc
+          - ./e2e/scripts/reset_backend.sh

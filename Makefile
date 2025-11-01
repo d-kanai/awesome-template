@@ -97,7 +97,7 @@ backend-stop:
 
 backend-start-test:
 	mkdir -p logs
-	cd backend && SPRING_PROFILES_ACTIVE=test nohup ./gradlew bootRun > "$(ROOT_DIR)/logs/backend-test.log" 2>&1 & echo $$! > "$(ROOT_DIR)/logs/backend-test.pid"
+	cd backend && nohup ./gradlew bootRunTest > "$(ROOT_DIR)/logs/backend-test.log" 2>&1 & echo $$! > "$(ROOT_DIR)/logs/backend-test.pid"
 	@echo "Backend (test profile) started (PID: $$(cat logs/backend-test.pid)) – logs/backend-test.log"
 
 backend-stop-test:

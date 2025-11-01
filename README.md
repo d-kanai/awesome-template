@@ -29,6 +29,7 @@
 - `pnpm install`
 - `pnpm start`
 - `maestro --version`
+- `bootRunTest`
 
 ## TODO
 

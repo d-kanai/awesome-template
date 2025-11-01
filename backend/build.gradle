@@ -223,3 +223,11 @@ tasks.named('jacocoTestReport') {
         })
     )
 }
+
+tasks.register('bootRunTest', org.springframework.boot.gradle.tasks.run.BootRun) {
+    group = 'application'
+    description = 'Run the application with the test Spring profile'
+    mainClass.set('com.example.demo.DemoApplication')
+    classpath = sourceSets.main.runtimeClasspath
+    environment('SPRING_PROFILES_ACTIVE', 'test')
+}
