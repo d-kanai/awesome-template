@@ -214,8 +214,7 @@ public class AccessLogFilter extends OncePerRequestFilter {
   }
 
   private boolean isJson(String contentType) {
-    return contentType != null
-        && contentType.toLowerCase(Locale.ROOT).contains("application/json");
+    return contentType != null && contentType.toLowerCase(Locale.ROOT).contains("application/json");
   }
 
   private String resolveEnvironment(Environment environment) {
