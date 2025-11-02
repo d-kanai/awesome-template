@@ -12,9 +12,8 @@ COPY build.gradle settings.gradle ./
 # 依存関係をダウンロード（キャッシュ効率化）
 RUN ./gradlew dependencies --no-daemon || return 0
 
-# ソースコードと生成済み jOOQ コードをコピー
+# ソースコードをコピー（jOOQ 生成コードを含む）
 COPY src src
-COPY build/generated-src build/generated-src
 
 # アプリケーションをビルド（jOOQ コード生成と Flyway マイグレーションをスキップ）
 RUN ./gradlew bootJar --no-daemon -x generateJooq -x flywayMigrate

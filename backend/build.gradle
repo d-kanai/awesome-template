@@ -71,7 +71,7 @@ jooq {
                     }
                     target {
                         packageName = 'com.example.demo.infrastructure.jooq'
-                        directory = 'build/generated-src/jooq'
+                        directory = 'src/main/generated-java'
                     }
                 }
             }
@@ -95,8 +95,8 @@ flyway {
 sourceSets {
     main {
         java {
-            // jOOQ の生成物は CI / ローカル双方で最新スキーマから再生成する運用とし、Git 管理下には置かない
-            srcDirs += 'build/generated-src/jooq'
+            // jOOQ の生成物は Git 管理下に置き、Docker ビルド時に再生成せずに利用する
+            srcDirs += 'src/main/generated-java'
         }
     }
 }
@@ -173,7 +173,7 @@ checkstyle {
 
 tasks.withType(Checkstyle).configureEach {
     exclude('**/build/generated-src/**')
-    exclude('**/generated-src/**')
+    exclude('**/src/main/generated-java/**')
     exclude('**/com/example/demo/infrastructure/jooq/**')
 }
 
