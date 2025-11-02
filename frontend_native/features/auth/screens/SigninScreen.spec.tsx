@@ -45,6 +45,7 @@ describe("SigninScreen", () => {
       data: {
         id: "user-1",
         email: "test@example.com",
+        accessToken: "test-token-123",
         createdAt: "2024-01-01T12:34:56.000Z",
         updatedAt: "2024-01-02T12:34:56.000Z",
       },
