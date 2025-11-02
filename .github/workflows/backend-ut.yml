@@ -31,7 +31,9 @@ jobs:
       - name: Run backend tests
         run: |
           cd backend
-          ./gradlew test jacocoTestReport
+          ./gradlew test jacocoTestReport --no-daemon
+        env:
+          SPRING_PROFILES_ACTIVE: test
 
       - name: Upload backend coverage report
         uses: actions/upload-artifact@v4
