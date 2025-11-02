@@ -22,6 +22,32 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
+async function setupE2ETestToken(): Promise<void> {
+  if (!__DEV__) return;
+
+  const launchArgs = LaunchArguments.value();
+  const isE2EMode = launchArgs.E2E_MODE === true;
+
+  if (!isE2EMode) return;
+
+  try {
+    const apiBaseUrl =
+      process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:8080";
+    const response = await fetch(`${apiBaseUrl}/test/token`, {
+      method: "POST",
+    });
+    if (response.ok) {
+      const data = await response.json();
+      if (data.token) {
+        await tokenStorage.setToken(data.token);
+        console.log("[E2E] Test token set successfully");
+      }
+    }
+  } catch (e) {
+    console.warn("[E2E] Failed to set test token:", e);
+  }
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,30 +61,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     async function initialize() {
       try {
-        // E2Eテストモード: launch argumentsをチェック
-        if (__DEV__) {
-          const launchArgs = LaunchArguments.value();
-          const isE2EMode = launchArgs.E2E_MODE === true;
-
-          if (isE2EMode) {
-            try {
-              const apiBaseUrl =
-                process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:8080";
-              const response = await fetch(`${apiBaseUrl}/test/token`, {
-                method: "POST",
-              });
-              if (response.ok) {
-                const data = await response.json();
-                if (data.token) {
-                  await tokenStorage.setToken(data.token);
-                  console.log("[E2E] Test token set successfully");
-                }
-              }
-            } catch (e) {
-              console.warn("[E2E] Failed to set test token:", e);
-            }
-          }
-        }
+        await setupE2ETestToken();
 
         const token = await tokenStorage.getToken();
         if (token) {
