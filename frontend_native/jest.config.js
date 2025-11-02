@@ -7,7 +7,6 @@ module.exports = {
   testMatch: ["**/?(*.)+(spec|test).[tj]s?(x)"],
   collectCoverage: true,
   collectCoverageFrom: [
-    "<rootDir>/app/**/*.{js,jsx,ts,tsx}",
     "<rootDir>/features/**/*.{js,jsx,ts,tsx}",
     "!**/__tests__/**",
     "!**/?(*.)+(spec|test).[tj]s?(x)",
