@@ -20,7 +20,7 @@ try {
 console.log(`[Config] Backend URL: ${backendUrl}`);
 
 const HEALTH_ENDPOINT = `${backendUrl}/health`;
-const RESET_ENDPOINT = `${backendUrl}/test/reset`;
+const RESET_ENDPOINT = `${backendUrl}/e2e/reset_data`;
 const MAX_HEALTH_ATTEMPTS = 30;
 const RETRY_DELAY_MS = 1000;
 

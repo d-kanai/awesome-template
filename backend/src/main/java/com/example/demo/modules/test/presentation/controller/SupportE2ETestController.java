@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "E2Eテスト支援", description = "E2Eテストで利用するデータセットアップの補助APIです")
 @Profile("test")
 @RestController
-@RequestMapping("/test")
-public class TestDataSetupController {
+@RequestMapping("/e2e")
+public class SupportE2ETestController {
 
-  private static final Logger logger = LoggerFactory.getLogger(TestDataSetupController.class);
+  private static final Logger logger = LoggerFactory.getLogger(SupportE2ETestController.class);
 
   /** E2Eテスト用の固定ユーザーID (SetupDataCommandで作成されるユーザーと一致). */
   private static final String E2E_TEST_USER_ID = "00000000-0000-0000-0000-000000000000";
@@ -34,7 +34,7 @@ public class TestDataSetupController {
   private final SetupDataCommand setupDataCommand;
   private final JwtTokenProvider jwtTokenProvider;
 
-  public TestDataSetupController(
+  public SupportE2ETestController(
       final ResetDatabaseCommand resetDatabaseCommand,
       final SetupDataCommand setupDataCommand,
       final JwtTokenProvider jwtTokenProvider) {
@@ -44,8 +44,8 @@ public class TestDataSetupController {
   }
 
   @Operation(summary = "DBをリセット", description = "アプリケーションが管理するテーブルからデータをすべて削除します。")
-  @PostMapping("/reset")
-  public ResponseEntity<Void> reset() {
+  @PostMapping("/reset_data")
+  public ResponseEntity<Void> resetData() {
     logger.info("Database reset requested");
     resetDatabaseCommand.execute();
     logger.info("Database reset completed successfully");
@@ -53,8 +53,8 @@ public class TestDataSetupController {
   }
 
   @Operation(summary = "テストデータをセットアップ", description = "指定されたテーブルにテストデータを1レコード作成します。")
-  @PostMapping("/setup")
-  public ResponseEntity<Void> setup(@RequestBody final SetupDataRequest request) {
+  @PostMapping("/create_data")
+  public ResponseEntity<Void> createData(@RequestBody final SetupDataRequest request) {
     logger.info("Test data setup requested for table: {}", request.table());
     setupDataCommand.execute(request.table());
     logger.info("Test data setup completed for table: {}", request.table());
@@ -62,8 +62,8 @@ public class TestDataSetupController {
   }
 
   @Operation(summary = "E2Eテスト用トークン生成", description = "E2Eテストでauth guardをバイパスするためのダミートークンを生成します。")
-  @PostMapping("/token")
-  public ResponseEntity<TestTokenResponse> generateTestToken() {
+  @PostMapping("/dummy_token")
+  public ResponseEntity<TestTokenResponse> generateDummyToken() {
     logger.info("Test token generation requested");
     // E2E テスト用の固定ユーザー情報でトークンを生成
     final String token = jwtTokenProvider.generateToken(E2E_TEST_USER_ID, E2E_TEST_EMAIL);

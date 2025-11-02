@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class TestDataSetupControllerIntegrationTest {
+class SupportE2ETestControllerIntegrationTest {
 
   @Autowired private MockMvc mockMvc;
 
@@ -29,7 +29,7 @@ class TestDataSetupControllerIntegrationTest {
     userRepository.save(User.signup(email, "John Doe"));
     assertThat(userRepository.findAll()).isNotEmpty();
 
-    mockMvc.perform(post("/test/reset")).andExpect(status().isNoContent());
+    mockMvc.perform(post("/e2e/reset_data")).andExpect(status().isNoContent());
 
     assertThat(userRepository.findAll()).isEmpty();
   }

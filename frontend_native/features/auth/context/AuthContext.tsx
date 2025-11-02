@@ -33,7 +33,7 @@ async function setupE2ETestToken(): Promise<void> {
   try {
     const apiBaseUrl =
       process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:8080";
-    const response = await fetch(`${apiBaseUrl}/test/token`, {
+    const response = await fetch(`${apiBaseUrl}/e2e/dummy_token`, {
       method: "POST",
     });
     if (response.ok) {

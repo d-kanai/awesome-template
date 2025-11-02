@@ -31,7 +31,7 @@ try {
 console.log(`[Config] Backend URL: ${backendUrl}`);
 console.log(`[Config] Table Name: ${tableName}`);
 
-const SETUP_ENDPOINT = `${backendUrl}/test/setup`;
+const SETUP_ENDPOINT = `${backendUrl}/e2e/create_data`;
 
 // ============================================
 // Data Setup
