@@ -32,7 +32,7 @@ export function useSignupForm() {
           Alert.alert("Success", `Account created for ${email}`, [
             {
               text: "OK",
-              onPress: () => router.back(),
+              onPress: () => router.push("/"),
             },
           ]);
         }

@@ -10,6 +10,13 @@ onFlowStart:
 # Given: ユーザーレコードを作成
 - launchApp:
     clearState: true
+# Navigate to users screen from welcome screen
+- runFlow:
+    file: ../../flows/wait_visible.yaml
+    env:
+      VISIBLE_TEXT: "Welcome"
+- tapOn:
+    id: home-browse-users-button
 # When: ユーザー一覧を表示
 - runFlow:
     file: ../../flows/wait_visible.yaml

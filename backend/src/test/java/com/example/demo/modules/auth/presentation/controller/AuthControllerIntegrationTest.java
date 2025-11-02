@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.modules.auth.presentation.input.SigninInput;
 import com.example.demo.modules.auth.presentation.input.SignupInput;
 import com.example.demo.modules.user.domain.model.User;
 import com.example.demo.modules.user.domain.repository.UserRepository;
@@ -57,5 +58,62 @@ class AuthControllerIntegrationTest {
         .get()
         .extracting(User::getEmail, User::getPassword)
         .containsExactly(request.getEmail(), request.getPassword());
+  }
+
+  @Test
+  void signin_withCorrectCredentials_returnsOkResponse() throws Exception {
+    // given input
+    final String email = "john.doe@example.com";
+    final String password = "SecurePassword123";
+
+    // given db
+    final User user = User.signup(email, password);
+    userRepository.save(user);
+
+    final SigninInput request = new SigninInput(email, password);
+
+    // when
+    final ApiTestResponse response = apiTestClient.post("/auth/signin", request);
+
+    // then response
+    response
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(user.getId().getValue().toString()))
+        .andExpect(jsonPath("$.email").value(email));
+  }
+
+  @Test
+  void signin_withIncorrectPassword_returnsBadRequest() throws Exception {
+    // given input
+    final String email = "john.doe@example.com";
+    final String correctPassword = "SecurePassword123";
+    final String wrongPassword = "WrongPassword456";
+
+    // given db
+    final User user = User.signup(email, correctPassword);
+    userRepository.save(user);
+
+    final SigninInput request = new SigninInput(email, wrongPassword);
+
+    // when
+    final ApiTestResponse response = apiTestClient.post("/auth/signin", request);
+
+    // then response
+    response.andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void signin_withNonExistentEmail_returnsBadRequest() throws Exception {
+    // given input
+    final SigninInput request = new SigninInput("nonexistent@example.com", "SomePassword123");
+
+    // given db
+    assertThat(userRepository.findAll()).isEmpty();
+
+    // when
+    final ApiTestResponse response = apiTestClient.post("/auth/signin", request);
+
+    // then response
+    response.andExpect(status().isBadRequest());
   }
 }

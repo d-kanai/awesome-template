@@ -1,0 +1,75 @@
+appId: con.example.awesome
+name: サインイン
+onFlowStart:
+  - runScript: ../../scripts/reset_backend.js
+---
+- clearKeychain
+- launchApp:
+    clearState: true
+
+# Wait for welcome screen to load
+- runFlow:
+    file: ../../flows/wait_visible.yaml
+    env:
+      VISIBLE_TEXT: "Welcome"
+
+# First, create a user via signup
+- tapOn:
+    id: home-signup-button
+- runFlow:
+    file: ../../flows/wait_visible.yaml
+    env:
+      VISIBLE_TEXT: "サインアップ"
+- tapOn:
+    id: signup-email
+- inputText:
+    text: "signin-test@example.com"
+    delayBetweenKeystrokes: 0
+- tapOn:
+    id: signup-password
+- inputText:
+    text: "SecurePassword123"
+    delayBetweenKeystrokes: 0
+- tapOn:
+    id: signup-submit
+- tapOn:
+    text: "OK"
+
+# Should be back on Welcome screen after signup
+- runFlow:
+    file: ../../flows/wait_visible.yaml
+    env:
+      VISIBLE_TEXT: "Welcome"
+
+# Now test signin
+- tapOn:
+    id: home-signin-button
+# Wait for signin form to load
+- assertVisible:
+    id: signin-email
+- tapOn:
+    id: signin-email
+- inputText:
+    text: "signin-test@example.com"
+    delayBetweenKeystrokes: 0
+- tapOn:
+    id: signin-password
+- inputText:
+    text: "SecurePassword123"
+    delayBetweenKeystrokes: 0
+- tapOn:
+    id: signin-submit
+
+# Wait for success alert
+- tapOn:
+    text: "OK"
+
+# Verify we're on the users screen
+- runFlow:
+    file: ../../flows/wait_visible.yaml
+    env:
+      VISIBLE_TEXT: "ユーザー一覧"
+- runFlow:
+    file: ../../flows/wait_visible.yaml
+    env:
+      VISIBLE_TEXT: "signin-test@example.com"

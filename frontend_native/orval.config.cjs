@@ -11,6 +11,8 @@ const schemaNameMap = {
   ユーザー一覧項目: "UserListItem",
   ユーザー登録リクエスト: "SignupRequest",
   ユーザー登録レスポンス: "SignupResponse",
+  サインインリクエスト: "SigninRequest",
+  サインインレスポンス: "SigninResponse",
 };
 
 module.exports = defineConfig({

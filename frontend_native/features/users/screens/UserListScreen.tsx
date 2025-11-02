@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import {
@@ -15,7 +14,6 @@ import { UserListItem } from "@/features/users/components/UserListItem";
 import { useUserList } from "@/features/users/hooks/useUserList";
 
 function UserList() {
-  const router = useRouter();
   const { users, refetch } = useUserList();
 
   return (
@@ -24,16 +22,6 @@ function UserList() {
         <Text style={styles.title}>ユーザー一覧</Text>
 
         <View style={styles.actions}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.addButton,
-              pressed && styles.addButtonPressed,
-            ]}
-            testID="user-list-add"
-            onPress={() => router.push("/auth/signup")}
-          >
-            <Text style={styles.addButtonText}>+ 新規ユーザー登録</Text>
-          </Pressable>
           <Pressable
             onPress={() => refetch()}
             style={({ pressed }) => [
@@ -118,25 +106,9 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     alignItems: "center",
     gap: 12,
-  },
-  addButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    backgroundColor: "#0077cc",
-    alignItems: "center",
-  },
-  addButtonPressed: {
-    opacity: 0.85,
-  },
-  addButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
   },
   reloadButton: {
     paddingVertical: 12,

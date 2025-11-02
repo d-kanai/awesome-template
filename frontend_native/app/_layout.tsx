@@ -33,7 +33,11 @@ export default function RootLayout() {
           />
           <Stack.Screen
             name="auth/signup/index"
-            options={{ title: "ユーザー登録" }}
+            options={{ title: "サインアップ" }}
+          />
+          <Stack.Screen
+            name="auth/signin/index"
+            options={{ title: "サインイン" }}
           />
         </Stack>
         <StatusBar style="auto" />

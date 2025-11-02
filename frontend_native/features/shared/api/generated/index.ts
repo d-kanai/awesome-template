@@ -30,6 +30,8 @@ import type {
   FindUserByIdResponse,
   HealthStatusResponse,
   SetupDataRequest,
+  SigninRequest,
+  SigninResponse,
   SignupRequest,
   SignupResponse,
   UpdateUserProfileRequest,
@@ -613,6 +615,98 @@ export const useSignup = <TError = void,
       > => {
 
       const mutationOptions = getSignupMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * メールアドレスとパスワードでサインインします。
+ * @summary サインイン
+ */
+export type signinResponse200 = {
+  data: SigninResponse
+  status: 200
+}
+
+export type signinResponse400 = {
+  data: void
+  status: 400
+}
+    
+export type signinResponseSuccess = (signinResponse200) & {
+  headers: Headers;
+};
+export type signinResponseError = (signinResponse400) & {
+  headers: Headers;
+};
+
+export type signinResponse = (signinResponseSuccess | signinResponseError)
+
+export const getSigninUrl = () => {
+
+
+  
+
+  return `/auth/signin`
+}
+
+export const signin = async (signinRequest: SigninRequest, options?: RequestInit): Promise<signinResponse> => {
+  
+  return fetcher<signinResponse>(getSigninUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      signinRequest,)
+  }
+);}
+
+
+
+
+export const getSigninMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signin>>, TError,{data: SigninRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof signin>>, TError,{data: SigninRequest}, TContext> => {
+
+const mutationKey = ['signin'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof signin>>, {data: SigninRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  signin(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SigninMutationResult = NonNullable<Awaited<ReturnType<typeof signin>>>
+    export type SigninMutationBody = SigninRequest
+    export type SigninMutationError = void
+
+    /**
+ * @summary サインイン
+ */
+export const useSignin = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signin>>, TError,{data: SigninRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof signin>>,
+        TError,
+        {data: SigninRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getSigninMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }

@@ -11,6 +11,8 @@ export * from './findUserByEmailResponse';
 export * from './findUserByIdResponse';
 export * from './healthStatusResponse';
 export * from './setupDataRequest';
+export * from './signinRequest';
+export * from './signinResponse';
 export * from './signupRequest';
 export * from './signupResponse';
 export * from './updateUserProfileRequest';

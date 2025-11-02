@@ -1,7 +1,10 @@
 package com.example.demo.modules.auth.presentation.controller;
 
+import com.example.demo.modules.auth.application.command.SigninCommand;
 import com.example.demo.modules.auth.application.command.SignupCommand;
+import com.example.demo.modules.auth.presentation.input.SigninInput;
 import com.example.demo.modules.auth.presentation.input.SignupInput;
+import com.example.demo.modules.auth.presentation.output.SigninOutput;
 import com.example.demo.modules.auth.presentation.output.SignupOutput;
 import com.example.demo.modules.user.domain.model.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,9 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
   private final SignupCommand signupCommand;
+  private final SigninCommand signinCommand;
 
-  public AuthController(final SignupCommand signupCommand) {
+  public AuthController(final SignupCommand signupCommand, final SigninCommand signinCommand) {
     this.signupCommand = signupCommand;
+    this.signinCommand = signinCommand;
   }
 
   @Operation(summary = "ユーザー登録", description = "指定した情報で新しいユーザーを登録します。")
@@ -46,6 +51,30 @@ public class AuthController {
     try {
       final User user = signupCommand.execute(input);
       return ResponseEntity.status(HttpStatus.CREATED).body(SignupOutput.from(user));
+    } catch (final IllegalArgumentException e) {
+      return ResponseEntity.badRequest().build();
+    }
+  }
+
+  @Operation(summary = "サインイン", description = "メールアドレスとパスワードでサインインします。")
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "サインインに成功しました。",
+        content =
+            @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = SigninOutput.class))),
+    @ApiResponse(
+        responseCode = "400",
+        description = "メールアドレスまたはパスワードが正しくありません。",
+        content = @Content)
+  })
+  @PostMapping(value = "/signin", consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<SigninOutput> signin(@Valid @RequestBody final SigninInput input) {
+    try {
+      final User user = signinCommand.execute(input);
+      return ResponseEntity.ok(SigninOutput.from(user));
     } catch (final IllegalArgumentException e) {
       return ResponseEntity.badRequest().build();
     }
