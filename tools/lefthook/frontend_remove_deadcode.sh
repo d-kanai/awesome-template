@@ -24,4 +24,4 @@ if ! $should_run; then
   exit 0
 fi
 
-pnpm --dir frontend_native run knip
+pnpm --dir frontend_native exec knip

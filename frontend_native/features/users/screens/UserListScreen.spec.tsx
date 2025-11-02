@@ -35,6 +35,7 @@ describe("UserListScreen", () => {
   });
 
   it("ユーザー一覧 API のデータを表示する", async () => {
+    //given API mock
     const client = createQueryClient();
     const apiResponse: getAllUsersResponse = {
       data: {
@@ -53,8 +54,10 @@ describe("UserListScreen", () => {
 
     mockedFetcher.mockResolvedValueOnce(apiResponse);
 
+    //when render screen
     renderWithClient(<UserListScreen />, client);
 
+    //then show user data
     await waitFor(() => {
       expect(screen.getByText("taro@example.com")).toBeTruthy();
     });

@@ -7,9 +7,7 @@
         "features/**/*.{ts,tsx}",
         "e2e/**/*.{js,ts}"
       ],
-      "project": [
-        "**/*.{ts,tsx,js,jsx}"
-      ],
+      "project": ["**/*.{ts,tsx,js,jsx}"],
       "ignore": [
         "coverage/**",
         "**/*.config.{js,ts,cjs,mjs}",
