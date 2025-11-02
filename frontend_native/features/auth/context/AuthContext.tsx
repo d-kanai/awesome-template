@@ -1,7 +1,7 @@
-import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import type React from "react";
 import { createContext, useEffect, useState } from "react";
+import { LaunchArguments } from "react-native-launch-arguments";
 
 import { tokenManager } from "@/features/shared/api/fetcher";
 import { tokenStorage } from "@/features/shared/storage/tokenStorage";
@@ -37,13 +37,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         // E2Eテストモード: launch argumentsをチェック
         if (__DEV__) {
-          const initialUrl = await Linking.getInitialURL();
-          const globalWithE2E = global as typeof global & {
-            __E2E_MODE__?: boolean;
-          };
-          const isE2EMode =
-            initialUrl?.includes("-E2E_MODE") ||
-            globalWithE2E.__E2E_MODE__ === true;
+          const launchArgs = LaunchArguments.value();
+          const isE2EMode = launchArgs.E2E_MODE === true;
 
           if (isE2EMode) {
             try {
