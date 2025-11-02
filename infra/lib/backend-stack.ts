@@ -37,6 +37,7 @@ export class BackendStack extends cdk.Stack {
           imageRepositoryType: 'ECR',
           imageConfiguration: {
             port: '8080',
+            startCommand: 'java -Djava.security.egd=file:/dev/./urandom -Dserver.port=8080 -jar app.jar',
             runtimeEnvironmentVariables: [
               {
                 name: 'SPRING_PROFILES_ACTIVE',
@@ -53,10 +54,10 @@ export class BackendStack extends cdk.Stack {
       healthCheckConfiguration: {
         protocol: 'HTTP',
         path: '/actuator/health',
-        interval: 20,
-        timeout: 10,
+        interval: 10,
+        timeout: 5,
         healthyThreshold: 1,
-        unhealthyThreshold: 10,
+        unhealthyThreshold: 3,
       },
     });
 

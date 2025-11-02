@@ -8,11 +8,9 @@ import com.example.demo.modules.auth.presentation.input.SigninInput;
 import com.example.demo.modules.auth.presentation.input.SignupInput;
 import com.example.demo.modules.user.domain.model.User;
 import com.example.demo.modules.user.domain.repository.UserRepository;
-import com.example.demo.modules.user.domain.valueobject.UserId;
 import com.example.demo.testsupport.ApiTestClient;
 import com.example.demo.testsupport.ApiTestResponse;
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +50,7 @@ class AuthControllerIntegrationTest {
             .andReturnBody();
 
     // then db
-    final UUID persistedId = UUID.fromString(responseBody.get("id").asText());
-    assertThat(userRepository.findById(UserId.reconstruct(persistedId)))
+    assertThat(userRepository.findByEmail(request.getEmail()))
         .isPresent()
         .get()
         .extracting(User::getEmail, User::getPassword)

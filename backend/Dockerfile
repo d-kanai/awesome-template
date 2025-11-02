@@ -30,4 +30,6 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 8080
 
 # アプリケーション起動
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# -Djava.security.egd=file:/dev/./urandom: 起動速度を向上
+# -Dserver.port=8080: ポートを明示的に指定
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Dserver.port=8080", "-jar", "app.jar"]

@@ -27,18 +27,8 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Optional<User> findById(final UserId id) {
-    return dsl.selectFrom(USERS).where(USERS.ID.eq(id.getValue())).fetchOptional(this::mapToUser);
-  }
-
-  @Override
   public Optional<User> findByEmail(final String email) {
     return dsl.selectFrom(USERS).where(USERS.EMAIL.eq(email)).fetchOptional(this::mapToUser);
-  }
-
-  @Override
-  public boolean existsById(final UserId id) {
-    return dsl.fetchExists(dsl.selectFrom(USERS).where(USERS.ID.eq(id.getValue())));
   }
 
   @Override
@@ -48,35 +38,21 @@ public class UserRepositoryImpl implements UserRepository {
 
   @Override
   public User save(final User user) {
-    final boolean exists = user.getId() != null && existsById(user.getId());
-    if (!exists) {
-      final LocalDateTime createdAt =
-          user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now();
-      final LocalDateTime updatedAt = user.getUpdatedAt() != null ? user.getUpdatedAt() : createdAt;
+    final LocalDateTime createdAt =
+        user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now();
+    final LocalDateTime updatedAt = user.getUpdatedAt() != null ? user.getUpdatedAt() : createdAt;
 
-      final UsersRecord record =
-          dsl.insertInto(USERS)
-              .set(USERS.ID, user.getId().getValue())
-              .set(USERS.EMAIL, user.getEmail())
-              .set(USERS.PASSWORD, user.getPassword())
-              .set(USERS.CREATED_AT, createdAt)
-              .set(USERS.UPDATED_AT, updatedAt)
-              .returning()
-              .fetchOne();
+    final UsersRecord record =
+        dsl.insertInto(USERS)
+            .set(USERS.ID, user.getId().getValue())
+            .set(USERS.EMAIL, user.getEmail())
+            .set(USERS.PASSWORD, user.getPassword())
+            .set(USERS.CREATED_AT, createdAt)
+            .set(USERS.UPDATED_AT, updatedAt)
+            .returning()
+            .fetchOne();
 
-      return mapToUser(record);
-    }
-
-    dsl.update(USERS)
-        .set(USERS.EMAIL, user.getEmail())
-        .set(USERS.PASSWORD, user.getPassword())
-        .set(
-            USERS.UPDATED_AT,
-            user.getUpdatedAt() != null ? user.getUpdatedAt() : LocalDateTime.now())
-        .where(USERS.ID.eq(user.getId().getValue()))
-        .execute();
-
-    return findById(user.getId()).orElseThrow();
+    return mapToUser(record);
   }
 
   @Override

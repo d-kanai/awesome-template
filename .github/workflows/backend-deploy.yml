@@ -2,18 +2,19 @@
 name: Deploy Backend to App Runner
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Backend UT"]
+    types:
+      - completed
     branches: [main]
-    paths:
-      - 'backend/**'
-      - 'infra/**'
-      - '.github/workflows/backend-deploy.yml'
   workflow_dispatch:
 
 jobs:
   deploy:
     name: Build and deploy backend
     runs-on: ubuntu-latest
+    # backend-ut が成功した場合のみデプロイを実行
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     permissions:
       id-token: write  # OIDC 認証用
       contents: read
@@ -38,32 +39,13 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 🟢 Node.js セットアップ（CDK 用）
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: infra/package-lock.json
-
-      # 📥 CDK 依存パッケージインストール
-      - name: Install CDK dependencies
-        run: |
-          cd infra
-          npm ci
-
-      # 🚀 CDK デプロイ（ECR リポジトリ作成）
-      - name: Deploy infrastructure with CDK
-        run: |
-          cd infra
-          npx cdk deploy --require-approval never --outputs-file outputs.json
-
       # 📦 ECR ログイン
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       # 🐳 Docker イメージビルド＆プッシュ
+      # App Runner の autoDeploymentsEnabled により、latest タグのプッシュで自動的に再デプロイされる
       - name: Build and push Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -80,15 +62,15 @@ jobs:
 
       # 📄 デプロイ結果を Step Summary に表示
       - name: Publish deployment summary
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: awesome-template-backend
         run: |
-          cd infra
-          if [ -f outputs.json ]; then
-            BACKEND_URL=$(cat outputs.json | jq -r '.AwesomeTemplateBackendStack.BackendUrl // "N/A"')
-            cat <<EOF >> "$GITHUB_STEP_SUMMARY"
+          cat <<EOF >> "$GITHUB_STEP_SUMMARY"
           ### 🚀 Backend Deployment Successful
 
-          - **Backend URL**: ${BACKEND_URL}
-          - **Image Tag**: \`${{ github.sha }}\`
+          - **Image**: \`${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}\`
+          - **App Runner**: Auto-deployment triggered by ECR image push
           - **Deployed at**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
           EOF
-          fi
