@@ -2,7 +2,12 @@ appId: con.example.awesome
 name: サインイン
 onFlowStart:
   - runScript: ../../scripts/reset_backend.js
+  - runScript:
+      file: ../../scripts/setup_data.js
+      env:
+        TABLE_NAME: user
 ---
+# Given: ユーザーレコードを作成
 - clearKeychain
 - launchApp:
     clearState: true
@@ -13,58 +18,29 @@ onFlowStart:
     env:
       VISIBLE_TEXT: "Welcome"
 
-# First, create a user via signup
-- tapOn:
-    id: home-signup-button
-- runFlow:
-    file: ../../flows/wait_visible.yaml
-    env:
-      VISIBLE_TEXT: "サインアップ"
-- tapOn:
-    id: signup-email
-- inputText:
-    text: "signin-test@example.com"
-    delayBetweenKeystrokes: 0
-- tapOn:
-    id: signup-password
-- inputText:
-    text: "SecurePassword123"
-    delayBetweenKeystrokes: 0
-- tapOn:
-    id: signup-submit
-- tapOn:
-    text: "OK"
-
-# Should be back on Welcome screen after signup
-- runFlow:
-    file: ../../flows/wait_visible.yaml
-    env:
-      VISIBLE_TEXT: "Welcome"
-
-# Now test signin
+# When: サインイン
 - tapOn:
     id: home-signin-button
-# Wait for signin form to load
-- assertVisible:
-    id: signin-email
+- runFlow:
+    file: ../../flows/wait_visible.yaml
+    env:
+      VISIBLE_TEXT: "サインイン"
 - tapOn:
     id: signin-email
 - inputText:
-    text: "signin-test@example.com"
+    text: "test@example.com"
     delayBetweenKeystrokes: 0
 - tapOn:
     id: signin-password
 - inputText:
-    text: "SecurePassword123"
+    text: "TestPassword123"
     delayBetweenKeystrokes: 0
 - tapOn:
     id: signin-submit
-
-# Wait for success alert
 - tapOn:
     text: "OK"
 
-# Verify we're on the users screen
+# Then: ユーザー一覧画面を表示
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
@@ -72,4 +48,4 @@ onFlowStart:
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
-      VISIBLE_TEXT: "signin-test@example.com"
+      VISIBLE_TEXT: "test@example.com"
