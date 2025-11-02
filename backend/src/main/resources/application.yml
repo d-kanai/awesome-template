@@ -18,6 +18,17 @@ server:
   port: 8080
   address: 0.0.0.0
 
+management:
+  endpoints:
+    web:
+      exposure:
+        # Only expose health endpoint in production
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      show-components: never
+
 jwt:
   secret: ${JWT_SECRET:my-secret-key-that-is-at-least-256-bits-long-for-hs256}
   expiration-hours: 24
