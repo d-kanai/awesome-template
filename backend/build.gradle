@@ -202,10 +202,15 @@ spotless {
             target spotlessFilesOverride
         } else {
             target 'src/**/*.java'
+            targetExclude 'src/main/generated-java/**'
         }
         googleJavaFormat('1.17.0')
         removeUnusedImports()
     }
+}
+
+tasks.named('spotlessJava') {
+    dependsOn tasks.named('generateJooq')
 }
 
 tasks.named('jacocoTestReport') {
