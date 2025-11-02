@@ -17,13 +17,15 @@ jest.mock("@/features/shared/api/fetcher", () => ({
 const mockedFetcher = fetcher as jest.MockedFunction<typeof fetcher>;
 
 describe("UserListScreen", () => {
-  afterEach(() => {
+  let client: ReturnType<typeof createQueryClient>;
+
+  beforeEach(() => {
     cleanupMocks(mockedFetcher);
+    client = createQueryClient();
   });
 
   it("ユーザー一覧 API のデータを表示する", async () => {
     //given API mock
-    const client = createQueryClient();
     const apiResponse: getAllUsersResponse = {
       data: {
         users: [
@@ -48,7 +50,5 @@ describe("UserListScreen", () => {
     await waitFor(() => {
       expect(screen.getByText("taro@example.com")).toBeTruthy();
     });
-
-    cleanupQueryClient(client);
   });
 });

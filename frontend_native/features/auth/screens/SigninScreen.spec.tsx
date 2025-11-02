@@ -28,18 +28,16 @@ const mockedUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
 
 describe("SigninScreen", () => {
   const mockPush = jest.fn();
+  let client: ReturnType<typeof createQueryClient>;
 
   beforeEach(() => {
-    setupRouterMock(mockedUseRouter, mockPush);
-  });
-
-  afterEach(() => {
     cleanupMocks(mockedFetcher, mockPush);
+    setupRouterMock(mockedUseRouter, mockPush);
+    client = createQueryClient();
   });
 
   it("フォーム送信時、正しいパラメータでサインインAPIを呼び出し、成功後にユーザー一覧画面に遷移する", async () => {
     //given API mock
-    const client = createQueryClient();
     const apiResponse: signinResponse = {
       data: {
         id: "user-1",
@@ -94,7 +92,5 @@ describe("SigninScreen", () => {
 
     //then navigate
     expect(mockPush).toHaveBeenCalledWith("/users");
-
-    cleanupQueryClient(client);
   });
 });
