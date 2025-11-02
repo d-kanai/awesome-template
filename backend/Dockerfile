@@ -1,5 +1,6 @@
 # ビルドステージ: Gradle でアプリケーションをビルド
-FROM eclipse-temurin:21-jdk-alpine AS builder
+# Alpine は ARM64 で不安定なので、Debian ベースを使用
+FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /app
 
@@ -11,14 +12,15 @@ COPY build.gradle settings.gradle ./
 # 依存関係をダウンロード（キャッシュ効率化）
 RUN ./gradlew dependencies --no-daemon || return 0
 
-# ソースコードをコピー
+# ソースコードと生成済み jOOQ コードをコピー
 COPY src src
+COPY build/generated-src build/generated-src
 
-# アプリケーションをビルド
-RUN ./gradlew bootJar --no-daemon
+# アプリケーションをビルド（jOOQ コード生成と Flyway マイグレーションをスキップ）
+RUN ./gradlew bootJar --no-daemon -x generateJooq -x flywayMigrate
 
 # 実行ステージ: 軽量な JRE イメージで実行
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
