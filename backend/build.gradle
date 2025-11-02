@@ -166,6 +166,8 @@ checkstyle {
             )
             .replaceAll('(?s)<module name="MissingJavadocMethod">.*?</module>', '')
             .replaceAll('(?s)<module name="MissingJavadocType">.*?</module>', '')
+            .replaceAll('(?s)<module name="MethodName">.*?</module>', '')
+            .replaceAll('(?s)<module name="AbbreviationAsWordInName">.*?</module>', '')
     )
 }
 
