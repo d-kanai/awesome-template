@@ -38,6 +38,26 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      # 🟢 Node.js セットアップ（CDK 用）
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: infra/package-lock.json
+
+      # 📥 CDK 依存パッケージインストール
+      - name: Install CDK dependencies
+        run: |
+          cd infra
+          npm ci
+
+      # 🚀 CDK デプロイ（ECR リポジトリ作成）
+      - name: Deploy infrastructure with CDK
+        run: |
+          cd infra
+          npx cdk deploy --require-approval never --outputs-file outputs.json
+
       # 📦 ECR ログイン
       - name: Login to Amazon ECR
         id: login-ecr
@@ -57,26 +77,6 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
         id: build-image
-
-      # 🟢 Node.js セットアップ（CDK 用）
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: infra/package-lock.json
-
-      # 📥 CDK 依存パッケージインストール
-      - name: Install CDK dependencies
-        run: |
-          cd infra
-          npm ci
-
-      # 🚀 CDK デプロイ
-      - name: Deploy with CDK
-        run: |
-          cd infra
-          npx cdk deploy --require-approval never --outputs-file outputs.json
 
       # 📄 デプロイ結果を Step Summary に表示
       - name: Publish deployment summary
