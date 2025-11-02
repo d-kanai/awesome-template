@@ -15,14 +15,14 @@ public class SetupDataCommand {
 
   private static final Logger logger = LoggerFactory.getLogger(SetupDataCommand.class);
 
-  /** E2Eテスト用の固定ユーザーID (test tokenのclaimと一致) */
+  /** E2Eテスト用の固定ユーザーID (test tokenのclaimと一致). */
   private static final UUID E2E_TEST_USER_ID =
       UUID.fromString("00000000-0000-0000-0000-000000000000");
 
-  /** E2Eテスト用のテストユーザーメールアドレス */
+  /** E2Eテスト用のテストユーザーメールアドレス. */
   private static final String E2E_TEST_EMAIL = "test@example.com";
 
-  /** E2Eテスト用のテストユーザーパスワード */
+  /** E2Eテスト用のテストユーザーパスワード. */
   private static final String E2E_TEST_PASSWORD = "TestPassword123";
 
   private final DSLContext dsl;

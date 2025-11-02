@@ -24,10 +24,10 @@ public class TestDataSetupController {
 
   private static final Logger logger = LoggerFactory.getLogger(TestDataSetupController.class);
 
-  /** E2Eテスト用の固定ユーザーID (SetupDataCommandで作成されるユーザーと一致) */
+  /** E2Eテスト用の固定ユーザーID (SetupDataCommandで作成されるユーザーと一致). */
   private static final String E2E_TEST_USER_ID = "00000000-0000-0000-0000-000000000000";
 
-  /** E2Eテスト用の固定メールアドレス */
+  /** E2Eテスト用の固定メールアドレス. */
   private static final String E2E_TEST_EMAIL = "e2e-test@example.com";
 
   private final ResetDatabaseCommand resetDatabaseCommand;

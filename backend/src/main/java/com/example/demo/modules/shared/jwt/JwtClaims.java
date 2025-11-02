@@ -3,7 +3,7 @@ package com.example.demo.modules.shared.jwt;
 import java.util.Date;
 
 /**
- * JWT tokenのclaimを表すrecordクラス
+ * JWT tokenのclaimを表すrecordクラス.
  *
  * @param userId ユーザーID (subject claim)
  * @param email メールアドレス (email claim)
