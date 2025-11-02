@@ -4,7 +4,7 @@ ROOT_DIR := $(CURDIR)
 .PHONY: help \
         install \
         backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
-        native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-setup native-ios native-start native-stop \
+        native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-setup native-ios native-start native-stop native-remove-deadcode \
         openapi-client lefthook-install
 
 help:
@@ -42,6 +42,7 @@ help:
 	@echo "  make native-stop          # Stop background Expo dev server"
 	@echo "  make native-ut            # Install dependencies and run Expo unit tests"
 	@echo "  make native-setup         # Install deps, prebuild, and install iOS dev client"
+	@echo "  make native-remove-deadcode # Detect and report unused code with knip"
 	@echo ""
 	@echo "Combined:"
 	@echo "  make openapi-client       # Export OpenAPI spec then generate native client/hooks"
@@ -182,5 +183,8 @@ native-ut:
 	cd frontend_native && pnpm test -- --ci
 
 native-setup: native-install native-prebuild native-run
+
+native-remove-deadcode:
+	cd frontend_native && pnpm run knip
 
 openapi-client: backend-openapi native-generate-api
