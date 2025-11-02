@@ -43,3 +43,55 @@ jobs:
       - name: Run native unit tests (Jest)
         run: |
           make native-ut
+
+      # 📊 Jest のカバレッジレポートから行カバレッジ率を抽出し、後続ステップやサマリーで利用できるようにする
+      - name: Extract coverage summary
+        id: coverage
+        run: |
+          cd frontend_native
+          coverage_output=$(node -e "
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+          const total = report.total;
+          const lineRate = total.lines.pct.toFixed(2);
+          const covered = total.lines.covered;
+          const missed = total.lines.total - total.lines.covered;
+          const totalLines = total.lines.total;
+          console.log(\`covered=\${covered}\`);
+          console.log(\`missed=\${missed}\`);
+          console.log(\`total=\${totalLines}\`);
+          console.log(\`line_rate=\${lineRate}\`);
+          ")
+
+          while IFS='=' read -r key value; do
+            echo "${key}=${value}" >> "$GITHUB_OUTPUT"
+          done <<< "${coverage_output}"
+
+      # 🧾 Step Summary に PR 番号やブランチ情報と合わせてカバレッジを記録する
+      - name: Publish coverage summary
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          LINE_RATE: ${{ steps.coverage.outputs.line_rate }}
+        run: |
+          if [[ -n "${PR_NUMBER}" ]]; then
+            REF_LABEL="PR #${PR_NUMBER}"
+          else
+            REF_LABEL="${GITHUB_REF}"
+          fi
+
+          cat <<'EOF' >> "$GITHUB_STEP_SUMMARY"
+          ### Native Jest Coverage
+
+          EOF
+          {
+            echo "- Reference: ${REF_LABEL}"
+            echo "- Line coverage: ${LINE_RATE}%"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # 💾 カバレッジレポート一式をアーティファクトとして保存し、後段の確認に備える
+      - name: Upload coverage report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-coverage-report
+          path: frontend_native/coverage
+          if-no-files-found: error

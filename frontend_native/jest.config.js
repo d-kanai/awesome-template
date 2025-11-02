@@ -13,7 +13,7 @@ module.exports = {
     "!<rootDir>/features/shared/api/**",
   ],
   coverageDirectory: "<rootDir>/coverage",
-  coverageReporters: ["text", "lcov", "cobertura"],
+  coverageReporters: ["text", "lcov", "cobertura", "json-summary"],
   moduleNameMapper: {
     ...expoPreset.moduleNameMapper,
     "^@/(.*)$": "<rootDir>/$1",
