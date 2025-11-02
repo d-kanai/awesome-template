@@ -73,12 +73,8 @@ jobs:
           make backend-db-refresh
 
       # 🧰 make コマンドを利用できることを明示的に保証しつつ、バックエンド用の make ターゲットを実行する
+      # 📝 テストは H2 インメモリDBを使用するため、PostgreSQL接続情報の環境変数は設定しない
       - name: Run backend unit tests with coverage
-        env:
-          # 🌐 Gradle が localhost で起動した PostgreSQL に接続できるようにホスト名を明示する
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/demodb
-          SPRING_DATASOURCE_USERNAME: demo
-          SPRING_DATASOURCE_PASSWORD: demo123
         run: |
           # 🧪 jacocoTestReport タスクはテスト実行とカバレッジ収集の両方を行うので backend-coverage ターゲットを利用する
           make backend-coverage
