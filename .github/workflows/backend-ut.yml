@@ -86,34 +86,34 @@ jobs:
         id: coverage
         run: |
           coverage_output=$(python3 <<'PY'
-from decimal import Decimal, ROUND_HALF_UP
-from pathlib import Path
-import xml.etree.ElementTree as ET
+          from decimal import Decimal, ROUND_HALF_UP
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
 
-report = Path("backend/build/reports/jacoco/test/jacocoTestReport.xml")
-if not report.is_file():
-    raise SystemExit(f"Jacoco report not found at {report}")
+          report = Path("backend/build/reports/jacoco/test/jacocoTestReport.xml")
+          if not report.is_file():
+              raise SystemExit(f"Jacoco report not found at {report}")
 
-root = ET.parse(report).getroot()
-covered = Decimal('0')
-missed = Decimal('0')
-for counter in root.iter('counter'):
-    if counter.get('type') == 'LINE':
-        covered += Decimal(counter.get('covered', '0'))
-        missed += Decimal(counter.get('missed', '0'))
+          root = ET.parse(report).getroot()
+          covered = Decimal('0')
+          missed = Decimal('0')
+          for counter in root.iter('counter'):
+              if counter.get('type') == 'LINE':
+                  covered += Decimal(counter.get('covered', '0'))
+                  missed += Decimal(counter.get('missed', '0'))
 
-total = covered + missed
-if total == 0:
-    percent = Decimal('0.00')
-else:
-    percent = (covered / total * 100).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+          total = covered + missed
+          if total == 0:
+              percent = Decimal('0.00')
+          else:
+              percent = (covered / total * 100).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
-print(f"covered={covered}")
-print(f"missed={missed}")
-print(f"total={total}")
-print(f"line_rate={percent}")
-PY
-)
+          print(f"covered={covered}")
+          print(f"missed={missed}")
+          print(f"total={total}")
+          print(f"line_rate={percent}")
+          PY
+          )
 
           while IFS='=' read -r key value; do
             echo "${key}=${value}" >> "$GITHUB_OUTPUT"
