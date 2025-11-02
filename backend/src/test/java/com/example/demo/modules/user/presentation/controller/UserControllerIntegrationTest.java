@@ -28,7 +28,7 @@ class UserControllerIntegrationTest {
   }
 
   @Test
-  void findById_returnsUserDetails() throws Exception {
+  void ユーザーID検索時_ユーザー詳細を返す() throws Exception {
     // given db
     final User existingUser =
         userRepository.save(User.signup("jane.doe@example.com", "SecurePassword123"));

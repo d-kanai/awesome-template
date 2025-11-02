@@ -24,7 +24,7 @@ class TestDataSetupControllerIntegrationTest {
   @Autowired private UserRepository userRepository;
 
   @Test
-  void reset_removesAllDataFromTables() throws Exception {
+  void リセット時_全テーブルからデータを削除する() throws Exception {
     final String email = "john.doe+" + UUID.randomUUID() + "@example.com";
     userRepository.save(User.signup(email, "John Doe"));
     assertThat(userRepository.findAll()).isNotEmpty();

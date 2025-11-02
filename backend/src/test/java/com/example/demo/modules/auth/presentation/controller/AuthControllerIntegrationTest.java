@@ -33,7 +33,7 @@ class AuthControllerIntegrationTest {
   }
 
   @Test
-  void signup_createsUserAndReturnsCreatedResponse() throws Exception {
+  void サインアップ時_ユーザーを作成しCreatedレスポンスを返す() throws Exception {
     // given input
     final SignupInput request = new SignupInput("john.doe@example.com", "SecurePassword123");
 
@@ -61,7 +61,7 @@ class AuthControllerIntegrationTest {
   }
 
   @Test
-  void signin_withCorrectCredentials_returnsOkResponse() throws Exception {
+  void サインイン時_正しい認証情報でOKレスポンスを返す() throws Exception {
     // given input
     final String email = "john.doe@example.com";
     final String password = "SecurePassword123";
@@ -83,7 +83,7 @@ class AuthControllerIntegrationTest {
   }
 
   @Test
-  void signin_withIncorrectPassword_returnsBadRequest() throws Exception {
+  void サインイン時_誤ったパスワードでBadRequestを返す() throws Exception {
     // given input
     final String email = "john.doe@example.com";
     final String correctPassword = "SecurePassword123";
@@ -103,7 +103,7 @@ class AuthControllerIntegrationTest {
   }
 
   @Test
-  void signin_withNonExistentEmail_returnsBadRequest() throws Exception {
+  void サインイン時_存在しないメールアドレスでBadRequestを返す() throws Exception {
     // given input
     final SigninInput request = new SigninInput("nonexistent@example.com", "SomePassword123");
 
