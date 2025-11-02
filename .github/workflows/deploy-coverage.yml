@@ -18,7 +18,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      # 📱 ネイティブカバレッジレポートをダウンロード（存在しない場合はスキップ）
+      # 📱 ネイティブカバレッジレポートをダウンロード（同じワークフロー実行内のアーティファクト）
       - name: Download native coverage report artifact
         uses: actions/download-artifact@v4
         with:
@@ -26,12 +26,32 @@ jobs:
           path: public/native
         continue-on-error: true
 
-      # 🔧 バックエンドカバレッジレポートをダウンロード（存在しない場合はスキップ）
+      # 🔧 バックエンドカバレッジレポートをダウンロード（同じワークフロー実行内のアーティファクト）
       - name: Download backend coverage report artifact
         uses: actions/download-artifact@v4
         with:
           name: backend-jacoco-report
           path: public/backend
+        continue-on-error: true
+
+      # 📥 最新のネイティブカバレッジを取得（別のワークフロー実行から）
+      - name: Download latest native coverage from other runs
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: native-ut.yml
+          name: native-coverage-report
+          path: public/native
+          if_no_artifact_found: ignore
+        continue-on-error: true
+
+      # 📥 最新のバックエンドカバレッジを取得（別のワークフロー実行から）
+      - name: Download latest backend coverage from other runs
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: backend-ut.yml
+          name: backend-jacoco-report
+          path: public/backend
+          if_no_artifact_found: ignore
         continue-on-error: true
 
       # 📄 両方のレポートへのリンクを含む統合インデックスページを作成
