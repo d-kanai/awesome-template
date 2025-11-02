@@ -39,7 +39,8 @@ public class SetupDataCommand {
 
   private void setupUserData() {
     logger.info("Creating default user record");
-    final UUID userId = UUID.randomUUID();
+    // E2Eテスト用の固定UUID (test tokenと一致させる)
+    final UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
     dsl.insertInto(USERS)
         .set(USERS.ID, userId)
         .set(USERS.EMAIL, "test@example.com")
