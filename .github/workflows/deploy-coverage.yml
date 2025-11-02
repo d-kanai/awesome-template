@@ -37,7 +37,8 @@ jobs:
       # 📄 両方のレポートへのリンクを含む統合インデックスページを作成
       - name: Create index page
         run: |
-          cat <<'EOF' > public/index.html
+          GENERATED_TIME=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          cat > public/index.html <<EOF
           <!DOCTYPE html>
           <html lang="en">
           <head>
@@ -109,7 +110,7 @@ jobs:
             <div class="metadata">
               <strong>Ref:</strong> ${GITHUB_REF}<br>
               <strong>SHA:</strong> ${GITHUB_SHA}<br>
-              <strong>Generated:</strong> $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+              <strong>Generated:</strong> ${GENERATED_TIME}
             </div>
           </body>
           </html>
