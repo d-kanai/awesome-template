@@ -4,6 +4,21 @@ type FetcherOptions<TVariables> = RequestInit & {
   data?: TVariables;
 };
 
+// Token manager - provides centralized access token management
+class TokenManager {
+  private getToken: (() => string | null) | null = null;
+
+  setGetter(getter: () => string | null): void {
+    this.getToken = getter;
+  }
+
+  getAccessToken(): string | null {
+    return this.getToken?.() ?? null;
+  }
+}
+
+export const tokenManager = new TokenManager();
+
 function mergeHeaders(
   base: HeadersInit | undefined,
   extra?: Record<string, string>,
@@ -43,9 +58,13 @@ export async function fetcher<TData, TVariables = unknown>(
       ? { "Content-Type": "application/json" }
       : undefined;
 
+  // Add Authorization header if token exists
+  const token = tokenManager.getAccessToken();
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : undefined;
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...rest,
-    headers: mergeHeaders(headers, contentType),
+    headers: mergeHeaders(mergeHeaders(headers, contentType), authHeader),
     body,
   });
 

@@ -14,6 +14,8 @@ export interface SigninResponse {
   id?: string;
   /** ユーザーのメールアドレス */
   email?: string;
+  /** JWT認証トークン */
+  accessToken?: string;
   /** ユーザーの作成日時 */
   createdAt?: string;
   /** ユーザーの最終更新日時 */

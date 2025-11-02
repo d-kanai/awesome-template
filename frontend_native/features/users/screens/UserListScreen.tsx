@@ -10,16 +10,23 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { UserListItem } from "@/features/users/components/UserListItem";
 import { useUserList } from "@/features/users/hooks/useUserList";
 
 function UserList() {
   const { users } = useUserList();
+  const { signOut } = useAuth();
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>ユーザー一覧</Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>ユーザー一覧</Text>
+          <Pressable style={styles.logoutButton} onPress={signOut}>
+            <Text style={styles.logoutButtonText}>ログアウト</Text>
+          </Pressable>
+        </View>
 
         <FlatList
           data={users}
@@ -87,10 +94,26 @@ const styles = StyleSheet.create({
     padding: 24,
     gap: 20,
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   title: {
     fontSize: 28,
     fontWeight: "700",
     color: "#111",
+  },
+  logoutButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: "#c1121f",
+  },
+  logoutButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
   },
   centered: {
     flexGrow: 1,

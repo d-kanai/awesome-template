@@ -37,8 +37,6 @@
 - AWS CDK (TypeScript)
 - AWS ECS Fargate
 - Amazon ECR
-- Amazon VPC
-- CloudWatch Logs
 - Docker
 - Docker Compose
 

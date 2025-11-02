@@ -8,11 +8,11 @@ onFlowStart:
         TABLE_NAME: user
 ---
 # Given: テストユーザーを事前登録してアプリを起動
-- launchApp:
-    clearState: true
-- openLink: con.example.awesome://users
+# アプリ起動時にAuthContextが自動的にtest tokenを取得・設定
+- clearKeychain
+- launchApp
 
-# When: ユーザー一覧画面を表示
+# When: 自動ログインでユーザー一覧画面に遷移するまで待機
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:

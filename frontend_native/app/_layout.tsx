@@ -9,6 +9,7 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import "react-native-reanimated";
 
+import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { useColorScheme } from "@/features/shared/hooks/use-color-scheme";
 
 export default function RootLayout() {
@@ -24,24 +25,28 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="users/index"
-            options={{ title: "ユーザー一覧", headerBackVisible: false }}
-          />
-          <Stack.Screen
-            name="auth/signup/index"
-            options={{ title: "サインアップ" }}
-          />
-          <Stack.Screen
-            name="auth/signin/index"
-            options={{ title: "サインイン" }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="users/index"
+              options={{ title: "ユーザー一覧", headerBackVisible: false }}
+            />
+            <Stack.Screen
+              name="auth/signup/index"
+              options={{ title: "サインアップ" }}
+            />
+            <Stack.Screen
+              name="auth/signin/index"
+              options={{ title: "サインイン" }}
+            />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

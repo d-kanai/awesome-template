@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { Alert } from "react-native";
 import { z } from "zod";
 
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useSignin } from "@/features/shared/api/generated";
 import type { SigninRequest } from "@/features/shared/api/generated/model";
 
@@ -15,11 +16,13 @@ export type SigninFormValues = z.infer<typeof signinSchema>;
 
 export function useSigninForm() {
   const router = useRouter();
+  const { signIn } = useAuth();
 
   const signinMutation = useSignin({
     mutation: {
-      onSuccess: (result) => {
-        if (result.status === 200) {
+      onSuccess: async (result) => {
+        if (result.status === 200 && result.data?.accessToken) {
+          await signIn(result.data.accessToken);
           router.push("/users");
         }
       },

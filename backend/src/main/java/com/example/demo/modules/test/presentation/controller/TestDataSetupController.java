@@ -1,8 +1,10 @@
 package com.example.demo.modules.test.presentation.controller;
 
+import com.example.demo.modules.shared.jwt.JwtTokenProvider;
 import com.example.demo.modules.test.application.command.ResetDatabaseCommand;
 import com.example.demo.modules.test.application.command.SetupDataCommand;
 import com.example.demo.modules.test.presentation.dto.SetupDataRequest;
+import com.example.demo.modules.test.presentation.dto.TestTokenResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -24,11 +26,15 @@ public class TestDataSetupController {
 
   private final ResetDatabaseCommand resetDatabaseCommand;
   private final SetupDataCommand setupDataCommand;
+  private final JwtTokenProvider jwtTokenProvider;
 
   public TestDataSetupController(
-      final ResetDatabaseCommand resetDatabaseCommand, final SetupDataCommand setupDataCommand) {
+      final ResetDatabaseCommand resetDatabaseCommand,
+      final SetupDataCommand setupDataCommand,
+      final JwtTokenProvider jwtTokenProvider) {
     this.resetDatabaseCommand = resetDatabaseCommand;
     this.setupDataCommand = setupDataCommand;
+    this.jwtTokenProvider = jwtTokenProvider;
   }
 
   @Operation(summary = "DBをリセット", description = "アプリケーションが管理するテーブルからデータをすべて削除します。")
@@ -47,5 +53,17 @@ public class TestDataSetupController {
     setupDataCommand.execute(request.table());
     logger.info("Test data setup completed for table: {}", request.table());
     return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "E2Eテスト用トークン生成", description = "E2Eテストでauth guardをバイパスするためのダミートークンを生成します。")
+  @PostMapping("/token")
+  public ResponseEntity<TestTokenResponse> generateTestToken() {
+    logger.info("Test token generation requested");
+    // E2E テスト用のダミーユーザー情報でトークンを生成
+    final String token =
+        jwtTokenProvider.generateToken(
+            "00000000-0000-0000-0000-000000000000", "e2e-test@example.com");
+    logger.info("Test token generated successfully");
+    return ResponseEntity.ok(new TestTokenResponse(token));
   }
 }

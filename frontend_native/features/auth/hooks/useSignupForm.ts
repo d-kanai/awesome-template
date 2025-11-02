@@ -29,12 +29,16 @@ export function useSignupForm() {
             queryKey: getGetAllUsersQueryKey(),
           });
           const email = result.data.email ?? variables.data.email ?? "User";
-          Alert.alert("Success", `Account created for ${email}`, [
-            {
-              text: "OK",
-              onPress: () => router.push("/users"),
-            },
-          ]);
+          Alert.alert(
+            "Success",
+            `Account created for ${email}. Please sign in.`,
+            [
+              {
+                text: "OK",
+                onPress: () => router.push("/auth/signin"),
+              },
+            ],
+          );
         }
       },
     },
