@@ -1,0 +1,28 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [
+        "app/**/*.{ts,tsx}",
+        "features/**/*.{ts,tsx}",
+        "e2e/**/*.{js,ts}"
+      ],
+      "project": [
+        "**/*.{ts,tsx,js,jsx}"
+      ],
+      "ignore": [
+        "coverage/**",
+        "**/*.config.{js,ts,cjs,mjs}",
+        "babel.config.js",
+        "jest.config.js",
+        "orval.config.cjs",
+        "e2e/scripts/*.js",
+        "features/shared/api/generated/**"
+      ],
+      "ignoreDependencies": [
+        "@tanstack/react-query-devtools",
+        "start-server-and-test"
+      ]
+    }
+  }
+}
