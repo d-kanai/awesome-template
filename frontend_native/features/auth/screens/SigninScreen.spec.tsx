@@ -92,4 +92,16 @@ describe("SigninScreen", () => {
     //then navigate
     expect(mockPush).toHaveBeenCalledWith("/users");
   });
+
+  it("サインアップリンク押下時、サインアップ画面に遷移する", () => {
+    //given
+    renderWithClient(<SigninScreen />, client);
+
+    //when
+    const signupLink = screen.getByTestId("signin-signup-link");
+    fireEvent.press(signupLink);
+
+    //then
+    expect(mockPush).toHaveBeenCalledWith("/auth/signup");
+  });
 });
