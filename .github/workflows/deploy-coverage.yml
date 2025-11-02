@@ -54,8 +54,65 @@ jobs:
           if_no_artifact_found: ignore
         continue-on-error: true
 
+      # 📊 カバレッジ数値を抽出
+      - name: Extract coverage percentages
+        id: coverage
+        run: |
+          # バックエンドカバレッジを抽出
+          if [ -f public/backend/jacocoTestReport.xml ]; then
+            BACKEND_COVERAGE=$(python3 <<'PY'
+          from decimal import Decimal, ROUND_HALF_UP
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          report = Path("public/backend/jacocoTestReport.xml")
+          if report.is_file():
+              root = ET.parse(report).getroot()
+              covered = Decimal('0')
+              missed = Decimal('0')
+              for counter in root.iter('counter'):
+                  if counter.get('type') == 'LINE':
+                      covered += Decimal(counter.get('covered', '0'))
+                      missed += Decimal(counter.get('missed', '0'))
+
+              total = covered + missed
+              if total == 0:
+                  print("N/A")
+              else:
+                  percent = (covered / total * 100).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+                  print(f"{percent}%")
+          else:
+              print("N/A")
+          PY
+          )
+          else
+            BACKEND_COVERAGE="N/A"
+          fi
+
+          # ネイティブカバレッジを抽出
+          if [ -f public/native/coverage-summary.json ]; then
+            NATIVE_COVERAGE=$(node -e "
+          const fs = require('fs');
+          try {
+            const report = JSON.parse(fs.readFileSync('public/native/coverage-summary.json', 'utf8'));
+            const lineRate = report.total.lines.pct.toFixed(2);
+            console.log(\`\${lineRate}%\`);
+          } catch (e) {
+            console.log('N/A');
+          }
+          ")
+          else
+            NATIVE_COVERAGE="N/A"
+          fi
+
+          echo "backend_coverage=${BACKEND_COVERAGE}" >> "$GITHUB_OUTPUT"
+          echo "native_coverage=${NATIVE_COVERAGE}" >> "$GITHUB_OUTPUT"
+
       # 📄 両方のレポートへのリンクを含む統合インデックスページを作成
       - name: Create index page
+        env:
+          BACKEND_COVERAGE: ${{ steps.coverage.outputs.backend_coverage }}
+          NATIVE_COVERAGE: ${{ steps.coverage.outputs.native_coverage }}
         run: |
           GENERATED_TIME=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
           cat > public/index.html <<EOF
@@ -105,6 +162,12 @@ jobs:
                 margin: 0;
                 color: #666;
               }
+              .coverage-percentage {
+                font-size: 36px;
+                font-weight: bold;
+                color: #0366d6;
+                margin: 15px 0 10px 0;
+              }
               .metadata {
                 margin-top: 30px;
                 padding: 15px;
@@ -120,10 +183,12 @@ jobs:
             <div class="coverage-links">
               <a href="backend/index.html" class="coverage-card">
                 <h2>🔧 Backend Coverage</h2>
+                <div class="coverage-percentage">${BACKEND_COVERAGE}</div>
                 <p>Jacoco coverage report for Java/Spring Boot backend</p>
               </a>
               <a href="native/lcov-report/index.html" class="coverage-card">
                 <h2>📱 Native Coverage</h2>
+                <div class="coverage-percentage">${NATIVE_COVERAGE}</div>
                 <p>Jest coverage report for React Native frontend</p>
               </a>
             </div>
