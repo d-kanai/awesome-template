@@ -75,22 +75,10 @@ describe("SigninScreen", () => {
       );
     });
 
-    //then show popup
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        "Success",
-        "Welcome back, test@example.com!",
-        expect.any(Array),
-      );
-    });
-
-    const alertCalls = (Alert.alert as jest.Mock).mock.calls;
-    const lastCall = alertCalls[alertCalls.length - 1];
-    const okButton = lastCall[2][0];
-    okButton.onPress();
-
     //then navigate
-    expect(mockPush).toHaveBeenCalledWith("/users");
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/users");
+    });
   });
 
   it("サインアップリンク押下時、サインアップ画面に遷移する", () => {

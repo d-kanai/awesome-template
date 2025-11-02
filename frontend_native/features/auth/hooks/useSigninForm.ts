@@ -20,13 +20,7 @@ export function useSigninForm() {
     mutation: {
       onSuccess: (result) => {
         if (result.status === 200) {
-          const email = result.data.email ?? "User";
-          Alert.alert("Success", `Welcome back, ${email}!`, [
-            {
-              text: "OK",
-              onPress: () => router.push("/users"),
-            },
-          ]);
+          router.push("/users");
         }
       },
       onError: () => {

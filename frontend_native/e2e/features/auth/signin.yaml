@@ -31,8 +31,6 @@ onFlowStart:
     delayBetweenKeystrokes: 0
 - tapOn:
     id: signin-submit
-- tapOn:
-    text: "OK"
 
 # Then: ユーザー一覧画面を表示
 - runFlow:
