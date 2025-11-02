@@ -35,4 +35,14 @@ public class JwtTokenProvider {
         .signWith(secretKey)
         .compact();
   }
+
+  public String generateToken(final JwtClaims claims) {
+    return Jwts.builder()
+        .subject(claims.userId())
+        .claim("email", claims.email())
+        .issuedAt(claims.issuedAt())
+        .expiration(claims.expiration())
+        .signWith(secretKey)
+        .compact();
+  }
 }

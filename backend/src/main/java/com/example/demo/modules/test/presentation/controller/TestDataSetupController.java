@@ -24,6 +24,12 @@ public class TestDataSetupController {
 
   private static final Logger logger = LoggerFactory.getLogger(TestDataSetupController.class);
 
+  /** E2Eテスト用の固定ユーザーID (SetupDataCommandで作成されるユーザーと一致) */
+  private static final String E2E_TEST_USER_ID = "00000000-0000-0000-0000-000000000000";
+
+  /** E2Eテスト用の固定メールアドレス */
+  private static final String E2E_TEST_EMAIL = "e2e-test@example.com";
+
   private final ResetDatabaseCommand resetDatabaseCommand;
   private final SetupDataCommand setupDataCommand;
   private final JwtTokenProvider jwtTokenProvider;
@@ -59,10 +65,8 @@ public class TestDataSetupController {
   @PostMapping("/token")
   public ResponseEntity<TestTokenResponse> generateTestToken() {
     logger.info("Test token generation requested");
-    // E2E テスト用のダミーユーザー情報でトークンを生成
-    final String token =
-        jwtTokenProvider.generateToken(
-            "00000000-0000-0000-0000-000000000000", "e2e-test@example.com");
+    // E2E テスト用の固定ユーザー情報でトークンを生成
+    final String token = jwtTokenProvider.generateToken(E2E_TEST_USER_ID, E2E_TEST_EMAIL);
     logger.info("Test token generated successfully");
     return ResponseEntity.ok(new TestTokenResponse(token));
   }

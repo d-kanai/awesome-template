@@ -15,6 +15,16 @@ public class SetupDataCommand {
 
   private static final Logger logger = LoggerFactory.getLogger(SetupDataCommand.class);
 
+  /** E2Eテスト用の固定ユーザーID (test tokenのclaimと一致) */
+  private static final UUID E2E_TEST_USER_ID =
+      UUID.fromString("00000000-0000-0000-0000-000000000000");
+
+  /** E2Eテスト用のテストユーザーメールアドレス */
+  private static final String E2E_TEST_EMAIL = "test@example.com";
+
+  /** E2Eテスト用のテストユーザーパスワード */
+  private static final String E2E_TEST_PASSWORD = "TestPassword123";
+
   private final DSLContext dsl;
 
   public SetupDataCommand(final DSLContext dsl) {
@@ -39,13 +49,11 @@ public class SetupDataCommand {
 
   private void setupUserData() {
     logger.info("Creating default user record");
-    // E2Eテスト用の固定UUID (test tokenと一致させる)
-    final UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
     dsl.insertInto(USERS)
-        .set(USERS.ID, userId)
-        .set(USERS.EMAIL, "test@example.com")
-        .set(USERS.PASSWORD, "TestPassword123")
+        .set(USERS.ID, E2E_TEST_USER_ID)
+        .set(USERS.EMAIL, E2E_TEST_EMAIL)
+        .set(USERS.PASSWORD, E2E_TEST_PASSWORD)
         .execute();
-    logger.info("Created user: test@example.com (id: {})", userId);
+    logger.info("Created user: {} (id: {})", E2E_TEST_EMAIL, E2E_TEST_USER_ID);
   }
 }
