@@ -14,24 +14,12 @@ import { UserListItem } from "@/features/users/components/UserListItem";
 import { useUserList } from "@/features/users/hooks/useUserList";
 
 function UserList() {
-  const { users, refetch } = useUserList();
+  const { users } = useUserList();
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>ユーザー一覧</Text>
-
-        <View style={styles.actions}>
-          <Pressable
-            onPress={() => refetch()}
-            style={({ pressed }) => [
-              styles.reloadButton,
-              pressed && styles.reloadPressed,
-            ]}
-          >
-            <Text style={styles.reloadText}>再読み込み</Text>
-          </Pressable>
-        </View>
 
         <FlatList
           data={users}
@@ -103,26 +91,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "700",
     color: "#111",
-  },
-  actions: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    gap: 12,
-  },
-  reloadButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    backgroundColor: "#e0e7ff",
-  },
-  reloadPressed: {
-    opacity: 0.7,
-  },
-  reloadText: {
-    color: "#1d4ed8",
-    fontSize: 14,
-    fontWeight: "600",
   },
   centered: {
     flexGrow: 1,
