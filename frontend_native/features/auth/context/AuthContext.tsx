@@ -1,3 +1,4 @@
+import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import type React from "react";
 import { createContext, useEffect, useState } from "react";
@@ -34,23 +35,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     async function initialize() {
       try {
-        // 開発環境: test token APIからトークンを取得して保存
+        // E2Eテストモード: launch argumentsをチェック
         if (__DEV__) {
-          try {
-            const apiBaseUrl =
-              process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:8080";
-            const response = await fetch(`${apiBaseUrl}/test/token`, {
-              method: "POST",
-            });
-            if (response.ok) {
-              const data = await response.json();
-              if (data.token) {
-                await tokenStorage.setToken(data.token);
-                console.log("[DEV] Test token set successfully");
+          const initialUrl = await Linking.getInitialURL();
+          const globalWithE2E = global as typeof global & {
+            __E2E_MODE__?: boolean;
+          };
+          const isE2EMode =
+            initialUrl?.includes("-E2E_MODE") ||
+            globalWithE2E.__E2E_MODE__ === true;
+
+          if (isE2EMode) {
+            try {
+              const apiBaseUrl =
+                process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:8080";
+              const response = await fetch(`${apiBaseUrl}/test/token`, {
+                method: "POST",
+              });
+              if (response.ok) {
+                const data = await response.json();
+                if (data.token) {
+                  await tokenStorage.setToken(data.token);
+                  console.log("[E2E] Test token set successfully");
+                }
               }
+            } catch (e) {
+              console.warn("[E2E] Failed to set test token:", e);
             }
-          } catch (e) {
-            console.warn("[DEV] Failed to set test token:", e);
           }
         }
 
