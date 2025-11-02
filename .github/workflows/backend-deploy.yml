@@ -2,19 +2,18 @@
 name: Deploy Backend to ECS Fargate
 
 on:
-  workflow_run:
-    workflows: ["Backend UT"]
-    types:
-      - completed
-    branches: [main]
+  workflow_call:
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
   workflow_dispatch:
 
 jobs:
   deploy:
     name: Build and deploy backend
     runs-on: ubuntu-latest
-    # backend-ut が成功した場合のみデプロイを実行
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     permissions:
       id-token: write  # OIDC 認証用
       contents: read

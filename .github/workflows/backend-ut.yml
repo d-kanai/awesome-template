@@ -1,8 +1,8 @@
-# 🚀 このワークフローはバックエンドのテストを自動で実行して品質を守るための設定です
-name: Backend UT
+name: Backend Unit Tests
 
 on:
-  # 🔁 main ブランチ向けの push と Pull Request に反応させて、デフォルト開発フローをカバーする
+  workflow_call:
+  workflow_dispatch:
   push:
     branches: ["main"]
     paths:
@@ -11,148 +11,31 @@ on:
     branches: ["main"]
     paths:
       - "backend/**"
-  # 🖱️ GitHub UI から手動実行できるようにする
-  workflow_dispatch:
 
 jobs:
-  backend-ut:
-    # 🧪 ジョブ名はわかりやすく「Run backend unit tests via Makefile」とする
-    name: Run backend unit tests via Makefile
+  test:
     runs-on: ubuntu-latest
-
-    # 🗄️ jOOQ のコード生成が PostgreSQL への接続を必要とするため、サービスとして起動する
-    services:
-      postgres:
-        image: postgres:15
-        # 🔐 Flyway / jOOQ で利用する資格情報を合わせて設定し、Makefile のテストでも再利用できるようにする
-        env:
-          POSTGRES_USER: demo
-          POSTGRES_PASSWORD: demo123
-          POSTGRES_DB: demodb
-        ports:
-          - 5432:5432
-        # ⏳ DB が起動しきる前にテストが走って失敗しないようヘルスチェックを厳しめに設定する
-        options: >-
-          --health-cmd "pg_isready -U demo"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-      # 🐘 PostgreSQL のサービスコンテナ起動時に都度イメージを取得する待ち時間を減らすため、事前に docker pull してキャッシュする
-      - name: Pre-pull PostgreSQL service image
-        run: |
-          docker pull postgres:15
-
-      # ✅ リポジトリの完全なソースコードをチェックアウトして後続ステップで利用できるようにする
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ☕️ Java 21 の実行環境を構築し、Gradle ビルドやテストが正しいバージョンで動くように準備する
-      - name: Set up Temurin JDK 21
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: "21"
-          cache: gradle  # 📦 Gradle の依存キャッシュを有効化してワークフローの実行時間を短縮する
+          java-version: '21'
+          distribution: 'temurin'
 
-      # 🚄 Gradle Build Action を追加して依存キャッシュだけでなく、Wrapper や設定キャッシュも効かせてさらにビルドを高速化する
-      - name: Prepare Gradle build cache
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          # 🔁 main 以外ではキャッシュを読み取り専用にして PR 同士のキャッシュ競合を避けつつ、main では書き込みも許可する
-          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
 
-      # 🧱 jOOQ のコード生成が参照するスキーマを Flyway で最新化しておくと、生成とテストのどちらも安定する
-      - name: Run Flyway migrations and regenerate jOOQ sources via Makefile
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/demodb
-          SPRING_DATASOURCE_USERNAME: demo
-          SPRING_DATASOURCE_PASSWORD: demo123
+      - name: Run backend tests
         run: |
-          make backend-db-refresh
+          cd backend
+          ./gradlew test jacocoTestReport
 
-      # 🧰 make コマンドを利用できることを明示的に保証しつつ、バックエンド用の make ターゲットを実行する
-      # 📝 テストは H2 インメモリDBを使用するため、PostgreSQL接続情報の環境変数は設定しない
-      - name: Run backend unit tests with coverage
-        run: |
-          # 🧪 jacocoTestReport タスクはテスト実行とカバレッジ収集の両方を行うので backend-coverage ターゲットを利用する
-          make backend-coverage
-
-      # 📊 Jacoco の XML レポートから行カバレッジ率を抽出し、後続ステップやサマリーで利用できるようにする
-      - name: Extract coverage summary
-        id: coverage
-        run: |
-          coverage_output=$(python3 <<'PY'
-          from decimal import Decimal, ROUND_HALF_UP
-          from pathlib import Path
-          import xml.etree.ElementTree as ET
-
-          report = Path("backend/build/reports/jacoco/test/jacocoTestReport.xml")
-          if not report.is_file():
-              raise SystemExit(f"Jacoco report not found at {report}")
-
-          root = ET.parse(report).getroot()
-          covered = Decimal('0')
-          missed = Decimal('0')
-          for counter in root.iter('counter'):
-              if counter.get('type') == 'LINE':
-                  covered += Decimal(counter.get('covered', '0'))
-                  missed += Decimal(counter.get('missed', '0'))
-
-          total = covered + missed
-          if total == 0:
-              percent = Decimal('0.00')
-          else:
-              percent = (covered / total * 100).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-
-          print(f"covered={covered}")
-          print(f"missed={missed}")
-          print(f"total={total}")
-          print(f"line_rate={percent}")
-          PY
-          )
-
-          while IFS='=' read -r key value; do
-            echo "${key}=${value}" >> "$GITHUB_OUTPUT"
-          done <<< "${coverage_output}"
-
-      # 🧾 Step Summary に PR 番号やブランチ情報と合わせてカバレッジを記録する
-      - name: Publish coverage summary
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          LINE_RATE: ${{ steps.coverage.outputs.line_rate }}
-        run: |
-          if [[ -n "${PR_NUMBER}" ]]; then
-            REF_LABEL="PR #${PR_NUMBER}"
-          else
-            REF_LABEL="${GITHUB_REF}"
-          fi
-
-          cat <<'EOF' >> "$GITHUB_STEP_SUMMARY"
-          ### Backend Jacoco Coverage
-
-          EOF
-          {
-            echo "- Reference: ${REF_LABEL}"
-            echo "- Line coverage: ${LINE_RATE}%"
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      # 💾 HTML レポート一式をアーティファクトとして保存し、後段の GitHub Pages デプロイや手動確認に備える
-      - name: Upload coverage report artifact
+      - name: Upload backend coverage report
         uses: actions/upload-artifact@v4
         with:
           name: backend-jacoco-report
-          path: backend/build/reports/jacoco/test
-          if-no-files-found: error
+          path: backend/build/reports/jacoco/test/
           retention-days: 7
-
-  # 🚀 統合カバレッジデプロイワークフローを呼び出し
-  deploy-coverage:
-    needs: backend-ut
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/deploy-coverage.yml
-    permissions:
-      pages: write
-      id-token: write
-

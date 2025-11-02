@@ -1,8 +1,8 @@
-# 🚀 このワークフローはネイティブアプリのユニットテスト（Jest）を自動実行して品質を保つための設定です
-name: Native UT
+name: Native Unit Tests
 
 on:
-  # 🔁 main ブランチへの push と Pull Request を監視し、ネイティブコードの変更をカバーする
+  workflow_call:
+  workflow_dispatch:
   push:
     branches: ["main"]
     paths:
@@ -11,27 +11,19 @@ on:
     branches: ["main"]
     paths:
       - "frontend_native/**"
-  # 🖱️ GitHub UI から手動実行できるようにする
-  workflow_dispatch:
 
 jobs:
-  native-ut:
-    # 🧪 ジョブ名は「Run native unit tests via pnpm」を採用し、実行内容を明確にする
-    name: Run native unit tests via pnpm
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      # ✅ リポジトリ全体をチェックアウトして後続のステップで利用できるようにする
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 📦 プロジェクトで採用している pnpm をセットアップし、バージョン差異を避ける
       - name: Set up pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 9.15.4
 
-      # 🟢 Node.js LTS (22.x) 環境を用意し、pnpm の依存キャッシュを活用してインストールを高速化する
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -39,69 +31,19 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: frontend_native/pnpm-lock.yaml
 
-      # 🧪 Jest を CI モードで実行し、フロントエンドネイティブのユニットテストを実施する
-      - name: Run native unit tests (Jest)
-        run: |
-          make native-ut
-
-      # 📊 Jest のカバレッジレポートから行カバレッジ率を抽出し、後続ステップやサマリーで利用できるようにする
-      - name: Extract coverage summary
-        id: coverage
+      - name: Install dependencies
         run: |
           cd frontend_native
-          coverage_output=$(node -e "
-          const fs = require('fs');
-          const report = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
-          const total = report.total;
-          const lineRate = total.lines.pct.toFixed(2);
-          const covered = total.lines.covered;
-          const missed = total.lines.total - total.lines.covered;
-          const totalLines = total.lines.total;
-          console.log(\`covered=\${covered}\`);
-          console.log(\`missed=\${missed}\`);
-          console.log(\`total=\${totalLines}\`);
-          console.log(\`line_rate=\${lineRate}\`);
-          ")
+          pnpm install --frozen-lockfile
 
-          while IFS='=' read -r key value; do
-            echo "${key}=${value}" >> "$GITHUB_OUTPUT"
-          done <<< "${coverage_output}"
-
-      # 🧾 Step Summary に PR 番号やブランチ情報と合わせてカバレッジを記録する
-      - name: Publish coverage summary
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          LINE_RATE: ${{ steps.coverage.outputs.line_rate }}
+      - name: Run native tests
         run: |
-          if [[ -n "${PR_NUMBER}" ]]; then
-            REF_LABEL="PR #${PR_NUMBER}"
-          else
-            REF_LABEL="${GITHUB_REF}"
-          fi
+          cd frontend_native
+          pnpm test -- --ci --coverage
 
-          cat <<'EOF' >> "$GITHUB_STEP_SUMMARY"
-          ### Native Jest Coverage
-
-          EOF
-          {
-            echo "- Reference: ${REF_LABEL}"
-            echo "- Line coverage: ${LINE_RATE}%"
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      # 💾 カバレッジレポート一式をアーティファクトとして保存し、後段の確認に備える
-      - name: Upload coverage report artifact
+      - name: Upload native coverage report
         uses: actions/upload-artifact@v4
         with:
           name: native-coverage-report
-          path: frontend_native/coverage
-          if-no-files-found: error
+          path: frontend_native/coverage/
           retention-days: 7
-
-  # 🚀 統合カバレッジデプロイワークフローを呼び出し
-  deploy-coverage:
-    needs: native-ut
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/deploy-coverage.yml
-    permissions:
-      pages: write
-      id-token: write

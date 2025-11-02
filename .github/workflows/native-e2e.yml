@@ -2,19 +2,18 @@
 name: Native E2E
 
 on:
-  workflow_run:
-    workflows: ["Native UT"]
-    types:
-      - completed
-    branches: [main]
+  workflow_call:
+    secrets:
+      EXPO_TOKEN:
+        required: true
+      MAESTRO_CLOUD_API_KEY:
+        required: true
   workflow_dispatch:
 
 jobs:
   e2e:
     name: Build APK and run E2E tests
     runs-on: ubuntu-latest
-    # native-ut が成功した場合のみ実行
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
     steps:
       # ✅ リポジトリ全体をチェックアウト

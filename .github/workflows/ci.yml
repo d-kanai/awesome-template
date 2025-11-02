@@ -1,0 +1,39 @@
+name: CI/CD
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  backend-ut:
+    uses: ./.github/workflows/backend-ut.yml
+
+  native-ut:
+    uses: ./.github/workflows/native-ut.yml
+
+  deploy-coverage:
+    needs: [backend-ut, native-ut]
+    if: always() && (needs.backend-ut.result == 'success' || needs.native-ut.result == 'success')
+    uses: ./.github/workflows/deploy-coverage.yml
+    permissions:
+      pages: write
+      id-token: write
+
+  native-e2e:
+    needs: [native-ut]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.native-ut.result == 'success'
+    uses: ./.github/workflows/native-e2e.yml
+    secrets:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      MAESTRO_CLOUD_API_KEY: ${{ secrets.MAESTRO_CLOUD_API_KEY }}
+
+  backend-deploy:
+    needs: [backend-ut]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.backend-ut.result == 'success'
+    uses: ./.github/workflows/backend-deploy.yml
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
