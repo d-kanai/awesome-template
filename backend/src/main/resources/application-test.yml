@@ -5,7 +5,11 @@ spring:
     username: sa
     password:
   flyway:
-    enabled: false
+    enabled: true
+    locations: classpath:db/migration
+    placeholders:
+      create_pgcrypto_extension: ''
+      users_id_uuid_clause: ''
   jooq:
     sql-dialect: H2
 
@@ -15,7 +19,6 @@ server:
 
 logging:
   level:
-    root: INFO
-    org.springframework.boot: INFO
-    org.springframework.boot.web.embedded.tomcat: INFO
+    root: WARN
+    org.flywaydb.core: WARN
     com.example.demo: INFO
