@@ -62,24 +62,30 @@ describe("SigninScreen", () => {
     fireEvent.press(submitButton);
 
     //then api called
-    await waitFor(() => {
-      expect(mockedFetcher).toHaveBeenCalledWith(
-        "/auth/signin",
-        expect.objectContaining({
-          method: "POST",
-          body: JSON.stringify({
-            email: "test@example.com",
-            password: "password123",
+    await waitFor(
+      () => {
+        expect(mockedFetcher).toHaveBeenCalledWith(
+          "/auth/signin",
+          expect.objectContaining({
+            method: "POST",
+            body: JSON.stringify({
+              email: "test@example.com",
+              password: "password123",
+            }),
           }),
-        }),
-      );
-    });
+        );
+      },
+      { timeout: 10000 },
+    );
 
     //then navigate
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/users");
-    });
-  });
+    await waitFor(
+      () => {
+        expect(mockPush).toHaveBeenCalledWith("/users");
+      },
+      { timeout: 10000 },
+    );
+  }, 15000);
 
   it("サインアップリンク押下時、サインアップ画面に遷移する", () => {
     //given

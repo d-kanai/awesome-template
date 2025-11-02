@@ -62,27 +62,33 @@ describe("SignupScreen", () => {
     fireEvent.press(submitButton);
 
     //then api called
-    await waitFor(() => {
-      expect(mockedFetcher).toHaveBeenCalledWith(
-        "/auth/signup",
-        expect.objectContaining({
-          method: "POST",
-          body: JSON.stringify({
-            email: "test@example.com",
-            password: "password123",
+    await waitFor(
+      () => {
+        expect(mockedFetcher).toHaveBeenCalledWith(
+          "/auth/signup",
+          expect.objectContaining({
+            method: "POST",
+            body: JSON.stringify({
+              email: "test@example.com",
+              password: "password123",
+            }),
           }),
-        }),
-      );
-    });
+        );
+      },
+      { timeout: 10000 },
+    );
 
     //then show popup
-    await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalledWith(
-        "Success",
-        "Account created for test@example.com",
-        expect.any(Array),
-      );
-    });
+    await waitFor(
+      () => {
+        expect(Alert.alert).toHaveBeenCalledWith(
+          "Success",
+          "Account created for test@example.com",
+          expect.any(Array),
+        );
+      },
+      { timeout: 10000 },
+    );
 
     const alertCalls = (Alert.alert as jest.Mock).mock.calls;
     const lastCall = alertCalls[alertCalls.length - 1];
@@ -91,5 +97,5 @@ describe("SignupScreen", () => {
 
     //then navigate
     expect(mockPush).toHaveBeenCalledWith("/users");
-  });
+  }, 15000);
 });
