@@ -11,6 +11,7 @@ module.exports = {
     "<rootDir>/features/**/*.{js,jsx,ts,tsx}",
     "!**/__tests__/**",
     "!**/?(*.)+(spec|test).[tj]s?(x)",
+    "!<rootDir>/features/shared/api/generated/**",
   ],
   coverageDirectory: "<rootDir>/coverage",
   coverageReporters: ["text", "lcov", "cobertura"],
