@@ -7,7 +7,6 @@ import { fetcher } from "@/features/shared/api/fetcher";
 import type { signinResponse } from "@/features/shared/api/generated";
 import {
   cleanupMocks,
-  cleanupQueryClient,
   createQueryClient,
   renderWithClient,
   setupRouterMock,

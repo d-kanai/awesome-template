@@ -4,7 +4,6 @@ import { fetcher } from "@/features/shared/api/fetcher";
 import type { getAllUsersResponse } from "@/features/shared/api/generated";
 import {
   cleanupMocks,
-  cleanupQueryClient,
   createQueryClient,
   renderWithClient,
 } from "@/features/shared/test/testsupport";
