@@ -1,0 +1,114 @@
+# 🧪 このワークフローは React Native アプリのE2Eテストを実行します
+name: Native E2E
+
+on:
+  workflow_run:
+    workflows: ["Native UT"]
+    types:
+      - completed
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    name: Build APK and run E2E tests
+    runs-on: ubuntu-latest
+    # native-ut が成功した場合のみ実行
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      # ✅ リポジトリ全体をチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 📦 Node.js セットアップ
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # 🔧 pnpm セットアップ
+      - name: Setup pnpm
+        run: corepack enable
+
+      # 📥 依存関係をインストール
+      - name: Install dependencies
+        run: |
+          cd frontend_native
+          pnpm install --frozen-lockfile
+
+      # 🏗️ EAS Build (APK)
+      - name: Build Android APK with EAS
+        run: |
+          cd frontend_native
+          npx eas-cli build --platform android --profile preview --non-interactive --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        id: eas-build
+
+      # ⏳ ビルド完了を待機
+      - name: Wait for EAS build to complete
+        run: |
+          cd frontend_native
+          BUILD_ID=$(npx eas-cli build:list --platform android --limit 1 --json | jq -r '.[0].id')
+          echo "Build ID: $BUILD_ID"
+
+          # ビルドが完了するまで待機（最大30分）
+          for i in {1..60}; do
+            STATUS=$(npx eas-cli build:view $BUILD_ID --json | jq -r '.status')
+            echo "Build status: $STATUS"
+
+            if [ "$STATUS" = "FINISHED" ]; then
+              echo "Build completed successfully"
+              APK_URL=$(npx eas-cli build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
+              echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
+              break
+            elif [ "$STATUS" = "ERRORED" ] || [ "$STATUS" = "CANCELED" ]; then
+              echo "Build failed with status: $STATUS"
+              exit 1
+            fi
+
+            sleep 30
+          done
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        id: wait-build
+
+      # 📥 APK をダウンロード
+      - name: Download APK
+        run: |
+          curl -L -o app.apk "${{ steps.wait-build.outputs.apk_url }}"
+          ls -lh app.apk
+
+      # 💾 APK を Artifact として保存
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk-${{ github.sha }}
+          path: app.apk
+          retention-days: 30
+
+      # 🧪 Maestro Cloud でE2Eテスト実行
+      - name: Run E2E tests on Maestro Cloud
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          export PATH="$PATH:$HOME/.maestro/bin"
+
+          cd frontend_native
+          maestro cloud \
+            --apiKey ${{ secrets.MAESTRO_CLOUD_API_KEY }} \
+            ../app.apk \
+            e2e/features/auth/signup.yaml
+
+      # 📄 デプロイ結果を Step Summary に表示
+      - name: Publish E2E summary
+        if: always()
+        run: |
+          cat <<EOF >> "$GITHUB_STEP_SUMMARY"
+          ### 🧪 Native E2E Test Results
+
+          - **APK**: \`android-apk-${{ github.sha }}\`
+          - **Download URL**: ${{ steps.wait-build.outputs.apk_url }}
+          - **Backend URL**: http://13.230.158.70:8080
+          - **Tested at**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          EOF
