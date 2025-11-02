@@ -31,7 +31,7 @@ jobs:
       - name: Run backend tests
         run: |
           cd backend
-          ./gradlew test jacocoTestReport --no-daemon
+          ./gradlew test jacocoTestReport --no-daemon -x flywayMigrate -x generateJooq
         env:
           SPRING_PROFILES_ACTIVE: test
 
