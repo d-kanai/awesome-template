@@ -5,6 +5,8 @@ import com.example.demo.modules.test.application.command.ResetDatabaseCommand;
 import com.example.demo.modules.test.application.command.SetupDataCommand;
 import com.example.demo.modules.test.presentation.dto.SetupDataRequest;
 import com.example.demo.modules.test.presentation.dto.TestTokenResponse;
+import com.example.demo.modules.user.domain.valueobject.UserEmail;
+import com.example.demo.modules.user.domain.valueobject.UserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -66,7 +68,9 @@ public class SupportE2ETestController {
   public ResponseEntity<TestTokenResponse> generateDummyToken() {
     logger.info("Test token generation requested");
     // E2E テスト用の固定ユーザー情報でトークンを生成
-    final String token = jwtTokenProvider.generateToken(E2E_TEST_USER_ID, E2E_TEST_EMAIL);
+    final UserId userId = UserId.fromString(E2E_TEST_USER_ID);
+    final UserEmail userEmail = UserEmail.of(E2E_TEST_EMAIL);
+    final String token = jwtTokenProvider.generateToken(userId, userEmail);
     logger.info("Test token generated successfully");
     return ResponseEntity.ok(new TestTokenResponse(token));
   }

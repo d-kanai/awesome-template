@@ -5,6 +5,7 @@ import com.example.demo.modules.auth.presentation.output.SigninOutput;
 import com.example.demo.modules.shared.jwt.JwtTokenProvider;
 import com.example.demo.modules.user.domain.model.User;
 import com.example.demo.modules.user.domain.repository.UserRepository;
+import com.example.demo.modules.user.domain.valueobject.UserEmail;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,7 @@ public class SigninCommand {
     }
 
     final String token =
-        jwtTokenProvider.generateToken(user.getId().getValue().toString(), user.getEmail());
+        jwtTokenProvider.generateToken(user.getId(), UserEmail.of(user.getEmail()));
 
     return SigninOutput.from(user, token);
   }
