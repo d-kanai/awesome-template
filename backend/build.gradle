@@ -126,8 +126,7 @@ tasks.named('test') {
     jacoco {
         excludes = [
             'com/example/demo/infrastructure/jooq/**',
-            'com/example/demo/DemoApplication*',
-            'com/example/demo/modules/health/**'
+            'com/example/demo/DemoApplication*'
         ]
     }
 }
@@ -230,8 +229,7 @@ tasks.named('jacocoTestReport') {
         files(classDirectories.files.collect { dir ->
             fileTree(dir: dir, exclude: [
                 'com/example/demo/infrastructure/jooq/**',
-                'com/example/demo/DemoApplication*',
-                'com/example/demo/modules/health/**'
+                'com/example/demo/DemoApplication*'
             ])
         })
     )

@@ -41,8 +41,6 @@ public class SecurityConfig {
                     // Public endpoints
                     .requestMatchers("/auth/**")
                     .permitAll()
-                    .requestMatchers("/health")
-                    .permitAll()
                     .requestMatchers("/actuator/health/**")
                     .permitAll()
                     .requestMatchers("/e2e/**")
