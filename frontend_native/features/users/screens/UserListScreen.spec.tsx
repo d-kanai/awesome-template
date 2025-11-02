@@ -1,9 +1,13 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react-native";
-import type { ReactNode } from "react";
+import { screen, waitFor } from "@testing-library/react-native";
 
 import { fetcher } from "@/features/shared/api/fetcher";
 import type { getAllUsersResponse } from "@/features/shared/api/generated";
+import {
+  cleanupMocks,
+  cleanupQueryClient,
+  createQueryClient,
+  renderWithClient,
+} from "@/features/shared/test/testsupport";
 import { UserListScreen } from "@/features/users/screens/UserListScreen";
 
 jest.mock("@/features/shared/api/fetcher", () => ({
@@ -12,26 +16,9 @@ jest.mock("@/features/shared/api/fetcher", () => ({
 
 const mockedFetcher = fetcher as jest.MockedFunction<typeof fetcher>;
 
-function createQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-      },
-    },
-  });
-}
-
-function renderWithClient(ui: ReactNode, client: QueryClient) {
-  return render(
-    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
-  );
-}
-
 describe("UserListScreen", () => {
   afterEach(() => {
-    mockedFetcher.mockReset();
+    cleanupMocks(mockedFetcher);
   });
 
   it("ユーザー一覧 API のデータを表示する", async () => {
@@ -62,7 +49,6 @@ describe("UserListScreen", () => {
       expect(screen.getByText("taro@example.com")).toBeTruthy();
     });
 
-    client.clear();
-    client.getQueryCache().clear();
+    cleanupQueryClient(client);
   });
 });

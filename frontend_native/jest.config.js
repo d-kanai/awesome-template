@@ -19,4 +19,5 @@ module.exports = {
     "^@/(.*)$": "<rootDir>/$1",
   },
   transformIgnorePatterns: [],
+  forceExit: true,
 };

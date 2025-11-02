@@ -1,17 +1,17 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from "@testing-library/react-native";
+import { fireEvent, screen, waitFor } from "@testing-library/react-native";
 import { useRouter } from "expo-router";
-import type { ReactNode } from "react";
 import { Alert } from "react-native";
 
 import { SignupScreen } from "@/features/auth/screens/SignupScreen";
 import { fetcher } from "@/features/shared/api/fetcher";
 import type { signupResponse } from "@/features/shared/api/generated";
+import {
+  cleanupMocks,
+  cleanupQueryClient,
+  createQueryClient,
+  renderWithClient,
+  setupRouterMock,
+} from "@/features/shared/test/testsupport";
 
 jest.mock("expo-router", () => ({
   useRouter: jest.fn(),
@@ -26,39 +26,15 @@ jest.spyOn(Alert, "alert");
 const mockedFetcher = fetcher as jest.MockedFunction<typeof fetcher>;
 const mockedUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
 
-function createQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-}
-
-function renderWithClient(ui: ReactNode, client: QueryClient) {
-  return render(
-    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
-  );
-}
-
 describe("SignupScreen", () => {
   const mockPush = jest.fn();
 
   beforeEach(() => {
-    mockedUseRouter.mockReturnValue({
-      push: mockPush,
-    } as unknown as ReturnType<typeof useRouter>);
+    setupRouterMock(mockedUseRouter, mockPush);
   });
 
   afterEach(() => {
-    mockedFetcher.mockReset();
-    mockPush.mockReset();
-    jest.clearAllMocks();
+    cleanupMocks(mockedFetcher, mockPush);
   });
 
   it("フォーム送信時、正しいパラメータでサインアップAPIを呼び出し、成功後にホーム画面に遷移する", async () => {
@@ -119,7 +95,6 @@ describe("SignupScreen", () => {
     //then navigate
     expect(mockPush).toHaveBeenCalledWith("/");
 
-    client.clear();
-    client.getQueryCache().clear();
+    cleanupQueryClient(client);
   });
 });
