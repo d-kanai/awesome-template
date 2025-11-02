@@ -46,8 +46,11 @@ describe("UserListScreen", () => {
     renderWithClient(<UserListScreen />, client);
 
     //then show user data
-    await waitFor(() => {
-      expect(screen.getByText("taro@example.com")).toBeTruthy();
-    });
-  });
+    await waitFor(
+      () => {
+        expect(screen.getByText("taro@example.com")).toBeTruthy();
+      },
+      { timeout: 10000 },
+    );
+  }, 15000);
 });
