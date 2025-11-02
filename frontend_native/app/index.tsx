@@ -39,20 +39,6 @@ export default function Index() {
               Sign Up
             </Text>
           </Pressable>
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.button,
-              styles.tertiaryButton,
-              pressed ? styles.buttonPressed : null,
-            ]}
-            testID="home-browse-users-button"
-            onPress={() => router.push("/users")}
-          >
-            <Text style={[styles.buttonText, styles.tertiaryButtonText]}>
-              Browse Users
-            </Text>
-          </Pressable>
         </View>
       </View>
     </SafeAreaView>
@@ -99,11 +85,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#0077cc",
   },
-  tertiaryButton: {
-    backgroundColor: "#f5f5f5",
-    borderWidth: 1,
-    borderColor: "#ccc",
-  },
   buttonPressed: {
     opacity: 0.85,
   },
@@ -114,8 +95,5 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: "#0077cc",
-  },
-  tertiaryButtonText: {
-    color: "#333",
   },
 });
