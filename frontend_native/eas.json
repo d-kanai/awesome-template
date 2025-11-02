@@ -4,9 +4,10 @@
   },
   "build": {
     "preview": {
+      "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "developmentClient": true,
+        "gradleCommand": ":app:assembleRelease",
         "env": {
           "EXPO_PUBLIC_BACKEND_URL": "http://13.230.158.70:8080"
         }
