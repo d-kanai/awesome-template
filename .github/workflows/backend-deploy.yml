@@ -1,0 +1,94 @@
+# 🚀 このワークフローはバックエンドを AWS App Runner にデプロイします
+name: Deploy Backend to App Runner
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'infra/**'
+      - '.github/workflows/backend-deploy.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build and deploy backend
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # OIDC 認証用
+      contents: read
+
+    steps:
+      # ✅ リポジトリ全体をチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ☕️ Java 21 セットアップ（Gradle ビルド用）
+      - name: Set up Temurin JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      # 🔐 AWS 認証（OIDC）
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # 📦 ECR ログイン
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # 🐳 Docker イメージビルド＆プッシュ
+      - name: Build and push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: awesome-template-backend
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          cd backend
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
+        id: build-image
+
+      # 🟢 Node.js セットアップ（CDK 用）
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: infra/package-lock.json
+
+      # 📥 CDK 依存パッケージインストール
+      - name: Install CDK dependencies
+        run: |
+          cd infra
+          npm ci
+
+      # 🚀 CDK デプロイ
+      - name: Deploy with CDK
+        run: |
+          cd infra
+          npx cdk deploy --require-approval never --outputs-file outputs.json
+
+      # 📄 デプロイ結果を Step Summary に表示
+      - name: Publish deployment summary
+        run: |
+          cd infra
+          if [ -f outputs.json ]; then
+            BACKEND_URL=$(cat outputs.json | jq -r '.AwesomeTemplateBackendStack.BackendUrl // "N/A"')
+            cat <<EOF >> "$GITHUB_STEP_SUMMARY"
+          ### 🚀 Backend Deployment Successful
+
+          - **Backend URL**: ${BACKEND_URL}
+          - **Image Tag**: \`${{ github.sha }}\`
+          - **Deployed at**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          EOF
+          fi
