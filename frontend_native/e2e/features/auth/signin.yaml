@@ -7,18 +7,16 @@ onFlowStart:
       env:
         TABLE_NAME: user
 ---
-# Given: ユーザーレコードを作成
+# Given: テストユーザーを事前登録してアプリを起動
 - clearKeychain
 - launchApp:
     clearState: true
-
-# Wait for signin screen to load
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
       VISIBLE_TEXT: "Sign In"
 
-# When: サインイン
+# When: 登録済みユーザーでサインイン
 - tapOn:
     id: signin-email
 - inputText:
@@ -32,7 +30,7 @@ onFlowStart:
 - tapOn:
     id: signin-submit
 
-# Then: ユーザー一覧画面を表示
+# Then: ユーザー一覧画面に遷移し、サインインしたユーザーが表示される
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:

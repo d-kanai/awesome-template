@@ -7,16 +7,18 @@ onFlowStart:
       env:
         TABLE_NAME: user
 ---
-# Given: ユーザーレコードを作成
+# Given: テストユーザーを事前登録してアプリを起動
 - launchApp:
     clearState: true
 - openLink: con.example.awesome://users
-# When: ユーザー一覧を表示
+
+# When: ユーザー一覧画面を表示
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
       VISIBLE_TEXT: "ユーザー一覧"
-# Then: ユーザーが表示される
+
+# Then: 登録済みユーザーが一覧に表示される
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:

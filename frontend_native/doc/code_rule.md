@@ -1,4 +1,6 @@
 [重要]nativeのコーディングは以下を遵守すること
-spec
+ut spec
 - specケース名は日本語でテストの意図が明確な名前にすること
-- given when thenのコメントを挿入してフェーズを見やすくすること
+- given when thenのコメントを日本語挿入してフェーズを見やすくすること
+e2e spec
+- given when thenのコメントを日本語挿入してフェーズを見やすくすること
