@@ -132,9 +132,9 @@ jobs:
           fi
 
           cat <<'EOF' >> "$GITHUB_STEP_SUMMARY"
-### Backend Jacoco Coverage
+          ### Backend Jacoco Coverage
 
-EOF
+          EOF
           {
             echo "- Reference: ${REF_LABEL}"
             echo "- Line coverage: ${LINE_RATE}%"
