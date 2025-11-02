@@ -76,7 +76,8 @@ class AuthControllerIntegrationTest {
     response
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(user.getId().getValue().toString()))
-        .andExpect(jsonPath("$.email").value(email));
+        .andExpect(jsonPath("$.email").value(email))
+        .andExpect(jsonPath("$.accessToken").isNotEmpty());
   }
 
   @Test

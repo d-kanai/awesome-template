@@ -1,7 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
-import * as apprunner from 'aws-cdk-lib/aws-apprunner';
-import * as iam from 'aws-cdk-lib/aws-iam';
+import * as logs from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 
 export class BackendStack extends cdk.Stack {
@@ -11,67 +12,106 @@ export class BackendStack extends cdk.Stack {
     // ECR リポジトリの作成
     const repository = new ecr.Repository(this, 'BackendRepository', {
       repositoryName: 'awesome-template-backend',
-      removalPolicy: cdk.RemovalPolicy.DESTROY, // 開発環境用：スタック削除時にリポジトリも削除
-      emptyOnDelete: true, // リポジトリ削除時にイメージも削除
-      imageScanOnPush: true, // イメージプッシュ時に脆弱性スキャン
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      emptyOnDelete: true,
+      imageScanOnPush: true,
     });
 
-    // App Runner 用の IAM ロール（ECR からイメージを pull するため）
-    const accessRole = new iam.Role(this, 'AppRunnerAccessRole', {
-      assumedBy: new iam.ServicePrincipal('build.apprunner.amazonaws.com'),
-      managedPolicies: [
-        iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSAppRunnerServicePolicyForECRAccess'),
+    // VPC作成（パブリックサブネットのみ）
+    const vpc = new ec2.Vpc(this, 'BackendVpc', {
+      maxAzs: 2,
+      natGateways: 0, // コスト削減のためNAT Gatewayなし
+      subnetConfiguration: [
+        {
+          cidrMask: 24,
+          name: 'Public',
+          subnetType: ec2.SubnetType.PUBLIC,
+        },
       ],
     });
 
-    // App Runner サービスの作成
-    const service = new apprunner.CfnService(this, 'BackendService', {
-      serviceName: 'awesome-template-backend-test',
-      sourceConfiguration: {
-        authenticationConfiguration: {
-          accessRoleArn: accessRole.roleArn,
-        },
-        autoDeploymentsEnabled: true, // ECR への新しいイメージプッシュで自動デプロイ
-        imageRepository: {
-          imageIdentifier: `${repository.repositoryUri}:latest`,
-          imageRepositoryType: 'ECR',
-          imageConfiguration: {
-            port: '8080',
-            startCommand: 'java -Djava.security.egd=file:/dev/./urandom -Dserver.port=8080 -jar app.jar',
-            runtimeEnvironmentVariables: [
-              {
-                name: 'SPRING_PROFILES_ACTIVE',
-                value: 'test',
-              },
-            ],
-          },
-        },
-      },
-      instanceConfiguration: {
-        cpu: '1 vCPU',
-        memory: '2 GB',
-      },
-      healthCheckConfiguration: {
-        protocol: 'HTTP',
-        path: '/actuator/health',
-        interval: 10,
-        timeout: 5,
-        healthyThreshold: 1,
-        unhealthyThreshold: 3,
-      },
+    // ECS クラスター
+    const cluster = new ecs.Cluster(this, 'BackendCluster', {
+      vpc,
+      clusterName: 'awesome-template-backend-cluster',
     });
 
-    // Outputs: 後で GitHub Actions や Maestro から使う URL
-    new cdk.CfnOutput(this, 'BackendUrl', {
-      value: `https://${service.attrServiceUrl}`,
-      description: 'App Runner service URL for backend',
-      exportName: 'BackendTestUrl',
+    // CloudWatch Logs
+    const logGroup = new logs.LogGroup(this, 'BackendLogGroup', {
+      logGroupName: '/ecs/awesome-template-backend',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      retention: logs.RetentionDays.ONE_WEEK,
+    });
+
+    // Fargate タスク定義
+    const taskDefinition = new ecs.FargateTaskDefinition(this, 'BackendTaskDef', {
+      memoryLimitMiB: 2048,
+      cpu: 1024,
+    });
+
+    // コンテナ定義
+    const container = taskDefinition.addContainer('BackendContainer', {
+      image: ecs.ContainerImage.fromEcrRepository(repository, 'latest'),
+      environment: {
+        SPRING_PROFILES_ACTIVE: 'test',
+      },
+      logging: ecs.LogDrivers.awsLogs({
+        streamPrefix: 'backend',
+        logGroup,
+      }),
+    });
+
+    container.addPortMappings({
+      containerPort: 8080,
+      protocol: ecs.Protocol.TCP,
+    });
+
+    // セキュリティグループ（ポート8080を公開）
+    const serviceSecurityGroup = new ec2.SecurityGroup(this, 'BackendServiceSecurityGroup', {
+      vpc,
+      description: 'Security group for backend ECS service',
+      allowAllOutbound: true,
+    });
+
+    serviceSecurityGroup.addIngressRule(
+      ec2.Peer.anyIpv4(),
+      ec2.Port.tcp(8080),
+      'Allow HTTP traffic on port 8080'
+    );
+
+    // Fargate サービス（ALBなし、パブリックIPで直接アクセス）
+    const fargateService = new ecs.FargateService(this, 'BackendService', {
+      cluster,
+      taskDefinition,
+      desiredCount: 1,
+      assignPublicIp: true,
+      serviceName: 'awesome-template-backend-service',
+      securityGroups: [serviceSecurityGroup],
+    });
+
+    // Outputs
+    new cdk.CfnOutput(this, 'ServiceName', {
+      value: fargateService.serviceName,
+      description: 'ECS Service name (use AWS CLI to get task public IP)',
+      exportName: 'BackendServiceName',
+    });
+
+    new cdk.CfnOutput(this, 'ClusterName', {
+      value: cluster.clusterName,
+      description: 'ECS Cluster name',
+      exportName: 'BackendClusterName',
     });
 
     new cdk.CfnOutput(this, 'RepositoryUri', {
       value: repository.repositoryUri,
       description: 'ECR repository URI',
       exportName: 'BackendRepositoryUri',
+    });
+
+    new cdk.CfnOutput(this, 'LogGroupName', {
+      value: logGroup.logGroupName,
+      description: 'CloudWatch Log Group name',
+      exportName: 'BackendLogGroupName',
     });
   }
 }

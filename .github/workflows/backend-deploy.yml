@@ -1,5 +1,5 @@
-# 🚀 このワークフローはバックエンドを AWS App Runner にデプロイします
-name: Deploy Backend to App Runner
+# 🚀 このワークフローはバックエンドを AWS ECS Fargate にデプロイします
+name: Deploy Backend to ECS Fargate
 
 on:
   workflow_run:
@@ -45,7 +45,6 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       # 🐳 Docker イメージビルド＆プッシュ
-      # App Runner の autoDeploymentsEnabled により、latest タグのプッシュで自動的に再デプロイされる
       - name: Build and push Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -60,17 +59,62 @@ jobs:
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
         id: build-image
 
+      # 🔄 ECS サービスを強制的に新しいデプロイメントで更新
+      - name: Force ECS service deployment
+        run: |
+          aws ecs update-service \
+            --cluster awesome-template-backend-cluster \
+            --service awesome-template-backend-service \
+            --force-new-deployment \
+            --region ${{ secrets.AWS_REGION }}
+
+      # ⏳ デプロイメントが安定するまで待機
+      - name: Wait for service stability
+        run: |
+          aws ecs wait services-stable \
+            --cluster awesome-template-backend-cluster \
+            --services awesome-template-backend-service \
+            --region ${{ secrets.AWS_REGION }}
+
+      # 📝 タスクのパブリックIPを取得
+      - name: Get task public IP
+        id: get-ip
+        run: |
+          TASK_ARN=$(aws ecs list-tasks \
+            --cluster awesome-template-backend-cluster \
+            --service-name awesome-template-backend-service \
+            --region ${{ secrets.AWS_REGION }} \
+            --query 'taskArns[0]' \
+            --output text)
+
+          ENI_ID=$(aws ecs describe-tasks \
+            --cluster awesome-template-backend-cluster \
+            --tasks $TASK_ARN \
+            --region ${{ secrets.AWS_REGION }} \
+            --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' \
+            --output text)
+
+          PUBLIC_IP=$(aws ec2 describe-network-interfaces \
+            --network-interface-ids $ENI_ID \
+            --region ${{ secrets.AWS_REGION }} \
+            --query 'NetworkInterfaces[0].Association.PublicIp' \
+            --output text)
+
+          echo "public_ip=$PUBLIC_IP" >> $GITHUB_OUTPUT
+
       # 📄 デプロイ結果を Step Summary に表示
       - name: Publish deployment summary
         env:
           IMAGE_TAG: ${{ github.sha }}
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: awesome-template-backend
+          PUBLIC_IP: ${{ steps.get-ip.outputs.public_ip }}
         run: |
           cat <<EOF >> "$GITHUB_STEP_SUMMARY"
           ### 🚀 Backend Deployment Successful
 
           - **Image**: \`${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}\`
-          - **App Runner**: Auto-deployment triggered by ECR image push
+          - **Backend URL**: http://${PUBLIC_IP}:8080
+          - **Health Check**: http://${PUBLIC_IP}:8080/actuator/health
           - **Deployed at**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
           EOF

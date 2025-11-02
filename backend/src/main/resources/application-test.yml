@@ -17,6 +17,10 @@ server:
   port: 8080
   address: 0.0.0.0
 
+jwt:
+  secret: test-secret-key-that-is-at-least-256-bits-long-for-hs256
+  expiration-hours: 24
+
 logging:
   level:
     root: WARN

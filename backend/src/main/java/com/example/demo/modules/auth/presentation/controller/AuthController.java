@@ -73,8 +73,8 @@ public class AuthController {
   @PostMapping(value = "/signin", consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<SigninOutput> signin(@Valid @RequestBody final SigninInput input) {
     try {
-      final User user = signinCommand.execute(input);
-      return ResponseEntity.ok(SigninOutput.from(user));
+      final SigninOutput output = signinCommand.execute(input);
+      return ResponseEntity.ok(output);
     } catch (final IllegalArgumentException e) {
       return ResponseEntity.badRequest().build();
     }
