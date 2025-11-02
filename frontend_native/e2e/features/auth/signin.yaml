@@ -12,19 +12,13 @@ onFlowStart:
 - launchApp:
     clearState: true
 
-# Wait for welcome screen to load
+# Wait for signin screen to load
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
-      VISIBLE_TEXT: "Welcome"
+      VISIBLE_TEXT: "Sign In"
 
 # When: サインイン
-- tapOn:
-    id: home-signin-button
-- runFlow:
-    file: ../../flows/wait_visible.yaml
-    env:
-      VISIBLE_TEXT: "サインイン"
 - tapOn:
     id: signin-email
 - inputText:

@@ -35,7 +35,7 @@ describe("SignupScreen", () => {
     client = createQueryClient();
   });
 
-  it("フォーム送信時、正しいパラメータでサインアップAPIを呼び出し、成功後にホーム画面に遷移する", async () => {
+  it("フォーム送信時、正しいパラメータでサインアップAPIを呼び出し、成功後にユーザー一覧画面に遷移する", async () => {
     //given API mock
     const apiResponse: signupResponse = {
       data: {
@@ -90,6 +90,6 @@ describe("SignupScreen", () => {
     okButton.onPress();
 
     //then navigate
-    expect(mockPush).toHaveBeenCalledWith("/");
+    expect(mockPush).toHaveBeenCalledWith("/users");
   });
 });

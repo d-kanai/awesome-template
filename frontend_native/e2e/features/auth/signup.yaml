@@ -9,13 +9,13 @@ onFlowStart:
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
-      VISIBLE_TEXT: "Welcome"
+      VISIBLE_TEXT: "Sign In"
 - tapOn:
-    id: home-signup-button
+    id: signin-signup-link
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
-      VISIBLE_TEXT: "サインアップ"
+      VISIBLE_TEXT: "Sign Up"
 - tapOn:
     id: signup-email
 - inputText:
@@ -30,12 +30,12 @@ onFlowStart:
     id: signup-submit
 - tapOn:
     text: "OK"
-# Verify we're back on the Welcome screen
+# Verify we're on the User List screen
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
-      VISIBLE_TEXT: "Welcome"
+      VISIBLE_TEXT: "ユーザー一覧"
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
-      VISIBLE_TEXT: "Choose an option to continue"
+      VISIBLE_TEXT: "maestro@example.com"
