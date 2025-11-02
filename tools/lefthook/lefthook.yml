@@ -18,3 +18,6 @@ pre-commit:
     native-typecheck:
       glob: "frontend_native/**/*.{ts,tsx,js,jsx,json}"
       run: ./tools/lefthook/frontend_typecheck.sh {staged_files}
+    native-remove-deadcode:
+      glob: "frontend_native/**/*.{ts,tsx,js,jsx,json}"
+      run: ./tools/lefthook/frontend_remove_deadcode.sh {staged_files}
