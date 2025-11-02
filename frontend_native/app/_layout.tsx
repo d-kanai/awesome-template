@@ -29,7 +29,7 @@ export default function RootLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen
             name="users/index"
-            options={{ title: "ユーザー一覧" }}
+            options={{ title: "ユーザー一覧", headerBackVisible: false }}
           />
           <Stack.Screen
             name="auth/signup/index"
