@@ -11,6 +11,8 @@ on:
     branches: ["main"]
     paths:
       - "backend/**"
+  # 🖱️ GitHub UI から手動実行できるようにする
+  workflow_dispatch:
 
 jobs:
   backend-ut:

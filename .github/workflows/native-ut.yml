@@ -11,6 +11,8 @@ on:
     branches: ["main"]
     paths:
       - "frontend_native/**"
+  # 🖱️ GitHub UI から手動実行できるようにする
+  workflow_dispatch:
 
 jobs:
   native-ut:
