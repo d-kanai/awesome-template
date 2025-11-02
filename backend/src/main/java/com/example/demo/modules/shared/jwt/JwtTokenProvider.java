@@ -2,6 +2,8 @@ package com.example.demo.modules.shared.jwt;
 
 import com.example.demo.modules.user.domain.valueobject.UserEmail;
 import com.example.demo.modules.user.domain.valueobject.UserId;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
@@ -44,5 +46,44 @@ public class JwtTokenProvider {
         .expiration(claims.expiration())
         .signWith(secretKey)
         .compact();
+  }
+
+  /**
+   * Validates the JWT token.
+   *
+   * @param token The JWT token to validate.
+   * @return true if the token is valid, false otherwise.
+   */
+  public boolean validateToken(final String token) {
+    try {
+      Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
+      return true;
+    } catch (JwtException | IllegalArgumentException e) {
+      return false;
+    }
+  }
+
+  /**
+   * Extracts user ID from JWT token.
+   *
+   * @param token The JWT token.
+   * @return The user ID from the token's subject claim.
+   */
+  public String getUserIdFromToken(final String token) {
+    final Claims claims =
+        Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+    return claims.getSubject();
+  }
+
+  /**
+   * Extracts email from JWT token.
+   *
+   * @param token The JWT token.
+   * @return The email from the token's email claim.
+   */
+  public String getEmailFromToken(final String token) {
+    final Claims claims =
+        Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+    return claims.get("email", String.class);
   }
 }
