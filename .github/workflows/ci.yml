@@ -34,6 +34,9 @@ jobs:
     needs: [backend-ut]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.backend-ut.result == 'success'
     uses: ./.github/workflows/backend-deploy.yml
+    permissions:
+      id-token: write
+      contents: read
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
