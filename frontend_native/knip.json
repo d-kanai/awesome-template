@@ -19,8 +19,10 @@
       ],
       "ignoreDependencies": [
         "@tanstack/react-query-devtools",
+        "expo-updates",
         "start-server-and-test"
-      ]
+      ],
+      "ignoreBinaries": ["maestro"]
     }
   }
 }
