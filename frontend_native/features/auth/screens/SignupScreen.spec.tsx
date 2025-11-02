@@ -18,6 +18,10 @@ jest.mock("expo-router", () => ({
 
 jest.mock("@/features/shared/api/fetcher", () => ({
   fetcher: jest.fn(),
+  tokenManager: {
+    setGetter: jest.fn(),
+    getAccessToken: jest.fn(),
+  },
 }));
 
 jest.spyOn(Alert, "alert");
@@ -83,7 +87,7 @@ describe("SignupScreen", () => {
       () => {
         expect(Alert.alert).toHaveBeenCalledWith(
           "Success",
-          "Account created for test@example.com",
+          "Account created for test@example.com. Please sign in.",
           expect.any(Array),
         );
       },
@@ -95,7 +99,7 @@ describe("SignupScreen", () => {
     const okButton = lastCall[2][0];
     okButton.onPress();
 
-    //then navigate
-    expect(mockPush).toHaveBeenCalledWith("/users");
+    //then navigate to signin
+    expect(mockPush).toHaveBeenCalledWith("/auth/signin");
   }, 15000);
 });

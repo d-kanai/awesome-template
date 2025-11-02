@@ -18,6 +18,10 @@ jest.mock("expo-router", () => ({
 
 jest.mock("@/features/shared/api/fetcher", () => ({
   fetcher: jest.fn(),
+  tokenManager: {
+    setGetter: jest.fn(),
+    getAccessToken: jest.fn(),
+  },
 }));
 
 jest.spyOn(Alert, "alert");

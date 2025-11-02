@@ -11,6 +11,10 @@ import { UserListScreen } from "@/features/users/screens/UserListScreen";
 
 jest.mock("@/features/shared/api/fetcher", () => ({
   fetcher: jest.fn(),
+  tokenManager: {
+    setGetter: jest.fn(),
+    getAccessToken: jest.fn(),
+  },
 }));
 
 const mockedFetcher = fetcher as jest.MockedFunction<typeof fetcher>;

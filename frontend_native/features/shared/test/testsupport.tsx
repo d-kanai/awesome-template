@@ -3,6 +3,7 @@ import { render } from "@testing-library/react-native";
 import type { useRouter } from "expo-router";
 import type { ReactNode } from "react";
 
+import { AuthProvider } from "@/features/auth/context/AuthContext";
 import type { fetcher } from "@/features/shared/api/fetcher";
 
 // Type exports for mocked functions
@@ -26,7 +27,9 @@ export function createQueryClient() {
 
 export function renderWithClient(ui: ReactNode, client: QueryClient) {
   return render(
-    <QueryClientProvider client={client}>{ui}</QueryClientProvider>,
+    <AuthProvider>
+      <QueryClientProvider client={client}>{ui}</QueryClientProvider>
+    </AuthProvider>,
   );
 }
 
