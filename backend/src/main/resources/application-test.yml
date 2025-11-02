@@ -13,6 +13,10 @@ spring:
   jooq:
     sql-dialect: H2
 
+server:
+  port: 8080
+  address: 0.0.0.0
+
 logging:
   level:
     root: WARN
