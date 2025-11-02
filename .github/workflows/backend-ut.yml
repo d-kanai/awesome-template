@@ -147,38 +147,3 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  deploy-coverage:
-    name: Publish coverage to GitHub Pages
-    needs: backend-ut
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - name: Download coverage report artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: backend-jacoco-report
-          path: public
-
-      - name: Add branch metadata
-        run: |
-          cat <<EOF > public/metadata.json
-          {
-            "ref": "${GITHUB_REF}",
-            "sha": "${GITHUB_SHA}"
-          }
-          EOF
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: public
-
-      - name: Deploy to GitHub Pages
-        id: deploy
-        uses: actions/deploy-pages@v4
