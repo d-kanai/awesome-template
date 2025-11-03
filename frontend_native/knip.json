@@ -16,7 +16,8 @@
         "jest.config.js",
         "orval.config.cjs",
         "e2e/scripts/*.js",
-        "features/shared/api/generated/**"
+        "features/shared/api/generated/**",
+        "plugins/**"
       ],
       "ignoreDependencies": [
         "@tanstack/react-query-devtools",
