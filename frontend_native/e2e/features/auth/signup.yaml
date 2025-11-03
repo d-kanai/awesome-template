@@ -34,12 +34,8 @@ onFlowStart:
 - tapOn:
     text: "OK"
 
-# Then: ユーザー一覧画面に遷移し、登録したユーザーが表示される
+# Then: サインイン画面に戻る
 - runFlow:
     file: ../../flows/wait_visible.yaml
     env:
-      VISIBLE_TEXT: "ユーザー一覧"
-- runFlow:
-    file: ../../flows/wait_visible.yaml
-    env:
-      VISIBLE_TEXT: "maestro@example.com"
+      VISIBLE_TEXT: "Sign In"

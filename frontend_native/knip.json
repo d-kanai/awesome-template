@@ -20,6 +20,7 @@
         "plugins/**"
       ],
       "ignoreDependencies": [
+        "@expo/config-plugins",
         "@tanstack/react-query-devtools",
         "expo-updates",
         "start-server-and-test"

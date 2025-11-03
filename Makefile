@@ -152,10 +152,10 @@ native-generate-api:
 	cd frontend_native && pnpm run generate:api
 
 native-prebuild:
-	cd frontend_native && CI=1 pnpm exec expo prebuild --platform ios
+	cd frontend_native && pnpm exec expo prebuild --clean --platform ios
 
 native-run:
-	cd frontend_native && CI=1 pnpm exec expo run:ios --device "iPhone 16"
+	cd frontend_native && pnpm exec expo run:ios --device "iPhone 16"
 
 native-ios:
 	cd frontend_native && pnpm run ios

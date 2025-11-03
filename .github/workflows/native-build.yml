@@ -43,6 +43,7 @@ jobs:
         run: |
           cd frontend_native
           pnpm install --frozen-lockfile
+          pnpm add -D expo-dev-client
 
       # 🏗️ EAS Build (APK)
       - name: Build Android APK with EAS

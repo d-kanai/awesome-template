@@ -41,7 +41,7 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="auth/signin/index"
-              options={{ title: "サインイン" }}
+              options={{ title: "サインイン", headerBackVisible: false }}
             />
           </Stack>
           <StatusBar style="auto" />
