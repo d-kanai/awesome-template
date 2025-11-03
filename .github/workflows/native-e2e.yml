@@ -51,7 +51,7 @@ jobs:
           cd frontend_native
           maestro cloud \
             --apiKey ${{ secrets.MAESTRO_CLOUD_API_KEY }} \
-            --env BACKEND_URL=http://18.183.26.104:8080 \
+            --env BACKEND_URL=http://18.183.135.52:8080 \
             ../app.apk \
             e2e
 
@@ -64,6 +64,6 @@ jobs:
 
           - **Build ID**: \`${{ inputs.build_id }}\`
           - **APK URL**: ${{ inputs.apk_url }}
-          - **Backend URL**: http://18.183.26.104:8080
+          - **Backend URL**: http://18.183.135.52:8080
           - **Tested at**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
           EOF
