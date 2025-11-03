@@ -92,20 +92,6 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         id: wait-build
 
-      # 📥 APK をダウンロード
-      - name: Download APK
-        run: |
-          curl -L -o app.apk "${{ steps.wait-build.outputs.apk_url }}"
-          ls -lh app.apk
-
-      # 💾 APK を Artifact として保存
-      - name: Upload APK as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk-${{ github.sha }}
-          path: app.apk
-          retention-days: 30
-
       # 📄 ビルド結果を Step Summary に表示
       - name: Publish build summary
         run: |
@@ -113,7 +99,6 @@ jobs:
           ### 🏗️ Native Build Successful
 
           - **Build ID**: \`${{ steps.eas-build.outputs.build_id }}\`
-          - **APK**: \`android-apk-${{ github.sha }}\`
-          - **Download URL**: ${{ steps.wait-build.outputs.apk_url }}
+          - **APK Download URL**: ${{ steps.wait-build.outputs.apk_url }}
           - **Built at**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
           EOF
