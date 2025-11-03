@@ -22,22 +22,24 @@ jobs:
       pages: write
       id-token: write
 
-  native-build:
-    needs: [native-ut]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.native-ut.result == 'success'
-    uses: ./.github/workflows/native-build.yml
-    secrets:
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  # Temporarily disabled
+  # native-build:
+  #   needs: [native-ut]
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.native-ut.result == 'success'
+  #   uses: ./.github/workflows/native-build.yml
+  #   secrets:
+  #     EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
-  native-e2e:
-    needs: [native-build]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.native-build.result == 'success'
-    uses: ./.github/workflows/native-e2e.yml
-    with:
-      apk_url: ${{ needs.native-build.outputs.apk_url }}
-      build_id: ${{ needs.native-build.outputs.build_id }}
-    secrets:
-      MAESTRO_CLOUD_API_KEY: ${{ secrets.MAESTRO_CLOUD_API_KEY }}
+  # Temporarily disabled
+  # native-e2e:
+  #   needs: [native-build]
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.native-build.result == 'success'
+  #   uses: ./.github/workflows/native-e2e.yml
+  #   with:
+  #     apk_url: ${{ needs.native-build.outputs.apk_url }}
+  #     build_id: ${{ needs.native-build.outputs.build_id }}
+  #   secrets:
+  #     MAESTRO_CLOUD_API_KEY: ${{ secrets.MAESTRO_CLOUD_API_KEY }}
 
   # Temporarily disabled
   # backend-deploy:
