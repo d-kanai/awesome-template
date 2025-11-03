@@ -105,7 +105,7 @@ jobs:
           export PATH="$PATH:$HOME/.maestro/bin"
 
           cd frontend_native
-          maestro cloud \
+          BACKEND_URL=http://13.230.158.70:8080 maestro cloud \
             --apiKey ${{ secrets.MAESTRO_CLOUD_API_KEY }} \
             ../app.apk \
             e2e/features/auth/signup.yaml
