@@ -44,6 +44,8 @@
 
 - GitHub Actions
 - GitHub Pages (Coverage reports)
+- EAS Build
+- Maestro Cloud (E2E Test)
 
 ## Development Tools
 

@@ -21,8 +21,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "con.example.awesome",
-      "usesCleartextTraffic": true
+      "package": "con.example.awesome"
     },
     "web": {
       "output": "static",
