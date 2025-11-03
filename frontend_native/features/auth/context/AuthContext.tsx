@@ -23,8 +23,7 @@ interface AuthProviderProps {
 }
 
 async function setupE2ETestToken(): Promise<void> {
-  if (!__DEV__) return;
-
+  // TODO: セキュリティ向上のため、特定のバックエンドURL（テスト環境のみ）でのみ動作するように制限することを検討
   const launchArgs = LaunchArguments.value();
   const isE2EMode = launchArgs.E2E_MODE === true;
 
