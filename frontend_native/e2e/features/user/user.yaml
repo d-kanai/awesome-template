@@ -1,5 +1,5 @@
 appId: con.example.awesome
-name: ユーザー一覧表示
+name: ユーザ 一覧
 onFlowStart:
   - runScript: ../../scripts/reset_backend.js
   - runScript:

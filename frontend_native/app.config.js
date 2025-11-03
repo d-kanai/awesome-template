@@ -9,10 +9,7 @@ module.exports = ({ config }) => {
 
   // CI環境（EASビルドまたはGitHub Actions）でのみexpo-dev-clientプラグインを追加
   if (ENABLE_DEV_CLIENT) {
-    appConfig.plugins = [
-      ...(appConfig.plugins || []),
-      "expo-dev-client",
-    ];
+    appConfig.plugins = [...(appConfig.plugins || []), "expo-dev-client"];
     console.log("✅ expo-dev-client plugin added for CI/EAS build");
   } else {
     console.log("ℹ️  expo-dev-client plugin skipped for local development");

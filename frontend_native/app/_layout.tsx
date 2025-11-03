@@ -11,9 +11,11 @@ import "react-native-reanimated";
 
 import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { useColorScheme } from "@/features/shared/hooks/use-color-scheme";
+import { useEasUpdate } from "@/features/updates/hooks/useEasUpdate";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  useEasUpdate(); // EAS Updateチェック
   const [queryClient] = useState(
     () =>
       new QueryClient({

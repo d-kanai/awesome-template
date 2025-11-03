@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { VersionInfo } from "@/features/settings/components/VersionInfo";
 import { UserListItem } from "@/features/users/components/UserListItem";
 import { useUserList } from "@/features/users/hooks/useUserList";
 
@@ -41,6 +42,8 @@ function UserList() {
           }
           renderItem={({ item }) => <UserListItem user={item} />}
         />
+
+        <VersionInfo />
       </View>
     </SafeAreaView>
   );
