@@ -11,7 +11,7 @@ import "react-native-reanimated";
 
 import { AuthProvider } from "@/features/auth/context/AuthContext";
 import { useColorScheme } from "@/features/shared/hooks/use-color-scheme";
-import { useEasUpdate } from "@/features/updates/hooks/useEasUpdate";
+import { useEasUpdate } from "@/features/shared/hooks/useEasUpdate";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
