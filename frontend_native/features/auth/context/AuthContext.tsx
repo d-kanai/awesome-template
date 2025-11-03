@@ -25,22 +25,31 @@ interface AuthProviderProps {
 async function setupE2ETestToken(): Promise<void> {
   // TODO: セキュリティ向上のため、特定のバックエンドURL（テスト環境のみ）でのみ動作するように制限することを検討
   const launchArgs = LaunchArguments.value();
+  console.log("[E2E] Launch args:", JSON.stringify(launchArgs));
   const isE2EMode = launchArgs.E2E_MODE === true;
+  console.log("[E2E] E2E mode enabled:", isE2EMode);
 
   if (!isE2EMode) return;
 
   try {
     const apiBaseUrl =
       process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:8080";
+    console.log("[E2E] Fetching dummy token from:", apiBaseUrl);
     const response = await fetch(`${apiBaseUrl}/e2e/dummy_token`, {
       method: "POST",
     });
+    console.log("[E2E] Response status:", response.status);
     if (response.ok) {
       const data = await response.json();
+      console.log("[E2E] Response data:", JSON.stringify(data));
       if (data.token) {
         await tokenStorage.setToken(data.token);
         console.log("[E2E] Test token set successfully");
+      } else {
+        console.warn("[E2E] No token in response");
       }
+    } else {
+      console.warn("[E2E] Failed to fetch token, status:", response.status);
     }
   } catch (e) {
     console.warn("[E2E] Failed to set test token:", e);
