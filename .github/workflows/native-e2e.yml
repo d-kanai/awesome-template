@@ -3,16 +3,32 @@ name: Native E2E
 
 on:
   workflow_call:
-    secrets:
-      EXPO_TOKEN:
+    inputs:
+      apk_url:
+        description: 'APK download URL'
         required: true
+        type: string
+      build_id:
+        description: 'EAS Build ID'
+        required: true
+        type: string
+    secrets:
       MAESTRO_CLOUD_API_KEY:
         required: true
   workflow_dispatch:
+    inputs:
+      apk_url:
+        description: 'APK download URL'
+        required: true
+        type: string
+      build_id:
+        description: 'EAS Build ID'
+        required: true
+        type: string
 
 jobs:
   e2e:
-    name: Build APK and run E2E tests
+    name: Run E2E tests on Maestro Cloud
     runs-on: ubuntu-latest
 
     steps:
@@ -20,83 +36,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 📦 Node.js セットアップ
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      # 🔧 pnpm セットアップ
-      - name: Setup pnpm
-        run: corepack enable
-
-      # 📥 依存関係をインストール
-      - name: Install dependencies
-        run: |
-          cd frontend_native
-          pnpm install --frozen-lockfile
-
-      # 🏗️ EAS Build (APK)
-      - name: Build Android APK with EAS
-        run: |
-          cd frontend_native
-          # ビルドを開始し、出力からビルドIDを抽出
-          BUILD_OUTPUT=$(npx eas-cli build --platform android --profile preview --non-interactive --no-wait 2>&1)
-          echo "$BUILD_OUTPUT"
-          BUILD_ID=$(echo "$BUILD_OUTPUT" | grep -oP 'https://expo.dev/accounts/[^/]+/projects/[^/]+/builds/\K[a-f0-9-]+' | head -1)
-
-          if [ -z "$BUILD_ID" ]; then
-            echo "Failed to extract build ID from output"
-            exit 1
-          fi
-
-          echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
-          echo "Build ID: $BUILD_ID"
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        id: eas-build
-
-      # ⏳ ビルド完了を待機
-      - name: Wait for EAS build to complete
-        run: |
-          cd frontend_native
-          BUILD_ID="${{ steps.eas-build.outputs.build_id }}"
-          echo "Waiting for build: $BUILD_ID"
-
-          # ビルドが完了するまで待機（最大30分）
-          for i in {1..60}; do
-            STATUS=$(npx eas-cli build:view $BUILD_ID --json 2>/dev/null | jq -r '.status' || echo "PENDING")
-            echo "Build status: $STATUS (attempt $i/60)"
-
-            if [ "$STATUS" = "FINISHED" ]; then
-              echo "Build completed successfully"
-              APK_URL=$(npx eas-cli build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
-              echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
-              break
-            elif [ "$STATUS" = "ERRORED" ] || [ "$STATUS" = "CANCELED" ]; then
-              echo "Build failed with status: $STATUS"
-              exit 1
-            fi
-
-            sleep 30
-          done
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        id: wait-build
-
       # 📥 APK をダウンロード
       - name: Download APK
         run: |
-          curl -L -o app.apk "${{ steps.wait-build.outputs.apk_url }}"
+          curl -L -o app.apk "${{ inputs.apk_url }}"
           ls -lh app.apk
-
-      # 💾 APK を Artifact として保存
-      - name: Upload APK as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk-${{ github.sha }}
-          path: app.apk
-          retention-days: 30
 
       # 🧪 Maestro Cloud でE2Eテスト実行
       - name: Run E2E tests on Maestro Cloud
@@ -111,15 +55,15 @@ jobs:
             ../app.apk \
             e2e/features/auth/signup.yaml
 
-      # 📄 デプロイ結果を Step Summary に表示
+      # 📄 E2E結果を Step Summary に表示
       - name: Publish E2E summary
         if: always()
         run: |
           cat <<EOF >> "$GITHUB_STEP_SUMMARY"
           ### 🧪 Native E2E Test Results
 
-          - **APK**: \`android-apk-${{ github.sha }}\`
-          - **Download URL**: ${{ steps.wait-build.outputs.apk_url }}
+          - **Build ID**: \`${{ inputs.build_id }}\`
+          - **APK URL**: ${{ inputs.apk_url }}
           - **Backend URL**: http://18.183.26.104:8080
           - **Tested at**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
           EOF
