@@ -4,3 +4,5 @@ platform:
     disableAnimations: true
   android:
     disableAnimations: true
+flows:
+  - "features/**/*.yaml"

@@ -53,7 +53,7 @@ jobs:
             --apiKey ${{ secrets.MAESTRO_CLOUD_API_KEY }} \
             --env BACKEND_URL=http://18.183.26.104:8080 \
             ../app.apk \
-            e2e/features/auth/signup.yaml
+            e2e
 
       # 📄 E2E結果を Step Summary に表示
       - name: Publish E2E summary
