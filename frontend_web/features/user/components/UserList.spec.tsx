@@ -47,7 +47,7 @@ describe("UserList", () => {
 
     // useGetAllUsersをモック（成功）
     vi.mocked(useGetAllUsers).mockReturnValue({
-      data: { users: mockUsers },
+      data: { data: { users: mockUsers } },
       isLoading: false,
       error: null,
     } as any);
@@ -68,7 +68,7 @@ describe("UserList", () => {
 
     // useGetAllUsersをモック（空配列を返す）
     vi.mocked(useGetAllUsers).mockReturnValue({
-      data: { users: [] },
+      data: { data: { users: [] } },
       isLoading: false,
       error: null,
     } as any);
@@ -105,7 +105,7 @@ describe("UserList", () => {
     const { useGetAllUsers } = await import("@/features/shared/api/generated");
 
     vi.mocked(useGetAllUsers).mockReturnValue({
-      data: { users: mockUsers },
+      data: { data: { users: mockUsers } },
       isLoading: false,
       error: null,
     } as any);
