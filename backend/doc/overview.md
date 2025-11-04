@@ -138,5 +138,5 @@ backend/
 
 ## テスト戦略
 
-TestA: Controller in-out Test without Mock
-TestB: Domain Model all patterns Test
+- TestA: Controller in-out Test (内部クラス・DBモックなし、外部連携のみモック)
+- TestB: Domain Model all patterns Test

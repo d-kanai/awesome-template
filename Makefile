@@ -5,6 +5,7 @@ ROOT_DIR := $(CURDIR)
         install \
         backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
+        web-install web-dev web-build web-lint web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run \
         unleash-up unleash-down unleash-open \
         openapi-client lefthook-install
 
@@ -50,6 +51,19 @@ help:
 	@echo "  make native-remove-deadcode # Detect and report unused code with knip"
 	@echo "  make native-reset         # Full reset: clean all caches, reinstall, and rebuild"
 	@echo ""
+	@echo "Web:"
+	@echo "  make web-install          # Install web dependencies (pnpm install)"
+	@echo "  make web-dev              # Start Next.js dev server"
+	@echo "  make web-build            # Build Next.js production bundle"
+	@echo "  make web-lint             # Run Biome lint/format check"
+	@echo "  make web-typecheck        # Run TypeScript type checking"
+	@echo "  make web-generate-api     # Generate web API client/hooks via orval"
+	@echo "  make web-ut               # Run web unit tests (Vitest)"
+	@echo "  make web-ut-coverage      # Run web unit tests with coverage"
+	@echo "  make web-e2e              # Run web E2E tests (Playwright + Cucumber)"
+	@echo "  make web-docker-build     # Build web Docker image"
+	@echo "  make web-docker-run       # Run web Docker container"
+	@echo ""
 	@echo "Combined:"
 	@echo "  make openapi-client       # Export OpenAPI spec then generate native client/hooks"
 	@echo ""
@@ -60,7 +74,7 @@ help:
 ###############################################################
 # Setup
 ###############################################################
-install: lefthook-install native-install
+install: lefthook-install native-install web-install
 
 lefthook-install:
 	chmod +x tools/lefthook/lefthook tools/lefthook/run-hook.sh
@@ -230,4 +244,43 @@ native-reset:
 	@echo ""
 	@echo "✅ Native reset complete! You can now run 'make native-start' or 'make native-ios'"
 
+###############################################################
+# Web
+###############################################################
+web-install:
+	cd frontend_web && pnpm install
+
+web-dev:
+	cd frontend_web && pnpm dev
+
+web-build:
+	cd frontend_web && pnpm build
+
+web-lint:
+	cd frontend_web && pnpm lint
+
+web-typecheck:
+	cd frontend_web && pnpm typecheck
+
+web-generate-api:
+	cd frontend_web && pnpm generate:api
+
+web-ut:
+	cd frontend_web && pnpm test
+
+web-ut-coverage:
+	cd frontend_web && pnpm test:coverage
+
+web-e2e:
+	cd frontend_web && pnpm test:e2e
+
+web-docker-build:
+	docker build -t frontend_web:latest ./frontend_web
+
+web-docker-run:
+	docker run -p 3000:3000 frontend_web:latest
+
+###############################################################
+# Combined
+###############################################################
 openapi-client: backend-openapi native-generate-api
