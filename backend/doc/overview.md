@@ -1,0 +1,142 @@
+# Backend Overview
+
+## 技術スタック
+
+### コア技術
+- **言語・ランタイム**: Java 21
+- **ビルドツール**: Gradle 8.5
+- **フレームワーク**: Spring Boot 3.2.0
+  - Spring Web
+  - Spring Security
+  - Spring Boot Actuator
+
+### データベース
+- **本番環境**: ???
+- **テスト環境**: H2 Database (in-memory)
+- **ORM・クエリビルダー**: JOOQ
+- **マイグレーション**: Flyway
+
+### API設計
+- **ドキュメント生成**: SpringDoc OpenAPI
+- **認証**: JWT (JSON Web Token)
+
+### 機能管理
+- **フィーチャーフラグ**: Unleash
+
+### テスティング
+- **テストフレームワーク**: JUnit 5
+- **カバレッジ**: JaCoCo
+
+### コード品質
+- **リンター**: Checkstyle (Google Java Style準拠)
+- **フォーマッター**: Spotless (Google Java Format)
+
+## アーキテクチャパターン
+
+### DDD風レイヤードアーキテクチャ + モジュラーモノリス風dir structure
+
+#### レイヤー構成
+
+各モジュールは以下の4層で構成されます：
+
+```
+Presentation Layer (プレゼンテーション層)
+    ↓
+Application Layer (アプリケーション層)
+    ↓
+Domain Layer (ドメイン層)
+    ↓
+Infrastructure Layer (インフラストラクチャ層)
+```
+
+##### 1. Presentation Layer (`presentation/`)
+- **責務**: HTTPリクエスト/レスポンスの処理、入力検証、OpenAPI定義
+- **構成要素**:
+  - `controller/`: REST APIエンドポイント
+  - `input/`: リクエストDTO
+  - `output/`: レスポンスDTO
+
+##### 2. Application Layer (`application/`)
+- **責務**: ユースケースの実装、トランザクション制御
+- **構成要素**:
+  - `command/`: 更新系処理（Create, Update, Delete）
+  - `query/`: 参照系処理（Read）
+- **原則**: 1クラス1publicメソッド（code_rule.mdに準拠）
+
+##### 3. Domain Layer (`domain/`)
+- **責務**: ビジネスロジック、ドメインルール、エンティティ
+- **構成要素**:
+  - `model/`: ドメインモデル（エンティティ）
+  - `valueobject/`: 値オブジェクト
+  - `repository/`: リポジトリインターフェース
+
+##### 4. Infrastructure Layer (`infrastructure/`)
+- **責務**: 外部システムとの接続、永続化の実装
+- **構成要素**:
+  - `persistence/`: リポジトリの実装（JOOQ使用）
+
+#### モジュール構成
+
+ドメインごとに独立したモジュールとして整理：
+
+```
+modules/
+├── auth/          # 認証・認可
+├── user/          # ユーザー管理
+└── shared/        # 共通コンポーネント
+```
+
+## プロジェクト構造
+
+```
+backend/
+├── src/
+│   ├── main/
+│   │   ├── java/com/example/demo/
+│   │   │   ├── DemoApplication.java
+│   │   │   ├── infrastructure/
+│   │   │   │   └── jooq/           # JOOQ生成コード（Git管理）
+│   │   │   └── modules/
+│   │   │       ├── auth/
+│   │   │       │   ├── application/
+│   │   │       │   │   └── command/
+│   │   │       │   ├── domain/
+│   │   │       │   ├── infrastructure/
+│   │   │       │   └── presentation/
+│   │   │       │       ├── controller/
+│   │   │       │       ├── input/
+│   │   │       │       └── output/
+│   │   │       ├── user/
+│   │   │       │   └── (同様の構成)
+│   │   │       └── shared/
+│   │   └── resources/
+│   │       ├── application.yml
+│   │       ├── application-test.yml
+│   │       └── db/migration/       # Flywayマイグレーション
+│   └── test/
+│       └── java/com/example/demo/
+│           ├── testsupport/
+│           └── modules/
+├── build.gradle
+└── doc/
+    ├── code_rule.md
+    └── overview.md (本ドキュメント)
+```
+
+## 主要コンポーネント
+
+### フィーチャーフラグ (Unleash)
+
+- **用途**: デプロイとリリースの分離・機能の段階的リリースなど
+
+### OpenAPI仕様
+
+- **生成方法**: `./gradlew generateOpenApiDocs`
+- **出力先**: `build/openapi/openapi.json`
+- **UIアクセス**: `http://localhost:8080/swagger-ui.html`
+- **クライアント生成**: フロントエンドで Orval により自動生成
+
+## テスト戦略
+
+TestA: Controller in-out Test without Mock
+TestB: Domain Model all patterns Test
