@@ -14,6 +14,6 @@ export function useUserList() {
 
   return {
     ...query,
-    data: query.data?.users,
+    data: query.data?.data?.users,
   };
 }
