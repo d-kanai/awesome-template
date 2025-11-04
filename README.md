@@ -27,6 +27,9 @@
 - Checkstyle (lint)
 - Spotless (Code Formatter)
 
+### Feature Management
+- Unleash (Feature flags)
+
 ## Frontend Native
 
 ### Language & Runtime
@@ -59,6 +62,9 @@
 ### Code Quality
 - Biome
 - Knip (Dead code detection)
+
+### Feature Management
+- Unleash Proxy Client (Feature flags)
 
 ## Infrastructure
 
