@@ -156,25 +156,7 @@ def spotlessFilesOverride = readFileProperty('spotlessFiles')
 
 checkstyle {
     toolVersion = '10.12.4'
-    def checkstyleArtifact = configurations.checkstyle.resolve().find { it.name.startsWith('checkstyle-') }
-    if (checkstyleArtifact == null) {
-        throw new GradleException('Unable to locate Checkstyle distribution to load google_checks.xml')
-    }
-    config = resources.text.fromString(
-        resources.text.fromArchiveEntry(
-            checkstyleArtifact,
-            'google_checks.xml'
-        )
-            .asString()
-            .replaceFirst(
-                '(?s)(<module name="MethodLength">.*?<property name="max" value=")\\d+("/>)',
-                '$130$2'
-            )
-            .replaceAll('(?s)<module name="MissingJavadocMethod">.*?</module>', '')
-            .replaceAll('(?s)<module name="MissingJavadocType">.*?</module>', '')
-            .replaceAll('(?s)<module name="MethodName">.*?</module>', '')
-            .replaceAll('(?s)<module name="AbbreviationAsWordInName">.*?</module>', '')
-    )
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
 }
 
 tasks.withType(Checkstyle).configureEach {
