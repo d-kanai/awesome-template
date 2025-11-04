@@ -12,7 +12,6 @@ export function SigninScreen() {
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>Sign In</Text>
-          <Text style={styles.subtitle}>Welcome back</Text>
         </View>
 
         <SigninForm />

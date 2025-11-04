@@ -30,7 +30,14 @@ management:
 
 jwt:
   secret: test-secret-key-that-is-at-least-256-bits-long-for-hs256
-  expiration-hours: 24
+  expiration-hours: 720  # 30 days
+
+unleash:
+  enabled: true
+  api-url: http://localhost:4242/api
+  api-token: default:development.unleash-insecure-api-token
+  app-name: awesome-template-backend-test
+  environment: test
 
 logging:
   level:

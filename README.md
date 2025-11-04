@@ -2,50 +2,90 @@
 
 ## Backend
 
+### Language & Runtime
 - Java 21
+
+### Build Tool
 - Gradle 8.5
+
+### Framework
 - Spring Boot 3.2.0
-- JOOQ 3.18.7
+
+### Database
 - PostgreSQL 16
+- JOOQ 3.18.7
 - Flyway (Database Migration)
-- SpringDoc OpenAPI
-- JUnit5
 - H2 Database (for testing)
+
+### API Documentation
+- SpringDoc OpenAPI
+
+### Testing
+- JUnit5
+
+### Code Quality
 - Checkstyle (lint)
 - Spotless (Code Formatter)
 
 ## Frontend Native
 
-- React Native
-- React 19
+### Language & Runtime
 - TypeScript
+- React 19
+- React Native
+
+### Package Manager
 - pnpm
+
+### Framework & Platform
 - Expo
 - Expo Router
-- Biome
+
+### State Management & Data Fetching
 - TanStack Query
 - TanStack Form
+
+### Validation
 - Zod
+
+### API Client
 - Orval (OpenAPI client generation)
+
+### Testing
 - Jest
 - React Testing Library
 - Maestro (E2E testing)
+
+### Code Quality
+- Biome
 - Knip (Dead code detection)
 
 ## Infrastructure
 
+### Infrastructure as Code
 - AWS CDK (TypeScript)
+
+### Container Orchestration
 - AWS ECS Fargate
 - Amazon ECR
+
+### Containerization
 - Docker
 - Docker Compose
 
 ## CI/CD
 
+### Continuous Integration
 - GitHub Actions
-- GitHub Pages (Coverage reports)
+
+### Build & Deployment
 - EAS Build
+
+### Testing
 - Maestro Cloud (E2E Test)
+
+### Reporting
+- GitHub Pages (Coverage reports)
 
 ## Development Tools
 

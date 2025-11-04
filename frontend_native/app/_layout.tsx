@@ -10,6 +10,7 @@ import { useState } from "react";
 import "react-native-reanimated";
 
 import { AuthProvider } from "@/features/auth/context/AuthContext";
+import { FeatureFlagProvider } from "@/features/shared/contexts/FeatureFlagContext";
 import { useColorScheme } from "@/features/shared/hooks/use-color-scheme";
 import { useEasUpdate } from "@/features/shared/hooks/useEasUpdate";
 
@@ -28,26 +29,28 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="users/index"
-              options={{ title: "ユーザー一覧", headerBackVisible: false }}
-            />
-            <Stack.Screen
-              name="auth/signup/index"
-              options={{ title: "サインアップ" }}
-            />
-            <Stack.Screen
-              name="auth/signin/index"
-              options={{ title: "サインイン", headerBackVisible: false }}
-            />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
+        <FeatureFlagProvider>
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="users/index"
+                options={{ title: "ユーザー一覧", headerBackVisible: false }}
+              />
+              <Stack.Screen
+                name="auth/signup/index"
+                options={{ title: "サインアップ" }}
+              />
+              <Stack.Screen
+                name="auth/signin/index"
+                options={{ title: "サインイン", headerBackVisible: false }}
+              />
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </FeatureFlagProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

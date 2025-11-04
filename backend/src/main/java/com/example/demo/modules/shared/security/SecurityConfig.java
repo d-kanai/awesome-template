@@ -51,6 +51,8 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers("/swagger-ui.html")
                     .permitAll()
+                    .requestMatchers("/featureflags/**")
+                    .permitAll()
                     // All other endpoints require authentication
                     .anyRequest()
                     .authenticated())

@@ -12,18 +12,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { VersionInfo } from "@/features/settings/components/VersionInfo";
+import { useFeatureFlag } from "@/features/shared/hooks/useFeatureFlag";
 import { UserListItem } from "@/features/users/components/UserListItem";
 import { useUserList } from "@/features/users/hooks/useUserList";
 
 function UserList() {
   const { users } = useUserList();
   const { signOut } = useAuth();
+  const showVersionInfo = useFeatureFlag("show-version-info");
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.title}>ユーザー一覧</Text>
+          <Text style={styles.title}>ユーザ一覧</Text>
           <Pressable style={styles.logoutButton} onPress={signOut}>
             <Text style={styles.logoutButtonText}>ログアウト</Text>
           </Pressable>
@@ -43,7 +45,7 @@ function UserList() {
           renderItem={({ item }) => <UserListItem user={item} />}
         />
 
-        <VersionInfo />
+        {showVersionInfo && <VersionInfo />}
       </View>
     </SafeAreaView>
   );

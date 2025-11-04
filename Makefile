@@ -4,7 +4,8 @@ ROOT_DIR := $(CURDIR)
 .PHONY: help \
         install \
         backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
-        native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-setup native-ios native-start native-stop native-remove-deadcode \
+        native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
+        unleash-up unleash-down unleash-open \
         openapi-client lefthook-install
 
 help:
@@ -29,6 +30,11 @@ help:
 	@echo "  make backend-lint         # Run Checkstyle on main and test sources"
 	@echo "  make backend-format       # Format Java sources with Spotless"
 	@echo ""
+	@echo "Unleash:"
+	@echo "  make unleash-up           # Start Unleash server and database"
+	@echo "  make unleash-down         # Stop Unleash server and database"
+	@echo "  make unleash-open         # Open Unleash UI (http://localhost:4242)"
+	@echo ""
 	@echo "Native:"
 	@echo "  make native-install       # Install native dependencies (pnpm install)"
 	@echo "  make native-lint          # Run Expo lint"
@@ -41,8 +47,8 @@ help:
 	@echo "  make native-start         # Start Expo dev server in background (logs/native.log, PID file)"
 	@echo "  make native-stop          # Stop background Expo dev server"
 	@echo "  make native-ut            # Install dependencies and run Expo unit tests"
-	@echo "  make native-setup         # Install deps, prebuild, and install iOS dev client"
 	@echo "  make native-remove-deadcode # Detect and report unused code with knip"
+	@echo "  make native-reset         # Full reset: clean all caches, reinstall, and rebuild"
 	@echo ""
 	@echo "Combined:"
 	@echo "  make openapi-client       # Export OpenAPI spec then generate native client/hooks"
@@ -137,6 +143,20 @@ backend-format:
 	cd backend && ./gradlew spotlessApply
 
 ###############################################################
+# Unleash
+###############################################################
+unleash-up:
+	cd backend && docker-compose up -d unleash-postgres unleash
+	@echo "Unleash server starting... Please wait for health check to complete."
+	@echo "Access Unleash UI at http://localhost:4242 (default login: admin/unleash4all)"
+
+unleash-down:
+	cd backend && docker-compose stop unleash unleash-postgres
+
+unleash-open:
+	open http://localhost:4242
+
+###############################################################
 # Native
 ###############################################################
 native-install:
@@ -182,9 +202,32 @@ native-ut:
 	cd frontend_native && pnpm install --frozen-lockfile --prefer-offline
 	cd frontend_native && pnpm test -- --ci
 
-native-setup: native-install native-prebuild native-run
-
 native-remove-deadcode:
 	cd frontend_native && pnpm run knip
+
+native-reset:
+	@echo "🧹 Starting full native reset..."
+	@echo ""
+	@echo "Step 1/5: Stopping any running Metro bundler..."
+	pkill -f "expo start" 2>/dev/null || true
+	pkill -f "react-native start" 2>/dev/null || true
+	@echo ""
+	@echo "Step 2/5: Cleaning all caches..."
+	cd frontend_native && pnpm exec expo start --clear --non-interactive & sleep 3 && pkill -f "expo start" || true
+	watchman watch-del-all 2>/dev/null || echo "Watchman not installed, skipping..."
+	rm -rf frontend_native/.expo
+	rm -rf frontend_native/ios/build
+	rm -rf frontend_native/node_modules
+	@echo ""
+	@echo "Step 3/5: Reinstalling dependencies..."
+	cd frontend_native && pnpm install --force
+	@echo ""
+	@echo "Step 4/5: Rebuilding iOS project..."
+	cd frontend_native && pnpm exec expo prebuild --clean --platform ios
+	@echo ""
+	@echo "Step 5/5: Installing dev client on simulator..."
+	cd frontend_native && pnpm exec expo run:ios --device "iPhone 16"
+	@echo ""
+	@echo "✅ Native reset complete! You can now run 'make native-start' or 'make native-ios'"
 
 openapi-client: backend-openapi native-generate-api

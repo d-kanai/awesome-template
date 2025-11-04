@@ -31,4 +31,11 @@ management:
 
 jwt:
   secret: ${JWT_SECRET:my-secret-key-that-is-at-least-256-bits-long-for-hs256}
-  expiration-hours: 24
+  expiration-hours: 720  # 30 days
+
+unleash:
+  api-url: ${UNLEASH_API_URL:http://localhost:4242/api}
+  api-token: ${UNLEASH_API_TOKEN:default:development.unleash-insecure-api-token}
+  app-name: ${UNLEASH_APP_NAME:awesome-template-backend}
+  environment: ${UNLEASH_ENVIRONMENT:development}
+  enabled: true
