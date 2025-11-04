@@ -149,3 +149,21 @@ backend/
 
 - TestA: Controller in-out Test (内部クラス・DBモックなし、外部連携のみモック)
 - TestB: Domain Model all patterns Test
+
+## Done の定義
+
+### コード品質
+- メソッド30行以内
+- ローカル変数・パラメータは基本final宣言
+- 基本全ての変数にfinalを付ける
+- 認知・循環複雑度15以内
+- deep nest 2以内
+
+### アーキテクチャ
+- Application層のcommand/queryは1クラス1publicメソッド
+
+### テスト
+- テストメソッド名は日本語でテストの意図が明確な名前にする
+- Given-When-Thenコメントを挿入してフェーズを見やすくする
+- カバレッジ90%以上（対象外ファイルは都度追加）
+  - 除外対象: JOOQ生成コード、DemoApplication
