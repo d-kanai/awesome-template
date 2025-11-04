@@ -7,12 +7,28 @@ setDefaultTimeout(30000);
 
 let browser: Browser;
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+
 /**
- * Before all tests: Launch browser
+ * Before all tests: Launch browser and reset database
  */
 BeforeAll(async () => {
+  // Reset database before starting tests
+  try {
+    const response = await fetch(`${API_BASE_URL}/e2e/reset_data`, {
+      method: "POST",
+    });
+    if (!response.ok) {
+      console.warn(`Failed to reset database: ${response.status}`);
+    } else {
+      console.log("[E2E] Database reset successful");
+    }
+  } catch (error) {
+    console.warn("[E2E] Failed to reset database:", error);
+  }
+
   browser = await chromium.launch({
-    headless: true, // headlessモードで実行
+    headless: true,
   });
 });
 

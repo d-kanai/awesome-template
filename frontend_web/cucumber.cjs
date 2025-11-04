@@ -7,7 +7,6 @@ module.exports = {
     formatOptions: {
       snippetInterface: "async-await",
     },
-    publishQuiet: true,
     timeout: 30000, // 30秒タイムアウト
   },
 };

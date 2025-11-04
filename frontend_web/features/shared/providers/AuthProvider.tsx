@@ -10,15 +10,17 @@ import {
 
 /**
  * AuthProvider
- * httpOnly Cookie認証を使用するため、フロントエンドではトークンを保持しない
- * 認証状態のみを管理
+ * JWTトークンをlocalStorageで管理
  */
+
+const TOKEN_KEY = "auth_token";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
-  signIn: () => void;
+  signIn: (token: string) => void;
   signOut: () => Promise<void>;
+  getToken: () => string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,9 +36,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuthStatus = async () => {
     try {
-      // TODO: バックエンドに認証状態を確認するエンドポイント実装後、ここで呼び出す
-      // 現在はCookieが存在するかチェックできないため、とりあえずfalseに設定
-      setIsAuthenticated(false);
+      const token = localStorage.getItem(TOKEN_KEY);
+      setIsAuthenticated(!!token);
     } catch (error) {
       setIsAuthenticated(false);
     } finally {
@@ -44,15 +45,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signIn = useCallback(() => {
-    // サインイン成功時に呼び出される
-    // Cookieはバックエンドで設定されているため、ここでは状態を更新するのみ
+  const getToken = useCallback(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem(TOKEN_KEY);
+  }, []);
+
+  const signIn = useCallback((token: string) => {
+    // サインイン成功時にトークンを保存
+    localStorage.setItem(TOKEN_KEY, token);
     setIsAuthenticated(true);
   }, []);
 
   const signOut = useCallback(async () => {
-    // TODO: バックエンドにサインアウトエンドポイント実装後、ここで呼び出す
-    // Cookieを削除するためにバックエンドを呼び出す
+    // トークンを削除
+    localStorage.removeItem(TOKEN_KEY);
     setIsAuthenticated(false);
   }, []);
 
@@ -63,6 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         signIn,
         signOut,
+        getToken,
       }}
     >
       {children}

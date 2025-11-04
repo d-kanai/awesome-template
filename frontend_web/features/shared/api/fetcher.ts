@@ -49,17 +49,21 @@ export async function fetcher<TData, TVariables = unknown>(
       ? { "Content-Type": "application/json" }
       : undefined;
 
+  // Get JWT token from localStorage
+  const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : undefined;
+
   console.log("[fetcher] Request:", {
     url: `${API_BASE_URL}${path}`,
     method: rest.method,
     body: body ? JSON.parse(typeof body === "string" ? body : "{}") : undefined,
+    hasToken: !!token,
   });
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...rest,
-    headers: mergeHeaders(headers, contentType),
+    headers: mergeHeaders(mergeHeaders(headers, contentType), authHeader),
     body,
-    // httpOnly Cookie認証のため、credentialsを含める
     credentials: "include",
   });
 

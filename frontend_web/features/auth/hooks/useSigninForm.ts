@@ -14,11 +14,16 @@ export function useSigninForm() {
 
   const signinMutation = useSignin({
     mutation: {
-      onSuccess: () => {
-        // サインイン成功後、認証状態を更新してユーザー画面に遷移
+      onSuccess: (response) => {
+        // サインイン成功後、トークンを保存して認証状態を更新
         console.log("[useSigninForm] Signin success, navigating to user page");
-        signIn();
-        router.push("/user");
+        const token = response.data.accessToken;
+        if (token) {
+          signIn(token);
+          router.push("/user");
+        } else {
+          console.error("[useSigninForm] No access token in response");
+        }
       },
       onError: (error) => {
         console.error("[useSigninForm] Signin error:", error);
