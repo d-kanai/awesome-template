@@ -106,3 +106,11 @@
   - バックエンドのOpenAPI定義に`required`配列が含まれていない
   - `@Schema`の`requiredMode`や`requiredProperties`では反映されない
   - SpringDocの設定でカスタマイザーを追加する必要がある
+
+- Unleash feature flags のスケール対応
+  - 現状: 各Backend PodがUnleash Serverを独立にポーリング（15秒間隔）
+  - 問題: Pod間でキャッシュ不整合が最大15秒発生する可能性
+  - 解決策の選択肢:
+    1. Unleash Edge Proxy導入（推奨）: 単一Proxyでキャッシュ集約
+    2. Redis共有キャッシュ: Sync Pod + Redisでフラグ同期
+    3. 現状維持: 不整合を許容（開発環境やgradual rolloutでは問題なし）
