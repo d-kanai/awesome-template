@@ -32,6 +32,9 @@
 - **フォーマッター**: Spotless (Google Java Format)
 - **静的コード解析**: SonarQube
 
+### エラーモニタリング
+- **エラートラッキング**: Sentry
+
 ## アーキテクチャパターン
 
 ### DDD風レイヤードアーキテクチャ + モジュラーモノリス風dir structure
