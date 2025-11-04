@@ -1,5 +1,6 @@
 import { useFlag } from "@unleash/proxy-client-react";
 
+import { FEATURE_FLAGS } from "../../constants/featureFlags";
 import { useFeatureFlag } from "../useFeatureFlag";
 
 // Unleash SDKをモック化
@@ -14,7 +15,7 @@ describe("useFeatureFlag", () => {
 
   it("フィーチャーフラグが有効な場合_trueを返す", () => {
     // given
-    const flagName = "sample-feature";
+    const flagName = FEATURE_FLAGS.SHOW_VERSION_INFO;
     (useFlag as jest.Mock).mockReturnValue(true);
 
     // when
@@ -27,20 +28,7 @@ describe("useFeatureFlag", () => {
 
   it("フィーチャーフラグが無効な場合_falseを返す", () => {
     // given
-    const flagName = "disabled-feature";
-    (useFlag as jest.Mock).mockReturnValue(false);
-
-    // when
-    const result = useFeatureFlag(flagName);
-
-    // then
-    expect(result).toBe(false);
-    expect(useFlag).toHaveBeenCalledWith(flagName);
-  });
-
-  it("存在しないフィーチャーフラグの場合_falseを返す", () => {
-    // given
-    const flagName = "nonexistent-feature";
+    const flagName = FEATURE_FLAGS.SHOW_VERSION_INFO;
     (useFlag as jest.Mock).mockReturnValue(false);
 
     // when

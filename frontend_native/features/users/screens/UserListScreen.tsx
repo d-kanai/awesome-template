@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { VersionInfo } from "@/features/settings/components/VersionInfo";
+import { FEATURE_FLAGS } from "@/features/shared/constants/featureFlags";
 import { useFeatureFlag } from "@/features/shared/hooks/useFeatureFlag";
 import { UserListItem } from "@/features/users/components/UserListItem";
 import { useUserList } from "@/features/users/hooks/useUserList";
@@ -19,7 +20,7 @@ import { useUserList } from "@/features/users/hooks/useUserList";
 function UserList() {
   const { users } = useUserList();
   const { signOut } = useAuth();
-  const showVersionInfo = useFeatureFlag("show-version-info");
+  const showVersionInfo = useFeatureFlag(FEATURE_FLAGS.SHOW_VERSION_INFO);
 
   return (
     <SafeAreaView style={styles.container}>
