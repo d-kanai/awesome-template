@@ -30,6 +30,7 @@
 ### コード品質
 - **リンター**: Checkstyle (Google Java Style準拠)
 - **フォーマッター**: Spotless (Google Java Format)
+- **静的コード解析**: SonarQube
 
 ## アーキテクチャパターン
 
