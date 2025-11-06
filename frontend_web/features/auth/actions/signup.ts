@@ -1,18 +1,18 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { signup as signupApi } from "@/features/shared/api/generated/functions";
 import type { SignupRequest } from "@/features/shared/api/generated/model";
 
 export type SignupActionState = {
   error?: string;
   success?: boolean;
+  redirectTo?: string;
 };
 
 /**
  * Server Action: サインアップ処理
  * - Orval生成のsignup関数を呼び出し
- * - 成功時は/auth/signinページにリダイレクト
+ * - 成功時はredirectToを返す（クライアント側でリダイレクト）
  */
 export async function signupAction(
   prevState: SignupActionState | undefined,
@@ -31,7 +31,7 @@ export async function signupAction(
 
     if (response.status === 200 || response.status === 201) {
       // サインアップ成功、サインインページにリダイレクト
-      redirect("/auth/signin");
+      return { success: true, redirectTo: "/auth/signin" };
     }
 
     return { error: "サインアップに失敗しました" };

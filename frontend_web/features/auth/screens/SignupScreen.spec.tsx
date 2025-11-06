@@ -30,8 +30,6 @@ describe("SignupScreen", () => {
   });
 
   it("フォーム送信時、正しいパラメータでサインアップAPIを呼び出し、成功後にサインイン画面に遷移する", async () => {
-    const { redirect } = await import("next/navigation");
-
     //given API mock
     const apiResponse: signupResponse = {
       data: {
@@ -73,10 +71,10 @@ describe("SignupScreen", () => {
       { timeout: 10000 },
     );
 
-    //then navigate to signin (Server Actionがredirectを呼ぶ)
+    //then navigate to signin (useRouterでpush)
     await waitFor(
       () => {
-        expect(redirect).toHaveBeenCalledWith("/auth/signin");
+        expect(mockPush).toHaveBeenCalledWith("/auth/signin");
       },
       { timeout: 10000 },
     );

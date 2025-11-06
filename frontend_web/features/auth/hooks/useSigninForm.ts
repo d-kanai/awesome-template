@@ -1,5 +1,6 @@
 import { signinAction } from "@/features/auth/actions/signin";
 import { useForm } from "@tanstack/react-form";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { type SigninFormData, signinSchema } from "../schemas/authSchema";
 
@@ -10,6 +11,7 @@ import { type SigninFormData, signinSchema } from "../schemas/authSchema";
  * - Server Actionでサインイン処理
  */
 export function useSigninForm() {
+  const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,8 +34,10 @@ export function useSigninForm() {
 
         if (result.error) {
           setError(result.error);
+        } else if (result.redirectTo) {
+          // 成功時はクライアント側でリダイレクト
+          router.push(result.redirectTo);
         }
-        // 成功時はServer Action内でredirect()されるので、ここでは何もしない
       } catch (err) {
         console.error("[useSigninForm] Signin error:", err);
         setError(

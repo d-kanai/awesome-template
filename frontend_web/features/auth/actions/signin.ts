@@ -1,19 +1,19 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { signin as signinApi } from "@/features/shared/api/generated/functions";
 import type { SigninRequest } from "@/features/shared/api/generated/model";
 
 export type SigninActionState = {
   error?: string;
   success?: boolean;
+  redirectTo?: string;
 };
 
 /**
  * Server Action: サインイン処理
  * - Orval生成のsignin関数を呼び出し
  * - バックエンドがSet-CookieヘッダーでhttpOnly Cookieを設定
- * - 成功時は/userページにリダイレクト
+ * - 成功時はredirectToを返す（クライアント側でリダイレクト）
  */
 export async function signinAction(
   prevState: SigninActionState | undefined,
@@ -33,7 +33,7 @@ export async function signinAction(
     if (response.status === 200) {
       // バックエンドがSet-CookieヘッダーでhttpOnly Cookieを設定
       // Next.jsが自動的にCookieを保存
-      redirect("/user");
+      return { success: true, redirectTo: "/user" };
     }
 
     return { error: "サインインに失敗しました" };

@@ -9,9 +9,14 @@ vi.mock("@/features/shared/api/fetcher", () => ({
   fetcher: vi.fn(),
 }));
 
-// next/navigationのredirectをモック
+// next/navigationのredirectとuseRouterをモック
 vi.mock("next/navigation", () => ({
   redirect: vi.fn(),
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+  })),
 }));
 
 describe("SigninForm", () => {

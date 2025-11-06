@@ -3,7 +3,11 @@ import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
 
 // next/navigationのグローバルモック
-vi.mock("next/navigation", () => require("next-router-mock"));
+const mockRouter = require("next-router-mock");
+vi.mock("next/navigation", () => ({
+  ...mockRouter,
+  useRouter: () => mockRouter.default,
+}));
 
 // テスト後のクリーンアップ
 afterEach(() => {
