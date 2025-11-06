@@ -15,7 +15,7 @@ export async function signinAction(
   prevState: SigninActionState | undefined,
   formData: FormData,
 ): Promise<SigninActionState> {
-  // Zodでvalidation
+  // FormDataから値を抽出
   const rawData = {
     email: formData.get("email"),
     password: formData.get("password"),

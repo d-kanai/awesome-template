@@ -11,8 +11,7 @@
 - page.tsxはRSC + Screen Component renderのみにすること (基本的にRoutingのみの位置付け)
 - URLはハードコードでなくROUTES定数で管理すること
 - backendへのリクエストはOpenAPI定義からOrvalで生成したClientFunctionを使うこと
-- client side form validationはzod schemaを利用すること
-- server action form validtion
+- form validationはzodを利用し、client side, server action共通の定義(schemas.ts)を利用すること
 
 ### UT spec
 
