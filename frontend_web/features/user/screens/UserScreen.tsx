@@ -3,11 +3,6 @@
 import type { UserListItem } from "@/features/shared/api/generated/model";
 import { UserList } from "../components/UserList";
 
-/**
- * UserScreen
- * ユーザー一覧画面
- * - Server Componentから取得したデータをpropsで受け取る
- */
 interface UserScreenProps {
   users: UserListItem[];
 }
