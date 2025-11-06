@@ -26,7 +26,9 @@ import type {
 
 import type {
   FindAllUsersResponse,
-  HealthStatusResponse,
+  MeResponse,
+  ProxyRequest,
+  ProxyResponse,
   SigninRequest,
   SigninResponse,
   SignupRequest,
@@ -38,6 +40,205 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
+/**
+ * すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。
+ * @summary フィーチャーフラグ取得 (GET)
+ */
+export type getFeaturesGetResponse200 = {
+  data: ProxyResponse
+  status: 200
+}
+    
+export type getFeaturesGetResponseSuccess = (getFeaturesGetResponse200) & {
+  headers: Headers;
+};
+;
+
+export type getFeaturesGetResponse = (getFeaturesGetResponseSuccess)
+
+export const getGetFeaturesGetUrl = () => {
+
+
+  
+
+  return `/featureflags/proxy`
+}
+
+export const getFeaturesGet = async ( options?: RequestInit): Promise<getFeaturesGetResponse> => {
+  
+  return fetcher<getFeaturesGetResponse>(getGetFeaturesGetUrl(),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+);}
+
+
+
+
+
+export const getGetFeaturesGetQueryKey = () => {
+    return [
+    `/featureflags/proxy`
+    ] as const;
+    }
+
+    
+export const getGetFeaturesGetQueryOptions = <TData = Awaited<ReturnType<typeof getFeaturesGet>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetFeaturesGetQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getFeaturesGet>>> = ({ signal }) => getFeaturesGet({ signal, ...requestOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetFeaturesGetQueryResult = NonNullable<Awaited<ReturnType<typeof getFeaturesGet>>>
+export type GetFeaturesGetQueryError = unknown
+
+
+export function useGetFeaturesGet<TData = Awaited<ReturnType<typeof getFeaturesGet>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFeaturesGet>>,
+          TError,
+          Awaited<ReturnType<typeof getFeaturesGet>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetFeaturesGet<TData = Awaited<ReturnType<typeof getFeaturesGet>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getFeaturesGet>>,
+          TError,
+          Awaited<ReturnType<typeof getFeaturesGet>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetFeaturesGet<TData = Awaited<ReturnType<typeof getFeaturesGet>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary フィーチャーフラグ取得 (GET)
+ */
+
+export function useGetFeaturesGet<TData = Awaited<ReturnType<typeof getFeaturesGet>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetFeaturesGetQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+
+
+/**
+ * すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。
+ * @summary フィーチャーフラグ取得 (POST)
+ */
+export type getFeaturesPostResponse200 = {
+  data: ProxyResponse
+  status: 200
+}
+    
+export type getFeaturesPostResponseSuccess = (getFeaturesPostResponse200) & {
+  headers: Headers;
+};
+;
+
+export type getFeaturesPostResponse = (getFeaturesPostResponseSuccess)
+
+export const getGetFeaturesPostUrl = () => {
+
+
+  
+
+  return `/featureflags/proxy`
+}
+
+export const getFeaturesPost = async (proxyRequest: ProxyRequest, options?: RequestInit): Promise<getFeaturesPostResponse> => {
+  
+  return fetcher<getFeaturesPostResponse>(getGetFeaturesPostUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      proxyRequest,)
+  }
+);}
+
+
+
+
+export const getGetFeaturesPostMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getFeaturesPost>>, TError,{data: ProxyRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof getFeaturesPost>>, TError,{data: ProxyRequest}, TContext> => {
+
+const mutationKey = ['getFeaturesPost'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getFeaturesPost>>, {data: ProxyRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  getFeaturesPost(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type GetFeaturesPostMutationResult = NonNullable<Awaited<ReturnType<typeof getFeaturesPost>>>
+    export type GetFeaturesPostMutationBody = ProxyRequest
+    export type GetFeaturesPostMutationError = unknown
+
+    /**
+ * @summary フィーチャーフラグ取得 (POST)
+ */
+export const useGetFeaturesPost = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getFeaturesPost>>, TError,{data: ProxyRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof getFeaturesPost>>,
+        TError,
+        {data: ProxyRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getGetFeaturesPostMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
 /**
  * 指定した情報で新しいユーザーを登録します。
  * @summary ユーザー登録
@@ -126,6 +327,90 @@ export const useSignup = <TError = void,
       > => {
 
       const mutationOptions = getSignupMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    
+/**
+ * サインアウトしてCookieを削除します。
+ * @summary サインアウト
+ */
+export type signoutResponse200 = {
+  data: void
+  status: 200
+}
+    
+export type signoutResponseSuccess = (signoutResponse200) & {
+  headers: Headers;
+};
+;
+
+export type signoutResponse = (signoutResponseSuccess)
+
+export const getSignoutUrl = () => {
+
+
+  
+
+  return `/auth/signout`
+}
+
+export const signout = async ( options?: RequestInit): Promise<signoutResponse> => {
+  
+  return fetcher<signoutResponse>(getSignoutUrl(),
+  {      
+    ...options,
+    method: 'POST'
+    
+    
+  }
+);}
+
+
+
+
+export const getSignoutMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signout>>, TError,void, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof signout>>, TError,void, TContext> => {
+
+const mutationKey = ['signout'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof signout>>, void> = () => {
+          
+
+          return  signout(requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SignoutMutationResult = NonNullable<Awaited<ReturnType<typeof signout>>>
+    
+    export type SignoutMutationError = unknown
+
+    /**
+ * @summary サインアウト
+ */
+export const useSignout = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signout>>, TError,void, TContext>, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof signout>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getSignoutMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }
@@ -337,32 +622,39 @@ export function useGetAllUsers<TData = Awaited<ReturnType<typeof getAllUsers>>, 
 
 
 /**
- * サービスの現在の状態を返します。
- * @summary サービスの稼働状況
+ * 現在認証されているユーザーの情報を取得します。
+ * @summary 認証済みユーザー情報取得
  */
-export type healthResponse200 = {
-  data: HealthStatusResponse
+export type meResponse200 = {
+  data: MeResponse
   status: 200
 }
+
+export type meResponse401 = {
+  data: void
+  status: 401
+}
     
-export type healthResponseSuccess = (healthResponse200) & {
+export type meResponseSuccess = (meResponse200) & {
   headers: Headers;
 };
-;
+export type meResponseError = (meResponse401) & {
+  headers: Headers;
+};
 
-export type healthResponse = (healthResponseSuccess)
+export type meResponse = (meResponseSuccess | meResponseError)
 
-export const getHealthUrl = () => {
+export const getMeUrl = () => {
 
 
   
 
-  return `/health`
+  return `/auth/me`
 }
 
-export const health = async ( options?: RequestInit): Promise<healthResponse> => {
+export const me = async ( options?: RequestInit): Promise<meResponse> => {
   
-  return fetcher<healthResponse>(getHealthUrl(),
+  return fetcher<meResponse>(getMeUrl(),
   {      
     ...options,
     method: 'GET'
@@ -375,69 +667,69 @@ export const health = async ( options?: RequestInit): Promise<healthResponse> =>
 
 
 
-export const getHealthQueryKey = () => {
+export const getMeQueryKey = () => {
     return [
-    `/health`
+    `/auth/me`
     ] as const;
     }
 
     
-export const getHealthQueryOptions = <TData = Awaited<ReturnType<typeof health>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+export const getMeQueryOptions = <TData = Awaited<ReturnType<typeof me>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof me>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getHealthQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getMeQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof health>>> = ({ signal }) => health({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof me>>> = ({ signal }) => me({ signal, ...requestOptions });
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof me>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type HealthQueryResult = NonNullable<Awaited<ReturnType<typeof health>>>
-export type HealthQueryError = unknown
+export type MeQueryResult = NonNullable<Awaited<ReturnType<typeof me>>>
+export type MeQueryError = void
 
 
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>> & Pick<
+export function useMe<TData = Awaited<ReturnType<typeof me>>, TError = void>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof me>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof health>>,
+          Awaited<ReturnType<typeof me>>,
           TError,
-          Awaited<ReturnType<typeof health>>
+          Awaited<ReturnType<typeof me>>
         > , 'initialData'
       >, request?: SecondParameter<typeof fetcher>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>> & Pick<
+export function useMe<TData = Awaited<ReturnType<typeof me>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof me>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof health>>,
+          Awaited<ReturnType<typeof me>>,
           TError,
-          Awaited<ReturnType<typeof health>>
+          Awaited<ReturnType<typeof me>>
         > , 'initialData'
       >, request?: SecondParameter<typeof fetcher>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+export function useMe<TData = Awaited<ReturnType<typeof me>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof me>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary サービスの稼働状況
+ * @summary 認証済みユーザー情報取得
  */
 
-export function useHealth<TData = Awaited<ReturnType<typeof health>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof health>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+export function useMe<TData = Awaited<ReturnType<typeof me>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof me>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getHealthQueryOptions(options)
+  const queryOptions = getMeQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

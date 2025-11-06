@@ -7,9 +7,11 @@
  */
 
 /**
- * ヘルスチェックのレスポンス
+ * 認証済みユーザーの情報を表します
  */
-export interface HealthStatusResponse {
-  /** サービスの現在の状態 */
-  status?: string;
+export interface MeResponse {
+  /** ユーザーの一意な識別子 */
+  id?: string;
+  /** ユーザーのメールアドレス */
+  email?: string;
 }

@@ -6,8 +6,12 @@
  * OpenAPI spec version: 1.0.0
  */
 
+export * from './featureToggle';
 export * from './findAllUsersResponse';
-export * from './healthStatusResponse';
+export * from './meResponse';
+export * from './proxyRequest';
+export * from './proxyRequestProperties';
+export * from './proxyResponse';
 export * from './signinRequest';
 export * from './signinResponse';
 export * from './signupRequest';

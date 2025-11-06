@@ -100,17 +100,6 @@ public class AuthController {
     }
   }
 
-  @Operation(summary = "サインアウト", description = "サインアウトしてCookieを削除します。")
-  @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "サインアウトに成功しました。", content = @Content)
-  })
-  @PostMapping(value = "/signout")
-  public ResponseEntity<Void> signout(final HttpServletResponse response) {
-    // Clear authentication cookie by setting maxAge=0 and empty value
-    clearAuthCookie(response);
-    return ResponseEntity.ok().build();
-  }
-
   @Operation(summary = "認証済みユーザー情報取得", description = "現在認証されているユーザーの情報を取得します。")
   @ApiResponses({
     @ApiResponse(
@@ -153,27 +142,6 @@ public class AuthController {
             .secure(jwtCookieProperties.isSecure())
             .sameSite(sameSite)
             .maxAge(jwtCookieProperties.getMaxAgeSeconds())
-            .path("/")
-            .build();
-
-    response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-  }
-
-  /**
-   * 認証Cookieを削除する（サインアウト時）.
-   *
-   * @param response HttpServletResponse
-   */
-  private void clearAuthCookie(final HttpServletResponse response) {
-    final String sameSite =
-        jwtCookieProperties.getSameSite() != null ? jwtCookieProperties.getSameSite() : "Lax";
-
-    final ResponseCookie cookie =
-        ResponseCookie.from(jwtCookieProperties.getName(), "")
-            .httpOnly(jwtCookieProperties.isHttpOnly())
-            .secure(jwtCookieProperties.isSecure())
-            .sameSite(sameSite)
-            .maxAge(0) // 即座に削除
             .path("/")
             .build();
 
