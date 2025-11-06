@@ -2,6 +2,11 @@
 
 [重要]web frontendのコーディングは以下を遵守すること
 
+### common
+
+- URLはハードコードでなくROUTES定数で管理すること
+- elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること
+
 ### code
 
 - feature baseのディレクトリ構造にすること
@@ -12,7 +17,6 @@
   - ※ ClientSideのFormValidationも実装するため、react-hook-form x Server Actionの組み合わせにすること（useActionStateは利用しない）
   - ※ エラーハンドリングとフォーム状態管理を柔軟に行うため、ServerAction内でのnavigation(redirect)は利用せず、client side navigationにすること
 - page.tsxはRSC + Screen Component renderのみにすること (基本的にRoutingのみの位置付け)
-- URLはハードコードでなくROUTES定数で管理すること
 - backendへのリクエストはOpenAPI定義からOrvalで生成したClientFunctionを使うこと
 - form validationはzodを利用し、client side, server action共通の定義(schemas.ts)を利用すること
 - form周りの情報(key名など)はzodのschema定義からできる限り取得し、SSOFとすること
@@ -24,7 +28,6 @@
 - it()のケース名は日本語でテストの意図が明確な名前にすること
   - 例: `describe("正常系") > it("サインイン画面に遷移する", ...)`
 - テストコード内部にはgiven when thenのコメントを日本語で挿入してフェーズを見やすくすること
-- elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること
 - TestC: Screen Level Test (RSC, Server Action統合テスト)
   - Common
     - 全てのScreenにTestCが作成されていること
@@ -45,5 +48,3 @@
       - Toastなど、ユーザへのFBが起きていること
 
 ### E2E spec (playwright)
-
-- elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること
