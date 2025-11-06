@@ -6,8 +6,8 @@
 
 - feature baseのディレクトリ構造にすること
 - 基本的にRSC・Server Actionを利用すること
-  - ※ ClientSideのFormValidationも実装するため、Tanstack Form x Server Actionの組み合わせにすること（useActionStateは利用しない）
-  - ※ Tanstack Formとのコンビネーションが弱いため、ServerAction内でのnavigationは利用せず、client side navigationにすること
+  - ※ ClientSideのFormValidationも実装するため、react-hook-form x Server Actionの組み合わせにすること（useActionStateは利用しない）
+  - ※ エラーハンドリングとフォーム状態管理を柔軟に行うため、ServerAction内でのnavigation(redirect)は利用せず、client side navigationにすること
 - page.tsxはRSC + Screen Component renderのみにすること (基本的にRoutingのみの位置付け)
 - URLはハードコードでなくROUTES定数で管理すること
 - backendへのリクエストはOpenAPI定義からOrvalで生成したClientFunctionを使うこと
@@ -31,7 +31,7 @@
     - When: page render
     - Then: 
       - Server Action内のCommand APIにformのパラメータが渡り呼び出されていること
-        - ※ react-hook-formとの組み合わせのためにServerSide Navigationしないルールなので、結果としてServerActionも統合したテストが動作する
+        - ※ エラーハンドリングを柔軟にするためにServer Side Navigation(redirect)しないルールなので、結果としてServerActionも統合したテストが動作する
       - Client Side URL遷移が起きていること
       - Toastなど、ユーザへのFBが起きていること
 

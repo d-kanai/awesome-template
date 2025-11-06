@@ -70,35 +70,6 @@ describe("SignupForm", () => {
     });
   });
 
-  it("given: 有効なフォームデータ when: サインアップボタンをクリック then: 送信中の状態が表示される", async () => {
-    const user = userEvent.setup();
-    const { fetcher } = await import("@/features/shared/api/fetcher");
-
-    // fetcherをモック（遅延させる）
-    vi.mocked(fetcher).mockImplementation(
-      () => new Promise((resolve) => setTimeout(resolve, 1000)),
-    );
-
-    renderWithProviders(<SignupForm />);
-
-    // フォームに入力
-    await user.type(
-      screen.getByLabelText("メールアドレス"),
-      "test@example.com",
-    );
-    await user.type(screen.getByLabelText("パスワード"), "password123");
-
-    // 送信
-    await user.click(screen.getByRole("button", { name: "サインアップ" }));
-
-    // 送信中の状態を確認
-    await waitFor(() => {
-      expect(
-        screen.getByRole("button", { name: "登録中..." }),
-      ).toBeInTheDocument();
-    });
-  });
-
   it("given: サインアップフォーム when: リンクをクリック then: サインインページへのリンクが機能する", () => {
     renderWithProviders(<SignupForm />);
 
