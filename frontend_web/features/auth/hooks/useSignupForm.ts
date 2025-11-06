@@ -1,27 +1,17 @@
-import { useSignup } from "@/features/shared/api/generated";
+import { signupAction } from "@/features/auth/actions/signup";
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { type SignupFormData, signupSchema } from "../schemas/authSchema";
 
 /**
  * useSignupForm
  * サインアップフォームの状態管理とバリデーション
+ * - TanStack Formでバリデーション
+ * - Server Actionでサインアップ処理
  */
 export function useSignupForm() {
-  const router = useRouter();
-
-  const signupMutation = useSignup({
-    mutation: {
-      onSuccess: () => {
-        // サインアップ成功後、サインイン画面に遷移
-        console.log("[useSignupForm] Signup success, navigating to signin");
-        router.push("/auth/signin");
-      },
-      onError: (error) => {
-        console.error("[useSignupForm] Signup error:", error);
-      },
-    },
-  });
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm({
     defaultValues: {
@@ -29,14 +19,36 @@ export function useSignupForm() {
       password: "",
     } as SignupFormData,
     onSubmit: async ({ value }) => {
-      await signupMutation.mutateAsync({ data: value });
+      setIsPending(true);
+      setError(null);
+
+      try {
+        // FormDataを作成してServer Actionに渡す
+        const formData = new FormData();
+        formData.append("email", value.email);
+        formData.append("password", value.password);
+
+        const result = await signupAction(undefined, formData);
+
+        if (result.error) {
+          setError(result.error);
+        }
+        // 成功時はServer Action内でredirect()されるので、ここでは何もしない
+      } catch (err) {
+        console.error("[useSignupForm] Signup error:", err);
+        setError(
+          err instanceof Error ? err.message : "サインアップに失敗しました",
+        );
+      } finally {
+        setIsPending(false);
+      }
     },
   });
 
   return {
     form,
-    isPending: signupMutation.isPending,
-    error: signupMutation.error,
+    isPending,
+    error,
     schema: signupSchema,
   };
 }

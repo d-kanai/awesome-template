@@ -1,4 +1,3 @@
-import { AuthProvider } from "@/features/shared/providers/AuthProvider";
 import { FeatureFlagProvider } from "@/features/shared/providers/FeatureFlagProvider";
 import { QueryProvider } from "@/features/shared/providers/QueryProvider";
 import type { Metadata } from "next";
@@ -9,7 +8,7 @@ export const metadata: Metadata = {
   description: "Frontend web application for awesome-template",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -18,9 +17,7 @@ export default function RootLayout({
     <html lang="ja">
       <body>
         <QueryProvider>
-          <AuthProvider>
-            <FeatureFlagProvider>{children}</FeatureFlagProvider>
-          </AuthProvider>
+          <FeatureFlagProvider>{children}</FeatureFlagProvider>
         </QueryProvider>
       </body>
     </html>

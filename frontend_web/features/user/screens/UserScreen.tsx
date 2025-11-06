@@ -1,12 +1,18 @@
 "use client";
 
+import type { UserListItem } from "@/features/shared/api/generated/model";
 import { UserList } from "../components/UserList";
 
 /**
  * UserScreen
  * ユーザー一覧画面
+ * - Server Componentから取得したデータをpropsで受け取る
  */
-export function UserScreen() {
+interface UserScreenProps {
+  users: UserListItem[];
+}
+
+export function UserScreen({ users }: UserScreenProps) {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
@@ -16,7 +22,7 @@ export function UserScreen() {
             登録されているユーザーの一覧です
           </p>
         </div>
-        <UserList />
+        <UserList users={users} />
       </div>
     </div>
   );

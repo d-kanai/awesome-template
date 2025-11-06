@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@/features/shared/figma_generated/Card";
-import { type User, useUserList } from "../hooks/useUserList";
+import type { UserListItem as User } from "@/features/shared/api/generated/model";
 
 /**
  * UserListItem
@@ -16,7 +16,9 @@ function UserListItem({ user }: { user: User }) {
           <p className="text-sm text-gray-500">ID: {user.id}</p>
         </div>
         <div className="text-sm text-gray-400">
-          {new Date(user.createdAt).toLocaleDateString("ja-JP")}
+          {user.createdAt
+            ? new Date(user.createdAt).toLocaleDateString("ja-JP")
+            : "-"}
         </div>
       </div>
     </div>
@@ -26,34 +28,14 @@ function UserListItem({ user }: { user: User }) {
 /**
  * UserList
  * ユーザー一覧を表示するコンポーネント
+ * - Server Componentから取得したデータをpropsで受け取る
+ * - 表示のみを担当（データ取得はServer Componentで実施）
  */
-export function UserList() {
-  const { data: users, isLoading, error } = useUserList();
+interface UserListProps {
+  users: User[];
+}
 
-  if (isLoading) {
-    return (
-      <Card>
-        <div className="p-8 text-center">
-          <p className="text-gray-500">読み込み中...</p>
-        </div>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <div className="p-8 text-center">
-          <p className="text-red-600">
-            {error instanceof Error
-              ? error.message
-              : "ユーザー一覧の取得に失敗しました"}
-          </p>
-        </div>
-      </Card>
-    );
-  }
-
+export function UserList({ users }: UserListProps) {
   if (!users || users.length === 0) {
     return (
       <Card>

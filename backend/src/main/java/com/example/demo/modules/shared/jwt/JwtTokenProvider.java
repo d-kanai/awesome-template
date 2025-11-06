@@ -86,4 +86,20 @@ public class JwtTokenProvider {
         Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
     return claims.get("email", String.class);
   }
+
+  /**
+   * Extracts JwtClaims from JWT token.
+   *
+   * @param token The JWT token.
+   * @return The JwtClaims object containing all claims.
+   */
+  public JwtClaims getClaimsFromToken(final String token) {
+    final Claims claims =
+        Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+    return new JwtClaims(
+        claims.getSubject(),
+        claims.get("email", String.class),
+        claims.getIssuedAt(),
+        claims.getExpiration());
+  }
 }

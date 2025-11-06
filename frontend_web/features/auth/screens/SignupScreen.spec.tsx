@@ -4,11 +4,12 @@ import { type MockedFunction, vi } from "vitest";
 
 import { SignupScreen } from "@/features/auth/screens/SignupScreen";
 import { fetcher } from "@/features/shared/api/fetcher";
-import type { signupResponse } from "@/features/shared/api/generated";
+import type { signupResponse } from "@/features/shared/api/generated/functions";
 import { renderWithProviders } from "@/features/shared/lib/testsupport";
 
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(),
+  redirect: vi.fn(),
 }));
 
 vi.mock("@/features/shared/api/fetcher", () => ({
@@ -29,6 +30,8 @@ describe("SignupScreen", () => {
   });
 
   it("フォーム送信時、正しいパラメータでサインアップAPIを呼び出し、成功後にサインイン画面に遷移する", async () => {
+    const { redirect } = await import("next/navigation");
+
     //given API mock
     const apiResponse: signupResponse = {
       data: {
@@ -37,8 +40,7 @@ describe("SignupScreen", () => {
         createdAt: "2024-01-01T12:34:56.000Z",
         updatedAt: "2024-01-02T12:34:56.000Z",
       },
-      status: 201,
-      headers: new Headers(),
+      status: 200,
     };
 
     mockedFetcher.mockResolvedValueOnce(apiResponse);
@@ -71,10 +73,10 @@ describe("SignupScreen", () => {
       { timeout: 10000 },
     );
 
-    //then navigate to signin
+    //then navigate to signin (Server Actionがredirectを呼ぶ)
     await waitFor(
       () => {
-        expect(mockPush).toHaveBeenCalledWith("/auth/signin");
+        expect(redirect).toHaveBeenCalledWith("/auth/signin");
       },
       { timeout: 10000 },
     );

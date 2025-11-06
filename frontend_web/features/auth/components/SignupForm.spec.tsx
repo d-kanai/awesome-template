@@ -9,6 +9,11 @@ vi.mock("@/features/shared/api/fetcher", () => ({
   fetcher: vi.fn(),
 }));
 
+// next/navigationのredirectをモック
+vi.mock("next/navigation", () => ({
+  redirect: vi.fn(),
+}));
+
 describe("SignupForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();

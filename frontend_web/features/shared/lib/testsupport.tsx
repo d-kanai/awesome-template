@@ -1,4 +1,3 @@
-import { AuthProvider } from "@/features/shared/providers/AuthProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type RenderOptions, render } from "@testing-library/react";
 
@@ -23,7 +22,7 @@ export function createQueryClient() {
 
 /**
  * プロバイダー付きでコンポーネントをレンダリング
- * QueryClientProvider + AuthProviderでラップ
+ * QueryClientProviderでラップ
  */
 export function renderWithProviders(
   ui: React.ReactElement,
@@ -35,7 +34,7 @@ export function renderWithProviders(
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>{children}</AuthProvider>
+        {children}
       </QueryClientProvider>
     );
   }

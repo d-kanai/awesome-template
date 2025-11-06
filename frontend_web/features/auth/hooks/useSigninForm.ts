@@ -1,35 +1,17 @@
-import { useSignin } from "@/features/shared/api/generated";
-import { useAuth } from "@/features/shared/providers/AuthProvider";
+import { signinAction } from "@/features/auth/actions/signin";
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { type SigninFormData, signinSchema } from "../schemas/authSchema";
 
 /**
  * useSigninForm
  * サインインフォームの状態管理とバリデーション
+ * - TanStack Formでバリデーション
+ * - Server Actionでサインイン処理
  */
 export function useSigninForm() {
-  const router = useRouter();
-  const { signIn } = useAuth();
-
-  const signinMutation = useSignin({
-    mutation: {
-      onSuccess: (response) => {
-        // サインイン成功後、トークンを保存して認証状態を更新
-        console.log("[useSigninForm] Signin success, navigating to user page");
-        const token = response.data.accessToken;
-        if (token) {
-          signIn(token);
-          router.push("/user");
-        } else {
-          console.error("[useSigninForm] No access token in response");
-        }
-      },
-      onError: (error) => {
-        console.error("[useSigninForm] Signin error:", error);
-      },
-    },
-  });
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm({
     defaultValues: {
@@ -37,14 +19,36 @@ export function useSigninForm() {
       password: "",
     } as SigninFormData,
     onSubmit: async ({ value }) => {
-      await signinMutation.mutateAsync({ data: value });
+      setIsPending(true);
+      setError(null);
+
+      try {
+        // FormDataを作成してServer Actionに渡す
+        const formData = new FormData();
+        formData.append("email", value.email);
+        formData.append("password", value.password);
+
+        const result = await signinAction(undefined, formData);
+
+        if (result.error) {
+          setError(result.error);
+        }
+        // 成功時はServer Action内でredirect()されるので、ここでは何もしない
+      } catch (err) {
+        console.error("[useSigninForm] Signin error:", err);
+        setError(
+          err instanceof Error ? err.message : "サインインに失敗しました",
+        );
+      } finally {
+        setIsPending(false);
+      }
     },
   });
 
   return {
     form,
-    isPending: signinMutation.isPending,
-    error: signinMutation.error,
+    isPending,
+    error,
     schema: signinSchema,
   };
 }

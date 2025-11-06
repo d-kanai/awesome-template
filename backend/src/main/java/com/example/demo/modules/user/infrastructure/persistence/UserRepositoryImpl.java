@@ -27,6 +27,11 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
+  public Optional<User> findById(final UserId id) {
+    return dsl.selectFrom(USERS).where(USERS.ID.eq(id.getValue())).fetchOptional(this::mapToUser);
+  }
+
+  @Override
   public Optional<User> findByEmail(final String email) {
     return dsl.selectFrom(USERS).where(USERS.EMAIL.eq(email)).fetchOptional(this::mapToUser);
   }
