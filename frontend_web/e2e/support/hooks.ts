@@ -1,7 +1,13 @@
-import { After, AfterAll, Before, BeforeAll, setDefaultTimeout } from "@cucumber/cucumber";
+import {
+  After,
+  AfterAll,
+  Before,
+  BeforeAll,
+  setDefaultTimeout,
+} from "@cucumber/cucumber";
 import { type Browser, chromium } from "@playwright/test";
-import type { CustomWorld } from "../steps/world";
 import { API_BASE_URL } from "../../features/shared/lib/constants";
+import type { CustomWorld } from "../steps/world";
 
 // デフォルトタイムアウトを30秒に設定
 setDefaultTimeout(30000);

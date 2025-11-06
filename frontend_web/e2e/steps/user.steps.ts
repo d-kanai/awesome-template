@@ -40,5 +40,7 @@ Then("ユーザー一覧が表示される", async function (this: CustomWorld) 
  * 検証: ユーザー一覧のタイトルが表示される
  */
 Then("ユーザー一覧のタイトルが表示される", async function (this: CustomWorld) {
-  await expect(this.page.locator('h1:has-text("ユーザー一覧")')).toBeVisible({ timeout: 10000 });
+  await expect(this.page.locator('h1:has-text("ユーザー一覧")')).toBeVisible({
+    timeout: 10000,
+  });
 });

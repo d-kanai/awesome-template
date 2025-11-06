@@ -12,7 +12,11 @@ vi.mock("@/features/shared/api/fetcher", () => ({
 // next/navigationのredirectをモック
 vi.mock("next/navigation", () => ({
   redirect: vi.fn(),
-  useRouter: vi.fn(() => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() })),
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+  })),
 }));
 
 describe("SignupForm", () => {

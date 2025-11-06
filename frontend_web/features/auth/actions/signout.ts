@@ -1,9 +1,9 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { signout } from "@/features/shared/api/generated/functions";
 import { COOKIE_KEYS, ROUTES } from "@/features/shared/lib/constants";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function signoutAction() {
   const cookieStore = await cookies();

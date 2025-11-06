@@ -1,6 +1,6 @@
+import type { UserListItem } from "@/features/shared/api/generated/model";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import type { UserListItem } from "@/features/shared/api/generated/model";
 import { UserList } from "./UserList";
 
 const mockUsers: UserListItem[] = [

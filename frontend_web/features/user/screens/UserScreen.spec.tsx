@@ -1,7 +1,7 @@
-import { render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getAllUsers } from "@/features/shared/api/generated/functions";
 import { UserScreen } from "@/features/user/screens/UserScreen";
+import { render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // getAllUsersをモック
 vi.mock("@/features/shared/api/generated/functions", () => ({
@@ -35,7 +35,7 @@ describe("UserScreen - TestC: Screen Level Test", () => {
         },
         status: 200,
       };
-      vi.mocked(getAllUsers).mockResolvedValue(mockResponse as any);
+      vi.mocked(getAllUsers).mockResolvedValue(mockResponse);
 
       // When: データ取得 → 画面レンダリング
       const response = await getAllUsers();
@@ -60,7 +60,7 @@ describe("UserScreen - TestC: Screen Level Test", () => {
         },
         status: 200,
       };
-      vi.mocked(getAllUsers).mockResolvedValue(mockResponse as any);
+      vi.mocked(getAllUsers).mockResolvedValue(mockResponse);
 
       // When: データ取得 → 画面レンダリング
       const response = await getAllUsers();
@@ -68,9 +68,7 @@ describe("UserScreen - TestC: Screen Level Test", () => {
       render(<UserScreen users={users} />);
 
       // Then: 空メッセージが表示される
-      expect(
-        screen.getByText("ユーザーが見つかりません"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("ユーザーが見つかりません")).toBeInTheDocument();
     });
 
     it("given: API成功 when: データ取得 + 画面レンダリング then: ユーザー情報の詳細が全て表示される", async () => {
@@ -88,7 +86,7 @@ describe("UserScreen - TestC: Screen Level Test", () => {
         },
         status: 200,
       };
-      vi.mocked(getAllUsers).mockResolvedValue(mockResponse as any);
+      vi.mocked(getAllUsers).mockResolvedValue(mockResponse);
 
       // When: データ取得 → 画面レンダリング
       const response = await getAllUsers();

@@ -1,6 +1,13 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { useRouter } from "next/navigation";
-import { beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
+import {
+  type MockedFunction,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 import { SigninScreen } from "@/features/auth/screens/SigninScreen";
 import { fetcher } from "@/features/shared/api/fetcher";
@@ -26,7 +33,12 @@ describe("SigninScreen - TestC: Screen Level Test", () => {
     vi.clearAllMocks();
     mockedUseRouter.mockReturnValue({
       push: mockPush,
-    } as any);
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+    });
   });
 
   describe("Command", () => {
@@ -35,12 +47,10 @@ describe("SigninScreen - TestC: Screen Level Test", () => {
       const apiResponse: signinResponse = {
         data: {
           accessToken: "test-token-123",
-          user: {
-            id: "user-1",
-            email: "test@example.com",
-            createdAt: "2024-01-01T12:34:56.000Z",
-            updatedAt: "2024-01-02T12:34:56.000Z",
-          },
+          id: "user-1",
+          email: "test@example.com",
+          createdAt: "2024-01-01T12:34:56.000Z",
+          updatedAt: "2024-01-02T12:34:56.000Z",
         },
         status: 200,
       };
@@ -85,7 +95,9 @@ describe("SigninScreen - TestC: Screen Level Test", () => {
 
     it("given: - when: API失敗 then: エラーメッセージが表示される", async () => {
       // Given: API失敗レスポンス
-      mockedFetcher.mockRejectedValueOnce(new Error("サインインに失敗しました"));
+      mockedFetcher.mockRejectedValueOnce(
+        new Error("サインインに失敗しました"),
+      );
 
       // When: 画面レンダリング + フォーム入力 + 送信
       renderWithProviders(<SigninScreen />);

@@ -1,7 +1,7 @@
 "use client";
 
-import { Card } from "@/features/shared/figma_generated/Card";
 import type { UserListItem as User } from "@/features/shared/api/generated/model";
+import { Card } from "@/features/shared/figma_generated/Card";
 
 /**
  * UserListItem

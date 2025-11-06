@@ -1,6 +1,13 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { useRouter } from "next/navigation";
-import { beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
+import {
+  type MockedFunction,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 import { SignupScreen } from "@/features/auth/screens/SignupScreen";
 import { fetcher } from "@/features/shared/api/fetcher";
@@ -26,7 +33,12 @@ describe("SignupScreen - TestC: Screen Level Test", () => {
     vi.clearAllMocks();
     mockedUseRouter.mockReturnValue({
       push: mockPush,
-    } as any);
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+    });
   });
 
   describe("Command", () => {
@@ -82,7 +94,9 @@ describe("SignupScreen - TestC: Screen Level Test", () => {
 
     it("given: - when: API失敗 then: エラーメッセージが表示される", async () => {
       // Given: API失敗レスポンス
-      mockedFetcher.mockRejectedValueOnce(new Error("サインアップに失敗しました"));
+      mockedFetcher.mockRejectedValueOnce(
+        new Error("サインアップに失敗しました"),
+      );
 
       // When: 画面レンダリング + フォーム入力 + 送信
       renderWithProviders(<SignupScreen />);

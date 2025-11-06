@@ -1,6 +1,6 @@
+import { COOKIE_KEYS } from "@/features/shared/lib/constants";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { COOKIE_KEYS } from "@/features/shared/lib/constants";
 
 export function middleware(request: NextRequest) {
   const sessionCookie = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN);

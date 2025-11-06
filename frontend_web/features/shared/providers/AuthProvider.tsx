@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext } from "react";
 import type { Session } from "@/features/auth/actions/getSession";
+import { createContext, useContext } from "react";
 
 /**
  * AuthProvider

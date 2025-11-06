@@ -1,12 +1,15 @@
 "use server";
 
-import { cache } from "react";
-import { cookies } from "next/headers";
 import { me } from "@/features/shared/api/generated/functions";
 import { COOKIE_KEYS } from "@/features/shared/lib/constants";
+import { cookies } from "next/headers";
+import { cache } from "react";
 
 export type Session = {
-  user: { id: string; email: string; createdAt?: string; updatedAt?: string } | null;
+  user: {
+    id?: string;
+    email?: string;
+  } | null;
   isAuthenticated: boolean;
 };
 
