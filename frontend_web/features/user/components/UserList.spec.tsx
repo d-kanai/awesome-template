@@ -17,7 +17,7 @@ const mockUsers: UserListItem[] = [
 ];
 
 describe("UserList", () => {
-  it("given: ユーザーデータが存在する when: コンポーネントがレンダリングされる then: ユーザーリストが表示される", () => {
+  it("ユーザーリストが表示される", () => {
     render(<UserList users={mockUsers} />);
 
     expect(screen.getByText("user1@example.com")).toBeInTheDocument();
@@ -26,13 +26,13 @@ describe("UserList", () => {
     expect(screen.getByText("ID: 2")).toBeInTheDocument();
   });
 
-  it("given: ユーザーデータが空 when: コンポーネントがレンダリングされる then: 空状態メッセージが表示される", () => {
+  it("ユーザーデータが空の場合、空状態メッセージが表示される", () => {
     render(<UserList users={[]} />);
 
     expect(screen.getByText("ユーザーが見つかりません")).toBeInTheDocument();
   });
 
-  it("given: createdAtがない when: ユーザーが表示される then: ダッシュが表示される", () => {
+  it("作成日が存在しない場合、ダッシュが表示される", () => {
     const usersWithoutDate: UserListItem[] = [
       {
         id: "1",

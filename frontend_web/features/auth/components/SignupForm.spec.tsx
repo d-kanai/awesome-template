@@ -24,7 +24,7 @@ describe("SignupForm", () => {
     vi.clearAllMocks();
   });
 
-  it("given: SignupFormが表示される when: コンポーネントがレンダリングされる then: すべてのフィールドが表示される", () => {
+  it("サインアップフォームが表示される", () => {
     renderWithProviders(<SignupForm />);
 
     expect(screen.getByLabelText("メールアドレス")).toBeInTheDocument();
@@ -34,7 +34,7 @@ describe("SignupForm", () => {
     ).toBeInTheDocument();
   });
 
-  it("given: 空のフォーム when: メールアドレスが無効 then: バリデーションエラーが表示される", async () => {
+  it("無効なメールアドレスを入力した場合、バリデーションエラーが表示される", async () => {
     const user = userEvent.setup();
     renderWithProviders(<SignupForm />);
 
@@ -52,7 +52,7 @@ describe("SignupForm", () => {
     });
   });
 
-  it("given: 空のフォーム when: パスワードが短い then: バリデーションエラーが表示される", async () => {
+  it("8文字未満のパスワードを入力した場合、バリデーションエラーが表示される", async () => {
     const user = userEvent.setup();
     renderWithProviders(<SignupForm />);
 
@@ -70,7 +70,7 @@ describe("SignupForm", () => {
     });
   });
 
-  it("given: サインアップフォーム when: リンクをクリック then: サインインページへのリンクが機能する", () => {
+  it("サインインページへのリンクが正しく設定されている", () => {
     renderWithProviders(<SignupForm />);
 
     const signinLink = screen.getByRole("link", { name: "サインイン" });

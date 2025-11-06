@@ -24,7 +24,7 @@ describe("SigninForm", () => {
     vi.clearAllMocks();
   });
 
-  it("given: SigninFormが表示される when: コンポーネントがレンダリングされる then: すべてのフィールドが表示される", () => {
+  it("サインインフォームが表示される", () => {
     renderWithProviders(<SigninForm />);
 
     expect(screen.getByLabelText("メールアドレス")).toBeInTheDocument();
@@ -34,7 +34,7 @@ describe("SigninForm", () => {
     ).toBeInTheDocument();
   });
 
-  it("given: 空のフォーム when: メールアドレスが無効 then: バリデーションエラーが表示される", async () => {
+  it("無効なメールアドレスを入力した場合、バリデーションエラーが表示される", async () => {
     const user = userEvent.setup();
     renderWithProviders(<SigninForm />);
 
@@ -52,7 +52,7 @@ describe("SigninForm", () => {
     });
   });
 
-  it("given: 空のフォーム when: パスワードが空 then: バリデーションエラーが表示される", async () => {
+  it("パスワードが空の場合、バリデーションエラーが表示される", async () => {
     const user = userEvent.setup();
     renderWithProviders(<SigninForm />);
 
@@ -71,14 +71,14 @@ describe("SigninForm", () => {
     });
   });
 
-  it("given: サインインフォーム when: リンクをクリック then: サインアップページへのリンクが機能する", () => {
+  it("サインアップページへのリンクが正しく設定されている", () => {
     renderWithProviders(<SigninForm />);
 
     const signupLink = screen.getByRole("link", { name: "サインアップ" });
     expect(signupLink).toHaveAttribute("href", "/auth/signup");
   });
 
-  it("given: サインインエラー when: APIがエラーを返す then: エラーメッセージが表示される", async () => {
+  it("API認証が失敗した場合、エラーメッセージが表示される", async () => {
     const user = userEvent.setup();
     const { fetcher } = await import("@/features/shared/api/fetcher");
 

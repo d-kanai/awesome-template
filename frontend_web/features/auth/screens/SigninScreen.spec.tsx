@@ -42,7 +42,7 @@ describe("SigninScreen - TestC: Screen Level Test", () => {
   });
 
   describe("Command", () => {
-    it("given: - when: 有効なフォームデータ送信 then: APIが呼ばれ、ユーザー画面に遷移する", async () => {
+    it("サインインが成功した場合、ユーザー一覧画面に遷移する", async () => {
       // Given: Command APIレスポンスモック
       const apiResponse: signinResponse = {
         data: {
@@ -93,7 +93,7 @@ describe("SigninScreen - TestC: Screen Level Test", () => {
       );
     }, 15000);
 
-    it("given: - when: API失敗 then: エラーメッセージが表示される", async () => {
+    it("サインインが失敗した場合、エラーメッセージが表示される", async () => {
       // Given: API失敗レスポンス
       mockedFetcher.mockRejectedValueOnce(
         new Error("サインインに失敗しました"),

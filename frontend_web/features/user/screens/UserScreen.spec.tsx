@@ -3,7 +3,6 @@ import { UserScreen } from "@/features/user/screens/UserScreen";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// getAllUsersをモック
 vi.mock("@/features/shared/api/generated/functions", () => ({
   getAllUsers: vi.fn(),
 }));
@@ -14,7 +13,7 @@ describe("UserScreen - TestC: Screen Level Test", () => {
   });
 
   describe("Query", () => {
-    it("given: API成功 when: データ取得 + 画面レンダリング then: ユーザー一覧が表示される", async () => {
+    it("ユーザーデータを取得して一覧表示する", async () => {
       // Given: Query APIレスポンスモック
       const mockResponse = {
         data: {
@@ -52,7 +51,7 @@ describe("UserScreen - TestC: Screen Level Test", () => {
       expect(getAllUsers).toHaveBeenCalledTimes(1);
     });
 
-    it("given: API成功（空配列） when: データ取得 + 画面レンダリング then: 空メッセージが表示される", async () => {
+    it("ユーザーが存在しない場合、空メッセージが表示される", async () => {
       // Given: 空のレスポンス
       const mockResponse = {
         data: {
@@ -71,7 +70,7 @@ describe("UserScreen - TestC: Screen Level Test", () => {
       expect(screen.getByText("ユーザーが見つかりません")).toBeInTheDocument();
     });
 
-    it("given: API成功 when: データ取得 + 画面レンダリング then: ユーザー情報の詳細が全て表示される", async () => {
+    it("ユーザー情報の詳細（ID、メール、作成日）が全て表示される", async () => {
       // Given: Query APIレスポンスモック
       const mockResponse = {
         data: {
