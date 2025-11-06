@@ -6,6 +6,7 @@
 
 - URLはハードコードでなくROUTES定数で管理すること
 - elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること
+- 基本メソッドコメントは不要
 
 ### code
 
@@ -49,11 +50,8 @@
 ### E2E spec (playwright)
 
 .feature file
-- feature descriptionは体言止めにする(する、こと、である。などはいらない)
-- Given/When/Thenのステップ定義も全て体言止めにする
+- Scenario/Given/When/Thenのステップ定義を全て体言止めにする
   - 例: "サインアップページにアクセスする" → "サインアップページにアクセス"
-  - 例: "メールアドレスに {string} を入力する" → "メールアドレスに {string} を入力"
-  - 例: "サインインページに遷移する" → "サインインページに遷移"
 
 step definition file
 - TBD

@@ -68,7 +68,7 @@ describe("SigninScreen - TestC", () => {
       fireEvent.change(passwordInput, { target: { value: "password123" } });
       fireEvent.click(submitButton);
 
-      // Then: Command APIにformのパラメータが渡り呼び出されていること
+      // Then: Command APIにformのパラメータが渡り呼び出し
       await waitFor(
         () => {
           expect(mockedFetcher).toHaveBeenCalledWith(
@@ -85,7 +85,7 @@ describe("SigninScreen - TestC", () => {
         { timeout: 10000 },
       );
 
-      // Then: URL遷移が起きていること
+      // Then: URL遷移
       await waitFor(
         () => {
           expect(mockPush).toHaveBeenCalledWith("/user");
@@ -100,7 +100,7 @@ describe("SigninScreen - TestC", () => {
       // When: 画面レンダリング
       renderWithProviders(<SigninScreen />);
 
-      // Then: サインアップページへのリンクが存在する
+      // Then: サインアップページへのリンク存在
       const signupLink = screen.getByTestId(SigninTestIds.signupLink);
       expect(signupLink).toHaveAttribute("href", "/auth/signup");
     });
@@ -126,7 +126,7 @@ describe("SigninScreen - TestC", () => {
       });
       fireEvent.click(submitButton);
 
-      // Then: ユーザへのFBが起きていること
+      // Then: ユーザへのFB
       await waitFor(
         () => {
           const errorMessage = screen.getByTestId(SigninTestIds.errorMessage);
@@ -135,7 +135,7 @@ describe("SigninScreen - TestC", () => {
         { timeout: 10000 },
       );
 
-      // Then: 遷移は起きない
+      // Then: 遷移なし
       expect(mockPush).not.toHaveBeenCalled();
     }, 15000);
 

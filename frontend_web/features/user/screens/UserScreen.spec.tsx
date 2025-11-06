@@ -42,7 +42,7 @@ describe("UserScreen - TestC", () => {
       const users = response.data?.users || [];
       render(<UserScreen users={users} />);
 
-      // Then: 画面にAPIデータが表示されていること
+      // Then: 画面にAPIデータ表示
       const userEmails = screen.getAllByTestId(UserTestIds.userEmail);
       expect(userEmails[0]).toHaveTextContent("taro@example.com");
       expect(userEmails[1]).toHaveTextContent("hanako@example.com");
@@ -55,7 +55,7 @@ describe("UserScreen - TestC", () => {
       expect(createdAts[0]).toHaveTextContent("2024/1/1");
       expect(createdAts[1]).toHaveTextContent("2024/1/3");
 
-      // Then: APIが呼ばれていること
+      // Then: API呼び出し
       expect(getAllUsers).toHaveBeenCalledTimes(1);
     });
   });

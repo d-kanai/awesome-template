@@ -5,9 +5,6 @@ import { SigninTestIds } from "../../features/auth/test-ids";
 import { UserTestIds } from "../../features/user/test-ids";
 import { ROUTES } from "../../features/shared/lib/constants";
 
-/**
- * 前提条件: 認証済みユーザーとしてログイン
- */
 Given("認証済みユーザーとしてログイン", async function (this: CustomWorld) {
   await this.page.goto(ROUTES.SIGNIN);
   await this.page
@@ -19,25 +16,16 @@ Given("認証済みユーザーとしてログイン", async function (this: Cus
   await expect(this.page).toHaveURL(ROUTES.USER_LIST, { timeout: 10000 });
 });
 
-/**
- * アクション: ユーザー画面にアクセス
- */
 When("ユーザー画面にアクセス", async function (this: CustomWorld) {
   await this.page.goto(ROUTES.USER_LIST);
 });
 
-/**
- * 検証: ユーザー一覧を表示
- */
 Then("ユーザー一覧を表示", async function (this: CustomWorld) {
   await expect(this.page.getByTestId(UserTestIds.userList)).toBeVisible({
     timeout: 10000,
   });
 });
 
-/**
- * 検証: ユーザー一覧のタイトルを表示
- */
 Then("ユーザー一覧のタイトルを表示", async function (this: CustomWorld) {
   await expect(this.page.getByTestId(UserTestIds.pageTitle)).toBeVisible({
     timeout: 10000,
