@@ -1,6 +1,7 @@
 import { Input } from "@/features/shared/figma_generated/Input";
 import { Label } from "@/features/shared/figma_generated/Label";
 import { forwardRef } from "react";
+import { SharedTestIds } from "../test-ids";
 
 export type TextFieldProps = {
   id: string;
@@ -27,7 +28,14 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           placeholder={placeholder}
           {...rest}
         />
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && (
+          <p
+            className="text-sm text-red-600"
+            data-testid={SharedTestIds.textFieldError}
+          >
+            {error}
+          </p>
+        )}
       </div>
     );
   },
