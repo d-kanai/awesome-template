@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useSigninForm } from "../hooks/useSigninForm";
 
 export function SigninForm() {
-  const { form, isPending, error, schema } = useSigninForm();
+  const { form, schema } = useSigninForm();
 
   return (
     <form
@@ -19,75 +19,92 @@ export function SigninForm() {
       }}
       className="space-y-6"
     >
-      <form.Field
-        name="email"
-        validators={{
-          onChange: schema.shape.email,
-        }}
-      >
-        {(field) => (
-          <div className="space-y-2">
-            <Label htmlFor="signin-email">メールアドレス</Label>
-            <Input
-              id="signin-email"
-              type="email"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              onBlur={field.handleBlur}
-              disabled={isPending}
-              placeholder="email@example.com"
-            />
-            {field.state.meta.errors.length > 0 && (
-              <p className="text-sm text-red-600">
-                {String(
-                  field.state.meta.errors[0]?.message ||
-                    field.state.meta.errors[0],
-                )}
-              </p>
-            )}
-          </div>
+      <form.Subscribe selector={(state) => state.isSubmitting}>
+        {(isSubmitting) => (
+          <>
+            <form.Field
+              name="email"
+              validators={{
+                onChange: schema.shape.email,
+              }}
+            >
+              {(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor="signin-email">メールアドレス</Label>
+                  <Input
+                    id="signin-email"
+                    type="email"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                    disabled={isSubmitting}
+                    placeholder="email@example.com"
+                  />
+                  {field.state.meta.errors.length > 0 && (
+                    <p className="text-sm text-red-600">
+                      {String(
+                        field.state.meta.errors[0]?.message ||
+                          field.state.meta.errors[0],
+                      )}
+                    </p>
+                  )}
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field
+              name="password"
+              validators={{
+                onChange: schema.shape.password,
+              }}
+            >
+              {(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor="signin-password">パスワード</Label>
+                  <Input
+                    id="signin-password"
+                    type="password"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                    disabled={isSubmitting}
+                    placeholder="パスワード"
+                  />
+                  {field.state.meta.errors.length > 0 && (
+                    <p className="text-sm text-red-600">
+                      {String(
+                        field.state.meta.errors[0]?.message ||
+                          field.state.meta.errors[0],
+                      )}
+                    </p>
+                  )}
+                </div>
+              )}
+            </form.Field>
+          </>
         )}
-      </form.Field>
+      </form.Subscribe>
 
-      <form.Field
-        name="password"
-        validators={{
-          onChange: schema.shape.password,
-        }}
+      <form.Subscribe
+        selector={(state) => ({
+          isSubmitting: state.isSubmitting,
+          submitError: state.submissionAttempts > 0 && state.errorMap.onSubmit,
+        })}
       >
-        {(field) => (
-          <div className="space-y-2">
-            <Label htmlFor="signin-password">パスワード</Label>
-            <Input
-              id="signin-password"
-              type="password"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              onBlur={field.handleBlur}
-              disabled={isPending}
-              placeholder="パスワード"
-            />
-            {field.state.meta.errors.length > 0 && (
-              <p className="text-sm text-red-600">
-                {String(
-                  field.state.meta.errors[0]?.message ||
-                    field.state.meta.errors[0],
-                )}
-              </p>
+        {({ isSubmitting, submitError }) => (
+          <>
+            {submitError && (
+              <div className="rounded-md bg-red-50 p-4">
+                <p className="text-sm text-red-800">{String(submitError)}</p>
+              </div>
             )}
-          </div>
+
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? "サインイン中..." : "サインイン"}
+            </Button>
+          </>
         )}
-      </form.Field>
-
-      {error && (
-        <div className="rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">{error}</p>
-        </div>
-      )}
-
-      <Button type="submit" disabled={isPending} className="w-full">
-        {isPending ? "サインイン中..." : "サインイン"}
-      </Button>
+      </form.Subscribe>
 
       <p className="text-center text-sm text-gray-600">
         アカウントをお持ちでないですか？{" "}
