@@ -5,7 +5,6 @@
 ### common
 
 - URLはハードコードでなくROUTES定数で管理すること
-- elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること
 - 基本メソッドコメントは不要
 
 ### code
@@ -46,6 +45,7 @@
         - ※ エラーハンドリングを柔軟にするためにServer Side Navigation(redirect)しないルールなので、結果としてServerActionも統合したテストが動作する
       - Client Side URL遷移が起きていること
       - Toastなど、ユーザへのFBが起きていること
+- elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること
 
 ### E2E spec (playwright)
 
@@ -54,4 +54,5 @@
   - 例: "サインアップページにアクセスする" → "サインアップページにアクセス"
 
 step definition file
-- TBD
+- signinする場合はbypassSigninを基本利用し、高速にすること
+- elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること

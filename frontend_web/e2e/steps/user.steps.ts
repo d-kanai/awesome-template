@@ -5,7 +5,7 @@ import { UserTestIds } from "../../features/user/test-ids";
 import { ROUTES } from "../../features/shared/lib/constants";
 
 Given("認証済みユーザーとしてログイン", async function (this: CustomWorld) {
-  await this.quickLogin();
+  await this.bypassSignin();
 });
 
 When("ユーザー画面にアクセス", async function (this: CustomWorld) {
