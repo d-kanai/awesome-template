@@ -63,9 +63,24 @@ export async function fetcher<TData, TVariables = unknown>(
   });
 
   if (!response.ok) {
-    const error = new Error(
-      "リクエストに失敗しました。もう一度お試しください。",
-    );
+    let errorMessage: string;
+
+    if (response.status === 400) {
+      errorMessage = "入力内容に誤りがあります。ご確認ください。";
+    } else if (response.status === 401) {
+      errorMessage = "認証に失敗しました。再度ログインしてください。";
+    } else if (response.status === 403) {
+      errorMessage = "この操作を実行する権限がありません。";
+    } else if (response.status === 404) {
+      errorMessage = "要求されたリソースが見つかりませんでした。";
+    } else if (response.status >= 500) {
+      errorMessage =
+        "サーバーエラーが発生しました。しばらく経ってから再度お試しください。";
+    } else {
+      errorMessage = "リクエストに失敗しました。もう一度お試しください。";
+    }
+
+    const error = new Error(errorMessage);
     // @ts-expect-error - statusを追加
     error.status = response.status;
     // @ts-expect-error - responseを追加

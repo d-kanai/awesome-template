@@ -19,11 +19,7 @@ export function useSignupForm() {
       setError(null);
 
       try {
-        const formData = new FormData();
-        formData.append("email", value.email);
-        formData.append("password", value.password);
-
-        const result = await signupAction(formData);
+        const result = await signupAction(value);
 
         if (result.error) {
           setError(result.error);

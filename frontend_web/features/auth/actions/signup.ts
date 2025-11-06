@@ -3,10 +3,9 @@
 import { type SignupFormData, signupFormSchema } from "@/features/auth/schemas";
 import { signup as signupApi } from "@/features/shared/api/generated/functions";
 import { ROUTES } from "@/features/shared/lib/constants";
-import { extractFormData } from "@/features/shared/lib/formHelpers";
-import { isSuccessStatus } from "@/features/shared/lib/http";
+import { formatZodFieldErrors } from "@/features/shared/lib/formHelpers";
 
-export type SignupActionState = {
+export type SignupActionResponse = {
   error?: string;
   fieldErrors?: Partial<Record<keyof SignupFormData, string[]>>;
   success?: boolean;
@@ -14,24 +13,21 @@ export type SignupActionState = {
 };
 
 export async function signupAction(
-  formData: FormData,
-): Promise<SignupActionState> {
-  const validatedFormData = extractFormData(signupFormSchema, formData);
+  data: SignupFormData,
+): Promise<SignupActionResponse> {
+  const validatedData = signupFormSchema.safeParse(data);
 
-  if (!validatedFormData.success) {
+  if (!validatedData.success) {
     return {
-      fieldErrors: validatedFormData.fieldErrors,
+      fieldErrors: formatZodFieldErrors<SignupFormData>(
+        validatedData.error.errors,
+      ),
     };
   }
 
   try {
-    const response = await signupApi(validatedFormData.data);
-
-    if (isSuccessStatus(response.status)) {
-      return { success: true, redirectTo: ROUTES.SIGNIN };
-    }
-
-    return { error: "サインアップに失敗しました" };
+    await signupApi(validatedData.data);
+    return { success: true, redirectTo: ROUTES.SIGNIN };
   } catch (error) {
     console.error("Signup error:", error);
     return { error: (error as Error).message };
