@@ -23,7 +23,7 @@ export function useSigninForm() {
         formData.append("email", value.email);
         formData.append("password", value.password);
 
-        const result = await signinAction(undefined, formData);
+        const result = await signinAction(formData);
 
         if (result.error) {
           setError(result.error);

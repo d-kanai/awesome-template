@@ -1,41 +1,33 @@
 "use server";
 
-import { signupFormSchema } from "@/features/auth/schemas";
+import { type SignupFormData, signupFormSchema } from "@/features/auth/schemas";
 import { signup as signupApi } from "@/features/shared/api/generated/functions";
-import type { SignupRequest } from "@/features/shared/api/generated/model";
 import { ROUTES } from "@/features/shared/lib/constants";
+import { extractFormData } from "@/features/shared/lib/formHelpers";
+import { isSuccessStatus } from "@/features/shared/lib/http";
 
 export type SignupActionState = {
   error?: string;
+  fieldErrors?: Partial<Record<keyof SignupFormData, string[]>>;
   success?: boolean;
   redirectTo?: string;
 };
 
 export async function signupAction(
-  prevState: SignupActionState | undefined,
   formData: FormData,
 ): Promise<SignupActionState> {
-  // Zodでvalidation
-  const rawData = {
-    email: formData.get("email"),
-    password: formData.get("password"),
-  };
+  const validatedFormData = extractFormData(signupFormSchema, formData);
 
-  const result = signupFormSchema.safeParse(rawData);
-
-  if (!result.success) {
+  if (!validatedFormData.success) {
     return {
-      error: result.error.errors[0]?.message || "入力エラーが発生しました",
+      fieldErrors: validatedFormData.fieldErrors,
     };
   }
 
-  const { email, password } = result.data;
-
   try {
-    const requestData: SignupRequest = { email, password };
-    const response = await signupApi(requestData);
+    const response = await signupApi(validatedFormData.data);
 
-    if (response.status === 200 || response.status === 201) {
+    if (isSuccessStatus(response.status)) {
       return { success: true, redirectTo: ROUTES.SIGNIN };
     }
 

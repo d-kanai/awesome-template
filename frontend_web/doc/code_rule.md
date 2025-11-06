@@ -12,6 +12,8 @@
 - URLはハードコードでなくROUTES定数で管理すること
 - backendへのリクエストはOpenAPI定義からOrvalで生成したClientFunctionを使うこと
 - form validationはzodを利用し、client side, server action共通の定義(schemas.ts)を利用すること
+- form周りの情報(key名など)はzodのschema定義からできる限り取得し、SSOFとすること
+- 不要なobject destructureを利用しないこと（無駄にtmp変数を増やさないこと）
 
 ### UT spec
 

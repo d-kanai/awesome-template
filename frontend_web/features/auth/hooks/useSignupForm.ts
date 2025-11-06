@@ -23,7 +23,7 @@ export function useSignupForm() {
         formData.append("email", value.email);
         formData.append("password", value.password);
 
-        const result = await signupAction(undefined, formData);
+        const result = await signupAction(formData);
 
         if (result.error) {
           setError(result.error);
