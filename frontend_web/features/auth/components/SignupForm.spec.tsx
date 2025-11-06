@@ -24,56 +24,60 @@ describe("SignupForm", () => {
     vi.clearAllMocks();
   });
 
-  it("サインアップフォームが表示される", () => {
-    renderWithProviders(<SignupForm />);
+  describe("正常系", () => {
+    it("フォームが表示される", () => {
+      renderWithProviders(<SignupForm />);
 
-    expect(screen.getByLabelText("メールアドレス")).toBeInTheDocument();
-    expect(screen.getByLabelText("パスワード")).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "サインアップ" }),
-    ).toBeInTheDocument();
-  });
-
-  it("無効なメールアドレスを入力した場合、バリデーションエラーが表示される", async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<SignupForm />);
-
-    const emailInput = screen.getByLabelText("メールアドレス");
-
-    // 無効なメールアドレスを入力
-    await user.type(emailInput, "invalid-email");
-    await user.tab();
-
-    // バリデーションエラーを確認
-    await waitFor(() => {
+      expect(screen.getByLabelText("メールアドレス")).toBeInTheDocument();
+      expect(screen.getByLabelText("パスワード")).toBeInTheDocument();
       expect(
-        screen.getByText("有効なメールアドレスを入力してください"),
+        screen.getByRole("button", { name: "サインアップ" }),
       ).toBeInTheDocument();
+    });
+
+    it("サインインページへのリンクが正しく設定されている", () => {
+      renderWithProviders(<SignupForm />);
+
+      const signinLink = screen.getByRole("link", { name: "サインイン" });
+      expect(signinLink).toHaveAttribute("href", "/auth/signin");
     });
   });
 
-  it("8文字未満のパスワードを入力した場合、バリデーションエラーが表示される", async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<SignupForm />);
+  describe("異常系", () => {
+    it("無効なメールアドレスでバリデーションエラーが表示される", async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<SignupForm />);
 
-    const passwordInput = screen.getByLabelText("パスワード");
+      const emailInput = screen.getByLabelText("メールアドレス");
 
-    // 短いパスワードを入力
-    await user.type(passwordInput, "1234567");
-    await user.tab();
+      // 無効なメールアドレスを入力
+      await user.type(emailInput, "invalid-email");
+      await user.tab();
 
-    // バリデーションエラーを確認
-    await waitFor(() => {
-      expect(
-        screen.getByText("パスワードは8文字以上で入力してください"),
-      ).toBeInTheDocument();
+      // バリデーションエラーを確認
+      await waitFor(() => {
+        expect(
+          screen.getByText("有効なメールアドレスを入力してください"),
+        ).toBeInTheDocument();
+      });
     });
-  });
 
-  it("サインインページへのリンクが正しく設定されている", () => {
-    renderWithProviders(<SignupForm />);
+    it("8文字未満のパスワードでバリデーションエラーが表示される", async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<SignupForm />);
 
-    const signinLink = screen.getByRole("link", { name: "サインイン" });
-    expect(signinLink).toHaveAttribute("href", "/auth/signin");
+      const passwordInput = screen.getByLabelText("パスワード");
+
+      // 短いパスワードを入力
+      await user.type(passwordInput, "1234567");
+      await user.tab();
+
+      // バリデーションエラーを確認
+      await waitFor(() => {
+        expect(
+          screen.getByText("パスワードは8文字以上で入力してください"),
+        ).toBeInTheDocument();
+      });
+    });
   });
 });

@@ -24,82 +24,86 @@ describe("SigninForm", () => {
     vi.clearAllMocks();
   });
 
-  it("サインインフォームが表示される", () => {
-    renderWithProviders(<SigninForm />);
+  describe("正常系", () => {
+    it("フォームが表示される", () => {
+      renderWithProviders(<SigninForm />);
 
-    expect(screen.getByLabelText("メールアドレス")).toBeInTheDocument();
-    expect(screen.getByLabelText("パスワード")).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "サインイン" }),
-    ).toBeInTheDocument();
-  });
-
-  it("無効なメールアドレスを入力した場合、バリデーションエラーが表示される", async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<SigninForm />);
-
-    const emailInput = screen.getByLabelText("メールアドレス");
-
-    // 無効なメールアドレスを入力
-    await user.type(emailInput, "invalid-email");
-    await user.tab();
-
-    // バリデーションエラーを確認
-    await waitFor(() => {
+      expect(screen.getByLabelText("メールアドレス")).toBeInTheDocument();
+      expect(screen.getByLabelText("パスワード")).toBeInTheDocument();
       expect(
-        screen.getByText("有効なメールアドレスを入力してください"),
+        screen.getByRole("button", { name: "サインイン" }),
       ).toBeInTheDocument();
+    });
+
+    it("サインアップページへのリンクが正しく設定されている", () => {
+      renderWithProviders(<SigninForm />);
+
+      const signupLink = screen.getByRole("link", { name: "サインアップ" });
+      expect(signupLink).toHaveAttribute("href", "/auth/signup");
     });
   });
 
-  it("パスワードが空の場合、バリデーションエラーが表示される", async () => {
-    const user = userEvent.setup();
-    renderWithProviders(<SigninForm />);
+  describe("異常系", () => {
+    it("無効なメールアドレスでバリデーションエラーが表示される", async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<SigninForm />);
 
-    const passwordInput = screen.getByLabelText("パスワード");
+      const emailInput = screen.getByLabelText("メールアドレス");
 
-    // パスワードを入力して削除
-    await user.type(passwordInput, "a");
-    await user.clear(passwordInput);
-    await user.tab();
+      // 無効なメールアドレスを入力
+      await user.type(emailInput, "invalid-email");
+      await user.tab();
 
-    // バリデーションエラーを確認
-    await waitFor(() => {
-      expect(
-        screen.getByText("パスワードを入力してください"),
-      ).toBeInTheDocument();
+      // バリデーションエラーを確認
+      await waitFor(() => {
+        expect(
+          screen.getByText("有効なメールアドレスを入力してください"),
+        ).toBeInTheDocument();
+      });
     });
-  });
 
-  it("サインアップページへのリンクが正しく設定されている", () => {
-    renderWithProviders(<SigninForm />);
+    it("パスワードが空でバリデーションエラーが表示される", async () => {
+      const user = userEvent.setup();
+      renderWithProviders(<SigninForm />);
 
-    const signupLink = screen.getByRole("link", { name: "サインアップ" });
-    expect(signupLink).toHaveAttribute("href", "/auth/signup");
-  });
+      const passwordInput = screen.getByLabelText("パスワード");
 
-  it("API認証が失敗した場合、エラーメッセージが表示される", async () => {
-    const user = userEvent.setup();
-    const { fetcher } = await import("@/features/shared/api/fetcher");
+      // パスワードを入力して削除
+      await user.type(passwordInput, "a");
+      await user.clear(passwordInput);
+      await user.tab();
 
-    // fetcherをモック（エラーを返す）
-    vi.mocked(fetcher).mockRejectedValue(new Error("認証に失敗しました"));
+      // バリデーションエラーを確認
+      await waitFor(() => {
+        expect(
+          screen.getByText("パスワードを入力してください"),
+        ).toBeInTheDocument();
+      });
+    });
 
-    renderWithProviders(<SigninForm />);
+    it("API認証が失敗するとエラーメッセージが表示される", async () => {
+      const user = userEvent.setup();
+      const { fetcher } = await import("@/features/shared/api/fetcher");
 
-    // フォームに入力
-    await user.type(
-      screen.getByLabelText("メールアドレス"),
-      "test@example.com",
-    );
-    await user.type(screen.getByLabelText("パスワード"), "password123");
+      // fetcherをモック（エラーを返す）
+      vi.mocked(fetcher).mockRejectedValue(new Error("認証に失敗しました"));
 
-    // 送信
-    await user.click(screen.getByRole("button", { name: "サインイン" }));
+      renderWithProviders(<SigninForm />);
 
-    // エラーメッセージを確認
-    await waitFor(() => {
-      expect(screen.getByText("認証に失敗しました")).toBeInTheDocument();
+      // フォームに入力
+      await user.type(
+        screen.getByLabelText("メールアドレス"),
+        "test@example.com",
+      );
+      await user.type(screen.getByLabelText("パスワード"), "password123");
+
+      // 送信
+      await user.click(screen.getByRole("button", { name: "サインイン" }));
+
+      // エラーメッセージを確認
+      await waitFor(() => {
+        expect(screen.getByText("認証に失敗しました")).toBeInTheDocument();
+      });
     });
   });
 });

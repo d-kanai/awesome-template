@@ -42,85 +42,93 @@ describe("SignupScreen - TestC: Screen Level Test", () => {
   });
 
   describe("Command", () => {
-    it("サインアップが成功した場合、サインイン画面に遷移する", async () => {
-      // Given: Command APIレスポンスモック
-      const apiResponse: signupResponse = {
-        data: {
-          id: "user-1",
-          email: "test@example.com",
-          createdAt: "2024-01-01T12:34:56.000Z",
-          updatedAt: "2024-01-02T12:34:56.000Z",
-        },
-        status: 200,
-      };
-      mockedFetcher.mockResolvedValueOnce(apiResponse);
+    describe("正常系", () => {
+      it("サインイン画面に遷移する", async () => {
+        // Given: Command APIレスポンスモック
+        const apiResponse: signupResponse = {
+          data: {
+            id: "user-1",
+            email: "test@example.com",
+            createdAt: "2024-01-01T12:34:56.000Z",
+            updatedAt: "2024-01-02T12:34:56.000Z",
+          },
+          status: 200,
+        };
+        mockedFetcher.mockResolvedValueOnce(apiResponse);
 
-      // When: 画面レンダリング + フォーム入力 + 送信
-      renderWithProviders(<SignupScreen />);
+        // When: 画面レンダリング + フォーム入力 + 送信
+        renderWithProviders(<SignupScreen />);
 
-      const emailInput = screen.getByLabelText("メールアドレス");
-      const passwordInput = screen.getByLabelText("パスワード");
-      const submitButton = screen.getByRole("button", { name: "サインアップ" });
+        const emailInput = screen.getByLabelText("メールアドレス");
+        const passwordInput = screen.getByLabelText("パスワード");
+        const submitButton = screen.getByRole("button", {
+          name: "サインアップ",
+        });
 
-      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-      fireEvent.change(passwordInput, { target: { value: "password123" } });
-      fireEvent.click(submitButton);
+        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+        fireEvent.change(passwordInput, { target: { value: "password123" } });
+        fireEvent.click(submitButton);
 
-      // Then: Command APIにformのパラメータが渡り呼び出されていること
-      await waitFor(
-        () => {
-          expect(mockedFetcher).toHaveBeenCalledWith(
-            "/auth/signup",
-            expect.objectContaining({
-              method: "POST",
-              body: JSON.stringify({
-                email: "test@example.com",
-                password: "password123",
+        // Then: Command APIにformのパラメータが渡り呼び出されていること
+        await waitFor(
+          () => {
+            expect(mockedFetcher).toHaveBeenCalledWith(
+              "/auth/signup",
+              expect.objectContaining({
+                method: "POST",
+                body: JSON.stringify({
+                  email: "test@example.com",
+                  password: "password123",
+                }),
               }),
-            }),
-          );
-        },
-        { timeout: 10000 },
-      );
+            );
+          },
+          { timeout: 10000 },
+        );
 
-      // Then: URL遷移が起きていること
-      await waitFor(
-        () => {
-          expect(mockPush).toHaveBeenCalledWith("/auth/signin");
-        },
-        { timeout: 10000 },
-      );
-    }, 15000);
+        // Then: URL遷移が起きていること
+        await waitFor(
+          () => {
+            expect(mockPush).toHaveBeenCalledWith("/auth/signin");
+          },
+          { timeout: 10000 },
+        );
+      }, 15000);
+    });
 
-    it("サインアップが失敗した場合、エラーメッセージが表示される", async () => {
-      // Given: API失敗レスポンス
-      mockedFetcher.mockRejectedValueOnce(
-        new Error("サインアップに失敗しました"),
-      );
+    describe("異常系", () => {
+      it("エラーメッセージが表示される", async () => {
+        // Given: API失敗レスポンス
+        mockedFetcher.mockRejectedValueOnce(
+          new Error("サインアップに失敗しました"),
+        );
 
-      // When: 画面レンダリング + フォーム入力 + 送信
-      renderWithProviders(<SignupScreen />);
+        // When: 画面レンダリング + フォーム入力 + 送信
+        renderWithProviders(<SignupScreen />);
 
-      const emailInput = screen.getByLabelText("メールアドレス");
-      const passwordInput = screen.getByLabelText("パスワード");
-      const submitButton = screen.getByRole("button", { name: "サインアップ" });
+        const emailInput = screen.getByLabelText("メールアドレス");
+        const passwordInput = screen.getByLabelText("パスワード");
+        const submitButton = screen.getByRole("button", {
+          name: "サインアップ",
+        });
 
-      fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-      fireEvent.change(passwordInput, { target: { value: "password123" } });
-      fireEvent.click(submitButton);
+        fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+        fireEvent.change(passwordInput, { target: { value: "password123" } });
+        fireEvent.click(submitButton);
 
-      // Then: ユーザへのFBが起きていること
-      await waitFor(
-        () => {
-          expect(
-            screen.getByText("サインアップに失敗しました"),
-          ).toBeInTheDocument();
-        },
-        { timeout: 10000 },
-      );
+        // Then: ユーザへのFBが起きていること
+        await waitFor(
+          () => {
+            expect(
+              screen.getByText("サインアップに失敗しました"),
+            ).toBeInTheDocument();
+          },
+          { timeout: 10000 },
+        );
 
-      // Then: 遷移は起きない
-      expect(mockPush).not.toHaveBeenCalled();
-    }, 15000);
+        // Then: 遷移は起きない
+        expect(mockPush).not.toHaveBeenCalled();
+      }, 15000);
+    });
   });
 });

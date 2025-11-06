@@ -20,10 +20,11 @@
 
 ### UT spec
 
+- describe()で正常系・異常系を分割すること
 - it()のケース名は日本語でテストの意図が明確な名前にすること
-  - ❌ 悪い例: `it("given: - when: 有効なフォームデータ送信 then: APIが呼ばれ、サインイン画面に遷移する", ...)`
-  - ✅ 良い例: `it("サインアップが成功した場合、サインイン画面に遷移する", ...)`
-  - ケース名にgiven-when-thenを含めず、テストの意図を簡潔に表現すること
+  - ❌ 悪い例: `it("サインアップが成功した場合、サインイン画面に遷移する", ...)`
+  - ✅ 良い例: `describe("正常系") > it("サインイン画面に遷移する", ...)`
+  - 正常系・異常系の情報はdescribe()で表現し、it()には結果のみを記述すること
 - テストコード内部にはgiven when thenのコメントを日本語で挿入してフェーズを見やすくすること
 - TestC: Screen Level Test (RSC, Server Action統合テスト)
   - Common
@@ -42,5 +43,6 @@
         - ※ エラーハンドリングを柔軟にするためにServer Side Navigation(redirect)しないルールなので、結果としてServerActionも統合したテストが動作する
       - Client Side URL遷移が起きていること
       - Toastなど、ユーザへのFBが起きていること
+- 全てのScreenにTestCが作成されていること
 
 ### E2E spec
