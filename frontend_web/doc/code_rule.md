@@ -10,6 +10,7 @@
   - ※ Tanstack Formとのコンビネーションが弱いため、ServerAction内でのnavigationは利用せず、client side navigationにすること
 - page.tsxはRSC + Screen Component renderのみにすること (基本的にRoutingのみの位置付け)
 - URLはハードコードでなくROUTES定数で管理すること
+- backendへのリクエストはOpenAPI定義からOrvalで生成したClientFunctionを使うこと
 
 ### UT spec
 

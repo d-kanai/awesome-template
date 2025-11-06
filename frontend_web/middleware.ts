@@ -2,14 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { COOKIE_KEYS } from "@/features/shared/lib/constants";
 
-/**
- * Next.js Middleware
- * - 認証が必要なルートを保護
- * - httpOnly Cookieの存在をチェック
- * - 未認証の場合はサインインページにリダイレクト
- */
 export function middleware(request: NextRequest) {
-  // バックエンドが設定するhttpOnly Cookieをチェック
   const sessionCookie = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN);
 
   // 認証が必要なパスのリスト

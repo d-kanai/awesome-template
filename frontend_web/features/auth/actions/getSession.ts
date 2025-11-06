@@ -2,7 +2,8 @@
 
 import { cache } from "react";
 import { cookies } from "next/headers";
-import { API_BASE_URL, COOKIE_KEYS } from "@/features/shared/lib/constants";
+import { me } from "@/features/shared/api/generated/functions";
+import { COOKIE_KEYS } from "@/features/shared/lib/constants";
 
 export type Session = {
   user: { id: string; email: string; createdAt?: string; updatedAt?: string } | null;
@@ -18,17 +19,15 @@ export const getSession = cache(async (): Promise<Session> => {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+    const response = await me({
       headers: {
         Cookie: `${accessTokenCookie.name}=${accessTokenCookie.value}`,
       },
-      credentials: "include",
       cache: "no-store",
     });
 
-    if (response.ok) {
-      const user = await response.json();
-      return { user, isAuthenticated: true };
+    if (response.status === 200) {
+      return { user: response.data, isAuthenticated: true };
     }
 
     return { user: null, isAuthenticated: false };
