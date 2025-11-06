@@ -3,10 +3,6 @@
 import type { UserListItem as User } from "@/features/shared/api/generated/model";
 import { Card } from "@/features/shared/figma_generated/Card";
 
-/**
- * UserListItem
- * ユーザーリストの各アイテムを表示するコンポーネント
- */
 function UserListItem({ user }: { user: User }) {
   return (
     <div className="border-b border-gray-200 p-4 last:border-b-0">
@@ -25,12 +21,6 @@ function UserListItem({ user }: { user: User }) {
   );
 }
 
-/**
- * UserList
- * ユーザー一覧を表示するコンポーネント
- * - Server Componentから取得したデータをpropsで受け取る
- * - 表示のみを担当（データ取得はServer Componentで実施）
- */
 interface UserListProps {
   users: User[];
 }

@@ -6,19 +6,49 @@ import {
 } from "@/features/shared/figma_generated/Card";
 import { SigninForm } from "../components/SigninForm";
 
-export function SigninScreen() {
+function ScreenContainer({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center">サインイン</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SigninForm />
-          </CardContent>
-        </Card>
-      </div>
+      {children}
     </div>
+  );
+}
+
+function FormCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="w-full max-w-md">
+      <Card>{children}</Card>
+    </div>
+  );
+}
+
+function Header() {
+  return (
+    <CardHeader>
+      <CardTitle className="text-center">サインイン</CardTitle>
+    </CardHeader>
+  );
+}
+
+function Content() {
+  return (
+    <CardContent>
+      <SigninForm />
+    </CardContent>
+  );
+}
+
+/**
+ * SigninScreen
+ * サインイン画面
+ */
+export function SigninScreen() {
+  return (
+    <ScreenContainer>
+      <FormCard>
+        <Header />
+        <Content />
+      </FormCard>
+    </ScreenContainer>
   );
 }

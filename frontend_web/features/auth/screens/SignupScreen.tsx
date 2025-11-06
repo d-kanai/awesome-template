@@ -6,23 +6,49 @@ import {
 } from "@/features/shared/figma_generated/Card";
 import { SignupForm } from "../components/SignupForm";
 
+function ScreenContainer({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      {children}
+    </div>
+  );
+}
+
+function FormCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="w-full max-w-md">
+      <Card>{children}</Card>
+    </div>
+  );
+}
+
+function Header() {
+  return (
+    <CardHeader>
+      <CardTitle className="text-center">サインアップ</CardTitle>
+    </CardHeader>
+  );
+}
+
+function Content() {
+  return (
+    <CardContent>
+      <SignupForm />
+    </CardContent>
+  );
+}
+
 /**
  * SignupScreen
  * サインアップ画面
  */
 export function SignupScreen() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center">サインアップ</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SignupForm />
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    <ScreenContainer>
+      <FormCard>
+        <Header />
+        <Content />
+      </FormCard>
+    </ScreenContainer>
   );
 }

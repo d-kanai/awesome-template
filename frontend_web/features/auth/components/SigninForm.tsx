@@ -82,27 +82,22 @@ function SuggestSignupSection() {
 
 export function SigninForm() {
   const { form, onSubmit, submitError } = useSigninForm();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = form;
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <EmailField
-          register={register}
-          error={errors.email?.message}
-          disabled={isSubmitting}
+          register={form.register}
+          error={form.formState.errors.email?.message}
+          disabled={form.formState.isSubmitting}
         />
         <PasswordField
-          register={register}
-          error={errors.password?.message}
-          disabled={isSubmitting}
+          register={form.register}
+          error={form.formState.errors.password?.message}
+          disabled={form.formState.isSubmitting}
         />
         {submitError && <ErrorMessage error={submitError} />}
-        <SubmitButton disabled={isSubmitting} />
+        <SubmitButton disabled={form.formState.isSubmitting} />
       </form>
       <SuggestSignupSection />
     </div>
