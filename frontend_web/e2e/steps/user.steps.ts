@@ -1,46 +1,45 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
 import type { CustomWorld } from "./world";
+import { SigninTestIds } from "../../features/auth/test-ids";
+import { UserTestIds } from "../../features/user/test-ids";
+import { ROUTES } from "../../features/shared/lib/constants";
 
 /**
  * 前提条件: 認証済みユーザーとしてログイン
  */
-Given(
-  "認証済みユーザーとしてログインしている",
-  async function (this: CustomWorld) {
-    // Navigate to signin and perform login
-    await this.page.goto("/auth/signin");
-    await this.page.fill('input[type="email"]', "test@example.com");
-    await this.page.fill('input[type="password"]', "password123");
-    await this.page.click('button[type="submit"]:has-text("サインイン")');
+Given("認証済みユーザーとしてログイン", async function (this: CustomWorld) {
+  await this.page.goto(ROUTES.SIGNIN);
+  await this.page
+    .getByTestId(SigninTestIds.emailInput)
+    .fill("test@example.com");
+  await this.page.getByTestId(SigninTestIds.passwordInput).fill("password123");
+  await this.page.getByTestId(SigninTestIds.submitButton).click();
 
-    // Wait for navigation to user page
-    await expect(this.page).toHaveURL(/\/user/, { timeout: 10000 });
-  },
-);
+  await expect(this.page).toHaveURL(ROUTES.USER_LIST, { timeout: 10000 });
+});
 
 /**
  * アクション: ユーザー画面にアクセス
  */
-When("ユーザー画面にアクセスする", async function (this: CustomWorld) {
-  await this.page.goto("/user");
+When("ユーザー画面にアクセス", async function (this: CustomWorld) {
+  await this.page.goto(ROUTES.USER_LIST);
 });
 
 /**
- * 検証: ユーザー一覧が表示される
+ * 検証: ユーザー一覧を表示
  */
-Then("ユーザー一覧が表示される", async function (this: CustomWorld) {
-  // Wait for user list to load
-  await expect(
-    this.page.locator('[class*="text-gray-900"]').first(),
-  ).toBeVisible({ timeout: 10000 });
+Then("ユーザー一覧を表示", async function (this: CustomWorld) {
+  await expect(this.page.getByTestId(UserTestIds.userList)).toBeVisible({
+    timeout: 10000,
+  });
 });
 
 /**
- * 検証: ユーザー一覧のタイトルが表示される
+ * 検証: ユーザー一覧のタイトルを表示
  */
-Then("ユーザー一覧のタイトルが表示される", async function (this: CustomWorld) {
-  await expect(this.page.locator('h1:has-text("ユーザー一覧")')).toBeVisible({
+Then("ユーザー一覧のタイトルを表示", async function (this: CustomWorld) {
+  await expect(this.page.getByTestId(UserTestIds.pageTitle)).toBeVisible({
     timeout: 10000,
   });
 });

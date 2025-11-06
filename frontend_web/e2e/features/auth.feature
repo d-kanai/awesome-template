@@ -1,22 +1,22 @@
 Feature: 認証機能
-  ユーザーがサインアップ、サインイン、サインアウトできること
+  ユーザーのサインアップ、サインイン、サインアウト
 
   Scenario: 新規ユーザーのサインアップ
-    Given サインアップページにアクセスする
-    When メールアドレスに "test@example.com" を入力する
-    And パスワードに "password123" を入力する
-    And サインアップボタンをクリックする
-    Then サインインページに遷移する
+    Given サインアップページにアクセス
+    When メールアドレスに "test@example.com" を入力
+    And パスワードに "password123" を入力
+    And サインアップボタンをクリック
+    Then サインインページに遷移
 
   Scenario: 既存ユーザーのサインイン
-    Given サインインページにアクセスする
-    When メールアドレスに "test@example.com" を入力する
-    And パスワードに "password123" を入力する
-    And サインインボタンをクリックする
-    Then ユーザー画面に遷移する
+    Given サインインページにアクセス
+    When メールアドレスに "test@example.com" を入力
+    And パスワードに "password123" を入力
+    And サインインボタンをクリック
+    Then ユーザー画面に遷移
 
   Scenario: 無効なメールアドレスでのサインイン失敗
-    Given サインインページにアクセスする
-    When メールアドレスに "invalid-email" を入力する
-    And パスワードに "password123" を入力する
-    Then バリデーションエラーが表示される
+    Given サインインページにアクセス
+    When メールアドレスに "invalid-email" を入力
+    And パスワードに "password123" を入力
+    Then バリデーションエラーを表示

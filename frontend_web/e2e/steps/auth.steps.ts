@@ -8,14 +8,14 @@ import { ROUTES } from "../../features/shared/lib/constants";
 /**
  * 前提条件: サインアップページにアクセス
  */
-Given("サインアップページにアクセスする", async function (this: CustomWorld) {
+Given("サインアップページにアクセス", async function (this: CustomWorld) {
   await this.page.goto(ROUTES.SIGNUP);
 });
 
 /**
  * 前提条件: サインインページにアクセス
  */
-Given("サインインページにアクセスする", async function (this: CustomWorld) {
+Given("サインインページにアクセス", async function (this: CustomWorld) {
   await this.page.goto(ROUTES.SIGNIN);
 });
 
@@ -23,7 +23,7 @@ Given("サインインページにアクセスする", async function (this: Cus
  * アクション: メールアドレスを入力
  */
 When(
-  "メールアドレスに {string} を入力する",
+  "メールアドレスに {string} を入力",
   async function (this: CustomWorld, email: string) {
     const currentUrl = this.page.url();
     if (currentUrl.includes(ROUTES.SIGNIN)) {
@@ -38,7 +38,7 @@ When(
  * アクション: パスワードを入力
  */
 When(
-  "パスワードに {string} を入力する",
+  "パスワードに {string} を入力",
   async function (this: CustomWorld, password: string) {
     const currentUrl = this.page.url();
     if (currentUrl.includes(ROUTES.SIGNIN)) {
@@ -52,35 +52,35 @@ When(
 /**
  * アクション: サインアップボタンをクリック
  */
-When("サインアップボタンをクリックする", async function (this: CustomWorld) {
+When("サインアップボタンをクリック", async function (this: CustomWorld) {
   await this.page.getByTestId(SignupTestIds.submitButton).click();
 });
 
 /**
  * アクション: サインインボタンをクリック
  */
-When("サインインボタンをクリックする", async function (this: CustomWorld) {
+When("サインインボタンをクリック", async function (this: CustomWorld) {
   await this.page.getByTestId(SigninTestIds.submitButton).click();
 });
 
 /**
  * 検証: サインインページに遷移
  */
-Then("サインインページに遷移する", async function (this: CustomWorld) {
+Then("サインインページに遷移", async function (this: CustomWorld) {
   await expect(this.page).toHaveURL(ROUTES.SIGNIN, { timeout: 10000 });
 });
 
 /**
  * 検証: ユーザー画面に遷移
  */
-Then("ユーザー画面に遷移する", async function (this: CustomWorld) {
+Then("ユーザー画面に遷移", async function (this: CustomWorld) {
   await expect(this.page).toHaveURL(ROUTES.USER_LIST, { timeout: 10000 });
 });
 
 /**
- * 検証: バリデーションエラーが表示される
+ * 検証: バリデーションエラーを表示
  */
-Then("バリデーションエラーが表示される", async function (this: CustomWorld) {
+Then("バリデーションエラーを表示", async function (this: CustomWorld) {
   await expect(
     this.page.getByTestId(SharedTestIds.textFieldError).first(),
   ).toBeVisible();

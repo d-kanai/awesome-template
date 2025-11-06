@@ -27,11 +27,10 @@
 - describe()で正常系・異常系を分割すること
 - it()のケース名は日本語でテストの意図が明確な名前にすること
   - 例: `describe("正常系") > it("サインイン画面に遷移する", ...)`
-- テストコード内部にはgiven when thenのコメントを日本語で挿入してフェーズを見やすくすること
+- テストコード内部にはgiven when thenのコメントを日本語を体言止めで挿入してフェーズを見やすくすること
 - TestC: Screen Level Test (RSC, Server Action統合テスト)
   - Common
     - 全てのScreenにTestCが作成されていること
-    - given when thenのコメントを日本語挿入してフェーズを見やすくすること
     - Screenから呼び出しているComponent全てのカバレッジが90%以上になるように、eventを網羅するようにすること
   - Query
     - Given: Query APIレスポンスモック
@@ -48,3 +47,13 @@
       - Toastなど、ユーザへのFBが起きていること
 
 ### E2E spec (playwright)
+
+.feature file
+- feature descriptionは体言止めにする(する、こと、である。などはいらない)
+- Given/When/Thenのステップ定義も全て体言止めにする
+  - 例: "サインアップページにアクセスする" → "サインアップページにアクセス"
+  - 例: "メールアドレスに {string} を入力する" → "メールアドレスに {string} を入力"
+  - 例: "サインインページに遷移する" → "サインインページに遷移"
+
+step definition file
+- TBD
