@@ -20,6 +20,11 @@
 
 ### UT spec
 
+- it()のケース名は日本語でテストの意図が明確な名前にすること
+  - ❌ 悪い例: `it("given: - when: 有効なフォームデータ送信 then: APIが呼ばれ、サインイン画面に遷移する", ...)`
+  - ✅ 良い例: `it("サインアップが成功した場合、サインイン画面に遷移する", ...)`
+  - ケース名にgiven-when-thenを含めず、テストの意図を簡潔に表現すること
+- テストコード内部にはgiven when thenのコメントを日本語で挿入してフェーズを見やすくすること
 - TestC: Screen Level Test (RSC, Server Action統合テスト)
   - Common
     - given when thenのコメントを日本語挿入してフェーズを見やすくすること
