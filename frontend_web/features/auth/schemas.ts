@@ -21,3 +21,13 @@ export const signupFormSchema = z.object({
 
 export type SigninFormData = z.infer<typeof signinFormSchema>;
 export type SignupFormData = z.infer<typeof signupFormSchema>;
+
+export const signinFormDefaults = {
+  email: "",
+  password: "",
+} satisfies SigninFormData;
+
+export const signupFormDefaults = {
+  email: "",
+  password: "",
+} satisfies SignupFormData;

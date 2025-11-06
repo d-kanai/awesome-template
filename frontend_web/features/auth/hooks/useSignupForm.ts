@@ -1,5 +1,9 @@
 import { signupAction } from "@/features/auth/actions/signup";
-import { type SignupFormData, signupFormSchema } from "@/features/auth/schemas";
+import {
+  type SignupFormData,
+  signupFormSchema,
+  signupFormDefaults,
+} from "@/features/auth/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -11,10 +15,7 @@ export function useSignupForm() {
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupFormSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: signupFormDefaults,
     mode: "onBlur",
   });
 

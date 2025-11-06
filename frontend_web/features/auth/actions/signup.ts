@@ -29,7 +29,6 @@ export async function signupAction(
     await signupApi(validatedData.data);
     return { success: true, redirectTo: ROUTES.SIGNIN };
   } catch (error) {
-    console.error("Signup error:", error);
     return { error: (error as Error).message };
   }
 }
