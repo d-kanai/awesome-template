@@ -34,9 +34,6 @@ export async function signupAction(
     return { error: "サインアップに失敗しました" };
   } catch (error) {
     console.error("Signup error:", error);
-    if (error instanceof Error) {
-      return { error: error.message };
-    }
-    return { error: "サインアップに失敗しました" };
+    return { error: (error as Error).message };
   }
 }

@@ -33,10 +33,6 @@ export async function signinAction(
 
     return { error: "サインインに失敗しました" };
   } catch (error) {
-    console.error("Signin error:", error);
-    if (error instanceof Error) {
-      return { error: error.message };
-    }
-    return { error: "サインインに失敗しました" };
+    return { error: (error as Error).message };
   }
 }
