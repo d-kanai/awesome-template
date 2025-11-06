@@ -9,6 +9,7 @@
   - ※ ClientSideのFormValidationも実装するため、Tanstack Form x Server Actionの組み合わせにすること（useActionStateは利用しない）
   - ※ Tanstack Formとのコンビネーションが弱いため、ServerAction内でのnavigationは利用せず、client side navigationにすること
 - page.tsxはRSC + Screen Component renderのみにすること (基本的にRoutingのみの位置付け)
+- URLはハードコードでなくROUTES定数で管理すること
 
 ### UT spec
 

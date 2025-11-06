@@ -2,14 +2,14 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { API_BASE_URL, ROUTES } from "@/features/shared/lib/constants";
+import { API_BASE_URL, COOKIE_KEYS, ROUTES } from "@/features/shared/lib/constants";
 
 export async function signoutAction() {
   const cookieStore = await cookies();
 
   // バックエンドにサインアウトリクエストを送信（Cookieを削除）
   try {
-    const accessTokenCookie = cookieStore.get("accessToken");
+    const accessTokenCookie = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN);
 
     if (accessTokenCookie) {
       await fetch(`${API_BASE_URL}/auth/signout`, {
@@ -25,7 +25,7 @@ export async function signoutAction() {
   }
 
   // ローカルのCookieも削除
-  cookieStore.delete("accessToken");
+  cookieStore.delete(COOKIE_KEYS.ACCESS_TOKEN);
 
   redirect(ROUTES.SIGNIN);
 }

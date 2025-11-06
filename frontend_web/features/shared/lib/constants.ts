@@ -1,14 +1,6 @@
-/**
- * API Base URL
- * 環境変数から取得。未設定の場合はlocalhostを使用
- */
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
 
-/**
- * Routes
- * アプリケーション内のルートパス定数
- */
 export const ROUTES = {
   HOME: "/",
   USER_LIST: "/user",
@@ -16,10 +8,10 @@ export const ROUTES = {
   SIGNUP: "/auth/signup",
 } as const;
 
-/**
- * Feature Flags
- * Unleashで管理される機能フラグの定数
- */
+export const COOKIE_KEYS = {
+  ACCESS_TOKEN: "accessToken",
+} as const;
+
 export const FEATURE_FLAGS = {
   SHOW_VERSION_INFO: "show-version-info",
 } as const;

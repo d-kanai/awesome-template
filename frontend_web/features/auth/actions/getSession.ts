@@ -2,7 +2,7 @@
 
 import { cache } from "react";
 import { cookies } from "next/headers";
-import { API_BASE_URL } from "@/features/shared/lib/constants";
+import { API_BASE_URL, COOKIE_KEYS } from "@/features/shared/lib/constants";
 
 export type Session = {
   user: { id: string; email: string; createdAt?: string; updatedAt?: string } | null;
@@ -11,7 +11,7 @@ export type Session = {
 
 export const getSession = cache(async (): Promise<Session> => {
   const cookieStore = await cookies();
-  const accessTokenCookie = cookieStore.get("accessToken");
+  const accessTokenCookie = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN);
 
   if (!accessTokenCookie) {
     return { user: null, isAuthenticated: false };
