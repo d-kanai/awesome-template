@@ -38,3 +38,4 @@ next-env.d.ts
 
 # API generated
 features/shared/api/generated/
+e2e-report.html

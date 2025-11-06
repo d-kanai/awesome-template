@@ -11,24 +11,22 @@ export class CustomWorld extends World {
   browser!: Browser;
   context!: BrowserContext;
 
-  async bypassSignin(email = "test@example.com", password = "password123") {
-    const response = await fetch(`${API_BASE_URL}/auth/signin`, {
+  async bypassSignin() {
+    const response = await fetch(`${API_BASE_URL}/e2e/dummy_token`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
     });
 
     if (!response.ok) {
-      throw new Error(`Signin failed with status ${response.status}`);
+      throw new Error(
+        `Failed to get dummy token with status ${response.status}`,
+      );
     }
 
     const data = await response.json();
-    const accessToken = data.accessToken;
+    const accessToken = data.token;
 
     if (!accessToken) {
-      throw new Error("No access token in signin response");
+      throw new Error("No access token in dummy token response");
     }
 
     await this.context.addCookies([
@@ -43,6 +41,8 @@ export class CustomWorld extends World {
       },
     ]);
 
+    await this.page.goto(ROUTES.HOME);
+    await this.page.waitForLoadState("networkidle");
     await this.page.goto(ROUTES.USER_LIST);
   }
 }
