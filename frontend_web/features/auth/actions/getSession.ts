@@ -2,19 +2,13 @@
 
 import { cache } from "react";
 import { cookies } from "next/headers";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+import { API_BASE_URL } from "@/features/shared/lib/constants";
 
 export type Session = {
   user: { id: string; email: string; createdAt?: string; updatedAt?: string } | null;
   isAuthenticated: boolean;
 };
 
-/**
- * Server Action: セッション情報を取得
- * - httpOnly Cookieの存在をチェック
- * - バックエンドの /auth/me エンドポイントを呼び出してユーザー情報を取得
- */
 export const getSession = cache(async (): Promise<Session> => {
   const cookieStore = await cookies();
   const accessTokenCookie = cookieStore.get("accessToken");

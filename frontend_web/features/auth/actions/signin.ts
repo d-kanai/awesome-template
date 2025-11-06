@@ -9,12 +9,6 @@ export type SigninActionState = {
   redirectTo?: string;
 };
 
-/**
- * Server Action: サインイン処理
- * - Orval生成のsignin関数を呼び出し
- * - バックエンドがSet-CookieヘッダーでhttpOnly Cookieを設定
- * - 成功時はredirectToを返す（クライアント側でリダイレクト）
- */
 export async function signinAction(
   prevState: SigninActionState | undefined,
   formData: FormData,

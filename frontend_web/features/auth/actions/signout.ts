@@ -2,14 +2,8 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { API_BASE_URL } from "@/features/shared/lib/constants";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
-
-/**
- * Server Action: サインアウト処理
- * - バックエンドの /auth/signout エンドポイントを呼び出してCookieを削除
- * - /auth/signinページにリダイレクト
- */
 export async function signoutAction() {
   const cookieStore = await cookies();
 

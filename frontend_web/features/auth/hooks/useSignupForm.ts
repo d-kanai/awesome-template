@@ -4,12 +4,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { type SignupFormData, signupSchema } from "../schemas/authSchema";
 
-/**
- * useSignupForm
- * サインアップフォームの状態管理とバリデーション
- * - TanStack Formでバリデーション
- * - Server Actionでサインアップ処理
- */
 export function useSignupForm() {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
@@ -25,7 +19,6 @@ export function useSignupForm() {
       setError(null);
 
       try {
-        // FormDataを作成してServer Actionに渡す
         const formData = new FormData();
         formData.append("email", value.email);
         formData.append("password", value.password);
@@ -35,7 +28,6 @@ export function useSignupForm() {
         if (result.error) {
           setError(result.error);
         } else if (result.redirectTo) {
-          // 成功時はクライアント側でリダイレクト
           router.push(result.redirectTo);
         }
       } catch (err) {

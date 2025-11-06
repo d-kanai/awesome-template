@@ -1,13 +1,12 @@
 import { After, AfterAll, Before, BeforeAll, setDefaultTimeout } from "@cucumber/cucumber";
 import { type Browser, chromium } from "@playwright/test";
 import type { CustomWorld } from "../steps/world";
+import { API_BASE_URL } from "../../features/shared/lib/constants";
 
 // デフォルトタイムアウトを30秒に設定
 setDefaultTimeout(30000);
 
 let browser: Browser;
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
 
 /**
  * Before all tests: Launch browser and reset database

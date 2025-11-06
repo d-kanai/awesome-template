@@ -9,11 +9,6 @@ export type SignupActionState = {
   redirectTo?: string;
 };
 
-/**
- * Server Action: サインアップ処理
- * - Orval生成のsignup関数を呼び出し
- * - 成功時はredirectToを返す（クライアント側でリダイレクト）
- */
 export async function signupAction(
   prevState: SignupActionState | undefined,
   formData: FormData,

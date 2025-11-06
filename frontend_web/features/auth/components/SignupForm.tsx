@@ -6,10 +6,6 @@ import { Label } from "@/features/shared/figma_generated/Label";
 import Link from "next/link";
 import { useSignupForm } from "../hooks/useSignupForm";
 
-/**
- * SignupForm コンポーネント
- * サインアップフォームUI
- */
 export function SignupForm() {
   const { form, isPending, error, schema } = useSignupForm();
 
@@ -22,7 +18,6 @@ export function SignupForm() {
       }}
       className="space-y-6"
     >
-      {/* Email */}
       <form.Field
         name="email"
         validators={{
@@ -53,7 +48,6 @@ export function SignupForm() {
         )}
       </form.Field>
 
-      {/* Password */}
       <form.Field
         name="password"
         validators={{
@@ -84,19 +78,16 @@ export function SignupForm() {
         )}
       </form.Field>
 
-      {/* Error Message */}
       {error && (
         <div className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">{error}</p>
         </div>
       )}
 
-      {/* Submit Button */}
       <Button type="submit" disabled={isPending} className="w-full">
         {isPending ? "登録中..." : "サインアップ"}
       </Button>
 
-      {/* Link to Signin */}
       <p className="text-center text-sm text-gray-600">
         すでにアカウントをお持ちですか？{" "}
         <Link
