@@ -43,7 +43,7 @@ describe("SigninScreen - TestC: Screen Level Test", () => {
 
   describe("Command", () => {
     describe("正常系", () => {
-      it("ユーザー一覧画面に遷移する", async () => {
+      it("サインインが成功しユーザー一覧画面に遷移する", async () => {
         // Given: Command APIレスポンスモック
         const apiResponse: signinResponse = {
           data: {
@@ -93,10 +93,21 @@ describe("SigninScreen - TestC: Screen Level Test", () => {
           { timeout: 10000 },
         );
       }, 15000);
+
+      it("サインアップページへのリンクが表示される", () => {
+        // Given: -
+
+        // When: 画面レンダリング
+        renderWithProviders(<SigninScreen />);
+
+        // Then: サインアップページへのリンクが存在する
+        const signupLink = screen.getByRole("link", { name: "サインアップ" });
+        expect(signupLink).toHaveAttribute("href", "/auth/signup");
+      });
     });
 
     describe("異常系", () => {
-      it("エラーメッセージが表示される", async () => {
+      it("API認証失敗時にエラーメッセージが表示される", async () => {
         // Given: API失敗レスポンス
         mockedFetcher.mockRejectedValueOnce(
           new Error("サインインに失敗しました"),
@@ -128,6 +139,43 @@ describe("SigninScreen - TestC: Screen Level Test", () => {
         // Then: 遷移は起きない
         expect(mockPush).not.toHaveBeenCalled();
       }, 15000);
+
+      it("無効なメールアドレスでバリデーションエラーが表示される", async () => {
+        // Given: -
+
+        // When: 画面レンダリング + 無効なメール入力
+        renderWithProviders(<SigninScreen />);
+
+        const emailInput = screen.getByLabelText("メールアドレス");
+        fireEvent.change(emailInput, { target: { value: "invalid-email" } });
+        fireEvent.blur(emailInput);
+
+        // Then: バリデーションエラーが表示される
+        await waitFor(() => {
+          expect(
+            screen.getByText("有効なメールアドレスを入力してください"),
+          ).toBeInTheDocument();
+        });
+      });
+
+      it("パスワードが空でバリデーションエラーが表示される", async () => {
+        // Given: -
+
+        // When: 画面レンダリング + パスワードを空にする
+        renderWithProviders(<SigninScreen />);
+
+        const passwordInput = screen.getByLabelText("パスワード");
+        fireEvent.change(passwordInput, { target: { value: "a" } });
+        fireEvent.change(passwordInput, { target: { value: "" } });
+        fireEvent.blur(passwordInput);
+
+        // Then: バリデーションエラーが表示される
+        await waitFor(() => {
+          expect(
+            screen.getByText("パスワードを入力してください"),
+          ).toBeInTheDocument();
+        });
+      });
     });
   });
 });

@@ -47,42 +47,16 @@ describe("UserScreen - TestC: Screen Level Test", () => {
         expect(screen.getByText("ID: user-1")).toBeInTheDocument();
         expect(screen.getByText("hanako@example.com")).toBeInTheDocument();
         expect(screen.getByText("ID: user-2")).toBeInTheDocument();
+        expect(screen.getByText("2024/1/1")).toBeInTheDocument();
+        expect(screen.getByText("2024/1/3")).toBeInTheDocument();
 
         // Then: APIが呼ばれていること
         expect(getAllUsers).toHaveBeenCalledTimes(1);
       });
-
-      it("ユーザー情報の詳細（ID、メール、作成日）が全て表示される", async () => {
-        // Given: Query APIレスポンスモック
-        const mockResponse = {
-          data: {
-            users: [
-              {
-                id: "user-123",
-                email: "test@example.com",
-                createdAt: "2024-01-01T12:34:56.000Z",
-                updatedAt: "2024-01-02T12:34:56.000Z",
-              },
-            ],
-          },
-          status: 200,
-        };
-        vi.mocked(getAllUsers).mockResolvedValue(mockResponse);
-
-        // When: データ取得 → 画面レンダリング
-        const response = await getAllUsers();
-        const users = response.data?.users || [];
-        render(<UserScreen users={users} />);
-
-        // Then: 全ての情報が表示される
-        expect(screen.getByText("test@example.com")).toBeInTheDocument();
-        expect(screen.getByText("ID: user-123")).toBeInTheDocument();
-        expect(screen.getByText("2024/1/1")).toBeInTheDocument();
-      });
     });
 
     describe("異常系", () => {
-      it("ユーザーが存在しない場合、空メッセージが表示される", async () => {
+      it("ユーザーが0件の場合に空メッセージが表示される", async () => {
         // Given: 空のレスポンス
         const mockResponse = {
           data: {
