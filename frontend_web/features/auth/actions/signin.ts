@@ -1,5 +1,6 @@
 "use server";
 
+import { signinFormSchema } from "@/features/auth/schemas";
 import { signin as signinApi } from "@/features/shared/api/generated/functions";
 import type { SigninRequest } from "@/features/shared/api/generated/model";
 import { ROUTES } from "@/features/shared/lib/constants";
@@ -14,12 +15,21 @@ export async function signinAction(
   prevState: SigninActionState | undefined,
   formData: FormData,
 ): Promise<SigninActionState> {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  // Zodでvalidation
+  const rawData = {
+    email: formData.get("email"),
+    password: formData.get("password"),
+  };
 
-  if (!email || !password) {
-    return { error: "メールアドレスとパスワードを入力してください" };
+  const result = signinFormSchema.safeParse(rawData);
+
+  if (!result.success) {
+    return {
+      error: result.error.errors[0]?.message || "入力エラーが発生しました",
+    };
   }
+
+  const { email, password } = result.data;
 
   try {
     const requestData: SigninRequest = { email, password };
