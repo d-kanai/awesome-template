@@ -31,7 +31,7 @@
     - When: page render
     - Then: 
       - Server Action内のCommand APIにformのパラメータが渡り呼び出されていること
-        - ※ Tanstack Formとの組み合わせのためにServerSide Navigationしないルールなので、結果としてServerActionも統合したテストが動作する
+        - ※ react-hook-formとの組み合わせのためにServerSide Navigationしないルールなので、結果としてServerActionも統合したテストが動作する
       - Client Side URL遷移が起きていること
       - Toastなど、ユーザへのFBが起きていること
 

@@ -1,110 +1,50 @@
 "use client";
 
 import { Button } from "@/features/shared/figma_generated/Button";
-import { Input } from "@/features/shared/figma_generated/Input";
-import { Label } from "@/features/shared/figma_generated/Label";
+import { TextField } from "@/features/shared/components/TextField";
 import { ROUTES } from "@/features/shared/lib/constants";
 import Link from "next/link";
 import { useSignupForm } from "../hooks/useSignupForm";
 
 export function SignupForm() {
-  const { form, schema } = useSignupForm();
+  const { form, onSubmit, submitError } = useSignupForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = form;
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        form.handleSubmit();
-      }}
-      className="space-y-6"
-    >
-      <form.Subscribe selector={(state) => state.isSubmitting}>
-        {(isSubmitting) => (
-          <>
-            <form.Field
-              name="email"
-              validators={{
-                onChange: schema.shape.email,
-              }}
-            >
-              {(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">メールアドレス</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
-                    disabled={isSubmitting}
-                    placeholder="email@example.com"
-                  />
-                  {field.state.meta.errors.length > 0 && (
-                    <p className="text-sm text-red-600">
-                      {String(
-                        field.state.meta.errors[0]?.message ||
-                          field.state.meta.errors[0],
-                      )}
-                    </p>
-                  )}
-                </div>
-              )}
-            </form.Field>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <TextField
+        id="signup-email"
+        label="メールアドレス"
+        type="email"
+        placeholder="email@example.com"
+        disabled={isSubmitting}
+        error={errors.email?.message}
+        {...register("email")}
+      />
 
-            <form.Field
-              name="password"
-              validators={{
-                onChange: schema.shape.password,
-              }}
-            >
-              {(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">パスワード</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
-                    disabled={isSubmitting}
-                    placeholder="8文字以上"
-                  />
-                  {field.state.meta.errors.length > 0 && (
-                    <p className="text-sm text-red-600">
-                      {String(
-                        field.state.meta.errors[0]?.message ||
-                          field.state.meta.errors[0],
-                      )}
-                    </p>
-                  )}
-                </div>
-              )}
-            </form.Field>
-          </>
-        )}
-      </form.Subscribe>
+      <TextField
+        id="signup-password"
+        label="パスワード"
+        type="password"
+        placeholder="8文字以上"
+        disabled={isSubmitting}
+        error={errors.password?.message}
+        {...register("password")}
+      />
 
-      <form.Subscribe
-        selector={(state) => ({
-          isSubmitting: state.isSubmitting,
-          submitError: state.submissionAttempts > 0 && state.errorMap.onSubmit,
-        })}
-      >
-        {({ isSubmitting, submitError }) => (
-          <>
-            {submitError && (
-              <div className="rounded-md bg-red-50 p-4">
-                <p className="text-sm text-red-800">{String(submitError)}</p>
-              </div>
-            )}
+      {submitError && (
+        <div className="rounded-md bg-red-50 p-4">
+          <p className="text-sm text-red-800">{submitError}</p>
+        </div>
+      )}
 
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? "登録中..." : "サインアップ"}
-            </Button>
-          </>
-        )}
-      </form.Subscribe>
+      <Button type="submit" disabled={isSubmitting} className="w-full">
+        {isSubmitting ? "登録中..." : "サインアップ"}
+      </Button>
 
       <p className="text-center text-sm text-gray-600">
         すでにアカウントをお持ちですか？{" "}
