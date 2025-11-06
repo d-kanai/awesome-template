@@ -3,18 +3,14 @@ Feature: 認証機能
 
   Scenario: 新規ユーザーのサインアップ
     Given サインアップページにアクセス
-    When メールアドレスに "test@example.com" を入力
+    When メールアドレスに "newuser@example.com" を入力
     And パスワードに "password123" を入力
     And サインアップボタンをクリック
     Then サインインページに遷移
 
   Scenario: 既存ユーザーのサインイン
-    Given サインアップページにアクセス
-    When メールアドレスに "signin-test@example.com" を入力
-    And パスワードに "TestPassword123" を入力
-    And サインアップボタンをクリック
-    Then サインインページに遷移
-    When メールアドレスに "signin-test@example.com" を入力
+    Given サインインページにアクセス
+    When メールアドレスに "test@example.com" を入力
     And パスワードに "TestPassword123" を入力
     And サインインボタンをクリック
     Then ユーザー画面に遷移

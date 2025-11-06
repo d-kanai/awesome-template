@@ -2,8 +2,9 @@
 
 import { type SigninFormData, signinFormSchema } from "@/features/auth/schemas";
 import { signin as signinApi } from "@/features/shared/api/generated/functions";
-import { ROUTES } from "@/features/shared/lib/constants";
+import { COOKIE_KEYS, ROUTES } from "@/features/shared/lib/constants";
 import { formatZodFieldErrors } from "@/features/shared/lib/formHelpers";
+import { cookies } from "next/headers";
 
 export type SigninActionResponse = {
   error?: string;
@@ -26,7 +27,20 @@ export async function signinAction(
   }
 
   try {
-    await signinApi(validatedData.data);
+    const response = await signinApi(validatedData.data);
+    const accessToken = response.data?.accessToken;
+
+    if (accessToken) {
+      const cookieStore = await cookies();
+      cookieStore.set(COOKIE_KEYS.ACCESS_TOKEN, accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        path: "/",
+      });
+    }
+
     return { success: true, redirectTo: ROUTES.USER_LIST };
   } catch (error) {
     return { error: (error as Error).message };

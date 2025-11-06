@@ -27,6 +27,23 @@ BeforeAll(async () => {
     console.warn("[E2E] Failed to reset database:", error);
   }
 
+  try {
+    const response = await fetch(`${API_BASE_URL}/e2e/create_data`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ table: "user" }),
+    });
+    if (!response.ok) {
+      console.warn(`Failed to create test data: ${response.status}`);
+    } else {
+      console.log("[E2E] Test data created successfully");
+    }
+  } catch (error) {
+    console.warn("[E2E] Failed to create test data:", error);
+  }
+
   browser = await chromium.launch({
     headless: true,
   });
