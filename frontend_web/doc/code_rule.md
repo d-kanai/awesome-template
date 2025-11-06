@@ -24,8 +24,10 @@
 - it()のケース名は日本語でテストの意図が明確な名前にすること
   - 例: `describe("正常系") > it("サインイン画面に遷移する", ...)`
 - テストコード内部にはgiven when thenのコメントを日本語で挿入してフェーズを見やすくすること
+- elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること
 - TestC: Screen Level Test (RSC, Server Action統合テスト)
   - Common
+    - 全てのScreenにTestCが作成されていること
     - given when thenのコメントを日本語挿入してフェーズを見やすくすること
     - Screenから呼び出しているComponent全てのカバレッジが90%以上になるように、eventを網羅するようにすること
   - Query
@@ -41,6 +43,7 @@
         - ※ エラーハンドリングを柔軟にするためにServer Side Navigation(redirect)しないルールなので、結果としてServerActionも統合したテストが動作する
       - Client Side URL遷移が起きていること
       - Toastなど、ユーザへのFBが起きていること
-- 全てのScreenにTestCが作成されていること
 
-### E2E spec
+### E2E spec (playwright)
+
+- elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること

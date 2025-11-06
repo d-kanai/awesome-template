@@ -10,6 +10,7 @@ import {
 } from "vitest";
 
 import { SignupScreen } from "@/features/auth/screens/SignupScreen";
+import { SignupTestIds } from "@/features/auth/test-ids";
 import { fetcher } from "@/features/shared/api/fetcher";
 import type { signupResponse } from "@/features/shared/api/generated/functions";
 import { renderWithProviders } from "@/features/shared/lib/testsupport";
@@ -58,11 +59,9 @@ describe("SignupScreen - TestC", () => {
       // When: 画面レンダリング + フォーム入力 + 送信
       renderWithProviders(<SignupScreen />);
 
-      const emailInput = screen.getByLabelText("メールアドレス");
-      const passwordInput = screen.getByLabelText("パスワード");
-      const submitButton = screen.getByRole("button", {
-        name: "サインアップ",
-      });
+      const emailInput = screen.getByTestId(SignupTestIds.emailInput);
+      const passwordInput = screen.getByTestId(SignupTestIds.passwordInput);
+      const submitButton = screen.getByTestId(SignupTestIds.submitButton);
 
       fireEvent.change(emailInput, { target: { value: "test@example.com" } });
       fireEvent.change(passwordInput, { target: { value: "password123" } });
@@ -101,7 +100,7 @@ describe("SignupScreen - TestC", () => {
       renderWithProviders(<SignupScreen />);
 
       // Then: サインインページへのリンクが存在する
-      const signinLink = screen.getByRole("link", { name: "サインイン" });
+      const signinLink = screen.getByTestId(SignupTestIds.signinLink);
       expect(signinLink).toHaveAttribute("href", "/auth/signin");
     });
   });
@@ -116,11 +115,9 @@ describe("SignupScreen - TestC", () => {
       // When: 画面レンダリング + フォーム入力 + 送信
       renderWithProviders(<SignupScreen />);
 
-      const emailInput = screen.getByLabelText("メールアドレス");
-      const passwordInput = screen.getByLabelText("パスワード");
-      const submitButton = screen.getByRole("button", {
-        name: "サインアップ",
-      });
+      const emailInput = screen.getByTestId(SignupTestIds.emailInput);
+      const passwordInput = screen.getByTestId(SignupTestIds.passwordInput);
+      const submitButton = screen.getByTestId(SignupTestIds.submitButton);
 
       fireEvent.change(emailInput, { target: { value: "test@example.com" } });
       fireEvent.change(passwordInput, { target: { value: "password123" } });
@@ -129,9 +126,8 @@ describe("SignupScreen - TestC", () => {
       // Then: ユーザへのFBが起きていること
       await waitFor(
         () => {
-          expect(
-            screen.getByText("サインアップに失敗しました"),
-          ).toBeInTheDocument();
+          const errorMessage = screen.getByTestId(SignupTestIds.errorMessage);
+          expect(errorMessage).toHaveTextContent("サインアップに失敗しました");
         },
         { timeout: 10000 },
       );
@@ -146,7 +142,7 @@ describe("SignupScreen - TestC", () => {
       // When: 画面レンダリング + 無効なメール入力
       renderWithProviders(<SignupScreen />);
 
-      const emailInput = screen.getByLabelText("メールアドレス");
+      const emailInput = screen.getByTestId(SignupTestIds.emailInput);
       fireEvent.change(emailInput, { target: { value: "invalid-email" } });
       fireEvent.blur(emailInput);
 
@@ -164,7 +160,7 @@ describe("SignupScreen - TestC", () => {
       // When: 画面レンダリング + 短いパスワード入力
       renderWithProviders(<SignupScreen />);
 
-      const passwordInput = screen.getByLabelText("パスワード");
+      const passwordInput = screen.getByTestId(SignupTestIds.passwordInput);
       fireEvent.change(passwordInput, { target: { value: "1234567" } });
       fireEvent.blur(passwordInput);
 

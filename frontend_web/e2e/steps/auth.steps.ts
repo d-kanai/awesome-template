@@ -1,6 +1,7 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
 import type { CustomWorld } from "./world";
+import { SigninTestIds, SignupTestIds } from "../../features/auth/test-ids";
 
 /**
  * 前提条件: サインアップページにアクセス
@@ -22,7 +23,12 @@ Given("サインインページにアクセスする", async function (this: Cus
 When(
   "メールアドレスに {string} を入力する",
   async function (this: CustomWorld, email: string) {
-    await this.page.fill('input[type="email"]', email);
+    const currentUrl = this.page.url();
+    if (currentUrl.includes("/auth/signin")) {
+      await this.page.getByTestId(SigninTestIds.emailInput).fill(email);
+    } else if (currentUrl.includes("/auth/signup")) {
+      await this.page.getByTestId(SignupTestIds.emailInput).fill(email);
+    }
   },
 );
 
@@ -32,7 +38,12 @@ When(
 When(
   "パスワードに {string} を入力する",
   async function (this: CustomWorld, password: string) {
-    await this.page.fill('input[type="password"]', password);
+    const currentUrl = this.page.url();
+    if (currentUrl.includes("/auth/signin")) {
+      await this.page.getByTestId(SigninTestIds.passwordInput).fill(password);
+    } else if (currentUrl.includes("/auth/signup")) {
+      await this.page.getByTestId(SignupTestIds.passwordInput).fill(password);
+    }
   },
 );
 
@@ -40,14 +51,14 @@ When(
  * アクション: サインアップボタンをクリック
  */
 When("サインアップボタンをクリックする", async function (this: CustomWorld) {
-  await this.page.click('button[type="submit"]:has-text("サインアップ")');
+  await this.page.getByTestId(SignupTestIds.submitButton).click();
 });
 
 /**
  * アクション: サインインボタンをクリック
  */
 When("サインインボタンをクリックする", async function (this: CustomWorld) {
-  await this.page.click('button[type="submit"]:has-text("サインイン")');
+  await this.page.getByTestId(SigninTestIds.submitButton).click();
 });
 
 /**

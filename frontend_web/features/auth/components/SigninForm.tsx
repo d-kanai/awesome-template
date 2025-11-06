@@ -5,6 +5,7 @@ import { TextField } from "@/features/shared/components/TextField";
 import { ROUTES } from "@/features/shared/lib/constants";
 import Link from "next/link";
 import { useSigninForm } from "../hooks/useSigninForm";
+import { SigninTestIds } from "../test-ids";
 
 function EmailField({
   register,
@@ -18,6 +19,7 @@ function EmailField({
   return (
     <TextField
       id="signin-email"
+      data-testid={SigninTestIds.emailInput}
       label="メールアドレス"
       type="email"
       placeholder="email@example.com"
@@ -40,6 +42,7 @@ function PasswordField({
   return (
     <TextField
       id="signin-password"
+      data-testid={SigninTestIds.passwordInput}
       label="パスワード"
       type="password"
       placeholder="パスワード"
@@ -52,7 +55,10 @@ function PasswordField({
 
 function ErrorMessage({ error }: { error: string }) {
   return (
-    <div className="rounded-md bg-red-50 p-4">
+    <div
+      className="rounded-md bg-red-50 p-4"
+      data-testid={SigninTestIds.errorMessage}
+    >
       <p className="text-sm text-red-800">{error}</p>
     </div>
   );
@@ -60,7 +66,12 @@ function ErrorMessage({ error }: { error: string }) {
 
 function SubmitButton({ disabled }: { disabled: boolean }) {
   return (
-    <Button type="submit" disabled={disabled} className="w-full">
+    <Button
+      type="submit"
+      disabled={disabled}
+      className="w-full"
+      data-testid={SigninTestIds.submitButton}
+    >
       サインイン
     </Button>
   );
@@ -73,6 +84,7 @@ function SuggestSignupSection() {
       <Link
         href={ROUTES.SIGNUP}
         className="font-medium text-blue-600 hover:text-blue-500"
+        data-testid={SigninTestIds.signupLink}
       >
         サインアップ
       </Link>
