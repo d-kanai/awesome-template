@@ -2,9 +2,9 @@ import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { useRouter } from "next/navigation";
 import { beforeEach, describe, expect, it, type MockedFunction, vi } from "vitest";
 
-import { SignupScreen } from "@/features/auth/screens/SignupScreen";
+import { SigninScreen } from "@/features/auth/screens/SigninScreen";
 import { fetcher } from "@/features/shared/api/fetcher";
-import type { signupResponse } from "@/features/shared/api/generated/functions";
+import type { signinResponse } from "@/features/shared/api/generated/functions";
 import { renderWithProviders } from "@/features/shared/lib/testsupport";
 
 vi.mock("next/navigation", () => ({
@@ -19,7 +19,7 @@ vi.mock("@/features/shared/api/fetcher", () => ({
 const mockedFetcher = fetcher as MockedFunction<typeof fetcher>;
 const mockedUseRouter = useRouter as MockedFunction<typeof useRouter>;
 
-describe("SignupScreen - TestC: Screen Level Test", () => {
+describe("SigninScreen - TestC: Screen Level Test", () => {
   const mockPush = vi.fn();
 
   beforeEach(() => {
@@ -30,25 +30,28 @@ describe("SignupScreen - TestC: Screen Level Test", () => {
   });
 
   describe("Command", () => {
-    it("given: - when: 有効なフォームデータ送信 then: APIが呼ばれ、サインイン画面に遷移する", async () => {
+    it("given: - when: 有効なフォームデータ送信 then: APIが呼ばれ、ユーザー画面に遷移する", async () => {
       // Given: Command APIレスポンスモック
-      const apiResponse: signupResponse = {
+      const apiResponse: signinResponse = {
         data: {
-          id: "user-1",
-          email: "test@example.com",
-          createdAt: "2024-01-01T12:34:56.000Z",
-          updatedAt: "2024-01-02T12:34:56.000Z",
+          accessToken: "test-token-123",
+          user: {
+            id: "user-1",
+            email: "test@example.com",
+            createdAt: "2024-01-01T12:34:56.000Z",
+            updatedAt: "2024-01-02T12:34:56.000Z",
+          },
         },
         status: 200,
       };
       mockedFetcher.mockResolvedValueOnce(apiResponse);
 
       // When: 画面レンダリング + フォーム入力 + 送信
-      renderWithProviders(<SignupScreen />);
+      renderWithProviders(<SigninScreen />);
 
       const emailInput = screen.getByLabelText("メールアドレス");
       const passwordInput = screen.getByLabelText("パスワード");
-      const submitButton = screen.getByRole("button", { name: "サインアップ" });
+      const submitButton = screen.getByRole("button", { name: "サインイン" });
 
       fireEvent.change(emailInput, { target: { value: "test@example.com" } });
       fireEvent.change(passwordInput, { target: { value: "password123" } });
@@ -58,7 +61,7 @@ describe("SignupScreen - TestC: Screen Level Test", () => {
       await waitFor(
         () => {
           expect(mockedFetcher).toHaveBeenCalledWith(
-            "/auth/signup",
+            "/auth/signin",
             expect.objectContaining({
               method: "POST",
               body: JSON.stringify({
@@ -74,7 +77,7 @@ describe("SignupScreen - TestC: Screen Level Test", () => {
       // Then: URL遷移が起きていること
       await waitFor(
         () => {
-          expect(mockPush).toHaveBeenCalledWith("/auth/signin");
+          expect(mockPush).toHaveBeenCalledWith("/user");
         },
         { timeout: 10000 },
       );
@@ -82,24 +85,24 @@ describe("SignupScreen - TestC: Screen Level Test", () => {
 
     it("given: - when: API失敗 then: エラーメッセージが表示される", async () => {
       // Given: API失敗レスポンス
-      mockedFetcher.mockRejectedValueOnce(new Error("サインアップに失敗しました"));
+      mockedFetcher.mockRejectedValueOnce(new Error("サインインに失敗しました"));
 
       // When: 画面レンダリング + フォーム入力 + 送信
-      renderWithProviders(<SignupScreen />);
+      renderWithProviders(<SigninScreen />);
 
       const emailInput = screen.getByLabelText("メールアドレス");
       const passwordInput = screen.getByLabelText("パスワード");
-      const submitButton = screen.getByRole("button", { name: "サインアップ" });
+      const submitButton = screen.getByRole("button", { name: "サインイン" });
 
       fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-      fireEvent.change(passwordInput, { target: { value: "password123" } });
+      fireEvent.change(passwordInput, { target: { value: "wrong-password" } });
       fireEvent.click(submitButton);
 
       // Then: ユーザへのFBが起きていること
       await waitFor(
         () => {
           expect(
-            screen.getByText("サインアップに失敗しました"),
+            screen.getByText("サインインに失敗しました"),
           ).toBeInTheDocument();
         },
         { timeout: 10000 },

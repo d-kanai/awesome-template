@@ -1,10 +1,12 @@
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Awesome Template Web</h1>
-        <p className="text-gray-600">Next.js + React + TypeScript</p>
-      </div>
-    </div>
-  );
+import { redirect } from "next/navigation";
+import { getSession } from "@/features/auth/actions/getSession";
+
+export default async function RootPage() {
+  const session = await getSession();
+
+  if (session.isAuthenticated) {
+    redirect("/user");
+  } else {
+    redirect("/auth/signin");
+  }
 }
