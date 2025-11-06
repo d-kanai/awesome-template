@@ -2,6 +2,7 @@
 
 import { signup as signupApi } from "@/features/shared/api/generated/functions";
 import type { SignupRequest } from "@/features/shared/api/generated/model";
+import { ROUTES } from "@/features/shared/lib/constants";
 
 export type SignupActionState = {
   error?: string;
@@ -25,8 +26,7 @@ export async function signupAction(
     const response = await signupApi(requestData);
 
     if (response.status === 200 || response.status === 201) {
-      // サインアップ成功、サインインページにリダイレクト
-      return { success: true, redirectTo: "/auth/signin" };
+      return { success: true, redirectTo: ROUTES.SIGNIN };
     }
 
     return { error: "サインアップに失敗しました" };

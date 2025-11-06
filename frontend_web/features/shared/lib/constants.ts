@@ -6,6 +6,17 @@ export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
 
 /**
+ * Routes
+ * アプリケーション内のルートパス定数
+ */
+export const ROUTES = {
+  HOME: "/",
+  USER_LIST: "/user",
+  SIGNIN: "/auth/signin",
+  SIGNUP: "/auth/signup",
+} as const;
+
+/**
  * Feature Flags
  * Unleashで管理される機能フラグの定数
  */

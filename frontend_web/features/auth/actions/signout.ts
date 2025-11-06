@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { API_BASE_URL } from "@/features/shared/lib/constants";
+import { API_BASE_URL, ROUTES } from "@/features/shared/lib/constants";
 
 export async function signoutAction() {
   const cookieStore = await cookies();
@@ -27,5 +27,5 @@ export async function signoutAction() {
   // ローカルのCookieも削除
   cookieStore.delete("accessToken");
 
-  redirect("/auth/signin");
+  redirect(ROUTES.SIGNIN);
 }

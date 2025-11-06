@@ -2,6 +2,7 @@
 
 import { signin as signinApi } from "@/features/shared/api/generated/functions";
 import type { SigninRequest } from "@/features/shared/api/generated/model";
+import { ROUTES } from "@/features/shared/lib/constants";
 
 export type SigninActionState = {
   error?: string;
@@ -25,9 +26,7 @@ export async function signinAction(
     const response = await signinApi(requestData);
 
     if (response.status === 200) {
-      // バックエンドがSet-CookieヘッダーでhttpOnly Cookieを設定
-      // Next.jsが自動的にCookieを保存
-      return { success: true, redirectTo: "/user" };
+      return { success: true, redirectTo: ROUTES.USER_LIST };
     }
 
     return { error: "サインインに失敗しました" };

@@ -3,6 +3,7 @@
 import { Button } from "@/features/shared/figma_generated/Button";
 import { Input } from "@/features/shared/figma_generated/Input";
 import { Label } from "@/features/shared/figma_generated/Label";
+import { ROUTES } from "@/features/shared/lib/constants";
 import Link from "next/link";
 import { useSignupForm } from "../hooks/useSignupForm";
 
@@ -91,7 +92,7 @@ export function SignupForm() {
       <p className="text-center text-sm text-gray-600">
         すでにアカウントをお持ちですか？{" "}
         <Link
-          href="/auth/signin"
+          href={ROUTES.SIGNIN}
           className="font-medium text-blue-600 hover:text-blue-500"
         >
           サインイン
