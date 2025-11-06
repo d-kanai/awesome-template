@@ -2,6 +2,7 @@
 
 import type { UserListItem } from "@/features/shared/api/generated/model";
 import { UserList } from "../components/UserList";
+import { UserTestIds } from "../test-ids";
 
 interface UserScreenProps {
   users: UserListItem[];
@@ -20,7 +21,12 @@ function ContentWrapper({ children }: { children: React.ReactNode }) {
 function PageHeader() {
   return (
     <div className="mb-8">
-      <h1 className="text-3xl font-bold text-gray-900">ユーザー一覧</h1>
+      <h1
+        className="text-3xl font-bold text-gray-900"
+        data-testid={UserTestIds.pageTitle}
+      >
+        ユーザー一覧
+      </h1>
       <p className="mt-2 text-sm text-gray-600">
         登録されているユーザーの一覧です
       </p>

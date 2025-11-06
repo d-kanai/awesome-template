@@ -1,5 +1,6 @@
 import { getAllUsers } from "@/features/shared/api/generated/functions";
 import { UserScreen } from "@/features/user/screens/UserScreen";
+import { UserTestIds } from "@/features/user/test-ids";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -42,12 +43,17 @@ describe("UserScreen - TestC", () => {
       render(<UserScreen users={users} />);
 
       // Then: 画面にAPIデータが表示されていること
-      expect(screen.getByText("taro@example.com")).toBeInTheDocument();
-      expect(screen.getByText("ID: user-1")).toBeInTheDocument();
-      expect(screen.getByText("hanako@example.com")).toBeInTheDocument();
-      expect(screen.getByText("ID: user-2")).toBeInTheDocument();
-      expect(screen.getByText("2024/1/1")).toBeInTheDocument();
-      expect(screen.getByText("2024/1/3")).toBeInTheDocument();
+      const userEmails = screen.getAllByTestId(UserTestIds.userEmail);
+      expect(userEmails[0]).toHaveTextContent("taro@example.com");
+      expect(userEmails[1]).toHaveTextContent("hanako@example.com");
+
+      const userIds = screen.getAllByTestId(UserTestIds.userId);
+      expect(userIds[0]).toHaveTextContent("ID: user-1");
+      expect(userIds[1]).toHaveTextContent("ID: user-2");
+
+      const createdAts = screen.getAllByTestId(UserTestIds.userCreatedAt);
+      expect(createdAts[0]).toHaveTextContent("2024/1/1");
+      expect(createdAts[1]).toHaveTextContent("2024/1/3");
 
       // Then: APIが呼ばれていること
       expect(getAllUsers).toHaveBeenCalledTimes(1);
@@ -71,7 +77,8 @@ describe("UserScreen - TestC", () => {
       render(<UserScreen users={users} />);
 
       // Then: 空メッセージが表示される
-      expect(screen.getByText("ユーザーが見つかりません")).toBeInTheDocument();
+      const emptyMessage = screen.getByTestId(UserTestIds.emptyMessage);
+      expect(emptyMessage).toHaveTextContent("ユーザーが見つかりません");
     });
   });
 });
