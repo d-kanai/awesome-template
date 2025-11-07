@@ -38,7 +38,7 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
   - Common
     - 全てのScreenにTestCが作成されていること
     - Screenから呼び出しているComponent全てのカバレッジが90%以上になるように、eventを網羅するようにすること
-  - Query Screen
+  - Query
     - Given: Query APIレスポンスモック
     - When: QueryするRSC実行 => Screen ComponentにRSCのdataをpropsで渡して実行
       - ※ spec上でRSCとScreenをpage.tsxのように統合してテストする
@@ -47,7 +47,7 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
     - Given: -
     - When: page render
     - Then: 
-      - Server Action内のCommand APIにformのパラメータが渡り呼び出されていること
+      - Server ActionからbackendへのCommand APIにformのパラメータが渡り呼び出されていること
         - ※ エラーハンドリングを柔軟にするためにServer Side Navigation(redirect)しないルールなので、結果としてServerActionも統合したテストが動作する
       - Client Side URL遷移が起きていること
       - Toastなど、ユーザへのFBが起きていること
