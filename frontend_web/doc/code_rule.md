@@ -30,9 +30,10 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 
 ### css
 
-- 基本的にデザインシステムのsemanticを優先して利用する
-- figmaから取り込んだdesign tokensはtailwind.configにあるのでそこから利用する
-- デザインシステム以外のハードコードされたclassNameは置き換えること
+- shadcn/ui方式（CSS変数）でテーマ管理
+- カラー: セマンティック名を優先（`bg-primary`, `text-foreground`, `border-border`） - ダークモード自動対応
+- スペーシング・タイポグラフィ: Figmaトークンを使用（`Space-*`, `Scale-*`）
+- ハードコード値は使用しない
 
 ### UT spec
 

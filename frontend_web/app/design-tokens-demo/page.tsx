@@ -1,42 +1,47 @@
+import { ThemeToggle } from "@/features/shared/components/ThemeToggle";
+
 export default function DesignTokensDemoPage() {
 	return (
-		<div className="min-h-screen p-Space-800">
+		<div className="relative min-h-screen bg-background p-Space-800">
+			<div className="absolute right-Space-800 top-Space-800">
+				<ThemeToggle />
+			</div>
 			<div className="max-w-4xl mx-auto space-y-Space-600">
 				{/* Header */}
 				<header className="space-y-Space-400">
-					<h1 className="text-[48px] font-[700] text-sds_light-Text-Brand-Default">
+					<h1 className="text-[48px] font-[700] text-primary">
 						Figma Design Tokens Demo
 					</h1>
-					<p className="text-[16px] text-sds_light-Text-Default-Secondary">
+					<p className="text-[16px] text-foreground-secondary">
 						Figmaから取り込んだデザイントークンを実際に使用したデモページ
 					</p>
 				</header>
 
 				{/* 使い方の説明 */}
-				<section className="bg-sds_light-Background-Brand-Tertiary p-Space-600 rounded">
-					<h2 className="text-[24px] font-[600] mb-Space-400 text-sds_light-Text-Brand-Default">
+				<section className="bg-muted p-Space-600 rounded">
+					<h2 className="text-[24px] font-[600] mb-Space-400 text-primary">
 						🎨 使い方の比較
 					</h2>
 					<div className="space-y-Space-300 text-[14px]">
 						<div>
 							<div className="font-[600] mb-Space-200">❌ Before（統合前）</div>
-							<code className="block bg-white p-Space-300 rounded">
+							<code className="block bg-background p-Space-300 rounded border border-border">
 								{`<div className="bg-[#2c2c2c] text-[#ffffff]" />`}
 							</code>
 						</div>
 						<div>
 							<div className="font-[600] mb-Space-200">
-								✅ After（統合後）- Figmaトークン名
+								✅ After（統合後）- セマンティック名
 							</div>
-							<code className="block bg-white p-Space-300 rounded">
-								{`<div className="bg-sds_light-Background-Brand-Default text-white" />`}
+							<code className="block bg-background p-Space-300 rounded border border-border">
+								{`<div className="bg-primary text-primary-foreground" />`}
 							</code>
 						</div>
 						<div>
 							<div className="font-[600] mb-Space-200">
 								✅ After（統合後）- Spacing
 							</div>
-							<code className="block bg-white p-Space-300 rounded">
+							<code className="block bg-background p-Space-300 rounded border border-border">
 								{`<div className="p-Space-400 m-Space-800" />`}
 							</code>
 						</div>
@@ -45,8 +50,8 @@ export default function DesignTokensDemoPage() {
 
 				{/* Color Palette */}
 				<section className="space-y-Space-400">
-					<h2 className="text-[32px] font-[600] text-[#2c2c2c]">
-						Color Palette
+					<h2 className="text-[32px] font-[600] text-foreground">
+						Color Palette（セマンティック名）
 					</h2>
 
 					<div className="space-y-Space-400">
@@ -54,26 +59,10 @@ export default function DesignTokensDemoPage() {
 						<div>
 							<h3 className="text-[20px] font-[600] mb-Space-300">Brand</h3>
 							<div className="grid grid-cols-4 gap-Space-300">
-								<ColorSwatch
-									color="bg-[#2c2c2c]"
-									name="Brand Default"
-									value="#2c2c2c"
-								/>
-								<ColorSwatch
-									color="bg-[#1e1e1e]"
-									name="Brand Hover"
-									value="#1e1e1e"
-								/>
-								<ColorSwatch
-									color="bg-[#e6e6e6]"
-									name="Brand Secondary"
-									value="#e6e6e6"
-								/>
-								<ColorSwatch
-									color="bg-[#f5f5f5]"
-									name="Brand Tertiary"
-									value="#f5f5f5"
-								/>
+								<ColorSwatch color="bg-primary" name="Primary" />
+								<ColorSwatch color="bg-primary-hover" name="Primary Hover" />
+								<ColorSwatch color="bg-secondary" name="Secondary" />
+								<ColorSwatch color="bg-muted" name="Muted" />
 							</div>
 						</div>
 
@@ -81,21 +70,9 @@ export default function DesignTokensDemoPage() {
 						<div>
 							<h3 className="text-[20px] font-[600] mb-Space-300">Status</h3>
 							<div className="grid grid-cols-3 gap-Space-300">
-								<ColorSwatch
-									color="bg-[#14ae5c]"
-									name="Positive"
-									value="#14ae5c"
-								/>
-								<ColorSwatch
-									color="bg-[#e8b931]"
-									name="Warning"
-									value="#e8b931"
-								/>
-								<ColorSwatch
-									color="bg-[#ec221f]"
-									name="Danger"
-									value="#ec221f"
-								/>
+								<ColorSwatch color="bg-success" name="Success" />
+								<ColorSwatch color="bg-warning" name="Warning" />
+								<ColorSwatch color="bg-destructive" name="Destructive" />
 							</div>
 						</div>
 					</div>
@@ -103,7 +80,9 @@ export default function DesignTokensDemoPage() {
 
 				{/* Spacing */}
 				<section className="space-y-Space-400">
-					<h2 className="text-[32px] font-[600] text-[#2c2c2c]">Spacing</h2>
+					<h2 className="text-[32px] font-[600] text-foreground">
+						Spacing（Figmaトークン）
+					</h2>
 					<div className="space-y-Space-300">
 						<SpacingDemo size="4px" label="Space-100" />
 						<SpacingDemo size="8px" label="Space-200" />
@@ -115,49 +94,59 @@ export default function DesignTokensDemoPage() {
 
 				{/* Typography */}
 				<section className="space-y-Space-400">
-					<h2 className="text-[32px] font-[600] text-[#2c2c2c]">Typography</h2>
+					<h2 className="text-[32px] font-[600] text-foreground">Typography</h2>
 					<div className="space-y-Space-400">
 						<div>
-							<p className="text-[72px] font-[700]">Title Hero (72px/700)</p>
+							<p className="text-[72px] font-[700] text-foreground">
+								Title Hero (72px/700)
+							</p>
 						</div>
 						<div>
-							<p className="text-[48px] font-[700]">Title Page (48px/700)</p>
+							<p className="text-[48px] font-[700] text-foreground">
+								Title Page (48px/700)
+							</p>
 						</div>
 						<div>
-							<p className="text-[32px] font-[400]">Subtitle (32px/400)</p>
+							<p className="text-[32px] font-[400] text-foreground">
+								Subtitle (32px/400)
+							</p>
 						</div>
 						<div>
-							<p className="text-[24px] font-[600]">Heading (24px/600)</p>
+							<p className="text-[24px] font-[600] text-foreground">
+								Heading (24px/600)
+							</p>
 						</div>
 						<div>
-							<p className="text-[16px] font-[400]">Body (16px/400)</p>
+							<p className="text-[16px] font-[400] text-foreground">
+								Body (16px/400)
+							</p>
 						</div>
 					</div>
 				</section>
 
 				{/* Button Examples */}
 				<section className="space-y-Space-400">
-					<h2 className="text-[32px] font-[600] text-sds_light-Text-Brand-Default">
-						Buttons（Figmaトークン名使用）
+					<h2 className="text-[32px] font-[600] text-foreground">
+						Buttons（セマンティック名）
 					</h2>
 					<div className="flex gap-Space-400">
 						<button
 							type="button"
-							className="px-Space-600 py-Space-300 bg-sds_light-Background-Brand-Default text-white rounded hover:bg-sds_light-Background-Brand-Hover transition-colors"
+							className="px-Space-600 py-Space-300 bg-primary text-primary-foreground rounded hover:bg-primary-hover transition-colors"
 						>
 							Primary Button
 						</button>
 						<button
 							type="button"
-							className="px-Space-600 py-Space-300 bg-sds_light-Background-Positive-Default text-white rounded hover:bg-sds_light-Background-Positive-Hover transition-colors"
+							className="px-Space-600 py-Space-300 bg-success text-success-foreground rounded hover:bg-success-hover transition-colors"
 						>
 							Success Button
 						</button>
 						<button
 							type="button"
-							className="px-Space-600 py-Space-300 bg-sds_light-Background-Danger-Default text-white rounded hover:bg-sds_light-Background-Danger-Hover transition-colors"
+							className="px-Space-600 py-Space-300 bg-destructive text-destructive-foreground rounded hover:bg-destructive-hover transition-colors"
 						>
-							Danger Button
+							Destructive Button
 						</button>
 					</div>
 				</section>
@@ -166,17 +155,12 @@ export default function DesignTokensDemoPage() {
 	);
 }
 
-function ColorSwatch({
-	color,
-	name,
-	value,
-}: { color: string; name: string; value: string }) {
+function ColorSwatch({ color, name }: { color: string; name: string }) {
 	return (
 		<div className="space-y-Space-200">
-			<div className={`${color} h-24 rounded border border-gray-200`} />
+			<div className={`${color} h-24 rounded border border-border`} />
 			<div className="text-[14px]">
-				<div className="font-[600]">{name}</div>
-				<div className="text-[#757575]">{value}</div>
+				<div className="font-[600] text-foreground">{name}</div>
 			</div>
 		</div>
 	);
@@ -185,9 +169,9 @@ function ColorSwatch({
 function SpacingDemo({ size, label }: { size: string; label: string }) {
 	return (
 		<div className="flex items-center gap-Space-400">
-			<div className="w-32 text-[14px] font-[600]">{label}</div>
-			<div className="bg-[#14ae5c] h-8" style={{ width: size }} />
-			<div className="text-[14px] text-[#757575]">{size}</div>
+			<div className="w-32 text-[14px] font-[600] text-foreground">{label}</div>
+			<div className="bg-success h-8" style={{ width: size }} />
+			<div className="text-[14px] text-foreground-secondary">{size}</div>
 		</div>
 	);
 }

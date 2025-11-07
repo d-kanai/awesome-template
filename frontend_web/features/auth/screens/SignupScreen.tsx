@@ -8,7 +8,7 @@ import { SignupForm } from "../components/SignupForm";
 
 function ScreenContainer({ children }: { children: React.ReactNode }) {
 	return (
-		<div className="flex min-h-screen items-center justify-center bg-sds_light-Background-Default-Secondary px-Space-400 py-Space-1200 sm:px-Space-600 lg:px-Space-800">
+		<div className="flex min-h-screen items-center justify-center bg-background-secondary px-Space-400 py-Space-1200 sm:px-Space-600 lg:px-Space-800">
 			{children}
 		</div>
 	);

@@ -56,10 +56,10 @@ function PasswordField({
 function ErrorMessage({ error }: { error: string }) {
 	return (
 		<div
-			className="rounded-md bg-sds_light-Background-Danger-Tertiary p-Space-400"
+			className="rounded-md bg-destructive/10 p-Space-400"
 			data-testid={SignupTestIds.errorMessage}
 		>
-			<p className="text-sm text-sds_light-Text-Danger-Default">{error}</p>
+			<p className="text-sm text-destructive">{error}</p>
 		</div>
 	);
 }
@@ -79,11 +79,11 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
 
 function SuggestSigninSection() {
 	return (
-		<p className="text-center text-sm text-sds_light-Text-Default-Secondary">
+		<p className="text-center text-sm text-foreground-secondary">
 			すでにアカウントをお持ちですか？{" "}
 			<Link
 				href={AUTH_ROUTES.SIGNIN}
-				className="font-medium text-sds_light-Text-Brand-Default hover:text-sds_light-Text-Brand-Secondary"
+				className="font-medium text-primary hover:text-primary/80"
 				data-testid={SignupTestIds.signinLink}
 			>
 				サインイン

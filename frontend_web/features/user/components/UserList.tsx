@@ -7,26 +7,26 @@ import { UserTestIds } from "../test-ids";
 function UserListItem({ user }: { user: User }) {
 	return (
 		<div
-			className="border-b border-sds_light-Border-Default-Default p-Space-400 last:border-b-0"
+			className="border-b border-border p-Space-400 last:border-b-0"
 			data-testid={UserTestIds.userListItem}
 		>
 			<div className="flex items-center justify-between">
 				<div>
 					<h3
-						className="font-medium text-sds_light-Text-Default-Default"
+						className="font-medium text-foreground"
 						data-testid={UserTestIds.userEmail}
 					>
 						{user.email}
 					</h3>
 					<p
-						className="text-sm text-sds_light-Text-Default-Secondary"
+						className="text-sm text-foreground-secondary"
 						data-testid={UserTestIds.userId}
 					>
 						ID: {user.id}
 					</p>
 				</div>
 				<div
-					className="text-sm text-sds_light-Text-Default-Tertiary"
+					className="text-sm text-foreground-tertiary"
 					data-testid={UserTestIds.userCreatedAt}
 				>
 					{user.createdAt
@@ -48,7 +48,7 @@ export function UserList({ users }: UserListProps) {
 			<Card>
 				<div className="p-Space-800 text-center">
 					<p
-						className="text-sds_light-Text-Default-Secondary"
+						className="text-foreground-secondary"
 						data-testid={UserTestIds.emptyMessage}
 					>
 						ユーザーが見つかりません
@@ -61,7 +61,7 @@ export function UserList({ users }: UserListProps) {
 	return (
 		<Card>
 			<div
-				className="divide-y divide-sds_light-Border-Default-Default"
+				className="divide-y divide-border"
 				data-testid={UserTestIds.userList}
 			>
 				{users.map((user) => (

@@ -30,7 +30,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
 				/>
 				{error && (
 					<p
-						className="text-sm text-sds_light-Text-Danger-Default"
+						className="text-sm text-destructive"
 						data-testid={SharedTestIds.textFieldError}
 					>
 						{error}

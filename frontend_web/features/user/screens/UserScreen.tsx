@@ -10,7 +10,7 @@ interface UserScreenProps {
 
 function ScreenContainer({ children }: { children: React.ReactNode }) {
 	return (
-		<div className="min-h-screen bg-sds_light-Background-Default-Secondary py-Space-800">
+		<div className="min-h-screen bg-background-secondary py-Space-800">
 			{children}
 		</div>
 	);
@@ -28,12 +28,12 @@ function PageHeader() {
 	return (
 		<div className="mb-Space-800">
 			<h1
-				className="text-3xl font-bold text-sds_light-Text-Default-Default"
+				className="text-3xl font-bold text-foreground"
 				data-testid={UserTestIds.pageTitle}
 			>
 				ユーザー一覧
 			</h1>
-			<p className="mt-Space-200 text-sm text-sds_light-Text-Default-Secondary">
+			<p className="mt-Space-200 text-sm text-foreground-secondary">
 				登録されているユーザーの一覧です
 			</p>
 		</div>

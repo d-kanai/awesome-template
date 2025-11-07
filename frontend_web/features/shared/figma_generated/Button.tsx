@@ -14,13 +14,15 @@ const buttonVariants = cva(
 		variants: {
 			variant: {
 				primary:
-					"bg-sds_light-Background-Brand-Default text-sds_light-Text-Brand-On-Brand hover:bg-sds_light-Background-Brand-Hover focus-visible:ring-sds_light-Border-Brand-Default",
+					"bg-primary text-primary-foreground hover:bg-primary-hover focus-visible:ring-ring",
 				secondary:
-					"bg-sds_light-Background-Brand-Secondary text-sds_light-Text-Brand-Default hover:bg-sds_light-Background-Brand-Secondary-Hover focus-visible:ring-sds_light-Border-Brand-Secondary",
+					"bg-secondary text-secondary-foreground hover:bg-secondary-hover focus-visible:ring-ring",
 				outline:
-					"border border-sds_light-Border-Default-Default bg-transparent text-sds_light-Text-Default-Default hover:bg-sds_light-Background-Default-Default-Hover focus-visible:ring-sds_light-Border-Default-Default",
+					"border border-border bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring",
 				ghost:
-					"text-sds_light-Text-Default-Default hover:bg-sds_light-Background-Default-Default-Hover focus-visible:ring-sds_light-Border-Default-Default",
+					"text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring",
+				destructive:
+					"bg-destructive text-destructive-foreground hover:bg-destructive-hover focus-visible:ring-ring",
 			},
 			size: {
 				sm: "h-9 px-Space-300",
