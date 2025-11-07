@@ -139,6 +139,43 @@ make web-generate-api
 pnpm generate:api
 ```
 
+### Figmaデザイントークン同期
+
+#### 現在（Professional Plan）: Plugin方式
+```bash
+# Figma PluginでエクスポートしたJSONを読み込み、Tailwind形式に変換
+pnpm figma:sync:plugin
+
+# または個別実行
+pnpm figma:import:plugin  # PluginエクスポートJSONを読み込み
+pnpm figma:generate       # Tailwind形式に変換
+```
+
+**手順:**
+1. Figmaで対象ファイルを開く
+2. プラグイン → "Design Tokens (W3C) Export" を実行
+3. エクスポートされたJSONファイルをダウンロード
+4. `design-tokens/figma-plugin-export.json` として保存
+5. `pnpm figma:sync:plugin` を実行
+
+#### 将来（Enterprise Plan）: API方式
+```bash
+# Figma REST APIからデザイントークンを自動取得
+pnpm figma:sync
+
+# または個別実行
+pnpm figma:fetch      # Figma APIからトークン取得
+pnpm figma:generate   # Tailwind形式に変換
+```
+
+**セットアップ（Enterprise移行後）:**
+1. `.env.local.example` を `.env.local` にコピー
+2. Figma Personal Access Token を取得して設定
+3. Figma File Key を設定
+4. `pnpm figma:sync` を実行
+
+> **注意**: Variables REST APIはEnterprise Planでのみ利用可能です。Professional Planでは上記のPlugin方式を使用してください。
+
 ### テスト
 
 #### ユニットテスト
@@ -203,7 +240,23 @@ docker-compose up
 
 ## 環境変数
 
-`.env.local` を作成:
+`.env.local` を作成（`.env.local.example`を参考に）:
+
+```bash
+# Figma API設定
+FIGMA_ACCESS_TOKEN=figd_xxxxx...
+FIGMA_FILE_KEY=1323286958747522747
+```
+
+**Figma Personal Access Tokenの取得方法:**
+1. Figma → Settings → Personal access tokens
+2. "Generate new token" をクリック
+3. 必要なスコープ: `File content (read-only)`
+4. トークンをコピーして `.env.local` に設定
+
+**Figma File Keyの取得方法:**
+- FigmaファイルのURL: `https://www.figma.com/file/FILE_KEY/...`
+- `FILE_KEY` の部分を `.env.local` に設定
 
 ## テストパターン
 
@@ -215,6 +268,77 @@ docker-compose up
 
 - TBD
 
-## Figma Code Connect統合
+## Figma連携
 
-- TBD
+### デザイントークン自動同期
+
+FigmaのVariablesからデザイントークンをTailwind CSS形式で自動生成できます。
+
+#### 現在のワークフロー（Professional Plan - Plugin方式）
+```
+Figma Variables
+  ↓ (Plugin Export)
+design-tokens/figma-plugin-export.json
+  ↓
+scripts/figma/import-tokens-plugin.ts
+  ↓
+design-tokens/figma-raw.json
+  ↓
+scripts/figma/generate-tokens.ts
+  ↓
+design-tokens/tailwind-tokens.ts
+  ↓
+tailwind.config.ts で import
+```
+
+**使用方法:**
+
+1. Figmaで対象ファイルを開く
+2. プラグイン → "Design Tokens (W3C) Export" を実行
+3. エクスポートしたJSONを `design-tokens/figma-plugin-export.json` に保存
+4. `pnpm figma:sync:plugin` を実行
+5. `design-tokens/tailwind-tokens.ts` が生成される
+6. `tailwind.config.ts` でインポートして使用:
+
+```typescript
+import { figmaTokens } from './design-tokens/tailwind-tokens';
+
+export default {
+  theme: {
+    extend: {
+      colors: figmaTokens.colors,
+      spacing: figmaTokens.spacing,
+      fontSize: figmaTokens.fontSize,
+      fontWeight: figmaTokens.fontWeight,
+      lineHeight: figmaTokens.lineHeight,
+    },
+  },
+};
+```
+
+#### 将来のワークフロー（Enterprise Plan - API方式）
+
+Enterprise移行後は、REST APIで完全自動化可能：
+
+```
+Figma Variables
+  ↓ (REST API - 自動)
+scripts/figma/fetch-tokens.ts
+  ↓
+design-tokens/figma-raw.json
+  ↓
+scripts/figma/generate-tokens.ts
+  ↓
+design-tokens/tailwind-tokens.ts
+```
+
+1. `.env.local` に `FIGMA_ACCESS_TOKEN` と `FIGMA_FILE_KEY` を設定
+2. `pnpm figma:sync` を実行（完全自動）
+
+**推奨Figma Plugin:**
+- [Design Tokens (W3C) Export](https://www.figma.com/community/plugin/1377982390646186215)
+- W3C Design Tokens Format仕様準拠
+
+### Figma Code Connect（予定）
+
+将来的にFigma Code Connectを導入し、デザイナーがFigma上でReactコンポーネントのコードを参照できるようにする予定です。

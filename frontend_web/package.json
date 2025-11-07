@@ -17,7 +17,12 @@
     "test:watch": "vitest --config .config/vitest.config.ts",
     "test:coverage": "vitest run --coverage --config .config/vitest.config.ts",
     "test:e2e": "cucumber-js --config e2e/cucumber.cjs",
-    "generate:api": "orval --config .config/orval.config.ts"
+    "generate:api": "orval --config .config/orval.config.ts",
+    "figma:fetch": "tsx scripts/figma/fetch-tokens.ts",
+    "figma:import:plugin": "tsx scripts/figma/import-tokens-plugin.ts",
+    "figma:generate": "tsx scripts/figma/generate-tokens.ts",
+    "figma:sync": "pnpm run figma:fetch && pnpm run figma:generate",
+    "figma:sync:plugin": "pnpm run figma:import:plugin && pnpm run figma:generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -47,6 +52,7 @@
     "@vitejs/plugin-react": "4.3.4",
     "@vitest/coverage-v8": "2.1.8",
     "autoprefixer": "10.4.20",
+    "dotenv": "^17.2.3",
     "jsdom": "25.0.1",
     "knip": "5.66.4",
     "next-router-mock": "^1.0.4",
@@ -54,6 +60,7 @@
     "postcss": "8.4.49",
     "tailwindcss": "3.4.17",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
     "typescript": "5.9.2",
     "vitest": "2.1.8",
     "wait-on": "^9.0.1"
