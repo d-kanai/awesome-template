@@ -1,5 +1,7 @@
 # Frontend Web コーディング規約
 
+AIができる限り漏れずに遵守するために、箇条書きでシンプルな形で管理すること。
+
 [重要]web frontendのコーディングは以下を遵守すること
 
 ### common
@@ -13,7 +15,7 @@
 
 ### code
 
-- feature baseのディレクトリ構造にすること
+- feature baseのディレクトリ構造にすること (feature間の依存関係をわかりやすくすること)
 - コンポーネントは、export関数のreturn部分を見ただけでUIの構造が理解できるよう、ファイル内の内部コンポーネントに分割すること
   - 例: `<form><EmailField /><PasswordField /><SubmitButton /></form>` のような構造が一目でわかるように
   - 詳細な実装は内部コンポーネント定義に記述し、メインのreturn部分はUIの構造を表現することに専念すること
@@ -36,7 +38,7 @@
   - Common
     - 全てのScreenにTestCが作成されていること
     - Screenから呼び出しているComponent全てのカバレッジが90%以上になるように、eventを網羅するようにすること
-  - Query
+  - Query Screen
     - Given: Query APIレスポンスモック
     - When: QueryするRSC実行 => Screen ComponentにRSCのdataをpropsで渡して実行
       - ※ spec上でRSCとScreenをpage.tsxのように統合してテストする
