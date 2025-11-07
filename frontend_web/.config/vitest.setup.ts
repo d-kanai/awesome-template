@@ -9,6 +9,15 @@ vi.mock("next/navigation", () => ({
 	useRouter: () => mockRouter.default,
 }));
 
+// next/headersのグローバルモック
+vi.mock("next/headers", () => ({
+	cookies: vi.fn(async () => ({
+		get: vi.fn(),
+		set: vi.fn(),
+		delete: vi.fn(),
+	})),
+}));
+
 // テスト後のクリーンアップ
 afterEach(() => {
 	cleanup();
