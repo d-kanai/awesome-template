@@ -34,7 +34,7 @@ Web版フロントエンドアプリケーション（Next.js + React + TypeScri
 - **Biome**: リント・フォーマット
 - **Knip**: デッドコード検出
 
-## ディレクトリ構造
+## ディレクトリ構造例
 
 ```
 frontend_web/
@@ -182,9 +182,6 @@ docker-compose up
 
 ### 認証
 - **httpOnly Cookie認証**
-- フロントエンドでトークンを保持しない
-- `credentials: 'include'` でCookieを送信
-- バックエンドで認証状態を管理
 
 ### データフェッチング
 - OrvalでOpenAPIから自動生成
@@ -202,13 +199,17 @@ docker-compose up
 ## 環境変数
 
 `.env.local` を作成:
-```env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
-```
 
 ## テストパターン
 
 ### Unit Test (vitest)
+
+- TBD
+
 ### E2Eテスト（Playwright xGherkin ）
 
-## Figma Code Connect統合（準備中）
+- TBD
+
+## Figma Code Connect統合
+
+- TBD
