@@ -1,6 +1,6 @@
 import { defineConfig } from "orval";
 
-const OPENAPI_SPEC_PATH = "../backend/build/openapi/openapi.json";
+const OPENAPI_SPEC_PATH = "../../backend/build/openapi/openapi.json";
 
 const schemaNameMap: Record<string, string> = {
 	"ID 検索レスポンス": "FindUserByIdResponse",
@@ -36,7 +36,7 @@ export default defineConfig({
 		},
 		hooks: {
 			afterAllFilesWrite:
-				"pnpm biome check --config-path .config/biome.json --write features/shared/api/generated",
+				"cd .. && pnpm biome check --config-path .config/biome.json --write features/shared/api/generated",
 		},
 	},
 	// Pure Functions用（Server Components/Server Actions用）
