@@ -38,10 +38,6 @@ function Content() {
   );
 }
 
-/**
- * SigninScreen
- * サインイン画面
- */
 export function SigninScreen() {
   return (
     <ScreenContainer>

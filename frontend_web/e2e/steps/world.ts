@@ -2,7 +2,7 @@ import { World, setWorldConstructor } from "@cucumber/cucumber";
 import type { Browser, BrowserContext, Page } from "@playwright/test";
 import { API_BASE_URL } from "../../features/shared/api/config";
 import { CookieManager } from "../../features/shared/lib/cookieManager";
-import { SHARED_ROUTES } from "../../features/shared/routing/routes";
+import { SHARED_ROUTES } from "../../features/shared/lib/routes";
 import { USER_ROUTES } from "../../features/user/routes";
 
 export class CustomWorld extends World {

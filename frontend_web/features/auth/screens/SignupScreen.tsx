@@ -38,10 +38,6 @@ function Content() {
   );
 }
 
-/**
- * SignupScreen
- * サインアップ画面
- */
 export function SignupScreen() {
   return (
     <ScreenContainer>

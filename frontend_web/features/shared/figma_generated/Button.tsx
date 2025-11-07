@@ -1,5 +1,5 @@
 import { type VariantProps, cva } from "class-variance-authority";
-import { cn } from "@/features/shared/styling/classNames";
+import { cn } from "@/features/shared/lib/classNames";
 
 /**
  * Button コンポーネント

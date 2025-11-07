@@ -1,4 +1,4 @@
-import { cn } from "@/features/shared/styling/classNames";
+import { cn } from "@/features/shared/lib/classNames";
 
 /**
  * Card コンポーネント

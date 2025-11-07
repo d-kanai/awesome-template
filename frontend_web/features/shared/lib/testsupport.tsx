@@ -20,10 +20,6 @@ export function createQueryClient() {
   });
 }
 
-/**
- * プロバイダー付きでコンポーネントをレンダリング
- * QueryClientProviderでラップ
- */
 export function renderWithProviders(
   ui: React.ReactElement,
   {

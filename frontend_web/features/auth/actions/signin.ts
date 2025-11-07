@@ -3,7 +3,7 @@
 import { type SigninFormData, signinFormSchema } from "@/features/auth/schemas";
 import { signin as signinApi } from "@/features/shared/api/generated/functions";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
-import { formatZodFieldErrors } from "@/features/shared/validation/zodErrorFormatter";
+import { formatZodFieldErrors } from "@/features/shared/lib/zodErrorFormatter";
 import { USER_ROUTES } from "@/features/user/routes";
 
 export type SigninActionResponse = {

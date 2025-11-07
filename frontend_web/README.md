@@ -85,16 +85,12 @@ frontend_web/
 ### 前提条件
 - Node.js 22.12.0
 - pnpm 10.10.0
-- バックエンドが起動していること（http://localhost:8080）
 
 ### インストール
 
 ```bash
 # ルートディレクトリから
 make web-install
-
-# または、frontend_webディレクトリで
-pnpm install
 ```
 
 ## 開発コマンド

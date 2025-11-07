@@ -2,7 +2,7 @@
 
 import { type SignupFormData, signupFormSchema } from "@/features/auth/schemas";
 import { signup as signupApi } from "@/features/shared/api/generated/functions";
-import { formatZodFieldErrors } from "@/features/shared/validation/zodErrorFormatter";
+import { formatZodFieldErrors } from "@/features/shared/lib/zodErrorFormatter";
 import { AUTH_ROUTES } from "@/features/auth/routes";
 
 export type SignupActionResponse = {
