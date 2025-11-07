@@ -5,11 +5,11 @@ import { afterEach, vi } from "vitest";
 // next/navigationのグローバルモック
 const mockRouter = require("next-router-mock");
 vi.mock("next/navigation", () => ({
-  ...mockRouter,
-  useRouter: () => mockRouter.default,
+	...mockRouter,
+	useRouter: () => mockRouter.default,
 }));
 
 // テスト後のクリーンアップ
 afterEach(() => {
-  cleanup();
+	cleanup();
 });

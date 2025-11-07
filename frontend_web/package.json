@@ -10,14 +10,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
+    "lint": "biome check --config-path .config/biome.json .",
+    "lint:fix": "biome check --config-path .config/biome.json --write .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "test:e2e": "cucumber-js",
-    "generate:api": "orval"
+    "test": "vitest run --config .config/vitest.config.ts",
+    "test:watch": "vitest --config .config/vitest.config.ts",
+    "test:coverage": "vitest run --coverage --config .config/vitest.config.ts",
+    "test:e2e": "cucumber-js --config e2e/cucumber.cjs",
+    "generate:api": "orval --config .config/orval.config.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
