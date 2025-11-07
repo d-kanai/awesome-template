@@ -2,6 +2,10 @@
 
 Web版フロントエンドアプリケーション（Next.js + React + TypeScript）
 
+## Documentation
+
+- [コーディング規約](./doc/code_rule.md)
+
 ## 技術スタック
 
 ### コア

@@ -1,5 +1,12 @@
 # Awesome Template
 
+## Documentation
+
+### Coding Standards
+- [Backend Coding Rules](./backend/doc/code_rule.md)
+- [Frontend Native Coding Rules](./frontend_native/doc/code_rule.md)
+- [Frontend Web Coding Rules](./frontend_web/doc/code_rule.md)
+
 ## Backend
 
 ### Language & Runtime
