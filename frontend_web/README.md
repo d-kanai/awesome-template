@@ -5,6 +5,7 @@ Web版フロントエンドアプリケーション（Next.js + React + TypeScri
 ## Documentation
 
 - [コーディング規約](./doc/code_rule.md)
+  - AIが順守する。
 
 ## 技術スタック
 

@@ -3,8 +3,8 @@
 # Base stage with Node.js 22.12.0
 FROM node:22.12.0-alpine AS base
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
+# Install pnpm directly
+RUN npm install -g pnpm@10.10.0
 
 # Dependencies stage
 FROM base AS deps
@@ -29,6 +29,9 @@ COPY . .
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+
+# Ensure public directory exists
+RUN mkdir -p public
 
 # Build Next.js app
 RUN pnpm build
