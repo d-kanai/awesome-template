@@ -12,7 +12,6 @@ export interface LabelProps
 
 export function Label({ className, ...props }: LabelProps) {
 	return (
-		// biome-ignore lint/a11y/noLabelWithoutControl: htmlFor is passed via props from parent TextField
 		<label
 			className={cn(
 				"text-sm font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
