@@ -38,11 +38,18 @@ function buildPrimitiveLookup(
 
 		if (tokenValue !== undefined) {
 			// プリミティブトークンの名前を構築（例: "Brand-800"）
-			const tokenName = prefix ? `${prefix}-${key}` : key;
+			// スペースをハイフンに置き換えてTailwindクラス名として使えるようにする
+			const tokenName = (prefix ? `${prefix}-${key}` : key).replace(
+				/\s+/g,
+				"-",
+			);
 			lookup[tokenName] = String(tokenValue);
 		} else {
 			// グループなので再帰
-			const tokenName = prefix ? `${prefix}-${key}` : key;
+			const tokenName = (prefix ? `${prefix}-${key}` : key).replace(
+				/\s+/g,
+				"-",
+			);
 			Object.assign(
 				lookup,
 				buildPrimitiveLookup(value as TokenGroup, tokenName),
@@ -71,7 +78,11 @@ function convertTokens(
 
 	function traverse(obj: TokenGroup, prefix = "") {
 		for (const [key, value] of Object.entries(obj)) {
-			const tokenName = prefix ? `${prefix}-${key}` : key;
+			// スペースをハイフンに置き換えてTailwindクラス名として使えるようにする
+			const tokenName = (prefix ? `${prefix}-${key}` : key).replace(
+				/\s+/g,
+				"-",
+			);
 
 			if (typeof value !== "object") continue;
 
@@ -176,7 +187,7 @@ async function main() {
 		jsonFiles.forEach((f) => console.log(`   - ${f}`));
 
 		// Step 1: プリミティブトークンの辞書を構築
-		console.log(`\n🔧 プリミティブトークンを読み込み中...`);
+		console.log("\n🔧 プリミティブトークンを読み込み中...");
 		let primitiveLookup: Record<string, string> = {};
 
 		const primitiveFiles = jsonFiles.filter((f) => f.includes("primitive"));
@@ -195,8 +206,8 @@ async function main() {
 		);
 
 		// Step 2: 全てのトークンを統合（参照解決付き）
-		console.log(`\n🔄 トークンを変換中...`);
-		let allTokens: Partial<DesignTokens> = {
+		console.log("\n🔄 トークンを変換中...");
+		const allTokens: Partial<DesignTokens> = {
 			colors: {},
 			spacing: {},
 			fontSize: {},
@@ -228,7 +239,7 @@ async function main() {
 		}
 
 		// Step 3: セマンティックトークン内の参照を解決
-		console.log(`\n🔗 セマンティックトークン内の参照を解決中...`);
+		console.log("\n🔗 セマンティックトークン内の参照を解決中...");
 
 		// 全トークンを参照辞書に統合
 		const semanticLookup: Record<string, string> = {
@@ -307,9 +318,9 @@ async function main() {
 			),
 		);
 
-		console.log(`\n💾 デザイントークンを統合・変換しました`);
+		console.log("\n💾 デザイントークンを統合・変換しました");
 		console.log(`   Output: ${outputPath}`);
-		console.log(`\n📊 統合したトークン:`);
+		console.log("\n📊 統合したトークン:");
 		console.log(`   Colors: ${Object.keys(allTokens.colors || {}).length} 個`);
 		console.log(
 			`   Spacing: ${Object.keys(allTokens.spacing || {}).length} 個`,

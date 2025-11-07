@@ -28,6 +28,12 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 - form周りの情報(key名など)はzodのschema定義からできる限り取得し、SSOFとすること
 - 不要なobject destructureを利用しないこと（無駄にtmp変数を増やさないこと）
 
+### css
+
+- 基本的にデザインシステムのsemanticを優先して利用する
+- figmaから取り込んだdesign tokensはtailwind.configにあるのでそこから利用する
+- デザインシステム以外のハードコードされたclassNameは置き換えること
+
 ### UT spec
 
 - describe()で正常系・異常系を分割すること

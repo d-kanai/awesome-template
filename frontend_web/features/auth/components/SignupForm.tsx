@@ -56,10 +56,10 @@ function PasswordField({
 function ErrorMessage({ error }: { error: string }) {
 	return (
 		<div
-			className="rounded-md bg-red-50 p-4"
+			className="rounded-md bg-sds_light-Background-Danger-Tertiary p-Space-400"
 			data-testid={SignupTestIds.errorMessage}
 		>
-			<p className="text-sm text-red-800">{error}</p>
+			<p className="text-sm text-sds_light-Text-Danger-Default">{error}</p>
 		</div>
 	);
 }
@@ -79,11 +79,11 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
 
 function SuggestSigninSection() {
 	return (
-		<p className="text-center text-sm text-gray-600">
+		<p className="text-center text-sm text-sds_light-Text-Default-Secondary">
 			すでにアカウントをお持ちですか？{" "}
 			<Link
 				href={AUTH_ROUTES.SIGNIN}
-				className="font-medium text-blue-600 hover:text-blue-500"
+				className="font-medium text-sds_light-Text-Brand-Default hover:text-sds_light-Text-Brand-Secondary"
 				data-testid={SignupTestIds.signinLink}
 			>
 				サインイン
@@ -96,8 +96,11 @@ export function SignupForm() {
 	const { form, onSubmit, submitError } = useSignupForm();
 
 	return (
-		<div className="space-y-6">
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+		<div className="space-y-Space-600">
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className="space-y-Space-600"
+			>
 				<EmailField
 					register={form.register}
 					error={form.formState.errors.email?.message}

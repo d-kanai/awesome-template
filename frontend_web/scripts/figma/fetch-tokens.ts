@@ -2,10 +2,9 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { config } from "dotenv";
 import type {
-	FigmaVariablesResponse,
-	FigmaFileStylesResponse,
 	DesignTokens,
-	FigmaVariable,
+	FigmaFileStylesResponse,
+	FigmaVariablesResponse,
 } from "./types";
 
 // .env.local を読み込み
@@ -35,7 +34,7 @@ const FIGMA_API_BASE = "https://api.figma.com/v1";
 async function fetchFigmaVariables(): Promise<FigmaVariablesResponse> {
 	const url = `${FIGMA_API_BASE}/files/${FIGMA_FILE_KEY}/variables/local`;
 
-	console.log(`\n📡 Figma Variables API を呼び出しています...`);
+	console.log("\n📡 Figma Variables API を呼び出しています...");
 	console.log(`   URL: ${url}`);
 
 	const response = await fetch(url, {
@@ -56,7 +55,7 @@ async function fetchFigmaVariables(): Promise<FigmaVariablesResponse> {
 async function fetchFigmaStyles(): Promise<FigmaFileStylesResponse> {
 	const url = `${FIGMA_API_BASE}/files/${FIGMA_FILE_KEY}/styles`;
 
-	console.log(`\n📡 Figma Styles API を呼び出しています...`);
+	console.log("\n📡 Figma Styles API を呼び出しています...");
 	console.log(`   URL: ${url}`);
 
 	const response = await fetch(url, {
@@ -180,9 +179,9 @@ async function main() {
 			),
 		);
 
-		console.log(`\n💾 デザイントークンを保存しました`);
+		console.log("\n💾 デザイントークンを保存しました");
 		console.log(`   Path: ${outputPath}`);
-		console.log(`\n📊 取得したトークン:`);
+		console.log("\n📊 取得したトークン:");
 		console.log(`   Colors: ${Object.keys(tokens.colors || {}).length} 個`);
 		console.log(`   Spacing: ${Object.keys(tokens.spacing || {}).length} 個`);
 		console.log(

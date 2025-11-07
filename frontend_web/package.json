@@ -21,6 +21,7 @@
     "figma:fetch": "tsx scripts/figma/fetch-tokens.ts",
     "figma:import:plugin": "tsx scripts/figma/import-tokens-plugin.ts",
     "figma:generate": "tsx scripts/figma/generate-tokens.ts",
+    "figma:list": "tsx scripts/figma/list-tokens.ts",
     "figma:sync": "pnpm run figma:fetch && pnpm run figma:generate",
     "figma:sync:plugin": "pnpm run figma:import:plugin && pnpm run figma:generate"
   },

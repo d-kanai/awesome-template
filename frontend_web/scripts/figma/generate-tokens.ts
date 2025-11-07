@@ -61,23 +61,23 @@ async function main() {
 	const content = generateTailwindTokens(rawTokens);
 	fs.writeFileSync(outputPath, content);
 
-	console.log(`\n✅ Tailwind トークンファイルを生成しました`);
+	console.log("\n✅ Tailwind トークンファイルを生成しました");
 	console.log(`   Path: ${outputPath}`);
 	console.log(
-		`\n💡 次は tailwind.config.ts で以下のようにインポートしてください:`,
+		"\n💡 次は tailwind.config.ts で以下のようにインポートしてください:",
 	);
 	console.log(
 		`\n   import { figmaTokens } from './design-tokens/tailwind-tokens';`,
 	);
-	console.log(`\n   export default {`);
-	console.log(`     theme: {`);
-	console.log(`       extend: {`);
-	console.log(`         colors: figmaTokens.colors,`);
-	console.log(`         spacing: figmaTokens.spacing,`);
-	console.log(`         // ...`);
-	console.log(`       },`);
-	console.log(`     },`);
-	console.log(`   }`);
+	console.log("\n   export default {");
+	console.log("     theme: {");
+	console.log("       extend: {");
+	console.log("         colors: figmaTokens.colors,");
+	console.log("         spacing: figmaTokens.spacing,");
+	console.log("         // ...");
+	console.log("       },");
+	console.log("     },");
+	console.log("   }");
 }
 
 main();

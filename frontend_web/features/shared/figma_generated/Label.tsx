@@ -8,16 +8,16 @@ import { cn } from "@/features/shared/lib/classNames";
  */
 
 export interface LabelProps
-  extends React.LabelHTMLAttributes<HTMLLabelElement> {}
+	extends React.LabelHTMLAttributes<HTMLLabelElement> {}
 
 export function Label({ className, ...props }: LabelProps) {
-  return (
-    <label
-      className={cn(
-        "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-        className,
-      )}
-      {...props}
-    />
-  );
+	return (
+		<label
+			className={cn(
+				"text-sm font-medium leading-none text-sds_light-Text-Default-Primary peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+				className,
+			)}
+			{...props}
+		/>
+	);
 }

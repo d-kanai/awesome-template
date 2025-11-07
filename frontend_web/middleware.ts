@@ -12,6 +12,7 @@ export function middleware(request: NextRequest) {
     SHARED_ROUTES.HOME,
     AUTH_ROUTES.SIGNIN,
     AUTH_ROUTES.SIGNUP,
+    "/design-tokens-demo", // デモページ
   ];
 
   const isPublicPath = publicPaths.some(
