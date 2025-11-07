@@ -1,4 +1,5 @@
-import { API_BASE_URL } from "@/features/shared/lib/constants";
+import { API_BASE_URL } from "@/features/shared/api/config";
+import { CookieManager } from "@/features/shared/lib/cookieManager";
 
 type FetcherOptions<TVariables> = RequestInit & {
   data?: TVariables;
@@ -31,6 +32,15 @@ function mergeHeaders(
   return { ...base, ...extra };
 }
 
+async function getServerCookie(): Promise<string | undefined> {
+  try {
+    return await CookieManager.getAccessTokenCookie();
+  } catch {
+    // Client側から呼ばれた場合はエラーになるので無視
+  }
+  return undefined;
+}
+
 export async function fetcher<TData, TVariables = unknown>(
   path: string,
   options: FetcherOptions<TVariables> = {},
@@ -43,6 +53,10 @@ export async function fetcher<TData, TVariables = unknown>(
       ? { "Content-Type": "application/json" }
       : undefined;
 
+  // Server Component/Server Actionから呼ばれた場合は自動的にCookieを設定
+  const serverCookie = await getServerCookie();
+  const cookieHeader = serverCookie ? { Cookie: serverCookie } : undefined;
+
   console.log("[fetcher] Request:", {
     url: `${API_BASE_URL}${path}`,
     method: rest.method,
@@ -51,7 +65,7 @@ export async function fetcher<TData, TVariables = unknown>(
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...rest,
-    headers: mergeHeaders(headers, contentType),
+    headers: mergeHeaders(mergeHeaders(headers, contentType), cookieHeader),
     body,
     credentials: "include", // httpOnly Cookieを自動的に送信
   });

@@ -3,23 +3,24 @@ import { expect } from "@playwright/test";
 import type { CustomWorld } from "./world";
 import { SigninTestIds, SignupTestIds } from "../../features/auth/test-ids";
 import { SharedTestIds } from "../../features/shared/test-ids";
-import { ROUTES } from "../../features/shared/lib/constants";
+import { AUTH_ROUTES } from "../../features/auth/routes";
+import { USER_ROUTES } from "../../features/user/routes";
 
 Given("サインアップページにアクセス", async function (this: CustomWorld) {
-  await this.page.goto(ROUTES.SIGNUP);
+  await this.page.goto(AUTH_ROUTES.SIGNUP);
 });
 
 Given("サインインページにアクセス", async function (this: CustomWorld) {
-  await this.page.goto(ROUTES.SIGNIN);
+  await this.page.goto(AUTH_ROUTES.SIGNIN);
 });
 
 When(
   "メールアドレスに {string} を入力",
   async function (this: CustomWorld, email: string) {
     const currentUrl = this.page.url();
-    if (currentUrl.includes(ROUTES.SIGNIN)) {
+    if (currentUrl.includes(AUTH_ROUTES.SIGNIN)) {
       await this.page.getByTestId(SigninTestIds.emailInput).fill(email);
-    } else if (currentUrl.includes(ROUTES.SIGNUP)) {
+    } else if (currentUrl.includes(AUTH_ROUTES.SIGNUP)) {
       await this.page.getByTestId(SignupTestIds.emailInput).fill(email);
     }
   },
@@ -29,9 +30,9 @@ When(
   "パスワードに {string} を入力",
   async function (this: CustomWorld, password: string) {
     const currentUrl = this.page.url();
-    if (currentUrl.includes(ROUTES.SIGNIN)) {
+    if (currentUrl.includes(AUTH_ROUTES.SIGNIN)) {
       await this.page.getByTestId(SigninTestIds.passwordInput).fill(password);
-    } else if (currentUrl.includes(ROUTES.SIGNUP)) {
+    } else if (currentUrl.includes(AUTH_ROUTES.SIGNUP)) {
       await this.page.getByTestId(SignupTestIds.passwordInput).fill(password);
     }
   },
@@ -46,11 +47,11 @@ When("サインインボタンをクリック", async function (this: CustomWorl
 });
 
 Then("サインインページに遷移", async function (this: CustomWorld) {
-  await expect(this.page).toHaveURL(ROUTES.SIGNIN, { timeout: 10000 });
+  await expect(this.page).toHaveURL(AUTH_ROUTES.SIGNIN, { timeout: 10000 });
 });
 
 Then("ユーザー画面に遷移", async function (this: CustomWorld) {
-  await expect(this.page).toHaveURL(ROUTES.USER_LIST, { timeout: 10000 });
+  await expect(this.page).toHaveURL(USER_ROUTES.USER_LIST, { timeout: 10000 });
 });
 
 Then("バリデーションエラーを表示", async function (this: CustomWorld) {

@@ -1,8 +1,8 @@
 "use client";
 
+import { AUTH_ROUTES } from "@/features/auth/routes";
 import { Button } from "@/features/shared/figma_generated/Button";
 import { TextField } from "@/features/shared/components/TextField";
-import { ROUTES } from "@/features/shared/lib/constants";
 import Link from "next/link";
 import { useSignupForm } from "../hooks/useSignupForm";
 import { SignupTestIds } from "../test-ids";
@@ -82,7 +82,7 @@ function SuggestSigninSection() {
     <p className="text-center text-sm text-gray-600">
       すでにアカウントをお持ちですか？{" "}
       <Link
-        href={ROUTES.SIGNIN}
+        href={AUTH_ROUTES.SIGNIN}
         className="font-medium text-blue-600 hover:text-blue-500"
         data-testid={SignupTestIds.signinLink}
       >

@@ -1,9 +1,9 @@
-import { COOKIE_KEYS } from "@/features/shared/lib/constants";
+import { CookieManager } from "@/features/shared/lib/cookieManager";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const sessionCookie = request.cookies.get(COOKIE_KEYS.ACCESS_TOKEN);
+  const sessionCookie = request.cookies.get(CookieManager.KEYS.ACCESS_TOKEN);
 
   // 認証が必要なパスのリスト
   const protectedPaths = ["/user"];

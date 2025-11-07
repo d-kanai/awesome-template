@@ -1,13 +1,11 @@
 "use server";
 
-import { COOKIE_KEYS, ROUTES } from "@/features/shared/lib/constants";
-import { cookies } from "next/headers";
+import { AUTH_ROUTES } from "@/features/auth/routes";
+import { CookieManager } from "@/features/shared/lib/cookieManager";
 import { redirect } from "next/navigation";
 
 export async function signoutAction() {
-  const cookieStore = await cookies();
+  await CookieManager.deleteAccessToken();
 
-  cookieStore.delete(COOKIE_KEYS.ACCESS_TOKEN);
-
-  redirect(ROUTES.SIGNIN);
+  redirect(AUTH_ROUTES.SIGNIN);
 }

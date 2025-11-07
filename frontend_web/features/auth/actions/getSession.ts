@@ -1,8 +1,7 @@
 "use server";
 
 import { me } from "@/features/shared/api/generated/functions";
-import { COOKIE_KEYS } from "@/features/shared/lib/constants";
-import { cookies } from "next/headers";
+import { CookieManager } from "@/features/shared/lib/cookieManager";
 import { cache } from "react";
 
 export type Session = {
@@ -14,18 +13,14 @@ export type Session = {
 };
 
 export const getSession = cache(async (): Promise<Session> => {
-  const cookieStore = await cookies();
-  const accessTokenCookie = cookieStore.get(COOKIE_KEYS.ACCESS_TOKEN);
+  const accessToken = await CookieManager.getAccessToken();
 
-  if (!accessTokenCookie) {
+  if (!accessToken) {
     return { user: null, isAuthenticated: false };
   }
 
   try {
     const response = await me({
-      headers: {
-        Cookie: `${accessTokenCookie.name}=${accessTokenCookie.value}`,
-      },
       cache: "no-store",
     });
 

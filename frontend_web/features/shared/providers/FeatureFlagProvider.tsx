@@ -1,12 +1,19 @@
 "use client";
 
-import { API_BASE_URL } from "@/features/shared/lib/constants";
+import { API_BASE_URL } from "@/features/shared/api/config";
 import { FlagProvider } from "@unleash/proxy-client-react";
 
 /**
  * FeatureFlagProvider
  * Unleash Proxy Clientを使用して機能フラグを管理
  */
+
+/**
+ * 機能フラグの定数
+ */
+export const FEATURE_FLAGS = {
+  SHOW_VERSION_INFO: "show-version-info",
+} as const;
 
 const unleashConfig = {
   url: `${API_BASE_URL}/featureflags/proxy`,

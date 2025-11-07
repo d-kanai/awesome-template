@@ -2,8 +2,8 @@
 
 import { type SignupFormData, signupFormSchema } from "@/features/auth/schemas";
 import { signup as signupApi } from "@/features/shared/api/generated/functions";
-import { ROUTES } from "@/features/shared/lib/constants";
-import { formatZodFieldErrors } from "@/features/shared/lib/formHelpers";
+import { formatZodFieldErrors } from "@/features/shared/validation/zodErrorFormatter";
+import { AUTH_ROUTES } from "@/features/auth/routes";
 
 export type SignupActionResponse = {
   error?: string;
@@ -27,7 +27,7 @@ export async function signupAction(
 
   try {
     await signupApi(validatedData.data);
-    return { success: true, redirectTo: ROUTES.SIGNIN };
+    return { success: true, redirectTo: AUTH_ROUTES.SIGNIN };
   } catch (error) {
     return { error: (error as Error).message };
   }

@@ -1,10 +1,9 @@
 import { World, setWorldConstructor } from "@cucumber/cucumber";
 import type { Browser, BrowserContext, Page } from "@playwright/test";
-import {
-  API_BASE_URL,
-  COOKIE_KEYS,
-  ROUTES,
-} from "../../features/shared/lib/constants";
+import { API_BASE_URL } from "../../features/shared/api/config";
+import { CookieManager } from "../../features/shared/lib/cookieManager";
+import { SHARED_ROUTES } from "../../features/shared/routing/routes";
+import { USER_ROUTES } from "../../features/user/routes";
 
 export class CustomWorld extends World {
   page!: Page;
@@ -31,7 +30,7 @@ export class CustomWorld extends World {
 
     await this.context.addCookies([
       {
-        name: COOKIE_KEYS.ACCESS_TOKEN,
+        name: CookieManager.KEYS.ACCESS_TOKEN,
         value: accessToken,
         domain: "localhost",
         path: "/",
@@ -41,9 +40,9 @@ export class CustomWorld extends World {
       },
     ]);
 
-    await this.page.goto(ROUTES.HOME);
+    await this.page.goto(SHARED_ROUTES.HOME);
     await this.page.waitForLoadState("networkidle");
-    await this.page.goto(ROUTES.USER_LIST);
+    await this.page.goto(USER_ROUTES.USER_LIST);
   }
 }
 

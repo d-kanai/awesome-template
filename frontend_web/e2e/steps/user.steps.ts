@@ -2,14 +2,14 @@ import { Given, Then, When } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
 import type { CustomWorld } from "./world";
 import { UserTestIds } from "../../features/user/test-ids";
-import { ROUTES } from "../../features/shared/lib/constants";
+import { USER_ROUTES } from "../../features/user/routes";
 
 Given("認証済みユーザーとしてログイン", async function (this: CustomWorld) {
   await this.bypassSignin();
 });
 
 When("ユーザー画面にアクセス", async function (this: CustomWorld) {
-  await this.page.goto(ROUTES.USER_LIST);
+  await this.page.goto(USER_ROUTES.USER_LIST);
 });
 
 Then("ユーザー一覧を表示", async function (this: CustomWorld) {
