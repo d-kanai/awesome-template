@@ -9,6 +9,7 @@ on:
 
 jobs:
   deploy-coverage:
+    if: false  # Temporarily disabled
     name: Publish coverage to GitHub Pages
     runs-on: ubuntu-latest
     permissions:

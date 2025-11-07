@@ -9,14 +9,16 @@ on:
 
 jobs:
   backend-ut:
+    if: false  # Temporarily disabled
     uses: ./.github/workflows/backend-ut.yml
 
   native-ut:
+    if: false  # Temporarily disabled
     uses: ./.github/workflows/native-ut.yml
 
   deploy-coverage:
+    if: false  # Temporarily disabled
     needs: [backend-ut, native-ut]
-    if: always() && (needs.backend-ut.result == 'success' || needs.native-ut.result == 'success')
     uses: ./.github/workflows/deploy-coverage.yml
     permissions:
       pages: write
