@@ -1,8 +1,8 @@
 "use client";
 
 import { AUTH_ROUTES } from "@/features/auth/routes";
-import { TextField } from "@/features/shared/components/TextField";
-import { Button } from "@/features/shared/figma_generated/Button";
+import { ButtonNew } from "@/features/shared/figma_generated/ButtonNew";
+import { InputField } from "@/features/shared/figma_generated/InputField";
 import Link from "next/link";
 import { useSignupForm } from "../hooks/useSignupForm";
 import { SignupTestIds } from "../test-ids";
@@ -17,13 +17,17 @@ function EmailField({
   disabled: boolean;
 }) {
   return (
-    <TextField
+    <InputField
       id="signup-email"
       data-testid={SignupTestIds.emailInput}
+      hasLabel
       label="メールアドレス"
       type="email"
-      placeholder="email@example.com"
+      valueType="placeholder"
+      value="email@example.com"
+      state={error ? "error" : disabled ? "disabled" : "default"}
       disabled={disabled}
+      hasError={!!error}
       error={error}
       {...register("email")}
     />
@@ -40,13 +44,17 @@ function PasswordField({
   disabled: boolean;
 }) {
   return (
-    <TextField
+    <InputField
       id="signup-password"
       data-testid={SignupTestIds.passwordInput}
+      hasLabel
       label="パスワード"
       type="password"
-      placeholder="8文字以上"
+      valueType="placeholder"
+      value="8文字以上"
+      state={error ? "error" : disabled ? "disabled" : "default"}
       disabled={disabled}
+      hasError={!!error}
       error={error}
       {...register("password")}
     />
@@ -66,14 +74,17 @@ function ErrorMessage({ error }: { error: string }) {
 
 function SubmitButton({ disabled }: { disabled: boolean }) {
   return (
-    <Button
+    <ButtonNew
       type="submit"
+      variant="primary"
+      size="medium"
+      state={disabled ? "disabled" : "default"}
       disabled={disabled}
       className="w-full"
       data-testid={SignupTestIds.submitButton}
     >
       サインアップ
-    </Button>
+    </ButtonNew>
   );
 }
 

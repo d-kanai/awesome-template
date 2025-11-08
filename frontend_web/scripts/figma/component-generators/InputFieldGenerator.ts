@@ -10,21 +10,23 @@ import { extractProperties, toCamelCase } from "./types";
  *
  * 条件:
  * - State, Value Type プロパティを持つ
- * - Error#, Value#, Open# などのboolean プロパティを持つ
- * - プロパティ数が10個
+ * - Label#, Description#, Has Description# などのプロパティを持つ
+ * - プロパティ数が5個
  */
 export class InputFieldGenerator implements ComponentGenerator {
   canHandle(component: ComponentInfo): boolean {
     const props = component.componentSetProperties || {};
     const keys = Object.keys(props).sort();
 
+    // NOTE: 実際のFigmaデータは5プロパティ（Label#, Description#, Has Description#, State, Value Type）
+    // 以前は10プロパティを想定していたが、fetch-components.tsの抽出により簡略化されている
     return (
-      keys.length === 10 &&
+      keys.length === 5 &&
       keys.includes("State") &&
       keys.includes("Value Type") &&
-      keys.some((key) => key.startsWith("Error#")) &&
-      keys.some((key) => key.startsWith("Value#")) &&
-      keys.some((key) => key.startsWith("Open#"))
+      keys.some((key) => key.startsWith("Label#")) &&
+      keys.some((key) => key.startsWith("Description#")) &&
+      keys.some((key) => key.startsWith("Has Description#"))
     );
   }
 
@@ -49,6 +51,7 @@ export class InputFieldGenerator implements ComponentGenerator {
     }
 
     const imports = [
+      'import { forwardRef } from "react";',
       'import type { ComponentPropsWithoutRef } from "react";',
       'import { type VariantProps, cva } from "class-variance-authority";',
       'import { cn } from "@/features/shared/lib/classNames";',
@@ -56,23 +59,17 @@ export class InputFieldGenerator implements ComponentGenerator {
 
     const variantsName = toCamelCase(componentName) + "Variants";
 
-    // Boolean プロパティを抽出
-    const booleanProps = propertyNames.filter(
-      (name) => !["State", "Value Type"].includes(name),
-    );
-
-    const propsTypeDefinition = booleanProps
-      .map((prop) => {
-        const camelName = toCamelCase(prop);
-        const defaultVal = defaultValues[prop] || "Label";
-        return `  ${camelName}?: ${prop.startsWith("Label#") || prop.startsWith("Error#") || prop.startsWith("Description#") || prop.startsWith("Value#") ? `boolean | string` : "boolean"};`;
-      })
-      .join("\n");
-
+    // InputFieldの固定Props（Figmaのプロパティ数が減ったため、手動で定義）
     const interfaceCode = `export interface ${componentName}Props
   extends ComponentPropsWithoutRef<"input">,
     VariantProps<typeof ${variantsName}> {
-${propsTypeDefinition}
+  hasLabel?: boolean;
+  label?: string;
+  hasError?: boolean;
+  error?: string;
+  hasDescription?: boolean;
+  description?: string;
+  value?: string;
 }`;
 
     const componentCode = `const ${variantsName} = cva("", {
@@ -89,69 +86,82 @@ ${propsTypeDefinition}
   },
   defaultVariants: {
     state: "${defaultValues.State?.toLowerCase() || "default"}",
-    valueType: "${defaultValues["Value Type"]?.toLowerCase().replace(/\s+/g, "") || "default"}",
+    valueType: "${
+      defaultValues["Value Type"]?.toLowerCase() === "checked" ||
+      defaultValues["Value Type"]?.toLowerCase() === "unchecked" ||
+      defaultValues["Value Type"]?.toLowerCase() === "indeterminate"
+        ? "default"
+        : defaultValues["Value Type"]?.toLowerCase().replace(/\s+/g, "") ||
+          "default"
+    }",
   },
 });
 
-export function ${componentName}({
-  className,
-  ${booleanProps.map((p) => toCamelCase(p)).join(", ")},
-  state,
-  valueType,
-  disabled,
-  ...props
-}: ${componentName}Props) {
-  // Boolean または string を受け取り、実際の値を決定
-  const labelText = typeof label === "string" ? label : "Label";
-  const errorText = typeof error === "string" ? error : "Error message";
-  const descriptionText = typeof description === "string" ? description : "Description";
-  const valueText = typeof value === "string" ? value : "Value";
+export const ${componentName} = forwardRef<HTMLInputElement, ${componentName}Props>(
+  function ${componentName}(
+    {
+      className,
+      hasLabel,
+      label = "Label",
+      hasError,
+      error = "Error message",
+      hasDescription,
+      description = "Description",
+      value = "Value",
+      state,
+      valueType,
+      disabled,
+      ...props
+    },
+    ref,
+  ) {
+    const showError = state === "error" && hasError;
+    const isDisabled = disabled || state === "disabled";
 
-  const showError = state === "error" && !!error;
-  const isDisabled = disabled || state === "disabled";
-
-  return (
-    <div className="space-y-Space-100">
-      {label && (
-        <label className="block text-sm font-medium text-foreground">
-          {labelText}
-        </label>
-      )}
-      <input
-        className={cn(
-          "w-full rounded-md border px-Space-300 py-Space-200 text-sm transition-colors",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          state === "error" ? "border-destructive" : "border-border",
-          isDisabled &&
-            "cursor-not-allowed bg-sds_light-Background-Disabled-Default border-sds_light-Border-Disabled-default text-sds_light-Text-Disabled-On-Disabled",
-          ${variantsName}({ state, valueType, className }),
+    return (
+      <div className="space-y-Space-100">
+        {hasLabel && (
+          <label className="block text-sm font-medium text-foreground">
+            {label}
+          </label>
         )}
-        placeholder={valueType === "placeholder" ? valueText : undefined}
-        defaultValue={valueType === "default" ? valueText : undefined}
-        disabled={isDisabled}
-        aria-invalid={showError}
-        aria-describedby={
-          showError
-            ? "error-message"
-            : description
-              ? "description"
-              : undefined
-        }
-        {...props}
-      />
-      {description && !showError && (
-        <p id="description" className="text-sm text-muted-foreground">
-          {descriptionText}
-        </p>
-      )}
-      {showError && (
-        <p id="error-message" className="text-sm text-destructive">
-          {errorText}
-        </p>
-      )}
-    </div>
-  );
-}`;
+        <input
+          ref={ref}
+          className={cn(
+            "w-full rounded-md border px-Space-300 py-Space-200 text-sm transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            state === "error" ? "border-destructive" : "border-border",
+            isDisabled &&
+              "cursor-not-allowed bg-sds_light-Background-Disabled-Default border-sds_light-Border-Disabled-default text-sds_light-Text-Disabled-On-Disabled",
+            ${variantsName}({ state, valueType, className }),
+          )}
+          placeholder={valueType === "placeholder" ? value : undefined}
+          defaultValue={valueType === "default" ? value : undefined}
+          disabled={isDisabled}
+          aria-invalid={showError}
+          aria-describedby={
+            showError
+              ? "error-message"
+              : hasDescription
+                ? "description"
+                : undefined
+          }
+          {...props}
+        />
+        {hasDescription && !showError && (
+          <p id="description" className="text-sm text-muted-foreground">
+            {description}
+          </p>
+        )}
+        {showError && (
+          <p id="error-message" className="text-sm text-destructive">
+            {error}
+          </p>
+        )}
+      </div>
+    );
+  },
+)`;
 
     return {
       imports,

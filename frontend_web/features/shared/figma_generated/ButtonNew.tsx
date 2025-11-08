@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import type { ComponentPropsWithoutRef } from "react";
 import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "@/features/shared/lib/classNames";
@@ -39,34 +40,40 @@ const buttonNewVariants = cva(
   },
 );
 
-export function ButtonNew({
-  className,
-  variant,
-  size,
-  state,
-  disabled,
-  label,
-  iconStart,
-  iconEnd,
-  hasIconStart,
-  hasIconEnd,
-  children,
-  ...props
-}: ButtonNewProps) {
-  const isDisabled = disabled || state === "disabled";
-  const content = label || children;
-  const showIconStart = iconStart || hasIconStart;
-  const showIconEnd = iconEnd || hasIconEnd;
+export const ButtonNew = forwardRef<HTMLButtonElement, ButtonNewProps>(
+  function ButtonNew(
+    {
+      className,
+      variant,
+      size,
+      state,
+      disabled,
+      label,
+      iconStart,
+      iconEnd,
+      hasIconStart,
+      hasIconEnd,
+      children,
+      ...props
+    },
+    ref,
+  ) {
+    const isDisabled = disabled || state === "disabled";
+    const content = label || children;
+    const showIconStart = iconStart || hasIconStart;
+    const showIconEnd = iconEnd || hasIconEnd;
 
-  return (
-    <button
-      className={cn(buttonNewVariants({ variant, size, state, className }))}
-      disabled={isDisabled}
-      {...props}
-    >
-      {showIconStart && <span className="mr-Space-150" aria-hidden="true">{iconStart}</span>}
-      {content}
-      {showIconEnd && <span className="ml-Space-150" aria-hidden="true">{iconEnd}</span>}
-    </button>
-  );
-}
+    return (
+      <button
+        ref={ref}
+        className={cn(buttonNewVariants({ variant, size, state, className }))}
+        disabled={isDisabled}
+        {...props}
+      >
+        {showIconStart && <span className="mr-Space-150" aria-hidden="true">{iconStart}</span>}
+        {content}
+        {showIconEnd && <span className="ml-Space-150" aria-hidden="true">{iconEnd}</span>}
+      </button>
+    );
+  },
+)

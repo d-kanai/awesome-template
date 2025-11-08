@@ -43,6 +43,7 @@ export class ButtonGenerator implements ComponentGenerator {
     const { defaultValues } = extractProperties(components[0]);
 
     const imports = [
+      'import { forwardRef } from "react";',
       'import type { ComponentPropsWithoutRef } from "react";',
       'import { type VariantProps, cva } from "class-variance-authority";',
       'import { cn } from "@/features/shared/lib/classNames";',
@@ -87,37 +88,43 @@ export class ButtonGenerator implements ComponentGenerator {
   },
 );
 
-export function ${componentName}({
-  className,
-  variant,
-  size,
-  state,
-  disabled,
-  label,
-  iconStart,
-  iconEnd,
-  hasIconStart,
-  hasIconEnd,
-  children,
-  ...props
-}: ${componentName}Props) {
-  const isDisabled = disabled || state === "disabled";
-  const content = label || children;
-  const showIconStart = iconStart || hasIconStart;
-  const showIconEnd = iconEnd || hasIconEnd;
+export const ${componentName} = forwardRef<HTMLButtonElement, ${componentName}Props>(
+  function ${componentName}(
+    {
+      className,
+      variant,
+      size,
+      state,
+      disabled,
+      label,
+      iconStart,
+      iconEnd,
+      hasIconStart,
+      hasIconEnd,
+      children,
+      ...props
+    },
+    ref,
+  ) {
+    const isDisabled = disabled || state === "disabled";
+    const content = label || children;
+    const showIconStart = iconStart || hasIconStart;
+    const showIconEnd = iconEnd || hasIconEnd;
 
-  return (
-    <button
-      className={cn(${variantsName}({ variant, size, state, className }))}
-      disabled={isDisabled}
-      {...props}
-    >
-      {showIconStart && <span className="mr-Space-150" aria-hidden="true">{iconStart}</span>}
-      {content}
-      {showIconEnd && <span className="ml-Space-150" aria-hidden="true">{iconEnd}</span>}
-    </button>
-  );
-}`;
+    return (
+      <button
+        ref={ref}
+        className={cn(${variantsName}({ variant, size, state, className }))}
+        disabled={isDisabled}
+        {...props}
+      >
+        {showIconStart && <span className="mr-Space-150" aria-hidden="true">{iconStart}</span>}
+        {content}
+        {showIconEnd && <span className="ml-Space-150" aria-hidden="true">{iconEnd}</span>}
+      </button>
+    );
+  },
+)`;
 
     return {
       imports,

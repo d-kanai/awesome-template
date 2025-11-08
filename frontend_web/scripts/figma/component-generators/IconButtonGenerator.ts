@@ -27,7 +27,7 @@ export class IconButtonGenerator implements ComponentGenerator {
       keys.includes("State") &&
       keys.includes("Icon") &&
       (component.componentSetName === "Icon Buttons" ||
-       component.name?.includes("Icon Button"))
+        component.name?.includes("Icon Button"))
     );
   }
 
@@ -54,6 +54,7 @@ export class IconButtonGenerator implements ComponentGenerator {
     }
 
     const imports = [
+      'import { forwardRef } from "react";',
       'import type { ComponentPropsWithoutRef, ReactNode } from "react";',
       'import { type VariantProps, cva } from "class-variance-authority";',
       'import { cn } from "@/features/shared/lib/classNames";',
@@ -94,27 +95,33 @@ export class IconButtonGenerator implements ComponentGenerator {
   },
 );
 
-export function ${componentName}({
-  className,
-  variant,
-  size,
-  state,
-  icon,
-  disabled,
-  ...props
-}: ${componentName}Props) {
-  const isDisabled = disabled || state === "disabled";
+export const ${componentName} = forwardRef<HTMLButtonElement, ${componentName}Props>(
+  function ${componentName}(
+    {
+      className,
+      variant,
+      size,
+      state,
+      icon,
+      disabled,
+      ...props
+    },
+    ref,
+  ) {
+    const isDisabled = disabled || state === "disabled";
 
-  return (
-    <button
-      className={cn(${variantsName}({ variant, size, state, className }))}
-      disabled={isDisabled}
-      {...props}
-    >
-      {icon}
-    </button>
-  );
-}`;
+    return (
+      <button
+        ref={ref}
+        className={cn(${variantsName}({ variant, size, state, className }))}
+        disabled={isDisabled}
+        {...props}
+      >
+        {icon}
+      </button>
+    );
+  },
+)`;
 
     return {
       imports,

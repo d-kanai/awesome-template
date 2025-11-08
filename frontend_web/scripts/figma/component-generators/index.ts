@@ -4,10 +4,10 @@
  * 各コンポーネントごとの生成ロジックを登録・管理
  */
 
-import type { ComponentGenerator } from "./types";
 import { ButtonGenerator } from "./ButtonGenerator";
 import { IconButtonGenerator } from "./IconButtonGenerator";
 import { InputFieldGenerator } from "./InputFieldGenerator";
+import type { ComponentGenerator } from "./types";
 
 /**
  * 登録されたコンポーネントジェネレーター一覧
@@ -23,11 +23,12 @@ export const componentGenerators: ComponentGenerator[] = [
 /**
  * コンポーネントに適したジェネレーターを検索
  */
-export function findGenerator(
-  component: {
-    componentSetProperties?: Record<string, { type: string; defaultValue: string }>;
-  },
-): ComponentGenerator | null {
+export function findGenerator(component: {
+  componentSetProperties?: Record<
+    string,
+    { type: string; defaultValue: string }
+  >;
+}): ComponentGenerator | null {
   for (const generator of componentGenerators) {
     if (generator.canHandle(component as any)) {
       return generator;

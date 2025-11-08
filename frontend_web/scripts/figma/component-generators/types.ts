@@ -8,7 +8,10 @@ export interface ComponentInfo {
   id: string;
   name: string;
   componentSetName?: string;
-  componentSetProperties?: Record<string, { type: string; defaultValue: string }>;
+  componentSetProperties?: Record<
+    string,
+    { type: string; defaultValue: string }
+  >;
   variantProperties?: Record<string, string>;
   description?: string;
   documentationLinks?: Array<{ uri: string }>;

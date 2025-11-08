@@ -123,9 +123,7 @@ function generateComponentFile(
   const generator = findGenerator(generatorComponents[0]);
 
   if (!generator) {
-    console.log(
-      `⚠️  Generator not found for: ${componentName} (skipping)`,
-    );
+    console.log(`⚠️  Generator not found for: ${componentName} (skipping)`);
     return null;
   }
 
@@ -198,7 +196,9 @@ async function main() {
     const outputPath = path.join(outputDir, `${componentName}.tsx`);
     fs.writeFileSync(outputPath, code);
 
-    console.log(`✅ ${componentName}.tsx を生成しました (${components.length} variants)`);
+    console.log(
+      `✅ ${componentName}.tsx を生成しました (${components.length} variants)`,
+    );
     generatedCount++;
   }
 
