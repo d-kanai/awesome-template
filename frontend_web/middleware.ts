@@ -16,6 +16,7 @@ export function middleware(request: NextRequest) {
     "/figma-styles", // Figmaスタイル・トークンショーケース
     "/button-demo", // Figma Buttonデモ
     "/input-demo", // Figma Input Fieldデモ
+    "/header-demo", // Figma Headerデモ
   ];
 
   const isPublicPath = publicPaths.some(

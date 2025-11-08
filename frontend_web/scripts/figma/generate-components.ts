@@ -202,7 +202,7 @@ async function main() {
     generatedCount++;
   }
 
-  console.log(`\n✨ 生成完了！`);
+  console.log("\n✨ 生成完了！");
   console.log(`   生成: ${generatedCount} コンポーネント`);
   console.log(`   スキップ: ${skippedCount} コンポーネント`);
   console.log(`   出力先: ${outputDir}`);

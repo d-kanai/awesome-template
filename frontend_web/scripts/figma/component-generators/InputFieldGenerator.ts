@@ -57,7 +57,7 @@ export class InputFieldGenerator implements ComponentGenerator {
       'import { cn } from "@/features/shared/lib/classNames";',
     ];
 
-    const variantsName = toCamelCase(componentName) + "Variants";
+    const variantsName = `${toCamelCase(componentName)}Variants`;
 
     // InputFieldの固定Props（Figmaのプロパティ数が減ったため、手動で定義）
     const interfaceCode = `export interface ${componentName}Props

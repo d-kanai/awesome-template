@@ -60,7 +60,7 @@ export class IconButtonGenerator implements ComponentGenerator {
       'import { cn } from "@/features/shared/lib/classNames";',
     ];
 
-    const variantsName = toCamelCase(componentName) + "Variants";
+    const variantsName = `${toCamelCase(componentName)}Variants`;
 
     const interfaceCode = `export interface ${componentName}Props
   extends Omit<ComponentPropsWithoutRef<"button">, "children">,

@@ -23,10 +23,12 @@ pre-commit:
       run: ./tools/lefthook/frontend_remove_deadcode.sh {staged_files}
     web-format:
       glob: "frontend_web/**/*.{ts,tsx,js,jsx,json}"
+      exclude: "frontend_web/scripts/**/*"
       stage_fixed: true
       run: ./tools/lefthook/frontend_web_format.sh {staged_files}
     web-lint:
       glob: "frontend_web/**/*.{ts,tsx,js,jsx,json}"
+      exclude: "frontend_web/scripts/**/*"
       run: ./tools/lefthook/frontend_web_lint.sh {staged_files}
     web-typecheck:
       glob: "frontend_web/**/*.{ts,tsx,js,jsx,json}"

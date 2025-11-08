@@ -26,7 +26,7 @@ export function ThemeToggle() {
 
 function ThemePlaceholder() {
   return (
-    <Button variant="ghost" size="sm" disabled>
+    <Button variant="neutral" size="small" disabled>
       <span className="h-5 w-5" />
     </Button>
   );
@@ -40,7 +40,7 @@ function ToggleButton({
   onToggle: () => void;
 }) {
   return (
-    <Button variant="ghost" size="sm" onClick={onToggle}>
+    <Button variant="neutral" size="small" onClick={onToggle}>
       {currentTheme === "dark" ? <SunIcon /> : <MoonIcon />}
     </Button>
   );

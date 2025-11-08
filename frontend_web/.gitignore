@@ -50,3 +50,6 @@ design-tokens/figma-components.json
 design-tokens/raw/figma-components-raw.json
 design-tokens/figma-styles.json
 design-tokens/raw/figma-styles-raw.json
+design-tokens/figma-page-*.json
+design-tokens/figma-*-components.json
+design-tokens/figma-*-summary.json

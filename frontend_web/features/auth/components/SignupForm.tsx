@@ -1,7 +1,7 @@
 "use client";
 
 import { AUTH_ROUTES } from "@/features/auth/routes";
-import { ButtonNew } from "@/features/shared/figma_generated/ButtonNew";
+import { Button } from "@/features/shared/figma_generated/Button";
 import { InputField } from "@/features/shared/figma_generated/InputField";
 import Link from "next/link";
 import { useSignupForm } from "../hooks/useSignupForm";
@@ -74,7 +74,7 @@ function ErrorMessage({ error }: { error: string }) {
 
 function SubmitButton({ disabled }: { disabled: boolean }) {
   return (
-    <ButtonNew
+    <Button
       type="submit"
       variant="primary"
       size="medium"
@@ -84,7 +84,7 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
       data-testid={SignupTestIds.submitButton}
     >
       サインアップ
-    </ButtonNew>
+    </Button>
   );
 }
 
