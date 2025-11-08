@@ -1,63 +1,55 @@
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "@/features/shared/lib/classNames";
 
-/**
- * IconButton コンポーネント
- *
- * アイコンのみを表示する正方形ボタン
- *
- * @figma 11:11509
- * @generated Figma API から自動生成 (2025-11-08T07:55:16.360Z)
- *
- * スタイルの適用:
- * - Text Styles は figma-styles.css の .text-{style-name} クラスを使用
- * - Color Styles は figma-theme.ts の色を使用 (bg-{colorName}, text-{colorName})
- * - Effect Styles は figma-theme.ts の shadow-{effectName} を使用
- */
+export interface IconButtonProps
+  extends Omit<ComponentPropsWithoutRef<"button">, "children">,
+    VariantProps<typeof iconButtonVariants> {
+  icon: ReactNode;
+}
 
-const iconbuttonVariants = cva(
-  "",
+const iconButtonVariants = cva(
+  "inline-flex items-center justify-center rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        primary: "",
-        neutral: "",
-        subtle: "",
+        primary: "bg-primary text-primary-foreground hover:bg-primary-hover focus-visible:ring-ring",
+        subtle: "bg-secondary text-secondary-foreground hover:bg-secondary-hover focus-visible:ring-ring",
+        neutral: "border border-border bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring",
+      },
+      size: {
+        small: "h-8 w-8 text-sm",
+        medium: "h-10 w-10",
       },
       state: {
         default: "",
         hover: "",
-        disabled: "",
+        disabled: "opacity-50 cursor-not-allowed",
       },
-      size: {
-        medium: "",
-        small: "",
-      }
     },
     defaultVariants: {
       variant: "primary",
+      size: "medium",
       state: "default",
-      size: "medium"
     },
   },
 );
 
-export interface IconButtonProps extends ComponentPropsWithoutRef<"button">,
-    VariantProps<typeof iconbuttonVariants> {
-  icon: React.ReactNode;
-  "aria-label": string;
-}
-
 export function IconButton({
   className,
-  variant, state, size,
+  variant,
+  size,
+  state,
   icon,
+  disabled,
   ...props
 }: IconButtonProps) {
+  const isDisabled = disabled || state === "disabled";
+
   return (
     <button
-      className={cn(iconbuttonVariants({ variant, state, size, className }))}
+      className={cn(iconButtonVariants({ variant, size, state, className }))}
+      disabled={isDisabled}
       {...props}
     >
       {icon}
