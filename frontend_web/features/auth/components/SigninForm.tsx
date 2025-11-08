@@ -1,7 +1,7 @@
 "use client";
 
 import { AUTH_ROUTES } from "@/features/auth/routes";
-import { TextField } from "@/features/shared/components/TextField";
+import { InputField } from "@/features/shared/figma_generated/InputField";
 import { ButtonNew } from "@/features/shared/figma_generated/ButtonNew";
 import Link from "next/link";
 import { useSigninForm } from "../hooks/useSigninForm";
@@ -17,13 +17,17 @@ function EmailField({
   disabled: boolean;
 }) {
   return (
-    <TextField
+    <InputField
       id="signin-email"
       data-testid={SigninTestIds.emailInput}
+      hasLabel
       label="メールアドレス"
       type="email"
       placeholder="email@example.com"
+      valueType="placeholder"
+      state={error ? "error" : disabled ? "disabled" : "default"}
       disabled={disabled}
+      hasError={!!error}
       error={error}
       {...register("email")}
     />
@@ -40,13 +44,17 @@ function PasswordField({
   disabled: boolean;
 }) {
   return (
-    <TextField
+    <InputField
       id="signin-password"
       data-testid={SigninTestIds.passwordInput}
+      hasLabel
       label="パスワード"
       type="password"
       placeholder="パスワード"
+      valueType="placeholder"
+      state={error ? "error" : disabled ? "disabled" : "default"}
       disabled={disabled}
+      hasError={!!error}
       error={error}
       {...register("password")}
     />
