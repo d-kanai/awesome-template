@@ -2,7 +2,7 @@
 
 import { AUTH_ROUTES } from "@/features/auth/routes";
 import { TextField } from "@/features/shared/components/TextField";
-import { Button } from "@/features/shared/figma_generated/Button";
+import { ButtonNew } from "@/features/shared/figma_generated/ButtonNew";
 import Link from "next/link";
 import { useSigninForm } from "../hooks/useSigninForm";
 import { SigninTestIds } from "../test-ids";
@@ -66,14 +66,17 @@ function ErrorMessage({ error }: { error: string }) {
 
 function SubmitButton({ disabled }: { disabled: boolean }) {
   return (
-    <Button
+    <ButtonNew
       type="submit"
+      variant="primary"
+      size="medium"
+      state={disabled ? "disabled" : "default"}
       disabled={disabled}
       className="w-full"
       data-testid={SigninTestIds.submitButton}
     >
       サインイン
-    </Button>
+    </ButtonNew>
   );
 }
 
