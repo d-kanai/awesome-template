@@ -17,21 +17,22 @@ import { cn } from "@/features/shared/lib/classNames";
  */
 
 const buttonnewVariants = cva(
-  "",
+  "inline-flex items-center justify-center rounded-md text-body-small-strong transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        primary: "",
-        subtle: "",
+        primary: "bg-primary text-primary-foreground hover:bg-primary-hover focus-visible:ring-ring",
+        subtle: "bg-secondary text-secondary-foreground hover:bg-secondary-hover focus-visible:ring-ring",
+        neutral: "border border-border bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring",
       },
       state: {
         default: "",
         hover: "",
-        disabled: "",
+        disabled: "opacity-50 cursor-not-allowed",
       },
       size: {
-        medium: "",
-        small: "",
+        medium: "h-10 px-Space-400 py-Space-200",
+        small: "h-9 px-Space-300 text-body-small",
       }
     },
     defaultVariants: {
