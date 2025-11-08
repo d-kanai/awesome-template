@@ -8,6 +8,11 @@ export const figmaTheme = {
   extend: {
     colors: {
       imagePlaceholder: "#e3e3e3",
+      // Disabled state colors from Figma Variables
+      "background-disabled": "#d9d9d9",
+      "border-disabled": "#b3b3b3",
+      "text-disabled": "#b3b3b3",
+      "icon-disabled": "#b3b3b3",
     },
     fontSize: {
       bodyBase: "16px",

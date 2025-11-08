@@ -365,8 +365,11 @@ export default function FigmaStylesPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               {styles.effectStyles.map((effectStyle) => {
                 const dropShadows = effectStyle.effects
-                  .filter((e) => e.type === "DROP_SHADOW" && e.visible)
-                  .map((e) => {
+                  .filter(
+                    (e) =>
+                      e.type === "DROP_SHADOW" && e.visible && "color" in e,
+                  )
+                  .map((e: any) => {
                     const r = Math.round((e.color?.r || 0) * 255);
                     const g = Math.round((e.color?.g || 0) * 255);
                     const b = Math.round((e.color?.b || 0) * 255);

@@ -81,9 +81,52 @@ interface FigmaNode {
       a: number;
     };
     opacity?: number;
+    boundVariables?: {
+      color?: {
+        type: string;
+        id: string;
+      };
+    };
   }>;
-  strokes?: Array<any>;
+  strokes?: Array<{
+    type: string;
+    color?: {
+      r: number;
+      g: number;
+      b: number;
+      a: number;
+    };
+    opacity?: number;
+    boundVariables?: {
+      color?: {
+        type: string;
+        id: string;
+      };
+    };
+  }>;
   effects?: Array<any>;
+  // Border radius
+  cornerRadius?: number;
+  rectangleCornerRadii?: [number, number, number, number];
+  // Border radius variable binding
+  boundVariables?: {
+    topLeftRadius?: {
+      type: string;
+      id: string;
+    };
+    topRightRadius?: {
+      type: string;
+      id: string;
+    };
+    bottomLeftRadius?: {
+      type: string;
+      id: string;
+    };
+    bottomRightRadius?: {
+      type: string;
+      id: string;
+    };
+  };
   // Style references (Figma Style IDs)
   styles?: {
     fill?: string;
@@ -242,6 +285,10 @@ function extractComponentInfo(
         fillStyles: Array.from(styleRefs.fillStyles),
         effectStyles: Array.from(styleRefs.effectStyles),
       },
+      // Border radius information
+      cornerRadius: node.cornerRadius,
+      rectangleCornerRadii: node.rectangleCornerRadii,
+      boundVariables: node.boundVariables,
     },
   };
 }
@@ -331,7 +378,7 @@ async function main() {
       }
     }
 
-    console.log(`\n📊 コンポーネント分類:`);
+    console.log("\n📊 コンポーネント分類:");
     console.log(`   Component Sets: ${componentSets.size} 個`);
     console.log(`   Standalone Components: ${standaloneComponents.length} 個`);
 
@@ -340,7 +387,7 @@ async function main() {
     const BATCH_SIZE = 100;
     const allComponentInfos: any[] = [];
 
-    console.log(`\n📡 Figma Nodes API を呼び出しています...`);
+    console.log("\n📡 Figma Nodes API を呼び出しています...");
     console.log(`   Total: ${components.length} 個`);
     console.log(`   Batch size: ${BATCH_SIZE}`);
 

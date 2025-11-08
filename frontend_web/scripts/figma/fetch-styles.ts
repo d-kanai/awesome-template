@@ -244,7 +244,7 @@ async function main() {
     const colorStyles = styles.filter((s) => s.style_type === "FILL");
     const effectStyles = styles.filter((s) => s.style_type === "EFFECT");
 
-    console.log(`\n📊 スタイル分類:`);
+    console.log("\n📊 スタイル分類:");
     console.log(`   Text Styles: ${textStyles.length} 個`);
     console.log(`   Color Styles: ${colorStyles.length} 個`);
     console.log(`   Effect Styles: ${effectStyles.length} 個`);

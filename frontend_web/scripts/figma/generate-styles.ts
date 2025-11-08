@@ -236,7 +236,7 @@ async function main() {
       fs.readFileSync(inputPath, "utf-8"),
     );
 
-    console.log(`\n📦 スタイル情報を読み込みました`);
+    console.log("\n📦 スタイル情報を読み込みました");
     console.log(`   Text Styles: ${data.textStyles.length} 個`);
     console.log(`   Color Styles: ${data.colorStyles.length} 個`);
     console.log(`   Effect Styles: ${data.effectStyles.length} 個`);
