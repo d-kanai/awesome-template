@@ -5,24 +5,24 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-	title: "Awesome Template Web",
-	description: "Frontend web application for awesome-template",
+  title: "Awesome Template Web",
+  description: "Frontend web application for awesome-template",
 };
 
 export default async function RootLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<html lang="ja" suppressHydrationWarning>
-			<body>
-				<ThemeProvider>
-					<QueryProvider>
-						<FeatureFlagProvider>{children}</FeatureFlagProvider>
-					</QueryProvider>
-				</ThemeProvider>
-			</body>
-		</html>
-	);
+  return (
+    <html lang="ja" suppressHydrationWarning>
+      <body>
+        <ThemeProvider>
+          <QueryProvider>
+            <FeatureFlagProvider>{children}</FeatureFlagProvider>
+          </QueryProvider>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
 }

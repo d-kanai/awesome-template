@@ -6,29 +6,29 @@ import { signup as signupApi } from "@/features/shared/api/generated/functions";
 import { formatZodFieldErrors } from "@/features/shared/lib/zodErrorFormatter";
 
 export type SignupActionResponse = {
-	error?: string;
-	fieldErrors?: Partial<Record<keyof SignupFormData, string[]>>;
-	success?: boolean;
-	redirectTo?: string;
+  error?: string;
+  fieldErrors?: Partial<Record<keyof SignupFormData, string[]>>;
+  success?: boolean;
+  redirectTo?: string;
 };
 
 export async function signupAction(
-	data: SignupFormData,
+  data: SignupFormData,
 ): Promise<SignupActionResponse> {
-	const validatedData = signupFormSchema.safeParse(data);
+  const validatedData = signupFormSchema.safeParse(data);
 
-	if (!validatedData.success) {
-		return {
-			fieldErrors: formatZodFieldErrors<SignupFormData>(
-				validatedData.error.errors,
-			),
-		};
-	}
+  if (!validatedData.success) {
+    return {
+      fieldErrors: formatZodFieldErrors<SignupFormData>(
+        validatedData.error.errors,
+      ),
+    };
+  }
 
-	try {
-		await signupApi(validatedData.data);
-		return { success: true, redirectTo: AUTH_ROUTES.SIGNIN };
-	} catch (error) {
-		return { error: (error as Error).message };
-	}
+  try {
+    await signupApi(validatedData.data);
+    return { success: true, redirectTo: AUTH_ROUTES.SIGNIN };
+  } catch (error) {
+    return { error: (error as Error).message };
+  }
 }

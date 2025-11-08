@@ -13,6 +13,8 @@ export function middleware(request: NextRequest) {
     AUTH_ROUTES.SIGNIN,
     AUTH_ROUTES.SIGNUP,
     "/design-tokens-demo", // デモページ
+    "/figma-styles", // Figmaスタイル・トークンショーケース
+    "/button-demo", // Figma Buttonデモ
   ];
 
   const isPublicPath = publicPaths.some(

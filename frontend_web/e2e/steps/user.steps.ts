@@ -5,21 +5,21 @@ import { UserTestIds } from "../../features/user/test-ids";
 import type { CustomWorld } from "./world";
 
 Given("認証済みユーザーとしてログイン", async function (this: CustomWorld) {
-	await this.bypassSignin();
+  await this.bypassSignin();
 });
 
 When("ユーザー画面にアクセス", async function (this: CustomWorld) {
-	await this.page.goto(USER_ROUTES.USER_LIST);
+  await this.page.goto(USER_ROUTES.USER_LIST);
 });
 
 Then("ユーザー一覧を表示", async function (this: CustomWorld) {
-	await expect(this.page.getByTestId(UserTestIds.userList)).toBeVisible({
-		timeout: 10000,
-	});
+  await expect(this.page.getByTestId(UserTestIds.userList)).toBeVisible({
+    timeout: 10000,
+  });
 });
 
 Then("ユーザー一覧のタイトルを表示", async function (this: CustomWorld) {
-	await expect(this.page.getByTestId(UserTestIds.pageTitle)).toBeVisible({
-		timeout: 10000,
-	});
+  await expect(this.page.getByTestId(UserTestIds.pageTitle)).toBeVisible({
+    timeout: 10000,
+  });
 });

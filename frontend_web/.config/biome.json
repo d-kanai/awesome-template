@@ -1,32 +1,33 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-	"formatter": {
-		"enabled": true,
-		"indentStyle": "space",
-		"indentWidth": 2
-	},
-	"organizeImports": {
-		"enabled": true
-	},
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"recommended": true,
-			"correctness": {
-				"noUnusedImports": "error"
-			}
-		}
-	},
-	"files": {
-		"ignore": [
-			"node_modules",
-			"build",
-			"dist",
-			".next",
-			"out",
-			"coverage",
-			"features/shared/api/generated",
-			"features/shared/figma_generated"
-		]
-	}
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "noUnusedImports": "error"
+      }
+    }
+  },
+  "files": {
+    "ignore": [
+      "node_modules",
+      "build",
+      "dist",
+      ".next",
+      "out",
+      "coverage",
+      "features/shared/api/generated",
+      "features/shared/figma_generated",
+      "styles/figma"
+    ]
+  }
 }

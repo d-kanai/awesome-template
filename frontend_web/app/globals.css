@@ -2,115 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Figma Styles (REST API) */
+@import "../styles/figma/figma-styles.css";
+
 @layer base {
   :root {
     /* Background */
-    --background: theme('colors.sds_light-Background-Default-Default');
-    --background-secondary: theme('colors.sds_light-Background-Default-Secondary');
-    --background-tertiary: theme('colors.sds_light-Background-Default-Tertiary');
+    --background: theme("colors.sds_light-Background-Default-Default");
+    --background-secondary: theme(
+      "colors.sds_light-Background-Default-Secondary"
+    );
+    --background-tertiary: theme("colors.sds_light-Background-Default-Tertiary");
 
     /* Foreground (Text) */
-    --foreground: theme('colors.sds_light-Text-Default-Default');
-    --foreground-secondary: theme('colors.sds_light-Text-Default-Secondary');
-    --foreground-tertiary: theme('colors.sds_light-Text-Default-Tertiary');
+    --foreground: theme("colors.sds_light-Text-Default-Default");
+    --foreground-secondary: theme("colors.sds_light-Text-Default-Secondary");
+    --foreground-tertiary: theme("colors.sds_light-Text-Default-Tertiary");
 
     /* Primary (Brand) */
-    --primary: theme('colors.sds_light-Background-Brand-Default');
-    --primary-hover: theme('colors.sds_light-Background-Brand-Hover');
-    --primary-foreground: theme('colors.sds_light-Text-Brand-On-Brand');
+    --primary: theme("colors.sds_light-Background-Brand-Default");
+    --primary-hover: theme("colors.sds_light-Background-Brand-Hover");
+    --primary-foreground: theme("colors.sds_light-Text-Brand-On-Brand");
 
     /* Secondary */
-    --secondary: theme('colors.sds_light-Background-Brand-Secondary');
-    --secondary-hover: theme('colors.sds_light-Background-Brand-Secondary-Hover');
-    --secondary-foreground: theme('colors.sds_light-Text-Brand-Default');
+    --secondary: theme("colors.sds_light-Background-Brand-Secondary");
+    --secondary-hover: theme(
+      "colors.sds_light-Background-Brand-Secondary-Hover"
+    );
+    --secondary-foreground: theme("colors.sds_light-Text-Brand-Default");
 
     /* Muted */
-    --muted: theme('colors.sds_light-Background-Default-Secondary');
-    --muted-foreground: theme('colors.sds_light-Text-Default-Secondary');
+    --muted: theme("colors.sds_light-Background-Default-Secondary");
+    --muted-foreground: theme("colors.sds_light-Text-Default-Secondary");
 
     /* Accent */
-    --accent: theme('colors.sds_light-Background-Default-Secondary');
-    --accent-foreground: theme('colors.sds_light-Text-Default-Default');
+    --accent: theme("colors.sds_light-Background-Default-Secondary");
+    --accent-foreground: theme("colors.sds_light-Text-Default-Default");
 
     /* Destructive (Danger) */
-    --destructive: theme('colors.sds_light-Background-Danger-Default');
-    --destructive-hover: theme('colors.sds_light-Background-Danger-Hover');
-    --destructive-foreground: theme('colors.sds_light-Text-Danger-On-Danger');
+    --destructive: theme("colors.sds_light-Background-Danger-Default");
+    --destructive-hover: theme("colors.sds_light-Background-Danger-Hover");
+    --destructive-foreground: theme("colors.sds_light-Text-Danger-On-Danger");
 
     /* Success (Positive) */
-    --success: theme('colors.sds_light-Background-Positive-Default');
-    --success-hover: theme('colors.sds_light-Background-Positive-Hover');
-    --success-foreground: theme('colors.sds_light-Text-Positive-On-Positive');
+    --success: theme("colors.sds_light-Background-Positive-Default");
+    --success-hover: theme("colors.sds_light-Background-Positive-Hover");
+    --success-foreground: theme("colors.sds_light-Text-Positive-On-Positive");
 
     /* Warning */
-    --warning: theme('colors.sds_light-Background-Warning-Default');
-    --warning-hover: theme('colors.sds_light-Background-Warning-Hover');
-    --warning-foreground: theme('colors.sds_light-Text-Warning-On-Warning');
+    --warning: theme("colors.sds_light-Background-Warning-Default");
+    --warning-hover: theme("colors.sds_light-Background-Warning-Hover");
+    --warning-foreground: theme("colors.sds_light-Text-Warning-On-Warning");
 
     /* Border */
-    --border: theme('colors.sds_light-Border-Default-Default');
-    --border-secondary: theme('colors.sds_light-Border-Default-Secondary');
+    --border: theme("colors.sds_light-Border-Default-Default");
+    --border-secondary: theme("colors.sds_light-Border-Default-Secondary");
 
     /* Input */
-    --input: theme('colors.sds_light-Border-Default-Default');
+    --input: theme("colors.sds_light-Border-Default-Default");
 
     /* Ring (Focus) */
-    --ring: theme('colors.sds_light-Border-Brand-Default');
+    --ring: theme("colors.sds_light-Border-Brand-Default");
   }
 
   .dark {
     /* Background */
-    --background: theme('colors.sds_dark-Background-Default-Default');
-    --background-secondary: theme('colors.sds_dark-Background-Default-Secondary');
-    --background-tertiary: theme('colors.sds_dark-Background-Default-Tertiary');
+    --background: theme("colors.sds_dark-Background-Default-Default");
+    --background-secondary: theme(
+      "colors.sds_dark-Background-Default-Secondary"
+    );
+    --background-tertiary: theme("colors.sds_dark-Background-Default-Tertiary");
 
     /* Foreground (Text) */
-    --foreground: theme('colors.sds_dark-Text-Default-Default');
-    --foreground-secondary: theme('colors.sds_dark-Text-Default-Secondary');
-    --foreground-tertiary: theme('colors.sds_dark-Text-Default-Tertiary');
+    --foreground: theme("colors.sds_dark-Text-Default-Default");
+    --foreground-secondary: theme("colors.sds_dark-Text-Default-Secondary");
+    --foreground-tertiary: theme("colors.sds_dark-Text-Default-Tertiary");
 
     /* Primary (Brand) */
-    --primary: theme('colors.sds_dark-Background-Brand-Default');
-    --primary-hover: theme('colors.sds_dark-Background-Brand-Hover');
-    --primary-foreground: theme('colors.sds_dark-Text-Brand-On-Brand');
+    --primary: theme("colors.sds_dark-Background-Brand-Default");
+    --primary-hover: theme("colors.sds_dark-Background-Brand-Hover");
+    --primary-foreground: theme("colors.sds_dark-Text-Brand-On-Brand");
 
     /* Secondary */
-    --secondary: theme('colors.sds_dark-Background-Brand-Secondary');
-    --secondary-hover: theme('colors.sds_dark-Background-Brand-Secondary-Hover');
-    --secondary-foreground: theme('colors.sds_dark-Text-Brand-Default');
+    --secondary: theme("colors.sds_dark-Background-Brand-Secondary");
+    --secondary-hover: theme("colors.sds_dark-Background-Brand-Secondary-Hover");
+    --secondary-foreground: theme("colors.sds_dark-Text-Brand-Default");
 
     /* Muted */
-    --muted: theme('colors.sds_dark-Background-Default-Secondary');
-    --muted-foreground: theme('colors.sds_dark-Text-Default-Secondary');
+    --muted: theme("colors.sds_dark-Background-Default-Secondary");
+    --muted-foreground: theme("colors.sds_dark-Text-Default-Secondary");
 
     /* Accent */
-    --accent: theme('colors.sds_dark-Background-Default-Secondary');
-    --accent-foreground: theme('colors.sds_dark-Text-Default-Default');
+    --accent: theme("colors.sds_dark-Background-Default-Secondary");
+    --accent-foreground: theme("colors.sds_dark-Text-Default-Default");
 
     /* Destructive (Danger) */
-    --destructive: theme('colors.sds_dark-Background-Danger-Default');
-    --destructive-hover: theme('colors.sds_dark-Background-Danger-Hover');
-    --destructive-foreground: theme('colors.sds_dark-Text-Danger-On-Danger');
+    --destructive: theme("colors.sds_dark-Background-Danger-Default");
+    --destructive-hover: theme("colors.sds_dark-Background-Danger-Hover");
+    --destructive-foreground: theme("colors.sds_dark-Text-Danger-On-Danger");
 
     /* Success (Positive) */
-    --success: theme('colors.sds_dark-Background-Positive-Default');
-    --success-hover: theme('colors.sds_dark-Background-Positive-Hover');
-    --success-foreground: theme('colors.sds_dark-Text-Positive-On-Positive');
+    --success: theme("colors.sds_dark-Background-Positive-Default");
+    --success-hover: theme("colors.sds_dark-Background-Positive-Hover");
+    --success-foreground: theme("colors.sds_dark-Text-Positive-On-Positive");
 
     /* Warning */
-    --warning: theme('colors.sds_dark-Background-Warning-Default');
-    --warning-hover: theme('colors.sds_dark-Background-Warning-Hover');
-    --warning-foreground: theme('colors.sds_dark-Text-Warning-On-Warning');
+    --warning: theme("colors.sds_dark-Background-Warning-Default");
+    --warning-hover: theme("colors.sds_dark-Background-Warning-Hover");
+    --warning-foreground: theme("colors.sds_dark-Text-Warning-On-Warning");
 
     /* Border */
-    --border: theme('colors.sds_dark-Border-Default-Default');
-    --border-secondary: theme('colors.sds_dark-Border-Default-Secondary');
+    --border: theme("colors.sds_dark-Border-Default-Default");
+    --border-secondary: theme("colors.sds_dark-Border-Default-Secondary");
 
     /* Input */
-    --input: theme('colors.sds_dark-Border-Default-Default');
+    --input: theme("colors.sds_dark-Border-Default-Default");
 
     /* Ring (Focus) */
-    --ring: theme('colors.sds_dark-Border-Brand-Default');
+    --ring: theme("colors.sds_dark-Border-Brand-Default");
   }
 }
 

@@ -1,54 +1,54 @@
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@/features/shared/figma_generated/Card";
 import { ThemeToggle } from "@/features/shared/components/ThemeToggle";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/features/shared/figma_generated/Card";
 import { SigninForm } from "../components/SigninForm";
 
 function ScreenContainer({ children }: { children: React.ReactNode }) {
-	return (
-		<div className="relative flex min-h-screen items-center justify-center bg-background-secondary px-Space-400 py-Space-1200 sm:px-Space-600 lg:px-Space-800">
-			<div className="absolute right-Space-400 top-Space-400">
-				<ThemeToggle />
-			</div>
-			{children}
-		</div>
-	);
+  return (
+    <div className="relative flex min-h-screen items-center justify-center bg-background-secondary px-Space-400 py-Space-1200 sm:px-Space-600 lg:px-Space-800">
+      <div className="absolute right-Space-400 top-Space-400">
+        <ThemeToggle />
+      </div>
+      {children}
+    </div>
+  );
 }
 
 function FormCard({ children }: { children: React.ReactNode }) {
-	return (
-		<div className="w-full max-w-md">
-			<Card>{children}</Card>
-		</div>
-	);
+  return (
+    <div className="w-full max-w-md">
+      <Card>{children}</Card>
+    </div>
+  );
 }
 
 function Header() {
-	return (
-		<CardHeader>
-			<CardTitle className="text-center">サインイン</CardTitle>
-		</CardHeader>
-	);
+  return (
+    <CardHeader>
+      <CardTitle className="text-center">サインイン</CardTitle>
+    </CardHeader>
+  );
 }
 
 function Content() {
-	return (
-		<CardContent>
-			<SigninForm />
-		</CardContent>
-	);
+  return (
+    <CardContent>
+      <SigninForm />
+    </CardContent>
+  );
 }
 
 export function SigninScreen() {
-	return (
-		<ScreenContainer>
-			<FormCard>
-				<Header />
-				<Content />
-			</FormCard>
-		</ScreenContainer>
-	);
+  return (
+    <ScreenContainer>
+      <FormCard>
+        <Header />
+        <Content />
+      </FormCard>
+    </ScreenContainer>
+  );
 }
