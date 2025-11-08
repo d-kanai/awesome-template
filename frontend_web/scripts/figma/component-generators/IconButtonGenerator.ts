@@ -19,11 +19,15 @@ export class IconButtonGenerator implements ComponentGenerator {
       .map((key) => key.replace(/#.*$/, ""))
       .sort();
 
+    // Icon Buttonは pageName が "Icon Buttons" であることで判定
     return (
       keys.length === 4 &&
       keys.includes("Variant") &&
       keys.includes("Size") &&
-      keys.includes("State")
+      keys.includes("State") &&
+      keys.includes("Icon") &&
+      (component.componentSetName === "Icon Buttons" ||
+       component.name?.includes("Icon Button"))
     );
   }
 

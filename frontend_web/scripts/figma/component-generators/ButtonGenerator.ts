@@ -9,8 +9,9 @@ import { extractProperties, toCamelCase } from "./types";
  * Button Component Generator
  *
  * 条件:
- * - Variant, Size, State プロパティを持つ
- * - プロパティ数が3つ
+ * - Variant, Size, State, Label プロパティを持つ
+ * - Icon関連のプロパティ（Has Icon Start, Has Icon End, Icon Start, Icon End）
+ * - プロパティ数が8つ
  */
 export class ButtonGenerator implements ComponentGenerator {
   canHandle(component: ComponentInfo): boolean {
@@ -19,11 +20,15 @@ export class ButtonGenerator implements ComponentGenerator {
       .map((key) => key.replace(/#.*$/, ""))
       .sort();
 
+    // 4プロパティのButton（Icon, Variant, State, Size）
+    // NOTE: 本来は8プロパティ（Has Icon End, Has Icon Start, Icon End, Icon Start, Label, Size, State, Variant）
+    // だが、fetch-components.tsが正しく抽出できていないため、4プロパティで判定
     return (
-      keys.length === 3 &&
+      keys.length === 4 &&
       keys.includes("Variant") &&
       keys.includes("Size") &&
-      keys.includes("State")
+      keys.includes("State") &&
+      keys.includes("Icon")
     );
   }
 
@@ -35,30 +40,7 @@ export class ButtonGenerator implements ComponentGenerator {
     components: ComponentInfo[],
     componentName: string,
   ): GeneratedComponent {
-    const { propertyNames, propertyTypes, defaultValues } =
-      extractProperties(components[0]);
-
-    // Variant の値を収集
-    const variants = new Set<string>();
-    const sizes = new Set<string>();
-    const states = new Set<string>();
-
-    for (const comp of components) {
-      const props = comp.variantProperties || {};
-      if (props.Variant) variants.add(props.Variant);
-      if (props.Size) sizes.add(props.Size);
-      if (props.State) states.add(props.State);
-    }
-
-    const variantValues = Array.from(variants)
-      .map((v) => `"${v.toLowerCase()}"`)
-      .join(", ");
-    const sizeValues = Array.from(sizes)
-      .map((s) => `"${s.toLowerCase()}"`)
-      .join(", ");
-    const stateValues = Array.from(states)
-      .map((s) => `"${s.toLowerCase()}"`)
-      .join(", ");
+    const { defaultValues } = extractProperties(components[0]);
 
     const imports = [
       'import type { ComponentPropsWithoutRef } from "react";',
@@ -70,7 +52,13 @@ export class ButtonGenerator implements ComponentGenerator {
 
     const interfaceCode = `export interface ${componentName}Props
   extends ComponentPropsWithoutRef<"button">,
-    VariantProps<typeof ${variantsName}> {}`;
+    VariantProps<typeof ${variantsName}> {
+  label?: string;
+  iconStart?: React.ReactNode;
+  iconEnd?: React.ReactNode;
+  hasIconStart?: boolean;
+  hasIconEnd?: boolean;
+}`;
 
     const componentCode = `const ${variantsName} = cva(
   "inline-flex items-center justify-center rounded-md text-body-small-strong transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -105,16 +93,29 @@ export function ${componentName}({
   size,
   state,
   disabled,
+  label,
+  iconStart,
+  iconEnd,
+  hasIconStart,
+  hasIconEnd,
+  children,
   ...props
 }: ${componentName}Props) {
   const isDisabled = disabled || state === "disabled";
+  const content = label || children;
+  const showIconStart = iconStart || hasIconStart;
+  const showIconEnd = iconEnd || hasIconEnd;
 
   return (
     <button
       className={cn(${variantsName}({ variant, size, state, className }))}
       disabled={isDisabled}
       {...props}
-    />
+    >
+      {showIconStart && <span className="mr-Space-150" aria-hidden="true">{iconStart}</span>}
+      {content}
+      {showIconEnd && <span className="ml-Space-150" aria-hidden="true">{iconEnd}</span>}
+    </button>
   );
 }`;
 
