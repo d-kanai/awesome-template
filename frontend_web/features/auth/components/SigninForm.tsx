@@ -20,12 +20,9 @@ function EmailField({
     <InputField
       id="signin-email"
       data-testid={SigninTestIds.emailInput}
-      hasLabel
       label="メールアドレス"
       type="email"
-      valueType="placeholder"
-      value="email@example.com"
-      state={error ? "error" : disabled ? "disabled" : "default"}
+      placeholder="email@example.com"
       disabled={disabled}
       hasError={!!error}
       error={error}
@@ -47,12 +44,9 @@ function PasswordField({
     <InputField
       id="signin-password"
       data-testid={SigninTestIds.passwordInput}
-      hasLabel
       label="パスワード"
       type="password"
-      valueType="placeholder"
-      value="パスワード"
-      state={error ? "error" : disabled ? "disabled" : "default"}
+      placeholder="パスワード"
       disabled={disabled}
       hasError={!!error}
       error={error}

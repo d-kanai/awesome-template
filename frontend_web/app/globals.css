@@ -12,7 +12,9 @@
     --sds-color-text-default-tertiary: #b3b3b3;
     --sds-color-text-default-secondary: #757575;
     --sds-color-text-neutral-default: #303030;
+    --sds-color-text-disabled-default: #b3b3b3;
     --sds-color-text-disabled-on-disabled: #b3b3b3;
+    --sds-color-text-danger-default: #900b09;
 
     /* Color - Background */
     --sds-color-background-default-default: #ffffff;
@@ -31,6 +33,8 @@
     --sds-color-border-brand-default: #2c2c2c;
     --sds-color-border-neutral-secondary: #767676;
     --sds-color-border-disabled-default: #b3b3b3;
+    --sds-color-border-disabled-secondary: #b2b2b2;
+    --sds-color-border-danger-default: #900b09;
 
     /* Color - Icon */
     --sds-color-icon-default-tertiary: #b3b3b3;
