@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-inter)", "sans-serif"],
+        mono: ["var(--font-roboto-mono)", "monospace"],
+      },
       colors: {
         // Semantic Colors (CSS Variables)
         background: "var(--background)",
@@ -55,6 +59,25 @@ const config: Config = {
         },
         input: "var(--input)",
         ring: "var(--ring)",
+        neutral: {
+          DEFAULT: "var(--neutral)",
+          hover: "var(--neutral-hover)",
+          foreground: "var(--neutral-foreground)",
+          border: "var(--neutral-border)",
+        },
+        subtle: {
+          DEFAULT: "var(--subtle)",
+          hover: "var(--subtle-hover)",
+          foreground: "var(--subtle-foreground)",
+          "foreground-hover": "var(--subtle-foreground-hover)",
+          border: "var(--subtle-border)",
+          "border-hover": "var(--subtle-border-hover)",
+        },
+        disabled: {
+          DEFAULT: "var(--disabled)",
+          foreground: "var(--disabled-foreground)",
+          border: "var(--disabled-border)",
+        },
         // Figma Design Tokens (Direct Access)
         ...figmaTokens.colors,
       },

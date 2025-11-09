@@ -84,7 +84,7 @@ export const Header = forwardRef<HTMLElement, HeaderProps>(
             className="flex flex-row gap-Space-200 justify-end"
             items={[
               { label: "Products", href: "#", active: true },
-              { label: "Solutions", href: "#" },
+              { label: "Solutions", href: "/auth/signup" },
               { label: "Community", href: "#" },
               { label: "Resources", href: "#" },
               { label: "Pricing", href: "#" },

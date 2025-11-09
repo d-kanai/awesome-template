@@ -1,6 +1,8 @@
 "use client";
 
 import { Header } from "@/features/shared/figma_generated/Header";
+import HeaderNew from "@/features/shared/figma_generated/HeaderNew";
+import HeaderImported from "@/features/shared/figma_generated/HeaderImported";
 
 export default function HeaderDemoPage() {
 	return (
@@ -9,10 +11,28 @@ export default function HeaderDemoPage() {
 				<section>
 					<div className="p-Space-600">
 						<h2 className="text-heading-large mb-Space-400">
-							Header - Desktop
+							Header - Desktop (既存)
 						</h2>
 					</div>
 					<Header platform="desktop" state="default" />
+				</section>
+
+				<section>
+					<div className="p-Space-600">
+						<h2 className="text-heading-large mb-Space-400">
+							Header - New (Figma生成 - Tailwind raw)
+						</h2>
+					</div>
+					<HeaderNew />
+				</section>
+
+				<section>
+					<div className="p-Space-600">
+						<h2 className="text-heading-large mb-Space-400">
+							Header - Imported (Figma変数 → プロジェクトTailwind変換済み)
+						</h2>
+					</div>
+					<HeaderImported />
 				</section>
 
 				<section>

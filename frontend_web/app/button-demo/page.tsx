@@ -2,6 +2,7 @@
 
 import { Button as ButtonNew } from "@/features/shared/figma_generated/Button";
 import { IconButton as IconButtonGenerated } from "@/features/shared/figma_generated/IconButton";
+import { ButtonFigma } from "@/features/shared/figma_generated/ButtonFigma";
 
 // Simple icon components for INSTANCE_SWAP demo
 const StarIcon = () => (
@@ -428,9 +429,50 @@ export default function ButtonDemoPage() {
 					</div>
 				</section>
 
+				{/* ButtonFigma Component Demo */}
+				<section className="space-y-Space-600 border-2 border-warning p-Space-600 rounded-lg">
+					<h2 className="text-heading">ButtonFigma - Figma MCP取り込み</h2>
+					<p className="text-body-small text-foreground-secondary">
+						Figma Desktop MCPから取得した情報を元に実装したButtonコンポーネント
+					</p>
+					<p className="text-body-small text-warning">
+						⚠️ Figma variables → プロジェクトTailwindクラスに手動変換
+					</p>
+
+					<div className="space-y-Space-400">
+						<h3 className="text-body-strong">Primary Variant</h3>
+						<div className="flex flex-wrap gap-Space-400">
+							<ButtonFigma variant="primary" size="medium" state="default">Default</ButtonFigma>
+							<ButtonFigma variant="primary" size="medium" state="hover">Hover</ButtonFigma>
+							<ButtonFigma variant="primary" size="medium" state="disabled">Disabled</ButtonFigma>
+							<ButtonFigma variant="primary" size="small" state="default">Small</ButtonFigma>
+						</div>
+					</div>
+
+					<div className="space-y-Space-400">
+						<h3 className="text-body-strong">Neutral Variant</h3>
+						<div className="flex flex-wrap gap-Space-400">
+							<ButtonFigma variant="neutral" size="medium" state="default">Default</ButtonFigma>
+							<ButtonFigma variant="neutral" size="medium" state="hover">Hover</ButtonFigma>
+							<ButtonFigma variant="neutral" size="medium" state="disabled">Disabled</ButtonFigma>
+							<ButtonFigma variant="neutral" size="small" state="default">Small</ButtonFigma>
+						</div>
+					</div>
+
+					<div className="space-y-Space-400">
+						<h3 className="text-body-strong">Subtle Variant</h3>
+						<div className="flex flex-wrap gap-Space-400">
+							<ButtonFigma variant="subtle" size="medium" state="default">Default</ButtonFigma>
+							<ButtonFigma variant="subtle" size="medium" state="hover">Hover</ButtonFigma>
+							<ButtonFigma variant="subtle" size="medium" state="disabled">Disabled</ButtonFigma>
+							<ButtonFigma variant="subtle" size="small" state="default">Small</ButtonFigma>
+						</div>
+					</div>
+				</section>
+
 				{/* Primary Variant */}
 				<section className="space-y-Space-600">
-					<h2 className="text-heading">Primary Variant</h2>
+					<h2 className="text-heading">Primary Variant (既存Button)</h2>
 
 					<div className="space-y-Space-400">
 						<h3 className="text-body-strong">Medium Size</h3>

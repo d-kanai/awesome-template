@@ -17,6 +17,12 @@ export function middleware(request: NextRequest) {
     "/button-demo", // Figma Buttonデモ
     "/input-demo", // Figma Input Fieldデモ
     "/header-demo", // Figma Headerデモ
+    "/home-page-demo", // Figma Home Page (Desktop)
+    "/home-page-mobile", // Figma Home Page (Mobile)
+    "/tooltip-demo", // Figma Tooltipデモ
+    "/typography-demo", // Figma Typographyデモ
+    "/button-with-icons-demo", // Figma Button with Iconsデモ
+    "/dialog-demo", // Figma Dialog Bodyデモ
   ];
 
   const isPublicPath = publicPaths.some(
