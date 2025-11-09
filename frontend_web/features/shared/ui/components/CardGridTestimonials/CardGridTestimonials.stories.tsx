@@ -6,15 +6,10 @@ const meta = {
   title: "Components/CardGridTestimonials",
   component: CardGridTestimonials,
   parameters: {
-    layout: "centered",
+    layout: "fullscreen",
   },
   tags: ["autodocs"],
   argTypes: {
-    platform: {
-      control: "select",
-      options: ["Desktop", "Mobile"],
-      description: "Platform variant",
-    },
     heading: {
       control: "text",
       description: "Section heading",
@@ -63,56 +58,75 @@ const sampleTestimonials = [
 
 export const Desktop: Story = {
   args: {
-    platform: "Desktop",
     heading: "What Our Customers Say",
     subheading: "Trusted by teams worldwide",
     hasSubheading: true,
     testimonials: sampleTestimonials,
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: "responsive", // 1200px
+    },
   },
 };
 
 export const Mobile: Story = {
   args: {
-    platform: "Mobile",
     heading: "What Our Customers Say",
     subheading: "Trusted by teams worldwide",
     hasSubheading: true,
     testimonials: sampleTestimonials,
   },
+  parameters: {
+    viewport: {
+      defaultViewport: "mobile1", // 375px
+    },
+  },
 };
 
 export const WithoutSubheading: Story = {
   args: {
-    platform: "Desktop",
     heading: "Customer Testimonials",
     hasSubheading: false,
     testimonials: sampleTestimonials,
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: "responsive",
+    },
   },
 };
 
 export const TwoTestimonials: Story = {
   args: {
-    platform: "Desktop",
     heading: "What People Are Saying",
     subheading: "Real feedback from real customers",
     hasSubheading: true,
     testimonials: sampleTestimonials.slice(0, 2),
   },
+  parameters: {
+    viewport: {
+      defaultViewport: "responsive",
+    },
+  },
 };
 
 export const SingleTestimonial: Story = {
   args: {
-    platform: "Desktop",
     heading: "Featured Testimonial",
     subheading: "From our valued customer",
     hasSubheading: true,
     testimonials: [sampleTestimonials[0]],
   },
+  parameters: {
+    viewport: {
+      defaultViewport: "responsive",
+    },
+  },
 };
 
 export const ManyTestimonials: Story = {
   args: {
-    platform: "Desktop",
     heading: "Loved by Thousands",
     subheading: "See what our customers have to say",
     hasSubheading: true,
@@ -141,34 +155,9 @@ export const ManyTestimonials: Story = {
       },
     ],
   },
-};
-
-export const Comparison: Story = {
-  args: {
-    heading: "Sample Heading",
-    subheading: "Sample Subheading",
-    testimonials: sampleTestimonials,
+  parameters: {
+    viewport: {
+      defaultViewport: "responsive",
+    },
   },
-  render: () => (
-    <div className="flex flex-col gap-8 items-center">
-      <div className="flex flex-col gap-2">
-        <h3 className="text-sm font-semibold text-center">Desktop Platform</h3>
-        <CardGridTestimonials
-          platform="Desktop"
-          heading="What Our Customers Say"
-          subheading="Trusted by teams worldwide"
-          testimonials={sampleTestimonials}
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <h3 className="text-sm font-semibold text-center">Mobile Platform</h3>
-        <CardGridTestimonials
-          platform="Mobile"
-          heading="What Our Customers Say"
-          subheading="Trusted by teams worldwide"
-          testimonials={sampleTestimonials}
-        />
-      </div>
-    </div>
-  ),
 };

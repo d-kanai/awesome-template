@@ -1,9 +1,8 @@
 /**
  * ============================================
- * 🎨 Generated from Figma
- * 📅 Synced at: 2025-11-09 15:30:00 JST
- * 🔗 Node ID: 348-13347
- * 🔗 Figma URL: https://www.figma.com/design/WoOuJeIanK8Ke56zr6muug/Simple-Design-System--Community-?node-id=348-13347
+ * 🎨 CardGridTestimonials
+ * 📅 Synced at: 2025-11-09 19:00 JST
+ * 🔗 Figma Raw: features/shared/ui/figma_generated/components/CardGridTestimonials/CardGridTestimonials.figma-raw.tsx
  * ============================================
  */
 "use client";
@@ -12,8 +11,6 @@ import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
 import { TextContentHeading } from "../TextContentHeading";
 import { TestimonialCard } from "../TestimonialCard";
-
-export type CardGridTestimonialsPlatform = "Desktop" | "Mobile";
 
 export interface Testimonial {
   quote: string;
@@ -24,7 +21,6 @@ export interface Testimonial {
 }
 
 export interface CardGridTestimonialsProps extends React.HTMLAttributes<HTMLElement> {
-  platform?: CardGridTestimonialsPlatform;
   heading?: string;
   subheading?: string;
   hasSubheading?: boolean;
@@ -35,7 +31,6 @@ export interface CardGridTestimonialsProps extends React.HTMLAttributes<HTMLElem
 export const CardGridTestimonials = forwardRef<HTMLElement, CardGridTestimonialsProps>(
   (
     {
-      platform = "Desktop",
       heading = "What Our Customers Say",
       subheading = "Trusted by teams worldwide",
       hasSubheading = true,
@@ -45,39 +40,22 @@ export const CardGridTestimonials = forwardRef<HTMLElement, CardGridTestimonials
     },
     ref,
   ) => {
-    // Platform-specific layout classes
-    const containerClasses = {
-      Desktop: cn(
-        "w-[1200px]",
-        "px-[var(--sds-size-space-1600,64px)]",
-        "py-[var(--sds-size-space-1600,64px)]",
-      ),
-      Mobile: cn(
-        "w-[375px]",
-        "px-[var(--sds-size-space-600,24px)]",
-        "py-[var(--sds-size-space-600,24px)]",
-      ),
-    }[platform];
-
-    const gridClasses = {
-      Desktop: cn(
-        "grid grid-cols-3",
-        "gap-[var(--sds-size-space-1200,48px)]",
-      ),
-      Mobile: cn(
-        "flex flex-col",
-        "gap-[var(--sds-size-space-600,24px)]",
-      ),
-    }[platform];
-
     return (
       <section
         ref={ref}
         className={cn(
-          "flex flex-col items-center content-stretch",
+          "flex flex-col content-stretch items-start",
           "gap-[var(--sds-size-space-1200,48px)]",
           "bg-[color:var(--sds-color-background-default-default,#ffffff)]",
-          containerClasses,
+          "w-full",
+
+          // Mobile (デフォルト): 小さなpadding
+          "px-[var(--sds-size-space-600,24px)]",
+          "py-[var(--sds-size-space-600,24px)]",
+
+          // Desktop (md: 768px以上): 大きなpadding
+          "md:px-[var(--sds-size-space-1600,64px)]",
+          "md:py-[var(--sds-size-space-1600,64px)]",
           className,
         )}
         {...props}
@@ -88,11 +66,28 @@ export const CardGridTestimonials = forwardRef<HTMLElement, CardGridTestimonials
           subheading={subheading}
           hasSubheading={hasSubheading}
           align="Start"
-          className="w-full"
+          className={cn(
+            "w-full",
+            // Desktop: 1200pxに制限
+            "md:w-[1200px]",
+          )}
         />
 
         {/* Testimonial Cards Grid */}
-        <div className={cn("w-full", gridClasses)}>
+        <div
+          className={cn(
+            "w-full",
+
+            // Mobile (デフォルト): 縦並び、小さなgap
+            "flex flex-col",
+            "gap-[var(--sds-size-space-600,24px)]",
+
+            // Desktop (md: 768px以上): 3列グリッド、大きなgap、1200pxに制限
+            "md:w-[1200px]",
+            "md:grid md:grid-cols-3",
+            "md:gap-[var(--sds-size-space-1200,48px)]",
+          )}
+        >
           {testimonials.map((testimonial, index) => (
             <TestimonialCard
               key={index}
