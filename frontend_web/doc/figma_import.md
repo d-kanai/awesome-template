@@ -97,11 +97,29 @@
 /**
  * ============================================
  * 🎨 Button
- * 📅 Last synced: 2025-11-09 21:30 JST
+ * 📅 Synced at: 2025-11-09 21:30 JST
  * 🔗 Figma Raw: features/shared/ui/figma_generated/atoms/Button/Button.figma-raw.tsx
  * ============================================
  */
 ```
+
+#### タイムスタンプのラベル規約
+
+ファイルの種類によってタイムスタンプのラベルを使い分けること:
+
+- **Figma Raw files** (`figma_generated/**/*.figma-raw.tsx`):
+  - `📅 Generated at: YYYY-MM-DD HH:mm JST`
+  - Figmaから生成された読み取り専用の参照ファイルであることを示す
+  - 差分比較用の純粋なFigma出力として保持
+
+- **Implementation files** (`ui/atoms/**/*.tsx`, `ui/components/**/*.tsx`, `app/**/*.tsx`):
+  - `📅 Synced at: YYYY-MM-DD HH:mm JST`
+  - Figmaデザインと最後に同期した日時を示す
+  - 実装側で継続的にメンテナンスされるファイルであることを強調
+
+**理由**:
+- "Generated" = 自動生成された静的なファイル（変更しない）
+- "Synced" = Figmaと同期しながら継続的に更新されるファイル（カスタマイズが含まれる）
 
 ### 4. 既存コンポーネントで置き換え
 
@@ -561,8 +579,14 @@ features/shared/ui/
 両ファイルのタイムスタンプを更新：
 
 ```typescript
+// Figma Raw file
 /**
- * 📅 Generated at: 2025-11-15 10:00:00 JST  // ← 更新日時
+ * 📅 Generated at: 2025-11-15 10:00 JST  // ← 更新日時
+ */
+
+// Implementation file
+/**
+ * 📅 Synced at: 2025-11-15 10:00 JST  // ← 更新日時
  */
 ```
 
