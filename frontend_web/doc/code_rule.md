@@ -35,6 +35,18 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 - スペーシング・タイポグラフィ: Figmaトークンを使用（`Space-*`, `Scale-*`）
 - ハードコード値は使用しない
 
+### Figma component integration
+
+- Figmaからコンポーネントを実装する際は、必ずFigmaのsemantic tokensを使用すること
+- Tailwindのユーティリティクラス（`gap-2`, `px-3`, `rounded-lg`など）ではなく、Figma design tokensを使用すること
+  - 例: `gap-2` → `gap-[var(--sds-size-space-200,8px)]`
+  - 例: `px-3 py-3` → `p-[var(--sds-size-space-300,12px)]`
+  - 例: `rounded-lg` → `rounded-[var(--sds-size-radius-200,8px)]`
+  - 例: `border` → `border-[var(--sds-size-stroke-border,1px)]`
+  - 例: `text-base font-normal` → `font-[family-name:var(--sds-typography-body-font-family)] font-[var(--sds-typography-body-font-weight-regular)] text-[length:var(--sds-typography-body-size-medium)]`
+- 理由: Figmaでデザイントークンの値が変更された際、CSS変数を更新するだけで全コンポーネントに反映される（コンポーネントコードの変更不要）
+- MCPの`get_design_context`で取得したコードを参考に、正確なtoken名を使用すること
+
 ### UT spec
 
 - describe()で正常系・異常系を分割すること
