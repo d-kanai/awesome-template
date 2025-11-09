@@ -1,7 +1,7 @@
 /**
  * ============================================
  * 🎨 Generated from Figma (RAW)
- * 📅 Generated at: 2025-11-09 17:00:00 JST
+ * 📅 Generated at: 2025-11-09 18:00:00 JST
  * 🔗 Node ID: 4185-3778
  * 🔗 Figma URL: https://www.figma.com/design/WoOuJeIanK8Ke56zr6muug/Simple-Design-System--Community-?node-id=4185-3778
  * ============================================
@@ -34,7 +34,7 @@ export default function Button({ className }: ButtonProps) {
           border-[var(--sds-size-stroke-border,1px)]
           border-solid
           relative
-          rounded-[var(--sds-size-radius-400,16px)]
+          rounded-[var(--sds-size-radius-200,8px)]
           size-full
           ${className}
         `}
