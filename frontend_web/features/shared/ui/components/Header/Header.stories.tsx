@@ -10,11 +10,6 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    platform: {
-      control: "select",
-      options: ["Desktop", "Mobile"],
-      description: "Platform variant",
-    },
     logoSrc: {
       control: "text",
       description: "Logo image URL",
@@ -36,33 +31,37 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Desktop: Story = {
-  args: {
-    platform: "Desktop",
+  args: {},
+  parameters: {
+    viewport: {
+      defaultViewport: "responsive", // 1200px
+    },
   },
 };
 
 export const DesktopWithLogo: Story = {
   args: {
-    platform: "Desktop",
     logoSrc: "https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg",
     logoAlt: "Figma",
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: "responsive",
+    },
   },
 };
 
 export const Mobile: Story = {
-  args: {
-    platform: "Mobile",
-  },
+  args: {},
   parameters: {
     viewport: {
-      defaultViewport: "mobile1",
+      defaultViewport: "mobile1", // 375px
     },
   },
 };
 
 export const MobileWithLogo: Story = {
   args: {
-    platform: "Mobile",
     logoSrc: "https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg",
     logoAlt: "Figma",
   },
@@ -75,7 +74,6 @@ export const MobileWithLogo: Story = {
 
 export const CustomNavigation: Story = {
   args: {
-    platform: "Desktop",
     navigationItems: [
       { label: "Home", isActive: true },
       { label: "About" },
@@ -83,6 +81,11 @@ export const CustomNavigation: Story = {
       { label: "Blog" },
       { label: "Contact" },
     ],
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: "responsive",
+    },
   },
 };
 
@@ -105,12 +108,16 @@ export const InteractiveDesktop: Story = {
 
     return (
       <Header
-        platform="Desktop"
         navigationItems={items}
         onSignIn={() => alert("Sign in clicked")}
         onRegister={() => alert("Register clicked")}
       />
     );
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: "responsive",
+    },
   },
 };
 
@@ -133,7 +140,6 @@ export const InteractiveMobile: Story = {
 
     return (
       <Header
-        platform="Mobile"
         navigationItems={items}
         onSignIn={() => alert("Sign in clicked")}
         onRegister={() => alert("Register clicked")}

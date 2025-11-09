@@ -1,3 +1,10 @@
+/**
+ * ============================================
+ * 🎨 Header
+ * 📅 Synced at: 2025-11-09 18:45 JST
+ * 🔗 Figma Raw: features/shared/ui/figma_generated/components/Header/Header.figma-raw.tsx
+ * ============================================
+ */
 "use client";
 
 import React, { useState } from "react";
@@ -13,7 +20,6 @@ export interface NavigationItem {
 }
 
 export interface HeaderProps {
-  platform?: "Desktop" | "Mobile";
   logoSrc?: string;
   logoAlt?: string;
   navigationItems?: NavigationItem[];
@@ -39,7 +45,6 @@ const defaultNavigationItems: NavigationItem[] = [
 ];
 
 export function Header({
-  platform = "Desktop",
   logoSrc,
   logoAlt = "Logo",
   navigationItems = defaultNavigationItems,
@@ -62,9 +67,9 @@ export function Header({
     onClick: item.onClick,
   }));
 
-  // Desktop Header
-  if (platform === "Desktop") {
-    return (
+  return (
+    <>
+      {/* Header Bar */}
       <header
         className={cn(
           "bg-[var(--sds-color-background-default-default,#ffffff)]",
@@ -78,9 +83,16 @@ export function Header({
       >
         <div
           className={cn(
-            "flex flex-wrap items-center content-center",
-            "gap-[var(--sds-size-space-600,24px)]",
-            "p-[var(--sds-size-space-800,32px)]",
+            "flex items-center",
+
+            // Mobile (デフォルト): ロゴとハンバーガー
+            "justify-between",
+            "p-[var(--sds-size-space-600,24px)]",
+
+            // Desktop (md: 768px以上): ロゴ、ナビ、認証を横並び
+            "md:flex-wrap md:content-center",
+            "md:gap-[var(--sds-size-space-600,24px)]",
+            "md:p-[var(--sds-size-space-800,32px)]",
           )}
         >
           {/* Logo */}
@@ -98,14 +110,17 @@ export function Header({
             )}
           </div>
 
-          {/* Navigation Pills */}
+          {/* Navigation Pills - Desktop only */}
           <NavigationPillList
             items={pillItems}
             direction="Row"
-            className="flex-1 basis-0 grow shrink-0 min-w-px min-h-px justify-end"
+            className={cn(
+              "hidden", // Mobile: 非表示
+              "md:flex md:flex-1 md:basis-0 md:grow md:shrink-0 md:min-w-px md:min-h-px md:justify-end", // Desktop: 表示
+            )}
           />
 
-          {/* Auth Section */}
+          {/* Auth Section - Desktop only */}
           <HeaderAuth
             state={authState}
             avatarSrc={avatarSrc}
@@ -115,48 +130,21 @@ export function Header({
             onAvatarClick={onAvatarClick}
             signInHref={signInHref}
             registerHref={registerHref}
-            className="shrink-0"
-          />
-        </div>
-      </header>
-    );
-  }
-
-  // Mobile Header
-  return (
-    <>
-      {/* Mobile Header Bar */}
-      <header
-        className={cn(
-          "bg-[var(--sds-color-background-default-default,#ffffff)]",
-          "border-solid",
-          "border-[length:var(--sds-size-stroke-border,1px)]",
-          "border-[color:var(--sds-color-border-default-default,#d9d9d9)]",
-          "border-b border-l-0 border-r-0 border-t-0",
-          "w-full",
-          className,
-        )}
-      >
-        <div className="flex items-center justify-between p-[var(--sds-size-space-600,24px)]">
-          {/* Logo */}
-          <div className="flex items-center gap-[24px] shrink-0">
-            {logoSrc ? (
-              <div className="relative w-[40px] h-[35px] shrink-0">
-                <img
-                  src={logoSrc}
-                  alt={logoAlt}
-                  className="block max-w-none size-full"
-                />
-              </div>
-            ) : (
-              <div className="relative w-[40px] h-[35px] bg-[var(--sds-color-background-brand-default,#2c2c2c)] rounded-[var(--sds-size-radius-100,4px)]" />
+            className={cn(
+              "hidden", // Mobile: 非表示
+              "md:block md:shrink-0", // Desktop: 表示
             )}
-          </div>
+          />
 
-          {/* Hamburger Menu Button */}
+          {/* Hamburger Menu Button - Mobile only */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex items-center justify-center overflow-clip p-[var(--sds-size-space-200,8px)] rounded-[32px] shrink-0"
+            className={cn(
+              "flex items-center justify-center overflow-clip",
+              "p-[var(--sds-size-space-200,8px)]",
+              "rounded-[32px] shrink-0",
+              "md:hidden", // Desktop: 非表示
+            )}
             aria-label="Toggle menu"
           >
             <div className="overflow-clip relative shrink-0 size-[16px]">
@@ -179,7 +167,7 @@ export function Header({
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-[var(--sds-color-background-default-default,#ffffff)] z-50 flex flex-col gap-[var(--sds-size-space-1600,64px)] items-center px-[var(--sds-size-space-600,24px)] py-[var(--sds-size-space-800,32px)]">
+        <div className="fixed inset-0 bg-[var(--sds-color-background-default-default,#ffffff)] z-50 flex flex-col gap-[var(--sds-size-space-1600,64px)] items-center px-[var(--sds-size-space-600,24px)] py-[var(--sds-size-space-800,32px)] md:hidden">
           {/* Header with Logo and Close Button */}
           <div className="flex items-center justify-between w-full shrink-0">
             {/* Logo */}
