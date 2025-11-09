@@ -30,18 +30,23 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     const baseStyles = cn(
-      // Base styles
-      "inline-flex items-center justify-center gap-2",
-      "rounded-lg border border-solid",
-      "text-base font-normal leading-none",
+      // Base styles - using semantic tokens
+      "inline-flex items-center justify-center",
+      "gap-[var(--sds-size-space-200,8px)]",
+      "rounded-[var(--sds-size-radius-200,8px)]",
+      "border-[var(--sds-size-stroke-border,1px)] border-solid",
+      "font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)]",
+      "font-[var(--sds-typography-body-font-weight-regular,400)]",
+      "text-[length:var(--sds-typography-body-size-medium,16px)]",
+      "leading-none",
       "transition-colors duration-200",
       "disabled:cursor-not-allowed",
 
-      // Size variants
-      size === "medium" && "px-3 py-3",
-      size === "small" && "px-2 py-2",
+      // Size variants - using semantic tokens
+      size === "medium" && "p-[var(--sds-size-space-300,12px)]",
+      size === "small" && "p-[var(--sds-size-space-200,8px)]",
 
-      // Variant styles
+      // Variant styles - using semantic tokens
       variant === "primary" && [
         "bg-[var(--sds-color-background-brand-default)] border-[var(--sds-color-border-brand-default)] text-[var(--sds-color-text-brand-on-brand)]",
         "hover:bg-[var(--sds-color-background-brand-hover)]",
@@ -53,8 +58,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         "disabled:bg-[var(--sds-color-background-disabled-default)] disabled:border-[var(--sds-color-border-disabled-default)] disabled:text-[var(--sds-color-text-disabled-on-disabled)]",
       ],
       variant === "subtle" && [
-        "bg-transparent border-transparent text-[var(--sds-color-text-neutral-default)]",
-        "hover:border-[var(--sds-color-border-default-default)] hover:text-[var(--sds-color-text-default-default)]",
+        "bg-transparent border-transparent text-[var(--sds-color-text-default-default)]",
+        "hover:border-[var(--sds-color-border-default-default)]",
         "disabled:bg-[var(--sds-color-background-disabled-default)] disabled:border-[var(--sds-color-border-disabled-default)] disabled:text-[var(--sds-color-text-disabled-on-disabled)]",
       ],
 
