@@ -58,10 +58,12 @@ function PasswordField({
 function ErrorMessage({ error }: { error: string }) {
   return (
     <div
-      className="rounded-md bg-destructive/10 p-Space-400"
+      className="rounded-[var(--sds-size-radius-200,8px)] bg-[#fee2e2] p-[var(--sds-size-space-400,16px)]"
       data-testid={SigninTestIds.errorMessage}
     >
-      <p className="text-body-small text-destructive">{error}</p>
+      <p className="font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] text-[length:var(--sds-typography-body-size-small,14px)] leading-[1.4] text-[color:var(--sds-color-text-danger-default,#900b09)]">
+        {error}
+      </p>
     </div>
   );
 }
@@ -83,11 +85,11 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
 
 function SuggestSignupSection() {
   return (
-    <p className="text-center text-body-small text-foreground-secondary">
+    <p className="text-center font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] text-[length:var(--sds-typography-body-size-small,14px)] leading-[1.4] text-[color:var(--sds-color-text-default-secondary,#757575)]">
       アカウントをお持ちでないですか？{" "}
       <Link
         href={AUTH_ROUTES.SIGNUP}
-        className="font-medium text-primary hover:text-primary/80"
+        className="font-[var(--sds-typography-body-font-weight-strong,600)] text-[color:var(--sds-color-text-brand-on-brand-tertiary,#2c2c2c)] hover:text-[color:var(--sds-color-text-default-default,#1e1e1e)]"
         data-testid={SigninTestIds.signupLink}
       >
         サインアップ
@@ -100,10 +102,10 @@ export function SigninForm() {
   const { form, onSubmit, submitError } = useSigninForm();
 
   return (
-    <div className="space-y-Space-600">
+    <div className="flex flex-col gap-[var(--sds-size-space-600,24px)]">
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-Space-600"
+        className="flex flex-col gap-[var(--sds-size-space-600,24px)]"
       >
         <EmailField
           register={form.register}
