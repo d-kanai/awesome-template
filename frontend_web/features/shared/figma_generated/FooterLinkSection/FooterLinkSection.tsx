@@ -1,3 +1,11 @@
+/**
+ * ============================================
+ * 🎨 Generated from Figma
+ * 📅 Generated at: 2025-11-09 15:30:00 JST
+ * 🔗 Node ID: 2153-7990
+ * 🔗 Figma URL: https://www.figma.com/design/WoOuJeIanK8Ke56zr6muug/Simple-Design-System--Community-?node-id=2153-7990
+ * ============================================
+ */
 "use client";
 
 import React, { forwardRef } from "react";
