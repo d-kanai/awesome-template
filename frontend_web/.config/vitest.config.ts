@@ -21,9 +21,11 @@ export default defineConfig({
       reporter: ["text", "json", "html", "lcov"],
       include: ["features/**/*.{ts,tsx}"],
       exclude: [
-        "features/shared/api/generated/**",
-        "features/shared/figma_generated/**",
+        "features/shared/api/**",
+        "**/figma_generated/**",
         "**/*.spec.{ts,tsx}",
+        "**/*.stories.{ts,tsx}",
+        "**/*.figma.tsx",
       ],
     },
   },

@@ -15,23 +15,6 @@ describe("HomeScreen - TestC", () => {
 
   describe("正常系", () => {
     it("ホーム画面が正しく表示される", async () => {
-      // Given: Query APIレスポンスモック
-      const mockTestimonials = [
-        {
-          quote: "This product has completely transformed how we work.",
-          title: "Sarah Johnson",
-          description: "CEO, TechCorp",
-          avatarSrc: "https://i.pravatar.cc/150?img=1",
-        },
-        {
-          quote: "The best investment we've made for our business.",
-          title: "Michael Chen",
-          description: "Product Manager, StartupXYZ",
-          avatarSrc: "https://i.pravatar.cc/150?img=2",
-        },
-      ];
-      vi.mocked(getTestimonials).mockResolvedValue(mockTestimonials);
-
       // When: データ取得 → 画面レンダリング
       const testimonials = await getTestimonials();
       render(<HomeScreen testimonials={testimonials} />);
