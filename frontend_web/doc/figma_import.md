@@ -433,97 +433,63 @@ features/shared/figma_generated/TextLinkListItem/
 
 #### 差分確認の手順
 
-##### 1. Figmaから最新コードを取得
+##### 1. Figmaから最新コードを取得してメモリ上で比較
 
 ```bash
-# AIに依頼してFigmaの最新コードを取得
-# "Update TextLinkListItem from Figma node 2153-7973"
-# → AIが /tmp/TextLinkListItem-figma-new.tsx に保存（className改行版）
+# AIに依頼してFigmaの最新コードを取得＆比較
+# "Update TextLinkListItem from Figma"
+# → AIがMCPで取得し、メモリ上で既存の.figma-raw.tsxと比較
 ```
 
-**重要**: classNameは**必ず改行版**で保存すること（差分が見やすくなる）
+**重要事項:**
+- 中間ファイル保存は不要（メモリ上で比較）
+- 2ファイル方式により、`.figma-raw.tsx`同士の比較で正確な差分検出が可能
+- classNameは常に改行版でフォーマット統一されている
 
-```typescript
-// ✅ 改行版（推奨）
-className={`
-  absolute
-  bottom-0
-  flex
-  flex-col
-  ${className}
-`}
+##### 2. AIが差分を検出して報告
 
-// ❌ 1行版（差分が見づらい）
-className={`absolute bottom-0 flex flex-col ${className}`}
-```
-
-##### 2. まず`.figma-raw.tsx`と比較（Figma側の変更を把握）
-
-```bash
-# ファイルに保存（長い出力でも省略されない）
-git diff --no-index \
-  features/shared/figma_generated/TextLinkListItem/TextLinkListItem.figma-raw.tsx \
-  /tmp/TextLinkListItem-figma-new.tsx \
-  > /tmp/diff-step2.txt 2>&1 || true
-
-# Readツールで全文表示
-```
-
-**ここで把握:**
-- ✅ Figma側でどこが変わったか（padding, color, layout等）
-- ✅ **実装に反映すべき変更**を特定
-- ✅ format問題なし（rawファイル同士なので同じformat）
-
-##### 3. 実装版と`.figma-raw.tsx`を比較（カスタマイズ確認）
-
-```bash
-git diff --no-index \
-  features/shared/figma_generated/TextLinkListItem/TextLinkListItem.figma-raw.tsx \
-  features/shared/figma_generated/TextLinkListItem/TextLinkListItem.tsx
-```
-
-**ここで把握:**
-- ✅ 実装時に追加したカスタマイズ（forwardRef, onClick等）
-- ✅ これらは**保持すべき**
-
-##### 4. AIが差分サマリーを提示
-
-**例:**
+**差分がない場合:**
 ```markdown
-## 差分サマリー
+✅ Figma側で変更なし - 更新不要
+```
 
-### Step2: Figma側の変更（raw比較結果）
+**差分がある場合:**
+```markdown
+## Figma側の変更
+
 - padding: var(--sds-size-space-300,12px) → var(--sds-size-space-400,16px)
 - border-radius: var(--sds-size-radius-200,8px) → var(--sds-size-radius-300,12px)
 
-### Step3: 実装のカスタマイズ（raw vs 実装）
-- ✅ forwardRef対応（保持）
-- ✅ onClick等のイベントハンドラー（保持）
-- ✅ ButtonHTMLAttributes継承（保持）
-- ✅ button要素（保持、Figmaはdiv）
-- ✅ cn()使用（保持）
+## 実装のカスタマイズ（保持すべき）
 
-### 更新が必要な箇所
+- ✅ forwardRef対応
+- ✅ onClick等のイベントハンドラー
+- ✅ ButtonHTMLAttributes継承
+- ✅ button要素（Figmaはdiv）
+- ✅ cn()使用
+
+## 更新が必要な箇所
+
 1. TextLinkListItem.tsx 行25: padding値を更新
 2. TextLinkListItem.tsx 行30: border-radius値を更新
 ```
 
-##### 5. 実装版を更新（カスタマイズを保持）
+##### 3. 差分がある場合のみ更新作業
+
+**a. 実装版を更新（カスタマイズを保持）**
 
 ```bash
 # Editツールで該当箇所のみ更新
 # forwardRef、onClick等のカスタマイズは保持
 ```
 
-##### 6. `.figma-raw.tsx`を最新版で置き換え
+**b. `.figma-raw.tsx`を最新版で更新**
 
 ```bash
-# Figma最新版をrawファイルとして保存
-cp /tmp/TextLinkListItem-figma-new.tsx \
-   features/shared/figma_generated/TextLinkListItem/TextLinkListItem.figma-raw.tsx
+# Writeツールで最新版を保存
 ```
 
-##### 7. タイムスタンプ更新
+**c. タイムスタンプ更新**
 
 両ファイルのタイムスタンプを更新：
 
@@ -533,7 +499,7 @@ cp /tmp/TextLinkListItem-figma-new.tsx \
  */
 ```
 
-##### 8. Git差分で検証
+**d. Git差分で検証**
 
 ```bash
 git diff features/shared/figma_generated/TextLinkListItem/
