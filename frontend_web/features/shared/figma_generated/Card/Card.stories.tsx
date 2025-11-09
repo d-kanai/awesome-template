@@ -177,6 +177,10 @@ export const ImagePlaceholder: Story = {
 
 // All variants comparison
 export const AllVariants: Story = {
+  args: {
+    title: "Card Title",
+    description: "Card description",
+  },
   render: () => (
     <div className="flex flex-col gap-12 max-w-4xl">
       <div>

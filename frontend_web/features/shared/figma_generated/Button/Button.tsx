@@ -4,7 +4,7 @@ import React, { forwardRef } from "react";
 import { cn } from "../../lib/utils";
 
 export type ButtonVariant = "primary" | "neutral" | "subtle";
-export type ButtonSize = "small" | "medium";
+export type ButtonSize = "small" | "medium" | "large";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -44,6 +44,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       "disabled:cursor-not-allowed",
 
       // Size variants - using semantic tokens
+      size === "large" && "p-[var(--sds-size-space-400,16px)]",
       size === "medium" && "p-[var(--sds-size-space-300,12px)]",
       size === "small" && "p-[var(--sds-size-space-200,8px)]",
 

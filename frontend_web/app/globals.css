@@ -6,6 +6,7 @@
   :root {
     /* Color - Text */
     --sds-color-text-brand-on-brand-tertiary: #2c2c2c;
+    --sds-color-text-brand-on-brand-secondary: #1e1e1e;
     --sds-color-text-brand-on-brand: #f5f5f5;
     --sds-color-text-brand-tertiary: #757575;
     --sds-color-text-default-default: #1e1e1e;
@@ -68,7 +69,13 @@
     --sds-typography-heading-font-family: Inter;
     --sds-typography-heading-font-weight: 600;
 
+    /* Typography - Subheading */
+    --sds-typography-subheading-size-medium: 20px;
+    --sds-typography-subheading-font-family: Inter;
+    --sds-typography-subheading-font-weight: 400;
+
     /* Size - Space */
+    --sds-size-space-050: 2px;
     --sds-size-space-100: 4px;
     --sds-size-space-200: 8px;
     --sds-size-space-300: 12px;
@@ -84,6 +91,11 @@
     --sds-size-radius-200: 8px;
     --sds-size-radius-400: 16px;
     --sds-size-radius-full: 9999px;
+
+    /* Size - Icon */
+    --sds-size-icon-small: 24px;
+    --sds-size-icon-medium: 32px;
+    --sds-size-icon-large: 40px;
 
     /* Size - Stroke */
     --sds-size-stroke-border: 1px;

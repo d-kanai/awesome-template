@@ -37,6 +37,18 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 
 ### Figma component integration
 
+#### コンポーネント実装の手順
+
+1. **コンポーネントをFigmaで検索**: 実装するコンポーネント名でFigmaを検索し、個別のコンポーネントノードを見つけること
+   - 推奨: Task subagentを使ってFigma内を検索する
+   - 例: Avatarコンポーネントを実装する場合、"Avatar"で検索してnode IDを特定
+2. **個別ノードのデザインコンテキストを取得**: 見つけたコンポーネントのnode IDで`get_design_context`を呼び出すこと
+   - 理由: 個別コンポーネントとして定義されている場合、すべてのvariantやpropsが正確に取得できる
+3. **ページ全体からの抽出は最終手段**: コンポーネントが個別に定義されていない場合のみ、ページ全体のデザインコンテキストから該当部分を抽出すること
+   - 例: HeaderやFooterがページレイアウトの一部としてのみ存在する場合
+
+#### デザイントークンの使用
+
 - Figmaからコンポーネントを実装する際は、必ずFigmaのsemantic tokensを使用すること
 - Tailwindのユーティリティクラス（`gap-2`, `px-3`, `rounded-lg`など）ではなく、Figma design tokensを使用すること
   - 例: `gap-2` → `gap-[var(--sds-size-space-200,8px)]`

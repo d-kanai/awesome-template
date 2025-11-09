@@ -10,6 +10,7 @@ export function middleware(request: NextRequest) {
   // 認証不要なパスのホワイトリスト
   const publicPaths = [
     SHARED_ROUTES.HOME,
+    "/home", // HomePage demo
     AUTH_ROUTES.SIGNIN,
     AUTH_ROUTES.SIGNUP,
   ];

@@ -29,9 +29,6 @@
     "figma:fetch:styles": "tsx scripts/figma/fetch-styles.ts",
     "figma:generate:styles": "tsx scripts/figma/generate-styles.ts",
     "figma:sync:styles": "pnpm run figma:fetch:styles && pnpm run figma:generate:styles",
-    "figma:fetch:components": "tsx scripts/figma/fetch-components.ts",
-    "figma:generate:components": "tsx scripts/figma/generate-components.ts",
-    "figma:sync:components": "pnpm run figma:fetch:components && pnpm run figma:generate:components",
     "figma:connect:create": "figma connect create",
     "figma:connect:publish": "figma connect publish",
     "figma:connect:unpublish": "figma connect unpublish"
