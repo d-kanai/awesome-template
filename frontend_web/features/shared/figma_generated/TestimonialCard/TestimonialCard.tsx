@@ -2,7 +2,8 @@
 
 import React from "react";
 import { cn } from "../../lib/utils";
-import { Avatar } from "../Avatar";
+import { TextContentHeading } from "../TextContentHeading";
+import { AvatarBlock } from "../AvatarBlock";
 
 export interface TestimonialCardProps {
   quote: string;
@@ -37,62 +38,18 @@ export function TestimonialCard({
       )}
     >
       {/* Quote */}
-      <p
-        className={cn(
-          "font-[family-name:var(--sds-typography-heading-font-family,'Inter',sans-serif)]",
-          "font-[var(--sds-typography-heading-font-weight,600)]",
-          "text-[length:var(--sds-typography-heading-size-base,24px)]",
-          "leading-[1.2]",
-          "tracking-[-0.48px]",
-          "text-[color:var(--sds-color-text-default-default,#1e1e1e)]",
-          "w-full",
-        )}
-      >
-        {quote}
-      </p>
+      <TextContentHeading heading={quote} hasSubheading={false} align="Start" className="w-full" />
 
       {/* Avatar Block */}
-      <div className="flex gap-[var(--sds-size-space-300,12px)] items-center w-full">
-        {/* Avatar */}
-        <Avatar
-          type="image"
-          size="large"
-          shape="circle"
-          src={avatarSrc}
-          alt={avatarAlt}
-        />
-
-        {/* Info */}
-        <div className="flex flex-col gap-[var(--sds-size-space-050,2px)] items-start flex-1">
-          {/* Title */}
-          <p
-            className={cn(
-              "font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)]",
-              "font-[var(--sds-typography-body-font-weight-strong,600)]",
-              "text-[length:var(--sds-typography-body-size-medium,16px)]",
-              "leading-[1.4]",
-              "text-[color:var(--sds-color-text-default-default,#1e1e1e)]",
-              "w-full",
-            )}
-          >
-            {title}
-          </p>
-
-          {/* Description */}
-          <p
-            className={cn(
-              "font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)]",
-              "font-[var(--sds-typography-body-font-weight-regular,400)]",
-              "text-[length:var(--sds-typography-body-size-small,14px)]",
-              "leading-[1.4]",
-              "text-[color:var(--sds-color-text-default-secondary,#757575)]",
-              "w-full",
-            )}
-          >
-            {description}
-          </p>
-        </div>
-      </div>
+      <AvatarBlock
+        title={title}
+        description={description}
+        avatarSrc={avatarSrc}
+        avatarAlt={avatarAlt}
+        avatarSize="large"
+        avatarShape="circle"
+        className="w-full"
+      />
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import React from "react";
 import { Header } from "@/features/shared/figma_generated/Header";
 import { HeroActions } from "@/features/shared/figma_generated/HeroActions";
-import { TestimonialCard } from "@/features/shared/figma_generated/TestimonialCard";
+import { CardGridTestimonials } from "@/features/shared/figma_generated/CardGridTestimonials";
 import { Footer } from "@/features/shared/figma_generated/Footer";
 import { cn } from "@/features/shared/lib/utils";
 
@@ -104,66 +104,14 @@ export default function HomePage() {
       </div>
 
       {/* Testimonials Section */}
-      <section
-        className={cn(
-          "bg-[var(--sds-color-background-default-default,#ffffff)]",
-          "flex flex-col items-start content-stretch",
-          "gap-[var(--sds-size-space-1200,48px)]",
-          "p-[var(--sds-size-space-1600,64px)]",
-          "w-full",
-        )}
-      >
-        {/* Section Header */}
-        <div className="flex flex-col items-start content-stretch gap-[var(--sds-size-space-200,8px)]">
-          <p
-            className={cn(
-              "font-[family-name:var(--sds-typography-heading-font-family,'Inter',sans-serif)]",
-              "font-[var(--sds-typography-heading-font-weight,600)]",
-              "text-[length:var(--sds-typography-heading-size-base,24px)]",
-              "leading-[1.2]",
-              "tracking-[-0.48px]",
-              "text-[color:var(--sds-color-text-default-default,#1e1e1e)]",
-              "w-full",
-            )}
-          >
-            What Our Customers Say
-          </p>
-          <div
-            className={cn(
-              "flex flex-col justify-center",
-              "font-[family-name:var(--sds-typography-subheading-font-family,'Inter',sans-serif)]",
-              "font-[var(--sds-typography-subheading-font-weight,400)]",
-              "text-[length:var(--sds-typography-subheading-size-medium,20px)]",
-              "leading-[0]",
-              "text-[color:var(--sds-color-text-default-secondary,#757575)]",
-              "w-full",
-            )}
-          >
-            <p className="leading-[1.2]">Trusted by teams worldwide</p>
-          </div>
-        </div>
-
-        {/* Testimonials Grid */}
-        <div
-          className={cn(
-            "flex flex-wrap content-start items-start",
-            "gap-[var(--sds-size-space-1200,48px)]",
-            "w-full",
-          )}
-        >
-          {testimonials.map((testimonial, index) => (
-            <TestimonialCard
-              key={index}
-              quote={testimonial.quote}
-              title={testimonial.title}
-              description={testimonial.description}
-              avatarSrc={testimonial.avatarSrc}
-              avatarAlt={testimonial.title}
-              className="flex-1 basis-0 grow shrink-0 min-w-[300px] min-h-px"
-            />
-          ))}
-        </div>
-      </section>
+      <CardGridTestimonials
+        platform="Desktop"
+        heading="What Our Customers Say"
+        subheading="Trusted by teams worldwide"
+        hasSubheading={true}
+        testimonials={testimonials}
+        className="w-full"
+      />
 
       {/* Footer */}
       <Footer
