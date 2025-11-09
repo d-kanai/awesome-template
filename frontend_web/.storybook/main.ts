@@ -26,6 +26,19 @@ const config: StorybookConfig = {
         "@": path.resolve(__dirname, "../"),
       };
     }
+
+    // Define process.env for browser
+    if (config.define) {
+      config.define = {
+        ...config.define,
+        "process.env": {},
+      };
+    } else {
+      config.define = {
+        "process.env": {},
+      };
+    }
+
     return config;
   },
 };
