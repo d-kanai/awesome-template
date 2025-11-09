@@ -3,6 +3,7 @@ import type { StorybookConfig } from "@storybook/react-vite";
 const config: StorybookConfig = {
   stories: [
     "../features/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+    "!../features/**/figma_generated/**",
     "../app/**/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
   addons: [
