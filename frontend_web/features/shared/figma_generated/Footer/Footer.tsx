@@ -2,14 +2,9 @@
 
 import React from "react";
 import { cn } from "../../lib/utils";
+import { FooterLinkSection, type FooterLinkItem } from "../FooterLinkSection";
 
-export interface FooterLinkItem {
-  label: string;
-  href?: string;
-  onClick?: () => void;
-}
-
-export interface FooterLinkSection {
+export interface FooterLinkSectionData {
   title: string;
   links: FooterLinkItem[];
 }
@@ -25,11 +20,11 @@ export interface FooterProps {
   logoSrc?: string;
   logoAlt?: string;
   socialLinks?: SocialLink[];
-  linkSections?: FooterLinkSection[];
+  linkSections?: FooterLinkSectionData[];
   className?: string;
 }
 
-const defaultLinkSections: FooterLinkSection[] = [
+const defaultLinkSections: FooterLinkSectionData[] = [
   {
     title: "Use cases",
     links: [
@@ -131,49 +126,12 @@ export function Footer({
 
         {/* Link Sections */}
         {linkSections.map((section, sectionIndex) => (
-          <div
+          <FooterLinkSection
             key={sectionIndex}
-            className="flex flex-col items-start content-stretch gap-[var(--sds-size-space-300,12px)] shrink-0 w-[262px]"
-          >
-            {/* Section Title */}
-            <div className="flex flex-col items-start content-stretch gap-[10px] pb-[var(--sds-size-space-400,16px)] pt-0 px-0 w-full">
-              <div className="flex items-start content-stretch w-full">
-                <p
-                  className={cn(
-                    "font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)]",
-                    "font-[var(--sds-typography-body-font-weight-strong,600)]",
-                    "text-[length:var(--sds-typography-body-size-medium,16px)]",
-                    "leading-[1.4]",
-                    "text-[color:var(--sds-color-text-default-default,#1e1e1e)]",
-                    "text-nowrap whitespace-pre",
-                  )}
-                >
-                  {section.title}
-                </p>
-              </div>
-            </div>
-
-            {/* Links */}
-            {section.links.map((link, linkIndex) => (
-              <div key={linkIndex} className="relative h-[22px] w-[89px]">
-                <button
-                  onClick={link.onClick}
-                  className={cn(
-                    "absolute bottom-0 left-0 right-[26.97%] top-0",
-                    "flex flex-col justify-center",
-                    "font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)]",
-                    "font-[var(--sds-typography-body-font-weight-regular,400)]",
-                    "text-[length:var(--sds-typography-body-size-medium,16px)]",
-                    "leading-[0]",
-                    "text-[color:var(--sds-color-text-default-default,#1e1e1e)]",
-                    "text-nowrap",
-                  )}
-                >
-                  <p className="leading-[1.4] whitespace-pre">{link.label}</p>
-                </button>
-              </div>
-            ))}
-          </div>
+            title={section.title}
+            links={section.links}
+            className="shrink-0 w-[262px]"
+          />
         ))}
       </div>
     </footer>
