@@ -78,7 +78,6 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
       type="submit"
       variant="primary"
       size="medium"
-      state={disabled ? "disabled" : "default"}
       disabled={disabled}
       className="w-full"
       data-testid={SigninTestIds.submitButton}
