@@ -33,7 +33,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       // Base styles - using semantic tokens
       "inline-flex items-center justify-center",
       "gap-[var(--sds-size-space-200,8px)]",
-      "rounded-[var(--sds-size-radius-200,8px)]",
+      "rounded-[var(--sds-size-radius-400,16px)]",
       "border-solid",
       "border-[length:var(--sds-size-stroke-border,1px)]",
       "font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)]",
