@@ -106,7 +106,7 @@ export const HeaderAuth = forwardRef<HTMLDivElement, HeaderAuthProps>(
       onClick?: () => void,
     ) => {
       const button = (
-        <Button variant={variant} size="medium" onClick={onClick}>
+        <Button variant={variant} size="medium" onClick={onClick} className="w-full">
           {label}
         </Button>
       );

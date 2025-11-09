@@ -132,7 +132,7 @@ export function Header({
             registerHref={registerHref}
             className={cn(
               "hidden", // Mobile: 非表示
-              "md:block md:shrink-0", // Desktop: 表示
+              "md:flex md:shrink-0", // Desktop: 表示
             )}
           />
 
