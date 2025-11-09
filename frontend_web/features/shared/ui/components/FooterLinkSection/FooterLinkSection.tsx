@@ -1,0 +1,66 @@
+/**
+ * ============================================
+ * 🎨 Generated from Figma
+ * 📅 Generated at: 2025-11-09 15:30:00 JST
+ * 🔗 Node ID: 2153-7990
+ * 🔗 Figma URL: https://www.figma.com/design/WoOuJeIanK8Ke56zr6muug/Simple-Design-System--Community-?node-id=2153-7990
+ * ============================================
+ */
+"use client";
+
+import React, { forwardRef } from "react";
+import { cn } from "@/features/shared/lib/utils";
+import { TextLinkListItem } from "../../atoms/TextLinkListItem";
+
+export interface FooterLinkItem {
+  label: string;
+  href?: string;
+  onClick?: () => void;
+}
+
+export interface FooterLinkSectionProps extends React.HTMLAttributes<HTMLDivElement> {
+  title?: string;
+  links?: FooterLinkItem[];
+  className?: string;
+}
+
+export const FooterLinkSection = forwardRef<HTMLDivElement, FooterLinkSectionProps>(
+  ({ title = "Text Strong", links = [], className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "flex flex-col items-start content-stretch",
+          "gap-[var(--sds-size-space-300,12px)]",
+          className,
+        )}
+        {...props}
+      >
+        {/* Title */}
+        <div className="flex flex-col items-start content-stretch gap-[10px] pb-[var(--sds-size-space-400,16px)] pt-0 px-0 w-full">
+          <div className="flex items-start content-stretch w-full">
+            <p
+              className={cn(
+                "font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)]",
+                "font-[var(--sds-typography-body-font-weight-strong,600)]",
+                "text-[length:var(--sds-typography-body-size-medium,16px)]",
+                "leading-[1.4]",
+                "text-[color:var(--sds-color-text-default-default,#1e1e1e)]",
+                "text-nowrap whitespace-pre",
+              )}
+            >
+              {title}
+            </p>
+          </div>
+        </div>
+
+        {/* Links */}
+        {links.map((link, index) => (
+          <TextLinkListItem key={index} text={link.label} onClick={link.onClick} />
+        ))}
+      </div>
+    );
+  },
+);
+
+FooterLinkSection.displayName = "FooterLinkSection";

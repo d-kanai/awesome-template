@@ -15,7 +15,6 @@ export default defineConfig({
       "out",
       "coverage",
       "features/shared/api/generated/**",
-      "features/shared/figma_generated/**",
     ],
     coverage: {
       provider: "v8",

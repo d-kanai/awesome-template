@@ -23,6 +23,8 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
   - ※ ClientSideのFormValidationも実装するため、react-hook-form x Server Actionの組み合わせにすること（useActionStateは利用しない）
   - ※ エラーハンドリングとフォーム状態管理を柔軟に行うため、ServerAction内でのnavigation(redirect)は利用せず、client side navigationにすること
 - page.tsxはRSC + Screen Component renderのみにすること (基本的にRoutingのみの位置付け)
+  - app routerのpageは、データ取得(RSC)を行い、すぐにfeatures配下のScreen componentを呼び出すだけにすること
+  - 例: `app/home/page.tsx` → `features/home/screens/HomeScreen.tsx`を呼び出す
 - backendへのリクエストはOpenAPI定義からOrvalで生成したClientFunctionを使うこと
 - form validationはzodを利用し、client side, server action共通の定義(schemas.ts)を利用すること
 - form周りの情報(key名など)はzodのschema定義からできる限り取得し、SSOFとすること

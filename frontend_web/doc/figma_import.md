@@ -22,13 +22,14 @@
 
 ## コンポーネント取り込みの基本方針
 
-1. **MCPツールを使用**: Figma Desktop MCPの`get_design_context`と`get_screenshot`を使用してコンポーネントを取得すること
-2. **Atomic Designの順序**: 小さいコンポーネントから大きいコンポーネントへ段階的に実装すること
+1. **MCPツールを使用**: Figma Desktop MCPの`get_design_context`と`get_screenshot`を使用してコンポーネント・ページを取得すること
+2. **Atomic Designの順序**: 小さいコンポーネントから大きいコンポーネント、そしてページへ段階的に実装すること
    - Atoms → Molecules → Organisms → Templates → Pages
    - 例: Button → ButtonGroup → HeroActions → HomePage
-3. **コンポーネントの合成**: 既存の小さいコンポーネントを組み合わせて大きいコンポーネントを構築すること
+3. **コンポーネントの合成**: 既存の小さいコンポーネントを組み合わせて大きいコンポーネント・ページを構築すること
    - 例: TestimonialCard = TextContentHeading + AvatarBlock
    - 例: Footer = FooterLinkSection, FooterLinkSection = TextLinkListItem
+   - 例: HomePage = Header + HeroActions + CardGridTestimonials + Footer
 
 ## 実装手順
 
@@ -45,14 +46,62 @@
 
 ### 3. コンポーネント実装
 
-- `features/shared/figma_generated/[ComponentName]/`ディレクトリを作成
-- 以下のファイルを作成:
-  - `[ComponentName].figma-raw.tsx`: **Figma純正版**（MCPから取得したコードをそのまま保存、差分比較用）
-  - `[ComponentName].tsx`: **実装版**（forwardRef、onClick等を追加したプロダクション用）
-  - `index.tsx`: エクスポート定義
-  - `[ComponentName].stories.tsx`: Storybookストーリー
+#### ディレクトリ構造
 
-**重要**: `.figma-raw.tsx`と`.tsx`の2ファイル管理により、Figma更新時の差分把握が容易になります
+コンポーネントの種類に応じて適切な場所に配置:
+
+**Atoms** (単一コンポーネント、他に依存しない):
+- Figma生データ: `features/shared/ui/figma_generated/atoms/[ComponentName]/`
+  - `[ComponentName].figma-raw.tsx`: Figma純正版（差分比較用のみ）
+- 実装: `features/shared/ui/atoms/[ComponentName]/`
+  - `[ComponentName].tsx`: 実装版（forwardRef、onClick等）
+  - `[ComponentName].stories.tsx`: Storybookストーリー
+  - `[ComponentName].figma.tsx`: Code Connect
+  - `index.tsx`: エクスポート定義
+
+**Components** (複数コンポーネント組み合わせ):
+- Figma生データ: `features/shared/ui/figma_generated/components/[ComponentName]/`
+  - `[ComponentName].figma-raw.tsx`: Figma純正版（差分比較用のみ）
+- 実装: `features/shared/ui/components/[ComponentName]/`
+  - `[ComponentName].tsx`: 実装版
+  - `[ComponentName].stories.tsx`: Storybookストーリー
+  - `[ComponentName].figma.tsx`: Code Connect
+  - `index.tsx`: エクスポート定義
+
+**Pages** (最上位、app routerのpageに対応):
+- Figma生データ: `features/shared/ui/figma_generated/pages/[PageName]/`
+  - `[PageName].figma-raw.tsx`: Figma純正版（参考用のみ）
+- 実装: `features/[feature]/screens/[ScreenName].tsx`
+  - 例: `features/home/screens/HomeScreen.tsx`
+
+**重要**:
+- `figma_generated`はFigmaから取得した生データ(`.figma-raw.tsx`)のみを保管
+- 実装ファイル(`.tsx`, `.stories.tsx`, `.figma.tsx`)は全て`ui/atoms`または`ui/components`に配置
+- 双方向の参照を維持するため、ファイルヘッダーにパスを記載:
+
+```typescript
+// features/shared/ui/figma_generated/atoms/Button/Button.figma-raw.tsx
+/**
+ * ============================================
+ * 🎨 Button (Figma Raw)
+ * 📅 Generated at: 2025-11-09 21:30 JST
+ * 🔗 Node ID: 123-456
+ * 🔗 Figma URL: https://...
+ * 📍 Implementation: features/shared/ui/atoms/Button/Button.tsx
+ * ============================================
+ */
+```
+
+```typescript
+// features/shared/ui/atoms/Button/Button.tsx
+/**
+ * ============================================
+ * 🎨 Button
+ * 📅 Last synced: 2025-11-09 21:30 JST
+ * 🔗 Figma Raw: features/shared/ui/figma_generated/atoms/Button/Button.figma-raw.tsx
+ * ============================================
+ */
+```
 
 ### 4. 既存コンポーネントで置き換え
 
@@ -423,12 +472,28 @@ Figmaが更新されたからといって、**コンポーネントファイル�
 
 #### ファイル構成
 
+**Atoms**の場合:
 ```
-features/shared/figma_generated/TextLinkListItem/
-├── TextLinkListItem.figma-raw.tsx  # Figma純正版（比較用）
-├── TextLinkListItem.tsx             # 実装版（プロダクション用）
-├── index.tsx
-└── TextLinkListItem.stories.tsx
+features/shared/ui/
+├── figma_generated/atoms/TextLinkListItem/
+│   └── TextLinkListItem.figma-raw.tsx  # Figma純正版（比較用）
+└── atoms/TextLinkListItem/
+    ├── TextLinkListItem.tsx             # 実装版（プロダクション用）
+    ├── TextLinkListItem.stories.tsx
+    ├── TextLinkListItem.figma.tsx
+    └── index.tsx
+```
+
+**Components**の場合:
+```
+features/shared/ui/
+├── figma_generated/components/Footer/
+│   └── Footer.figma-raw.tsx
+└── components/Footer/
+    ├── Footer.tsx
+    ├── Footer.stories.tsx
+    ├── Footer.figma.tsx
+    └── index.tsx
 ```
 
 #### 差分確認の手順
@@ -480,6 +545,7 @@ features/shared/figma_generated/TextLinkListItem/
 
 ```bash
 # Editツールで該当箇所のみ更新
+# features/shared/ui/atoms/TextLinkListItem/TextLinkListItem.tsx
 # forwardRef、onClick等のカスタマイズは保持
 ```
 
@@ -487,6 +553,7 @@ features/shared/figma_generated/TextLinkListItem/
 
 ```bash
 # Writeツールで最新版を保存
+# features/shared/ui/figma_generated/atoms/TextLinkListItem/TextLinkListItem.figma-raw.tsx
 ```
 
 **c. タイムスタンプ更新**
@@ -502,7 +569,8 @@ features/shared/figma_generated/TextLinkListItem/
 **d. Git差分で検証**
 
 ```bash
-git diff features/shared/figma_generated/TextLinkListItem/
+git diff features/shared/ui/figma_generated/atoms/TextLinkListItem/
+git diff features/shared/ui/atoms/TextLinkListItem/
 
 # 以下を確認:
 # - .figma-raw.tsx: Figmaの変更のみ
