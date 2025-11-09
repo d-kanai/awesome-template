@@ -83,10 +83,10 @@ export default function HomePage() {
 
       {/* Hero Actions */}
       <HeroActions
-        title="Welcome to Our Platform"
-        subtitle="Experience innovation like never before"
-        primaryButtonText="Get Started"
-        secondaryButtonText="Learn More"
+        title="Title"
+        subtitle="Subtitle"
+        primaryButtonText="Button"
+        secondaryButtonText="Button"
         onPrimaryButtonClick={() => console.log("Get Started clicked")}
         onSecondaryButtonClick={() => console.log("Learn More clicked")}
       />
