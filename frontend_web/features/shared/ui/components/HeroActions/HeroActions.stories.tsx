@@ -1,4 +1,3 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { HeroActions } from "./HeroActions";
 
@@ -66,7 +65,8 @@ export const ShortContent: Story = {
 export const LongContent: Story = {
   args: {
     title: "Transform Your Workflow with Advanced Collaboration Tools",
-    subtitle: "Streamline your team's productivity and creativity with our comprehensive design platform",
+    subtitle:
+      "Streamline your team's productivity and creativity with our comprehensive design platform",
     primaryButtonText: "Start Free Trial",
     secondaryButtonText: "Watch Video",
   },

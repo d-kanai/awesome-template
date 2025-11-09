@@ -1,13 +1,15 @@
 "use client";
 
-import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
+import type React from "react";
+import { forwardRef } from "react";
 
 export type AvatarType = "initial" | "image";
 export type AvatarSize = "large" | "medium" | "small";
 export type AvatarShape = "circle" | "square";
 
-export interface AvatarProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "type"> {
+export interface AvatarProps
+  extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "type"> {
   initials?: string;
   type?: AvatarType;
   size?: AvatarSize;
@@ -16,7 +18,19 @@ export interface AvatarProps extends Omit<React.ImgHTMLAttributes<HTMLImageEleme
 }
 
 export const Avatar = forwardRef<HTMLImageElement, AvatarProps>(
-  ({ initials = "F", type = "image", size = "large", shape = "circle", className, alt = "", src, ...props }, ref) => {
+  (
+    {
+      initials = "F",
+      type = "image",
+      size = "large",
+      shape = "circle",
+      className,
+      alt = "",
+      src,
+      ...props
+    },
+    ref,
+  ) => {
     // Size classes
     const sizeClass = {
       large: "size-[var(--sds-size-icon-large,40px)]",
@@ -25,17 +39,21 @@ export const Avatar = forwardRef<HTMLImageElement, AvatarProps>(
     }[size];
 
     // Border radius
-    const radiusClass = shape === "circle"
-      ? "rounded-[var(--sds-size-radius-full,9999px)]"
-      : size === "small"
-        ? "rounded-[var(--sds-size-radius-100,4px)]"
-        : "rounded-[var(--sds-size-radius-200,8px)]";
+    const radiusClass =
+      shape === "circle"
+        ? "rounded-[var(--sds-size-radius-full,9999px)]"
+        : size === "small"
+          ? "rounded-[var(--sds-size-radius-100,4px)]"
+          : "rounded-[var(--sds-size-radius-200,8px)]";
 
     // Text size for initials
     const textSizeClass = {
-      large: "text-[length:var(--sds-typography-subheading-size-medium,20px)] leading-[1.2]",
-      medium: "text-[length:var(--sds-typography-body-size-medium,16px)] leading-[1.4]",
-      small: "text-[length:var(--sds-typography-body-size-small,14px)] leading-[1.4]",
+      large:
+        "text-[length:var(--sds-typography-subheading-size-medium,20px)] leading-[1.2]",
+      medium:
+        "text-[length:var(--sds-typography-body-size-medium,16px)] leading-[1.4]",
+      small:
+        "text-[length:var(--sds-typography-body-size-small,14px)] leading-[1.4]",
     }[size];
 
     if (type === "initial") {
@@ -84,10 +102,10 @@ export const Avatar = forwardRef<HTMLImageElement, AvatarProps>(
         >
           <img
             ref={ref}
-            alt={alt}
             src={src}
             className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full"
             {...props}
+            alt={alt}
           />
         </div>
       </div>

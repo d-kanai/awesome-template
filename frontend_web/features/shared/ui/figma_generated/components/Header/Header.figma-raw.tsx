@@ -9,14 +9,18 @@
  * ============================================
  */
 
-const imgFigma = "http://localhost:3845/assets/d9dff2cab482da26555227b26a6b400d24cd3f3f.svg";
-const imgMenu = "http://localhost:3845/assets/a30087a6e8c3af0734d17b7eb30c19cd09b07f11.svg";
+const imgFigma =
+  "http://localhost:3845/assets/d9dff2cab482da26555227b26a6b400d24cd3f3f.svg";
+const imgMenu =
+  "http://localhost:3845/assets/a30087a6e8c3af0734d17b7eb30c19cd09b07f11.svg";
 
 type HeaderFigmaRawProps = {
   platform?: "Desktop" | "Mobile";
 };
 
-export default function HeaderFigmaRaw({ platform = "Desktop" }: HeaderFigmaRawProps) {
+export default function HeaderFigmaRaw({
+  platform = "Desktop",
+}: HeaderFigmaRawProps) {
   if (platform === "Mobile") {
     return (
       <div
@@ -61,7 +65,11 @@ export default function HeaderFigmaRaw({ platform = "Desktop" }: HeaderFigmaRawP
               >
                 <div
                   className="absolute inset-[-8%_-5.33%]"
-                  style={{ "--stroke-0": "rgba(30, 30, 30, 1)" } as React.CSSProperties}
+                  style={
+                    {
+                      "--stroke-0": "rgba(30, 30, 30, 1)",
+                    } as React.CSSProperties
+                  }
                 >
                   <img
                     alt=""

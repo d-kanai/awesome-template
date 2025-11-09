@@ -1,4 +1,3 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { TextContentTitle } from "./TextContentTitle";
 
@@ -63,7 +62,8 @@ export const LongContent: Story = {
   args: {
     align: "Start",
     title: "A Very Long Title That Spans Multiple Lines",
-    subtitle: "This is a longer subtitle that provides additional context and information",
+    subtitle:
+      "This is a longer subtitle that provides additional context and information",
     hasSubtitle: true,
   },
 };

@@ -11,14 +11,15 @@
  */
 "use client";
 
-import React from "react";
-
 export interface TextLinkListItemProps {
   text?: string;
   className?: string;
 }
 
-export default function TextLinkListItem({ text = "List item", className }: TextLinkListItemProps) {
+export default function TextLinkListItem({
+  text = "List item",
+  className,
+}: TextLinkListItemProps) {
   return (
     <div className="h-[22px] w-[89px]">
       <div

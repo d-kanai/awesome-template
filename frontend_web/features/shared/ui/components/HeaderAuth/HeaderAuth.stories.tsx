@@ -1,5 +1,5 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
 import { HeaderAuth } from "./HeaderAuth";
 
 const meta = {
@@ -107,7 +107,13 @@ export const Interactive: Story = {
     };
 
     if (!isLoggedIn) {
-      return <HeaderAuth state="Logged Out" onSignIn={handleSignIn} onRegister={handleRegister} />;
+      return (
+        <HeaderAuth
+          state="Logged Out"
+          onSignIn={handleSignIn}
+          onRegister={handleRegister}
+        />
+      );
     }
 
     return (

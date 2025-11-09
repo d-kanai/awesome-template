@@ -8,12 +8,14 @@
  */
 "use client";
 
-import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
+import type React from "react";
+import { forwardRef } from "react";
 
 export type TextContentHeadingAlign = "Start" | "Center";
 
-export interface TextContentHeadingProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface TextContentHeadingProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   heading?: string;
   subheading?: string;
   hasSubheading?: boolean;
@@ -21,7 +23,10 @@ export interface TextContentHeadingProps extends React.HTMLAttributes<HTMLDivEle
   className?: string;
 }
 
-export const TextContentHeading = forwardRef<HTMLDivElement, TextContentHeadingProps>(
+export const TextContentHeading = forwardRef<
+  HTMLDivElement,
+  TextContentHeadingProps
+>(
   (
     {
       heading = "Heading",

@@ -1,4 +1,3 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Avatar } from "./Avatar";
 
@@ -166,18 +165,54 @@ export const AllVariants: Story = {
       <div className="flex flex-col gap-3">
         <h3 className="text-heading">Image - Circle</h3>
         <div className="flex gap-4 items-center">
-          <Avatar type="image" size="large" shape="circle" src="https://i.pravatar.cc/150?img=1" alt="Large" />
-          <Avatar type="image" size="medium" shape="circle" src="https://i.pravatar.cc/150?img=2" alt="Medium" />
-          <Avatar type="image" size="small" shape="circle" src="https://i.pravatar.cc/150?img=3" alt="Small" />
+          <Avatar
+            type="image"
+            size="large"
+            shape="circle"
+            src="https://i.pravatar.cc/150?img=1"
+            alt="Large"
+          />
+          <Avatar
+            type="image"
+            size="medium"
+            shape="circle"
+            src="https://i.pravatar.cc/150?img=2"
+            alt="Medium"
+          />
+          <Avatar
+            type="image"
+            size="small"
+            shape="circle"
+            src="https://i.pravatar.cc/150?img=3"
+            alt="Small"
+          />
         </div>
       </div>
 
       <div className="flex flex-col gap-3">
         <h3 className="text-heading">Image - Square</h3>
         <div className="flex gap-4 items-center">
-          <Avatar type="image" size="large" shape="square" src="https://i.pravatar.cc/150?img=4" alt="Large" />
-          <Avatar type="image" size="medium" shape="square" src="https://i.pravatar.cc/150?img=5" alt="Medium" />
-          <Avatar type="image" size="small" shape="square" src="https://i.pravatar.cc/150?img=6" alt="Small" />
+          <Avatar
+            type="image"
+            size="large"
+            shape="square"
+            src="https://i.pravatar.cc/150?img=4"
+            alt="Large"
+          />
+          <Avatar
+            type="image"
+            size="medium"
+            shape="square"
+            src="https://i.pravatar.cc/150?img=5"
+            alt="Medium"
+          />
+          <Avatar
+            type="image"
+            size="small"
+            shape="square"
+            src="https://i.pravatar.cc/150?img=6"
+            alt="Small"
+          />
         </div>
       </div>
 

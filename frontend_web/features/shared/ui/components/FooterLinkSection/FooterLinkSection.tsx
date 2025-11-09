@@ -8,8 +8,9 @@
  */
 "use client";
 
-import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
+import type React from "react";
+import { forwardRef } from "react";
 import { TextLinkListItem } from "../../atoms/TextLinkListItem";
 
 export interface FooterLinkItem {
@@ -18,49 +19,55 @@ export interface FooterLinkItem {
   onClick?: () => void;
 }
 
-export interface FooterLinkSectionProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface FooterLinkSectionProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
   links?: FooterLinkItem[];
   className?: string;
 }
 
-export const FooterLinkSection = forwardRef<HTMLDivElement, FooterLinkSectionProps>(
-  ({ title = "Text Strong", links = [], className, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "flex flex-col items-start content-stretch",
-          "gap-[var(--sds-size-space-300,12px)]",
-          className,
-        )}
-        {...props}
-      >
-        {/* Title */}
-        <div className="flex flex-col items-start content-stretch gap-[10px] pb-[var(--sds-size-space-400,16px)] pt-0 px-0 w-full">
-          <div className="flex items-start content-stretch w-full">
-            <p
-              className={cn(
-                "font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)]",
-                "font-[var(--sds-typography-body-font-weight-strong,600)]",
-                "text-[length:var(--sds-typography-body-size-medium,16px)]",
-                "leading-[1.4]",
-                "text-[color:var(--sds-color-text-default-default,#1e1e1e)]",
-                "text-nowrap whitespace-pre",
-              )}
-            >
-              {title}
-            </p>
-          </div>
+export const FooterLinkSection = forwardRef<
+  HTMLDivElement,
+  FooterLinkSectionProps
+>(({ title = "Text Strong", links = [], className, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "flex flex-col items-start content-stretch",
+        "gap-[var(--sds-size-space-300,12px)]",
+        className,
+      )}
+      {...props}
+    >
+      {/* Title */}
+      <div className="flex flex-col items-start content-stretch gap-[10px] pb-[var(--sds-size-space-400,16px)] pt-0 px-0 w-full">
+        <div className="flex items-start content-stretch w-full">
+          <p
+            className={cn(
+              "font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)]",
+              "font-[var(--sds-typography-body-font-weight-strong,600)]",
+              "text-[length:var(--sds-typography-body-size-medium,16px)]",
+              "leading-[1.4]",
+              "text-[color:var(--sds-color-text-default-default,#1e1e1e)]",
+              "text-nowrap whitespace-pre",
+            )}
+          >
+            {title}
+          </p>
         </div>
-
-        {/* Links */}
-        {links.map((link, index) => (
-          <TextLinkListItem key={index} text={link.label} onClick={link.onClick} />
-        ))}
       </div>
-    );
-  },
-);
+
+      {/* Links */}
+      {links.map((link) => (
+        <TextLinkListItem
+          key={link.label}
+          text={link.label}
+          onClick={link.onClick}
+        />
+      ))}
+    </div>
+  );
+});
 
 FooterLinkSection.displayName = "FooterLinkSection";

@@ -1,8 +1,9 @@
 "use client";
-
-import React from "react";
 import { cn } from "@/features/shared/lib/utils";
-import { NavigationPill, NavigationPillState } from "../../atoms/NavigationPill";
+import {
+  NavigationPill,
+  type NavigationPillState,
+} from "../../atoms/NavigationPill";
 
 export type NavigationPillListDirection = "Row" | "Column";
 
@@ -43,9 +44,9 @@ export function NavigationPillList({
           className,
         )}
       >
-        {items.map((item, index) => (
+        {items.map((item) => (
           <NavigationPill
-            key={index}
+            key={item.label}
             label={item.label}
             state={item.state}
             onClick={item.onClick}
@@ -64,9 +65,9 @@ export function NavigationPillList({
         className,
       )}
     >
-      {items.map((item, index) => (
+      {items.map((item) => (
         <NavigationPill
-          key={index}
+          key={item.label}
           label={item.label}
           state={item.state}
           onClick={item.onClick}

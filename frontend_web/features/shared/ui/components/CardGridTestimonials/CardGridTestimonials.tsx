@@ -7,10 +7,11 @@
  */
 "use client";
 
-import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
-import { TextContentHeading } from "../TextContentHeading";
+import type React from "react";
+import { forwardRef } from "react";
 import { TestimonialCard } from "../TestimonialCard";
+import { TextContentHeading } from "../TextContentHeading";
 
 export interface Testimonial {
   quote: string;
@@ -20,7 +21,8 @@ export interface Testimonial {
   avatarAlt?: string;
 }
 
-export interface CardGridTestimonialsProps extends React.HTMLAttributes<HTMLElement> {
+export interface CardGridTestimonialsProps
+  extends React.HTMLAttributes<HTMLElement> {
   heading?: string;
   subheading?: string;
   hasSubheading?: boolean;
@@ -28,7 +30,10 @@ export interface CardGridTestimonialsProps extends React.HTMLAttributes<HTMLElem
   className?: string;
 }
 
-export const CardGridTestimonials = forwardRef<HTMLElement, CardGridTestimonialsProps>(
+export const CardGridTestimonials = forwardRef<
+  HTMLElement,
+  CardGridTestimonialsProps
+>(
   (
     {
       heading = "What Our Customers Say",
@@ -88,9 +93,9 @@ export const CardGridTestimonials = forwardRef<HTMLElement, CardGridTestimonials
             "md:gap-[var(--sds-size-space-1200,48px)]",
           )}
         >
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map((testimonial) => (
             <TestimonialCard
-              key={index}
+              key={`${testimonial.title}-${testimonial.quote}`}
               quote={testimonial.quote}
               title={testimonial.title}
               description={testimonial.description}

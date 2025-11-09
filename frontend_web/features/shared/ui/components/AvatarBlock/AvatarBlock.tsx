@@ -1,8 +1,9 @@
 "use client";
 
-import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
-import { Avatar, type AvatarSize, type AvatarShape } from "../../atoms/Avatar";
+import type React from "react";
+import { forwardRef } from "react";
+import { Avatar, type AvatarShape, type AvatarSize } from "../../atoms/Avatar";
 
 export interface AvatarBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
@@ -39,7 +40,13 @@ export const AvatarBlock = forwardRef<HTMLDivElement, AvatarBlockProps>(
         {...props}
       >
         {/* Avatar */}
-        <Avatar type="image" size={avatarSize} shape={avatarShape} src={avatarSrc} alt={avatarAlt} />
+        <Avatar
+          type="image"
+          size={avatarSize}
+          shape={avatarShape}
+          src={avatarSrc}
+          alt={avatarAlt}
+        />
 
         {/* Info */}
         <div className="flex flex-col gap-[var(--sds-size-space-050,2px)] items-start flex-1">

@@ -1,8 +1,9 @@
 "use client";
 
-import React, { forwardRef } from "react";
-import Link from "next/link";
 import { cn } from "@/features/shared/lib/utils";
+import Link from "next/link";
+import type React from "react";
+import { forwardRef } from "react";
 import { Button } from "../../atoms/Button";
 
 export type ButtonGroupAlign = "Justify" | "Start" | "End" | "Center" | "Stack";
@@ -44,7 +45,10 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
     },
     ref,
   ) => {
-    const renderButton = (button: ButtonGroupButton, buttonClassName?: string) => {
+    const renderButton = (
+      button: ButtonGroupButton,
+      buttonClassName?: string,
+    ) => {
       const buttonElement = (
         <Button
           variant={button.variant || "neutral"}
@@ -110,7 +114,8 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           renderButton(
             startButton,
             cn(
-              align === "Justify" && "flex-1 basis-0 grow shrink-0 min-w-px min-h-px",
+              align === "Justify" &&
+                "flex-1 basis-0 grow shrink-0 min-w-px min-h-px",
               align !== "Justify" && "shrink-0",
             ),
           )}
@@ -118,7 +123,8 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
           renderButton(
             endButton,
             cn(
-              align === "Justify" && "flex-1 basis-0 grow shrink-0 min-w-px min-h-px",
+              align === "Justify" &&
+                "flex-1 basis-0 grow shrink-0 min-w-px min-h-px",
               align !== "Justify" && "shrink-0",
             ),
           )}

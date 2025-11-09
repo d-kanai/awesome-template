@@ -1,4 +1,3 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { InputField } from "./InputField";
 
@@ -80,7 +79,7 @@ export const DefaultWithDescription: Story = {
 };
 
 // Error state stories
-export const Error: Story = {
+export const ErrorState: Story = {
   args: {
     label: "Label",
     placeholder: "Value",

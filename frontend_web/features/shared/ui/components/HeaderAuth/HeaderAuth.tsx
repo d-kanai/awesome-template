@@ -1,8 +1,9 @@
 "use client";
 
-import React, { forwardRef } from "react";
-import Link from "next/link";
 import { cn } from "@/features/shared/lib/utils";
+import Link from "next/link";
+import type React from "react";
+import { forwardRef } from "react";
 import { Avatar } from "../../atoms/Avatar";
 import { Button } from "../../atoms/Button";
 import { ChevronDown } from "../../atoms/ChevronDown";
@@ -106,20 +107,32 @@ export const HeaderAuth = forwardRef<HTMLDivElement, HeaderAuthProps>(
       onClick?: () => void,
     ) => {
       const button = (
-        <Button variant={variant} size="medium" onClick={onClick} className="w-full">
+        <Button
+          variant={variant}
+          size="medium"
+          onClick={onClick}
+          className="w-full"
+        >
           {label}
         </Button>
       );
 
       if (href) {
         return (
-          <Link href={href} className="flex-1 basis-0 grow shrink-0 min-w-px min-h-px">
+          <Link
+            href={href}
+            className="flex-1 basis-0 grow shrink-0 min-w-px min-h-px"
+          >
             {button}
           </Link>
         );
       }
 
-      return <div className="flex-1 basis-0 grow shrink-0 min-w-px min-h-px">{button}</div>;
+      return (
+        <div className="flex-1 basis-0 grow shrink-0 min-w-px min-h-px">
+          {button}
+        </div>
+      );
     };
 
     return (

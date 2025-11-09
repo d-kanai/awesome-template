@@ -7,11 +7,9 @@
  * ============================================
  */
 "use client";
-
-import React from "react";
 import { cn } from "@/features/shared/lib/utils";
-import { TextContentHeading } from "../TextContentHeading";
 import { AvatarBlock } from "../AvatarBlock";
+import { TextContentHeading } from "../TextContentHeading";
 
 export interface TestimonialCardProps {
   quote: string;
@@ -46,7 +44,12 @@ export function TestimonialCard({
       )}
     >
       {/* Quote */}
-      <TextContentHeading heading={quote} hasSubheading={false} align="Start" className="w-full" />
+      <TextContentHeading
+        heading={quote}
+        hasSubheading={false}
+        align="Start"
+        className="w-full"
+      />
 
       {/* Avatar Block */}
       <AvatarBlock

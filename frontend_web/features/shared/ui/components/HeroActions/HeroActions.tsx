@@ -1,6 +1,4 @@
 "use client";
-
-import React from "react";
 import { cn } from "@/features/shared/lib/utils";
 import { ButtonGroup } from "../ButtonGroup";
 import { TextContentTitle } from "../TextContentTitle";

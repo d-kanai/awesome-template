@@ -1,5 +1,5 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
 import { NavigationPill } from "./NavigationPill";
 
 const meta = {
@@ -75,7 +75,13 @@ export const NavigationList: Story = {
 export const Interactive: Story = {
   render: () => {
     const [activeIndex, setActiveIndex] = React.useState(0);
-    const items = ["Products", "Solutions", "Community", "Resources", "Pricing"];
+    const items = [
+      "Products",
+      "Solutions",
+      "Community",
+      "Resources",
+      "Pricing",
+    ];
 
     return (
       <div className="flex gap-2 items-center">

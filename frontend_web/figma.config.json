@@ -4,11 +4,7 @@
       "features/shared/figma_generated/**/*.figma.tsx",
       "features/shared/figma_generated/**/*.figma.ts"
     ],
-    "exclude": [
-      "**/*.stories.tsx",
-      "**/*.test.tsx",
-      "**/node_modules/**"
-    ],
+    "exclude": ["**/*.stories.tsx", "**/*.test.tsx", "**/node_modules/**"],
     "parser": "react",
     "label": "React",
     "importType": "esm",

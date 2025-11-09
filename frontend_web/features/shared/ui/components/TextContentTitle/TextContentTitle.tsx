@@ -1,11 +1,13 @@
 "use client";
 
-import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
+import type React from "react";
+import { forwardRef } from "react";
 
 export type TextContentTitleAlign = "Start" | "Center";
 
-export interface TextContentTitleProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface TextContentTitleProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
   subtitle?: string;
   hasSubtitle?: boolean;
@@ -13,7 +15,10 @@ export interface TextContentTitleProps extends React.HTMLAttributes<HTMLDivEleme
   className?: string;
 }
 
-export const TextContentTitle = forwardRef<HTMLDivElement, TextContentTitleProps>(
+export const TextContentTitle = forwardRef<
+  HTMLDivElement,
+  TextContentTitleProps
+>(
   (
     {
       title = "Title",

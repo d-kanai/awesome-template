@@ -12,7 +12,8 @@ const config: Config = {
         // Text colors
         text: {
           brand: {
-            "on-brand-tertiary": "var(--sds-color-text-brand-on-brand-tertiary)",
+            "on-brand-tertiary":
+              "var(--sds-color-text-brand-on-brand-tertiary)",
             "on-brand": "var(--sds-color-text-brand-on-brand)",
             tertiary: "var(--sds-color-text-brand-tertiary)",
           },
@@ -42,7 +43,8 @@ const config: Config = {
           },
           neutral: {
             tertiary: "var(--sds-color-background-neutral-tertiary)",
-            "tertiary-hover": "var(--sds-color-background-neutral-tertiary-hover)",
+            "tertiary-hover":
+              "var(--sds-color-background-neutral-tertiary-hover)",
           },
           disabled: {
             DEFAULT: "var(--sds-color-background-disabled-default)",
@@ -129,9 +131,9 @@ const config: Config = {
       },
       // Line height
       lineHeight: {
-        "body": "1.4",
-        "heading": "1.2",
-        "single": "1",
+        body: "1.4",
+        heading: "1.2",
+        single: "1",
       },
     },
   },

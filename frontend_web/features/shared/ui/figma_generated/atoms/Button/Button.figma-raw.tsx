@@ -11,14 +11,20 @@
  */
 "use client";
 
-import React from "react";
+import type React from "react";
 
-const img = "http://localhost:3845/assets/033754b7d4a00015b32c60053fe71f7a5a5f1aaf.svg";
-const img1 = "http://localhost:3845/assets/9db6e888ea2ba937a92587b4d2255234922a17c7.svg";
-const img2 = "http://localhost:3845/assets/af356927da1b4a35792e5a5a5112915ed7ba4164.svg";
-const img3 = "http://localhost:3845/assets/bb4fa82a53c2e73d14c53cbd6490260cd5a5070f.svg";
-const img4 = "http://localhost:3845/assets/84b6172ff4ac259f801f96b8f4f923b2664efe9b.svg";
-const img5 = "http://localhost:3845/assets/7042bdc4186f626723e7be7f42c05a550b7f40b5.svg";
+const img =
+  "http://localhost:3845/assets/033754b7d4a00015b32c60053fe71f7a5a5f1aaf.svg";
+const img1 =
+  "http://localhost:3845/assets/9db6e888ea2ba937a92587b4d2255234922a17c7.svg";
+const img2 =
+  "http://localhost:3845/assets/af356927da1b4a35792e5a5a5112915ed7ba4164.svg";
+const img3 =
+  "http://localhost:3845/assets/bb4fa82a53c2e73d14c53cbd6490260cd5a5070f.svg";
+const img4 =
+  "http://localhost:3845/assets/84b6172ff4ac259f801f96b8f4f923b2664efe9b.svg";
+const img5 =
+  "http://localhost:3845/assets/7042bdc4186f626723e7be7f42c05a550b7f40b5.svg";
 
 export interface ButtonProps {
   className?: string;
@@ -79,7 +85,11 @@ export default function Button({ className }: ButtonProps) {
                   absolute
                   inset-[-6.31%_-6%]
                 `}
-                style={{ "--stroke-0": "rgba(245, 245, 245, 1)" } as React.CSSProperties}
+                style={
+                  {
+                    "--stroke-0": "rgba(245, 245, 245, 1)",
+                  } as React.CSSProperties
+                }
               >
                 <img alt="" className="block max-w-none size-full" src={img} />
               </div>
@@ -125,7 +135,11 @@ export default function Button({ className }: ButtonProps) {
                   absolute
                   inset-[-10%]
                 `}
-                style={{ "--stroke-0": "rgba(245, 245, 245, 1)" } as React.CSSProperties}
+                style={
+                  {
+                    "--stroke-0": "rgba(245, 245, 245, 1)",
+                  } as React.CSSProperties
+                }
               >
                 <img alt="" className="block max-w-none size-full" src={img1} />
               </div>

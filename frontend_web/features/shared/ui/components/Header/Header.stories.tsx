@@ -1,5 +1,5 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
 import { Header } from "./Header";
 
 const meta = {
@@ -41,7 +41,8 @@ export const Desktop: Story = {
 
 export const DesktopWithLogo: Story = {
   args: {
-    logoSrc: "https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg",
+    logoSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg",
     logoAlt: "Figma",
   },
   parameters: {
@@ -62,7 +63,8 @@ export const Mobile: Story = {
 
 export const MobileWithLogo: Story = {
   args: {
-    logoSrc: "https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg",
+    logoSrc:
+      "https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg",
     logoAlt: "Figma",
   },
   parameters: {

@@ -9,18 +9,26 @@
  * ============================================
  */
 
-const imgAvatar1 = "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
-const imgAvatar2 = "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
-const imgAvatar3 = "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
-const imgAvatar4 = "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
-const imgAvatar5 = "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
-const imgAvatar6 = "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
+const imgAvatar1 =
+  "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
+const imgAvatar2 =
+  "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
+const imgAvatar3 =
+  "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
+const imgAvatar4 =
+  "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
+const imgAvatar5 =
+  "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
+const imgAvatar6 =
+  "http://localhost:3845/assets/99914b932bd37a50b983c5e7c90ae93b1f2df024.svg";
 
 type CardGridTestimonialsFigmaRawProps = {
   platform?: "Desktop" | "Mobile";
 };
 
-export default function CardGridTestimonialsFigmaRaw({ platform = "Desktop" }: CardGridTestimonialsFigmaRawProps) {
+export default function CardGridTestimonialsFigmaRaw({
+  platform = "Desktop",
+}: CardGridTestimonialsFigmaRawProps) {
   if (platform === "Mobile") {
     return (
       <div
@@ -97,8 +105,8 @@ export default function CardGridTestimonialsFigmaRaw({ platform = "Desktop" }: C
               className="font-[family-name:var(--sds-typography-body-font-family,'Inter:Regular',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] leading-[var(--sds-typography-body-line-height-medium,1.5)] not-italic relative self-stretch text-[color:var(--sds-color-text-default-default,#1e1e1e)] text-[length:var(--sds-typography-body-size-medium,16px)]"
               data-node-id="I562:8145;175:4455;123:3584;123:3581"
             >
-              &quot;This is an amazing product! It has completely transformed the
-              way we work and improved our productivity significantly.&quot;
+              &quot;This is an amazing product! It has completely transformed
+              the way we work and improved our productivity significantly.&quot;
             </p>
           </div>
           <div
@@ -147,8 +155,8 @@ export default function CardGridTestimonialsFigmaRaw({ platform = "Desktop" }: C
               className="font-[family-name:var(--sds-typography-body-font-family,'Inter:Regular',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] leading-[var(--sds-typography-body-line-height-medium,1.5)] not-italic relative self-stretch text-[color:var(--sds-color-text-default-default,#1e1e1e)] text-[length:var(--sds-typography-body-size-medium,16px)]"
               data-node-id="I562:8145;175:4455;123:3585;123:3581"
             >
-              &quot;This is an amazing product! It has completely transformed the
-              way we work and improved our productivity significantly.&quot;
+              &quot;This is an amazing product! It has completely transformed
+              the way we work and improved our productivity significantly.&quot;
             </p>
           </div>
           <div
@@ -197,8 +205,8 @@ export default function CardGridTestimonialsFigmaRaw({ platform = "Desktop" }: C
               className="font-[family-name:var(--sds-typography-body-font-family,'Inter:Regular',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] leading-[var(--sds-typography-body-line-height-medium,1.5)] not-italic relative self-stretch text-[color:var(--sds-color-text-default-default,#1e1e1e)] text-[length:var(--sds-typography-body-size-medium,16px)]"
               data-node-id="I562:8145;175:4455;123:3586;123:3581"
             >
-              &quot;This is an amazing product! It has completely transformed the
-              way we work and improved our productivity significantly.&quot;
+              &quot;This is an amazing product! It has completely transformed
+              the way we work and improved our productivity significantly.&quot;
             </p>
           </div>
           <div
@@ -247,8 +255,8 @@ export default function CardGridTestimonialsFigmaRaw({ platform = "Desktop" }: C
               className="font-[family-name:var(--sds-typography-body-font-family,'Inter:Regular',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] leading-[var(--sds-typography-body-line-height-medium,1.5)] not-italic relative self-stretch text-[color:var(--sds-color-text-default-default,#1e1e1e)] text-[length:var(--sds-typography-body-size-medium,16px)]"
               data-node-id="I562:8145;175:4455;123:3587;123:3581"
             >
-              &quot;This is an amazing product! It has completely transformed the
-              way we work and improved our productivity significantly.&quot;
+              &quot;This is an amazing product! It has completely transformed
+              the way we work and improved our productivity significantly.&quot;
             </p>
           </div>
           <div
@@ -297,8 +305,8 @@ export default function CardGridTestimonialsFigmaRaw({ platform = "Desktop" }: C
               className="font-[family-name:var(--sds-typography-body-font-family,'Inter:Regular',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] leading-[var(--sds-typography-body-line-height-medium,1.5)] not-italic relative self-stretch text-[color:var(--sds-color-text-default-default,#1e1e1e)] text-[length:var(--sds-typography-body-size-medium,16px)]"
               data-node-id="I562:8145;175:4455;123:3588;123:3581"
             >
-              &quot;This is an amazing product! It has completely transformed the
-              way we work and improved our productivity significantly.&quot;
+              &quot;This is an amazing product! It has completely transformed
+              the way we work and improved our productivity significantly.&quot;
             </p>
           </div>
           <div
@@ -347,8 +355,8 @@ export default function CardGridTestimonialsFigmaRaw({ platform = "Desktop" }: C
               className="font-[family-name:var(--sds-typography-body-font-family,'Inter:Regular',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] leading-[var(--sds-typography-body-line-height-medium,1.5)] not-italic relative self-stretch text-[color:var(--sds-color-text-default-default,#1e1e1e)] text-[length:var(--sds-typography-body-size-medium,16px)]"
               data-node-id="I562:8145;175:4455;123:3589;123:3581"
             >
-              &quot;This is an amazing product! It has completely transformed the
-              way we work and improved our productivity significantly.&quot;
+              &quot;This is an amazing product! It has completely transformed
+              the way we work and improved our productivity significantly.&quot;
             </p>
           </div>
         </div>

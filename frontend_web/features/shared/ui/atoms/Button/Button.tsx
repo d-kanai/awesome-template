@@ -1,7 +1,8 @@
 "use client";
 
-import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
+import type React from "react";
+import { forwardRef } from "react";
 
 export type ButtonVariant = "primary" | "neutral" | "subtle";
 export type ButtonSize = "small" | "medium" | "large";

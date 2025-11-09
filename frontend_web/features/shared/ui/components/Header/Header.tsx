@@ -7,10 +7,13 @@
  */
 "use client";
 
-import React, { useState } from "react";
 import { cn } from "@/features/shared/lib/utils";
-import { NavigationPillList, NavigationPillListItem } from "../NavigationPillList";
-import { HeaderAuth, HeaderAuthState } from "../HeaderAuth";
+import { useState } from "react";
+import { HeaderAuth, type HeaderAuthState } from "../HeaderAuth";
+import {
+  NavigationPillList,
+  type NavigationPillListItem,
+} from "../NavigationPillList";
 
 export interface NavigationItem {
   label: string;
@@ -138,6 +141,7 @@ export function Header({
 
           {/* Hamburger Menu Button - Mobile only */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={cn(
               "flex items-center justify-center overflow-clip",
@@ -151,6 +155,7 @@ export function Header({
               <svg
                 viewBox="0 0 16 16"
                 fill="none"
+                aria-hidden="true"
                 className="size-full"
               >
                 <path
@@ -187,6 +192,7 @@ export function Header({
 
             {/* Close Button */}
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center justify-center gap-[var(--sds-size-space-200,8px)] overflow-clip p-[var(--sds-size-space-300,12px)] rounded-[32px] shrink-0 size-[40px]"
               aria-label="Close menu"
@@ -195,6 +201,7 @@ export function Header({
                 <svg
                   viewBox="0 0 16 16"
                   fill="none"
+                  aria-hidden="true"
                   className="size-full"
                 >
                   <path

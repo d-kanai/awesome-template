@@ -11,12 +11,16 @@
  */
 "use client";
 
-import React from "react";
+import type React from "react";
 
-const img = "http://localhost:3845/assets/9b215cead51e1e760cf5acb064d6f134c93d579c.svg";
-const img1 = "http://localhost:3845/assets/5ec78d07553db0879c1c9cf1a965d99f9d50f361.svg";
-const img2 = "http://localhost:3845/assets/980b428413d8dac62ca15ce8366c9e7f90a3366e.svg";
-const img3 = "http://localhost:3845/assets/a978e5181a65527e0f3ca63ada0fa80a98f8ddf6.svg";
+const img =
+  "http://localhost:3845/assets/9b215cead51e1e760cf5acb064d6f134c93d579c.svg";
+const img1 =
+  "http://localhost:3845/assets/5ec78d07553db0879c1c9cf1a965d99f9d50f361.svg";
+const img2 =
+  "http://localhost:3845/assets/980b428413d8dac62ca15ce8366c9e7f90a3366e.svg";
+const img3 =
+  "http://localhost:3845/assets/a978e5181a65527e0f3ca63ada0fa80a98f8ddf6.svg";
 
 export interface CheckboxFieldProps {
   hasDescription?: boolean;
@@ -124,7 +128,11 @@ export default function CheckboxField({
             data-name="Description Row"
             data-node-id="9762:1446"
           >
-            <div className="shrink-0 size-[16px]" data-name="Space" data-node-id="709:11253" />
+            <div
+              className="shrink-0 size-[16px]"
+              data-name="Space"
+              data-node-id="709:11253"
+            />
             <p
               className="
                 basis-0
@@ -219,9 +227,17 @@ export default function CheckboxField({
                     absolute
                     inset-[-0.8px_-8.57%]
                   "
-                  style={{ "--stroke-0": "rgba(245, 245, 245, 1)" } as React.CSSProperties}
+                  style={
+                    {
+                      "--stroke-0": "rgba(245, 245, 245, 1)",
+                    } as React.CSSProperties
+                  }
                 >
-                  <img alt="" className="block max-w-none size-full" src={img} />
+                  <img
+                    alt=""
+                    className="block max-w-none size-full"
+                    src={img}
+                  />
                 </div>
               </div>
             </div>
@@ -245,7 +261,11 @@ export default function CheckboxField({
             data-name="Description Row"
             data-node-id="565:15640"
           >
-            <div className="shrink-0 size-[16px]" data-name="Space" data-node-id="709:11415" />
+            <div
+              className="shrink-0 size-[16px]"
+              data-name="Space"
+              data-node-id="709:11415"
+            />
             <p
               className="
                 basis-0
@@ -350,9 +370,17 @@ export default function CheckboxField({
                       absolute
                       inset-[-10.91%_-7.5%]
                     "
-                    style={{ "--stroke-0": "rgba(179, 179, 179, 1)" } as React.CSSProperties}
+                    style={
+                      {
+                        "--stroke-0": "rgba(179, 179, 179, 1)",
+                      } as React.CSSProperties
+                    }
                   >
-                    <img alt="" className="block max-w-none size-full" src={img1} />
+                    <img
+                      alt=""
+                      className="block max-w-none size-full"
+                      src={img1}
+                    />
                   </div>
                 </div>
               </div>
@@ -375,7 +403,11 @@ export default function CheckboxField({
             data-name="Description Row"
             data-node-id="565:15666"
           >
-            <div className="shrink-0 size-[16px]" data-name="Space" data-node-id="709:11408" />
+            <div
+              className="shrink-0 size-[16px]"
+              data-name="Space"
+              data-node-id="709:11408"
+            />
             <p
               className="
                 basis-0
@@ -471,7 +503,11 @@ export default function CheckboxField({
             data-name="Description Row"
             data-node-id="565:15666"
           >
-            <div className="shrink-0 size-[16px]" data-name="Space" data-node-id="709:11408" />
+            <div
+              className="shrink-0 size-[16px]"
+              data-name="Space"
+              data-node-id="709:11408"
+            />
             <p
               className="
                 basis-0
@@ -576,9 +612,17 @@ export default function CheckboxField({
                       absolute
                       inset-[-0.8px_-8.57%]
                     "
-                    style={{ "--stroke-0": "rgba(179, 179, 179, 1)" } as React.CSSProperties}
+                    style={
+                      {
+                        "--stroke-0": "rgba(179, 179, 179, 1)",
+                      } as React.CSSProperties
+                    }
                   >
-                    <img alt="" className="block max-w-none size-full" src={img2} />
+                    <img
+                      alt=""
+                      className="block max-w-none size-full"
+                      src={img2}
+                    />
                   </div>
                 </div>
               </div>
@@ -604,7 +648,11 @@ export default function CheckboxField({
             data-name="Description Row"
             data-node-id="587:17000"
           >
-            <div className="shrink-0 size-[16px]" data-name="Space" data-node-id="709:11416" />
+            <div
+              className="shrink-0 size-[16px]"
+              data-name="Space"
+              data-node-id="709:11416"
+            />
             <p
               className="
                 basis-0
@@ -698,7 +746,11 @@ export default function CheckboxField({
                   absolute
                   inset-[-10.91%_-7.5%]
                 "
-                style={{ "--stroke-0": "rgba(245, 245, 245, 1)" } as React.CSSProperties}
+                style={
+                  {
+                    "--stroke-0": "rgba(245, 245, 245, 1)",
+                  } as React.CSSProperties
+                }
               >
                 <img alt="" className="block max-w-none size-full" src={img3} />
               </div>
@@ -721,7 +773,11 @@ export default function CheckboxField({
           data-name="Description Row"
           data-node-id="9762:1446"
         >
-          <div className="shrink-0 size-[16px]" data-name="Space" data-node-id="709:11253" />
+          <div
+            className="shrink-0 size-[16px]"
+            data-name="Space"
+            data-node-id="709:11253"
+          />
           <p
             className="
               basis-0

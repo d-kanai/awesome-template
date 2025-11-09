@@ -1,4 +1,3 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { TextLinkListItem } from "./TextLinkListItem";
 
@@ -81,10 +80,22 @@ export const Interactive: Story = {
   },
   render: () => (
     <div className="flex flex-col gap-3">
-      <TextLinkListItem text="About" onClick={() => console.log("About clicked")} />
-      <TextLinkListItem text="Contact" onClick={() => console.log("Contact clicked")} />
-      <TextLinkListItem text="Privacy" onClick={() => console.log("Privacy clicked")} />
-      <TextLinkListItem text="Terms" onClick={() => console.log("Terms clicked")} />
+      <TextLinkListItem
+        text="About"
+        onClick={() => console.log("About clicked")}
+      />
+      <TextLinkListItem
+        text="Contact"
+        onClick={() => console.log("Contact clicked")}
+      />
+      <TextLinkListItem
+        text="Privacy"
+        onClick={() => console.log("Privacy clicked")}
+      />
+      <TextLinkListItem
+        text="Terms"
+        onClick={() => console.log("Terms clicked")}
+      />
     </div>
   ),
 };

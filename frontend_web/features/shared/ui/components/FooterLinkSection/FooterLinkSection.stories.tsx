@@ -1,4 +1,3 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { FooterLinkSection } from "./FooterLinkSection";
 
@@ -89,11 +88,7 @@ export const Resources: Story = {
 export const ShortList: Story = {
   args: {
     title: "Quick Links",
-    links: [
-      { label: "About" },
-      { label: "Contact" },
-      { label: "Privacy" },
-    ],
+    links: [{ label: "About" }, { label: "Contact" }, { label: "Privacy" }],
   },
 };
 

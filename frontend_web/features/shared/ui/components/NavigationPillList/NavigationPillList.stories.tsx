@@ -1,5 +1,5 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
 import { NavigationPillList } from "./NavigationPillList";
 
 const meta = {
@@ -74,7 +74,14 @@ export const ColumnLayout: Story = {
 export const Interactive: Story = {
   render: () => {
     const [activeIndex, setActiveIndex] = React.useState(0);
-    const labels = ["Products", "Solutions", "Community", "Resources", "Pricing", "Contact"];
+    const labels = [
+      "Products",
+      "Solutions",
+      "Community",
+      "Resources",
+      "Pricing",
+      "Contact",
+    ];
 
     const items = labels.map((label, index) => ({
       label,
@@ -89,7 +96,14 @@ export const Interactive: Story = {
 export const InteractiveColumn: Story = {
   render: () => {
     const [activeIndex, setActiveIndex] = React.useState(1);
-    const labels = ["Products", "Solutions", "Community", "Resources", "Pricing", "Contact"];
+    const labels = [
+      "Products",
+      "Solutions",
+      "Community",
+      "Resources",
+      "Pricing",
+      "Contact",
+    ];
 
     const items = labels.map((label, index) => ({
       label,

@@ -1,6 +1,4 @@
 "use client";
-
-import React from "react";
 import { cn } from "@/features/shared/lib/utils";
 
 export type NavigationPillState = "Default" | "Active" | "Hover";
@@ -20,14 +18,17 @@ export function NavigationPill({
 }: NavigationPillProps) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
         "flex items-center justify-center content-stretch",
         "gap-[var(--sds-size-space-200,8px)]",
         "p-[var(--sds-size-space-200,8px)]",
         "rounded-[var(--sds-size-radius-200,8px)]",
-        state === "Active" && "bg-[var(--sds-color-background-brand-tertiary,#f5f5f5)]",
-        state === "Hover" && "bg-[var(--sds-color-background-default-default-hover,#f5f5f5)]",
+        state === "Active" &&
+          "bg-[var(--sds-color-background-brand-tertiary,#f5f5f5)]",
+        state === "Hover" &&
+          "bg-[var(--sds-color-background-default-default-hover,#f5f5f5)]",
         className,
       )}
     >

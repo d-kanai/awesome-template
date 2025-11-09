@@ -1,4 +1,3 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { CardGridTestimonials } from "./CardGridTestimonials";
 
@@ -34,7 +33,8 @@ type Story = StoryObj<typeof meta>;
 
 const sampleTestimonials = [
   {
-    quote: "This product has completely transformed how we work. Highly recommended!",
+    quote:
+      "This product has completely transformed how we work. Highly recommended!",
     title: "Sarah Johnson",
     description: "CEO, TechCorp",
     avatarSrc: "https://i.pravatar.cc/150?img=1",
@@ -48,7 +48,8 @@ const sampleTestimonials = [
     avatarAlt: "Michael Chen",
   },
   {
-    quote: "Outstanding service and support. The team really cares about their customers.",
+    quote:
+      "Outstanding service and support. The team really cares about their customers.",
     title: "Emma Wilson",
     description: "Designer, Creative Agency",
     avatarSrc: "https://i.pravatar.cc/150?img=3",

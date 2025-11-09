@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
 import { cn } from "@/features/shared/lib/utils";
-import { FooterLinkSection, type FooterLinkItem } from "../FooterLinkSection";
+import type React from "react";
+import { type FooterLinkItem, FooterLinkSection } from "../FooterLinkSection";
 
 export interface FooterLinkSectionData {
   title: string;
@@ -110,9 +110,10 @@ export function Footer({
           {/* Social Links */}
           {socialLinks.length > 0 && (
             <div className="flex items-center content-stretch gap-[var(--sds-size-space-400,16px)]">
-              {socialLinks.map((social, index) => (
+              {socialLinks.map((social) => (
                 <button
-                  key={index}
+                  key={social.label}
+                  type="button"
                   onClick={social.onClick}
                   aria-label={social.label}
                   className="relative shrink-0 size-[24px]"
@@ -125,9 +126,9 @@ export function Footer({
         </div>
 
         {/* Link Sections */}
-        {linkSections.map((section, sectionIndex) => (
+        {linkSections.map((section) => (
           <FooterLinkSection
-            key={sectionIndex}
+            key={section.title}
             title={section.title}
             links={section.links}
             className="shrink-0 w-[262px]"

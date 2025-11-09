@@ -1,4 +1,3 @@
-import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { TestimonialCard } from "./TestimonialCard";
 
@@ -38,7 +37,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    quote: "This product has completely transformed how we work. Highly recommended!",
+    quote:
+      "This product has completely transformed how we work. Highly recommended!",
     title: "Sarah Johnson",
     description: "CEO, TechCorp",
     avatarSrc: "https://i.pravatar.cc/150?img=1",
@@ -48,7 +48,8 @@ export const Default: Story = {
 
 export const LongQuote: Story = {
   args: {
-    quote: "Working with this team has been an absolute pleasure. Their attention to detail and commitment to excellence is unmatched in the industry. I couldn't be happier with the results.",
+    quote:
+      "Working with this team has been an absolute pleasure. Their attention to detail and commitment to excellence is unmatched in the industry. I couldn't be happier with the results.",
     title: "Michael Chen",
     description: "Product Manager, StartupXYZ",
     avatarSrc: "https://i.pravatar.cc/150?img=2",
