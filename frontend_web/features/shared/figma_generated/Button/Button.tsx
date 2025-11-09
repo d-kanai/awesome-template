@@ -34,7 +34,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       "inline-flex items-center justify-center",
       "gap-[var(--sds-size-space-200,8px)]",
       "rounded-[var(--sds-size-radius-200,8px)]",
-      "border-[var(--sds-size-stroke-border,1px)] border-solid",
+      "border-solid",
+      "border-[length:var(--sds-size-stroke-border,1px)]",
       "font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)]",
       "font-[var(--sds-typography-body-font-weight-regular,400)]",
       "text-[length:var(--sds-typography-body-size-medium,16px)]",
@@ -48,19 +49,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
       // Variant styles - using semantic tokens
       variant === "primary" && [
-        "bg-[var(--sds-color-background-brand-default)] border-[var(--sds-color-border-brand-default)] text-[var(--sds-color-text-brand-on-brand)]",
+        "bg-[var(--sds-color-background-brand-default)] border-[color:var(--sds-color-border-brand-default)] text-[color:var(--sds-color-text-brand-on-brand)]",
         "hover:bg-[var(--sds-color-background-brand-hover)]",
-        "disabled:bg-[var(--sds-color-background-disabled-default)] disabled:border-[var(--sds-color-border-disabled-default)] disabled:text-[var(--sds-color-text-disabled-on-disabled)]",
+        "disabled:bg-[var(--sds-color-background-disabled-default)] disabled:border-[color:var(--sds-color-border-disabled-default)] disabled:text-[color:var(--sds-color-text-disabled-on-disabled)]",
       ],
       variant === "neutral" && [
-        "bg-[var(--sds-color-background-neutral-tertiary)] border-[var(--sds-color-border-neutral-secondary)] text-[var(--sds-color-text-default-default)]",
+        "bg-[var(--sds-color-background-neutral-tertiary)] border-[color:var(--sds-color-border-neutral-secondary)] text-[color:var(--sds-color-text-default-default)]",
         "hover:bg-[var(--sds-color-background-neutral-tertiary-hover)]",
-        "disabled:bg-[var(--sds-color-background-disabled-default)] disabled:border-[var(--sds-color-border-disabled-default)] disabled:text-[var(--sds-color-text-disabled-on-disabled)]",
+        "disabled:bg-[var(--sds-color-background-disabled-default)] disabled:border-[color:var(--sds-color-border-disabled-default)] disabled:text-[color:var(--sds-color-text-disabled-on-disabled)]",
       ],
       variant === "subtle" && [
-        "bg-transparent border-transparent text-[var(--sds-color-text-default-default)]",
-        "hover:border-[var(--sds-color-border-default-default)]",
-        "disabled:bg-[var(--sds-color-background-disabled-default)] disabled:border-[var(--sds-color-border-disabled-default)] disabled:text-[var(--sds-color-text-disabled-on-disabled)]",
+        "bg-transparent border-transparent text-[color:var(--sds-color-text-default-default)]",
+        "hover:border-[color:var(--sds-color-border-default-default)]",
+        "disabled:bg-[var(--sds-color-background-disabled-default)] disabled:border-[color:var(--sds-color-border-disabled-default)] disabled:text-[color:var(--sds-color-text-disabled-on-disabled)]",
       ],
 
       className,

@@ -46,8 +46,9 @@ export function Card({
         isHorizontal ? "flex-row flex-wrap" : "flex-col",
         hasStroke && [
           "bg-[var(--sds-color-background-default-default,#ffffff)]",
-          "border-[var(--sds-color-border-default-default,#d9d9d9)]",
-          "border-[var(--sds-size-stroke-border,1px)] border-solid",
+          "border-[color:var(--sds-color-border-default-default,#d9d9d9)]",
+          "border-solid",
+          "border-[length:var(--sds-size-stroke-border,1px)]",
           "p-[var(--sds-size-space-600,24px)]",
           "rounded-[var(--sds-size-radius-200,8px)]",
         ],

@@ -44,6 +44,12 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
   - 例: `rounded-lg` → `rounded-[var(--sds-size-radius-200,8px)]`
   - 例: `border` → `border-[var(--sds-size-stroke-border,1px)]`
   - 例: `text-base font-normal` → `font-[family-name:var(--sds-typography-body-font-family)] font-[var(--sds-typography-body-font-weight-regular)] text-[length:var(--sds-typography-body-size-medium)]`
+- **重要**: Tailwind arbitrary valuesでは、プロパティの種類を明示的に指定すること
+  - border-widthの場合: `border-[length:var(--sds-size-stroke-border,1px)]`
+  - border-colorの場合: `border-[color:var(--sds-color-border-default-default,#d9d9d9)]`
+  - text-colorの場合: `text-[color:var(--sds-color-text-default-default,#1e1e1e)]`
+  - font-sizeの場合: `text-[length:var(--sds-typography-body-size-medium,16px)]`
+  - 理由: Tailwindは`border-[var(...)]`を自動的に`border-color`として解釈するため、border-widthやfont-sizeなど他のプロパティには明示的な型指定が必要
 - 理由: Figmaでデザイントークンの値が変更された際、CSS変数を更新するだけで全コンポーネントに反映される（コンポーネントコードの変更不要）
 - MCPの`get_design_context`で取得したコードを参考に、正確なtoken名を使用すること
 

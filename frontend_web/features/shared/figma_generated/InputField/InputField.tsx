@@ -74,14 +74,15 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           className={cn(
             "min-w-[240px] w-full relative",
             "rounded-[var(--sds-size-radius-200,8px)]",
-            "border-[var(--sds-size-stroke-border,1px)] border-solid",
+            "border-solid",
+            "border-[length:var(--sds-size-stroke-border,1px)]",
             isError &&
-              "bg-[var(--sds-color-background-default-default,#ffffff)] border-[var(--sds-color-border-danger-default,#900b09)]",
+              "bg-[var(--sds-color-background-default-default,#ffffff)] border-[color:var(--sds-color-border-danger-default,#900b09)]",
             isDisabled &&
-              "bg-[var(--sds-color-background-disabled-default,#d9d9d9)] border-[var(--sds-color-border-disabled-secondary,#b2b2b2)]",
+              "bg-[var(--sds-color-background-disabled-default,#d9d9d9)] border-[color:var(--sds-color-border-disabled-secondary,#b2b2b2)]",
             !isError &&
               !isDisabled &&
-              "bg-[var(--sds-color-background-default-default,#ffffff)] border-[var(--sds-color-border-default-default,#d9d9d9)]",
+              "bg-[var(--sds-color-background-default-default,#ffffff)] border-[color:var(--sds-color-border-default-default,#d9d9d9)]",
           )}
         >
           <input
