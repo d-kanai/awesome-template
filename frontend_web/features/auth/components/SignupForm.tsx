@@ -20,12 +20,9 @@ function EmailField({
     <InputField
       id="signup-email"
       data-testid={SignupTestIds.emailInput}
-      hasLabel
       label="メールアドレス"
       type="email"
-      valueType="placeholder"
-      value="email@example.com"
-      state={error ? "error" : disabled ? "disabled" : "default"}
+      placeholder="email@example.com"
       disabled={disabled}
       hasError={!!error}
       error={error}
@@ -47,12 +44,9 @@ function PasswordField({
     <InputField
       id="signup-password"
       data-testid={SignupTestIds.passwordInput}
-      hasLabel
       label="パスワード"
       type="password"
-      valueType="placeholder"
-      value="8文字以上"
-      state={error ? "error" : disabled ? "disabled" : "default"}
+      placeholder="8文字以上"
       disabled={disabled}
       hasError={!!error}
       error={error}
@@ -64,10 +58,12 @@ function PasswordField({
 function ErrorMessage({ error }: { error: string }) {
   return (
     <div
-      className="rounded-md bg-destructive/10 p-Space-400"
+      className="rounded-[var(--sds-size-radius-200,8px)] bg-[#fee2e2] p-[var(--sds-size-space-400,16px)]"
       data-testid={SignupTestIds.errorMessage}
     >
-      <p className="text-body-small text-destructive">{error}</p>
+      <p className="font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] text-[length:var(--sds-typography-body-size-small,14px)] leading-[1.4] text-[color:var(--sds-color-text-danger-default,#900b09)]">
+        {error}
+      </p>
     </div>
   );
 }
@@ -78,7 +74,6 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
       type="submit"
       variant="primary"
       size="medium"
-      state={disabled ? "disabled" : "default"}
       disabled={disabled}
       className="w-full"
       data-testid={SignupTestIds.submitButton}
@@ -90,11 +85,11 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
 
 function SuggestSigninSection() {
   return (
-    <p className="text-center text-body-small text-foreground-secondary">
+    <p className="text-center font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] text-[length:var(--sds-typography-body-size-small,14px)] leading-[1.4] text-[color:var(--sds-color-text-default-secondary,#757575)]">
       すでにアカウントをお持ちですか？{" "}
       <Link
         href={AUTH_ROUTES.SIGNIN}
-        className="font-medium text-primary hover:text-primary/80"
+        className="font-[var(--sds-typography-body-font-weight-strong,600)] text-[color:var(--sds-color-text-brand-on-brand-tertiary,#2c2c2c)] hover:text-[color:var(--sds-color-text-default-default,#1e1e1e)]"
         data-testid={SignupTestIds.signinLink}
       >
         サインイン
@@ -107,10 +102,10 @@ export function SignupForm() {
   const { form, onSubmit, submitError } = useSignupForm();
 
   return (
-    <div className="space-y-Space-600">
+    <div className="flex flex-col gap-[var(--sds-size-space-600,24px)]">
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-Space-600"
+        className="flex flex-col gap-[var(--sds-size-space-600,24px)]"
       >
         <EmailField
           register={form.register}
