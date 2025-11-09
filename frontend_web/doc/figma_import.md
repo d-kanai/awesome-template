@@ -30,6 +30,11 @@
    - 例: TestimonialCard = TextContentHeading + AvatarBlock
    - 例: Footer = FooterLinkSection, FooterLinkSection = TextLinkListItem
    - 例: HomePage = Header + HeroActions + CardGridTestimonials + Footer
+4. **レスポンシブ対応**: FigmaにDesktop版とMobile版が存在する場合、Tailwindレスポンシブクラスで実装すること
+   - Figmaの`platform` propパターンは`.figma-raw.tsx`にのみ保持（参照用）
+   - 実装ファイル（`.tsx`）では`platform` propを使わず、Tailwindの`md:`ブレークポイント（768px）で自動切り替え
+   - Mobile First: デフォルトスタイルがMobile、`md:`プレフィックスでDesktop
+   - 例: `hidden md:flex` (Mobile非表示、Desktop表示), `flex md:hidden` (Mobile表示、Desktop非表示)
 
 ## 実装手順
 
@@ -387,6 +392,135 @@ export const CardGridTestimonials = forwardRef<HTMLElement, CardGridTestimonials
 );
 
 CardGridTestimonials.displayName = "CardGridTestimonials";
+```
+
+### 4. Responsive Component（Header）
+
+FigmaにDesktop版とMobile版が存在する場合の実装例。
+
+```typescript
+// Header.tsx
+"use client";
+
+import React, { useState } from "react";
+import { cn } from "@/features/shared/lib/utils";
+import { NavigationPillList } from "../NavigationPillList";
+import { HeaderAuth } from "../HeaderAuth";
+
+export interface HeaderProps {
+  logoSrc?: string;
+  logoAlt?: string;
+  navigationItems?: NavigationItem[];
+  authState?: HeaderAuthState;
+  // ❌ platform prop は削除（Figma rawにのみ存在）
+  className?: string;
+}
+
+export function Header({
+  logoSrc,
+  logoAlt = "Logo",
+  navigationItems = defaultNavigationItems,
+  authState = "Logged Out",
+  className,
+}: HeaderProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  return (
+    <>
+      {/* Header Bar */}
+      <header
+        className={cn(
+          "bg-[var(--sds-color-background-default-default,#ffffff)]",
+          "border-[color:var(--sds-color-border-default-default,#d9d9d9)]",
+          "border-b",
+          "w-full",
+          className,
+        )}
+      >
+        <div
+          className={cn(
+            "flex items-center",
+
+            // Mobile (デフォルト)
+            "justify-between",
+            "p-[var(--sds-size-space-600,24px)]",
+
+            // Desktop (md: 768px以上)
+            "md:flex-wrap md:content-center",
+            "md:gap-[var(--sds-size-space-600,24px)]",
+            "md:p-[var(--sds-size-space-800,32px)]",
+          )}
+        >
+          {/* Logo - 常に表示 */}
+          <div className="flex items-center gap-[24px] shrink-0">
+            {/* Logo content */}
+          </div>
+
+          {/* Navigation - Desktop only */}
+          <NavigationPillList
+            items={pillItems}
+            className={cn(
+              "hidden", // Mobile: 非表示
+              "md:flex md:flex-1 md:justify-end", // Desktop: 表示
+            )}
+          />
+
+          {/* Auth - Desktop only */}
+          <HeaderAuth
+            state={authState}
+            className={cn(
+              "hidden", // Mobile: 非表示
+              "md:block", // Desktop: 表示
+            )}
+          />
+
+          {/* Hamburger - Mobile only */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden" // Desktop: 非表示
+          >
+            {/* Menu icon */}
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile Menu Overlay - Mobile only */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Menu content */}
+        </div>
+      )}
+    </>
+  );
+}
+```
+
+**ポイント:**
+- `platform` propは削除し、Tailwindの`md:`ブレークポイントで自動切り替え
+- Mobile First: デフォルトがMobile、`md:`でDesktop
+- `hidden md:flex`: Mobile非表示、Desktop表示
+- `flex md:hidden`: Mobile表示、Desktop非表示
+
+**Storybook:**
+```typescript
+// Header.stories.tsx
+export const Desktop: Story = {
+  args: {},
+  parameters: {
+    viewport: {
+      defaultViewport: "responsive", // 1200px
+    },
+  },
+};
+
+export const Mobile: Story = {
+  args: {},
+  parameters: {
+    viewport: {
+      defaultViewport: "mobile1", // 375px
+    },
+  },
+};
 ```
 
 ## よくある問題と対処法
