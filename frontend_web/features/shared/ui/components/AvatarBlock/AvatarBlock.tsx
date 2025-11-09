@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/features/shared/lib/utils";
-import type React from "react";
+import React from "react";
 import { forwardRef } from "react";
 import { Avatar, type AvatarShape, type AvatarSize } from "../../atoms/Avatar";
 

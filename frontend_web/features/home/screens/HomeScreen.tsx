@@ -4,7 +4,7 @@ import { CardGridTestimonials } from "@/features/shared/ui/components/CardGridTe
 import { Footer } from "@/features/shared/ui/components/Footer";
 import { Header } from "@/features/shared/ui/components/Header";
 import { HeroActions } from "@/features/shared/ui/components/HeroActions";
-import type React from "react";
+import React from "react";
 import type { Testimonial } from "../data/getTestimonials";
 import { HomeTestIds } from "../test-ids";
 

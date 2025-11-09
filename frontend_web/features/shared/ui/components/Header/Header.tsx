@@ -8,7 +8,8 @@
 "use client";
 
 import { cn } from "@/features/shared/lib/utils";
-import { useState } from "react";
+// biome-ignore lint/correctness/noUnusedImports: React is needed for JSX in Storybook
+import React, { useState } from "react";
 import { HeaderAuth, type HeaderAuthState } from "../HeaderAuth";
 import {
   NavigationPillList,

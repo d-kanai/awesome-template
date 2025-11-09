@@ -9,7 +9,7 @@
 "use client";
 
 import { cn } from "@/features/shared/lib/utils";
-import type React from "react";
+import React from "react";
 import { forwardRef } from "react";
 import { TextLinkListItem } from "../../atoms/TextLinkListItem";
 

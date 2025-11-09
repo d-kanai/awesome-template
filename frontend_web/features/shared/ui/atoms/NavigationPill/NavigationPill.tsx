@@ -1,5 +1,8 @@
 "use client";
+
 import { cn } from "@/features/shared/lib/utils";
+// biome-ignore lint/correctness/noUnusedImports: React is needed for JSX in Storybook
+import React from "react";
 
 export type NavigationPillState = "Default" | "Active" | "Hover";
 

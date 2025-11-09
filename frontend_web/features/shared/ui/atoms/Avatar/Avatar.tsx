@@ -1,8 +1,7 @@
 "use client";
 
 import { cn } from "@/features/shared/lib/utils";
-import type React from "react";
-import { forwardRef } from "react";
+import React, { forwardRef } from "react";
 
 export type AvatarType = "initial" | "image";
 export type AvatarSize = "large" | "medium" | "small";

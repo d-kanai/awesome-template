@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/features/shared/lib/utils";
-import type React from "react";
+import React from "react";
 import { type FooterLinkItem, FooterLinkSection } from "../FooterLinkSection";
 
 export interface FooterLinkSectionData {

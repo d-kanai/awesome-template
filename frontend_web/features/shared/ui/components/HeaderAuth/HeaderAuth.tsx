@@ -2,7 +2,7 @@
 
 import { cn } from "@/features/shared/lib/utils";
 import Link from "next/link";
-import type React from "react";
+import React from "react";
 import { forwardRef } from "react";
 import { Avatar } from "../../atoms/Avatar";
 import { Button } from "../../atoms/Button";
