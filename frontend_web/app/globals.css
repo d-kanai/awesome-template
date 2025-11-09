@@ -4,18 +4,162 @@
 
 @layer base {
   :root {
-    --background: #ffffff;
-    --foreground: #171717;
+    /* Color - Text */
+    --sds-color-text-brand-on-brand-tertiary: #2c2c2c;
+    --sds-color-text-brand-on-brand: #f5f5f5;
+    --sds-color-text-brand-tertiary: #757575;
+    --sds-color-text-default-default: #1e1e1e;
+    --sds-color-text-default-tertiary: #b3b3b3;
+    --sds-color-text-default-secondary: #757575;
+    --sds-color-text-neutral-default: #303030;
+    --sds-color-text-disabled-on-disabled: #b3b3b3;
+
+    /* Color - Background */
+    --sds-color-background-default-default: #ffffff;
+    --sds-color-background-default-secondary: #f5f5f5;
+    --sds-color-background-brand-default: #2c2c2c;
+    --sds-color-background-brand-hover: #1e1e1e;
+    --sds-color-background-brand-secondary: #e6e6e6;
+    --sds-color-background-brand-tertiary: #f5f5f5;
+    --sds-color-background-neutral-tertiary: #e3e3e3;
+    --sds-color-background-neutral-tertiary-hover: #cdcdcd;
+    --sds-color-background-disabled-default: #d9d9d9;
+    --sds-color-background-utilities-scrim: #ffffffcc;
+
+    /* Color - Border */
+    --sds-color-border-default-default: #d9d9d9;
+    --sds-color-border-brand-default: #2c2c2c;
+    --sds-color-border-neutral-secondary: #767676;
+    --sds-color-border-disabled-default: #b3b3b3;
+
+    /* Color - Icon */
+    --sds-color-icon-default-tertiary: #b3b3b3;
+    --sds-color-icon-default-default: #1e1e1e;
+    --sds-color-icon-brand-on-brand: #f5f5f5;
+
+    /* Color - Primitives */
+    --sds-color-black-100: #0c0c0d0d;
+    --sds-color-black-200: #0c0c0d1a;
+    --sds-color-slate-200: #e3e3e3;
+
+    /* Typography - Title Hero */
+    --sds-typography-title-hero-size: 72px;
+    --sds-typography-title-hero-font-family: Inter;
+    --sds-typography-title-hero-font-weight: 700;
+
+    /* Typography - Subtitle */
+    --sds-typography-subtitle-size-base: 32px;
+    --sds-typography-subtitle-font-family: Inter;
+    --sds-typography-subtitle-font-weight: 400;
+
+    /* Typography - Body */
+    --sds-typography-body-size-medium: 16px;
+    --sds-typography-body-size-small: 14px;
+    --sds-typography-body-font-family: Inter;
+    --sds-typography-body-font-weight-regular: 400;
+    --sds-typography-body-font-weight-strong: 600;
+
+    /* Typography - Heading */
+    --sds-typography-heading-size-base: 24px;
+    --sds-typography-heading-font-family: Inter;
+    --sds-typography-heading-font-weight: 600;
+
+    /* Size - Space */
+    --sds-size-space-100: 4px;
+    --sds-size-space-200: 8px;
+    --sds-size-space-300: 12px;
+    --sds-size-space-400: 16px;
+    --sds-size-space-600: 24px;
+    --sds-size-space-800: 32px;
+    --sds-size-space-1200: 48px;
+    --sds-size-space-1600: 64px;
+    --sds-size-space-4000: 160px;
+
+    /* Size - Radius */
+    --sds-size-radius-100: 4px;
+    --sds-size-radius-200: 8px;
+    --sds-size-radius-400: 16px;
+    --sds-size-radius-full: 9999px;
+
+    /* Size - Stroke */
+    --sds-size-stroke-border: 1px;
+
+    /* Size - Depth */
+    --sds-size-depth-0: 0px;
+    --sds-size-depth-100: 4px;
+    --sds-size-depth-400: 16px;
+    --sds-size-depth-800: 32px;
+    --sds-size-depth-negative-100: -4px;
+
+    /* Size - Blur */
+    --sds-size-blur-100: 4px;
+
+    /* Responsive */
+    --sds-responsive-device-width: 1200px;
+    --sds-responsive-border-width: 1px;
   }
 
   .dark {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Dark mode overrides will be added here */
   }
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--sds-color-text-default-default);
+  background: var(--sds-color-background-default-default);
+  font-family: var(--sds-typography-body-font-family), sans-serif;
+  font-size: var(--sds-typography-body-size-medium);
+  font-weight: var(--sds-typography-body-font-weight-regular);
+}
+
+@layer components {
+  /* Typography Styles */
+  .text-body-base {
+    font-family: var(--sds-typography-body-font-family), sans-serif;
+    font-size: var(--sds-typography-body-size-medium);
+    font-weight: var(--sds-typography-body-font-weight-regular);
+    line-height: 1.4;
+  }
+
+  .text-body-base-single-line {
+    font-family: var(--sds-typography-body-font-family), sans-serif;
+    font-size: var(--sds-typography-body-size-medium);
+    font-weight: var(--sds-typography-body-font-weight-regular);
+    line-height: 1;
+  }
+
+  .text-body-small {
+    font-family: var(--sds-typography-body-font-family), sans-serif;
+    font-size: var(--sds-typography-body-size-small);
+    font-weight: var(--sds-typography-body-font-weight-regular);
+    line-height: 1.4;
+  }
+
+  .text-body-strong {
+    font-family: var(--sds-typography-body-font-family), sans-serif;
+    font-size: var(--sds-typography-body-size-medium);
+    font-weight: var(--sds-typography-body-font-weight-strong);
+    line-height: 1.4;
+  }
+
+  .text-heading {
+    font-family: var(--sds-typography-heading-font-family), sans-serif;
+    font-size: var(--sds-typography-heading-size-base);
+    font-weight: var(--sds-typography-heading-font-weight);
+    line-height: 1.2;
+  }
+
+  .text-subtitle {
+    font-family: var(--sds-typography-subtitle-font-family), sans-serif;
+    font-size: var(--sds-typography-subtitle-size-base);
+    font-weight: var(--sds-typography-subtitle-font-weight);
+    line-height: 1.2;
+  }
+
+  .text-title-hero {
+    font-family: var(--sds-typography-title-hero-font-family), sans-serif;
+    font-size: var(--sds-typography-title-hero-size);
+    font-weight: var(--sds-typography-title-hero-font-weight);
+    line-height: 1.2;
+  }
 }
