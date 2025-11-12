@@ -700,22 +700,37 @@ features/shared/ui/
 
 ##### 3. 差分がある場合のみ更新作業
 
-**a. 実装版を更新（カスタマイズを保持）**
+**重要: 必ず figma-raw → 実装 の順で更新すること**
 
-```bash
-# Editツールで該当箇所のみ更新
-# features/shared/ui/atoms/TextLinkListItem/TextLinkListItem.tsx
-# forwardRef、onClick等のカスタマイズは保持
-```
-
-**b. `.figma-raw.tsx`を最新版で更新**
+**a. `.figma-raw.tsx`を最新版で更新**
 
 ```bash
 # Writeツールで最新版を保存
 # features/shared/ui/figma_generated/atoms/TextLinkListItem/TextLinkListItem.figma-raw.tsx
 ```
 
-**c. タイムスタンプ更新**
+**b. git diff で figma-raw の差分を確認**
+
+```bash
+git diff features/shared/ui/figma_generated/atoms/TextLinkListItem/TextLinkListItem.figma-raw.tsx
+
+# Figmaの純粋な変更内容を把握:
+# - どのデザイントークンが変わったか
+# - どのスタイルが追加/削除されたか
+```
+
+**c. 実装版を更新（カスタマイズを保持）**
+
+```bash
+# Editツールで該当箇所のみ更新
+# features/shared/ui/atoms/TextLinkListItem/TextLinkListItem.tsx
+#
+# git diff で確認した変更内容を反映:
+# - デザイントークンの値を更新
+# - forwardRef、onClick等のカスタマイズは保持
+```
+
+**d. タイムスタンプ更新**
 
 両ファイルのタイムスタンプを更新：
 
@@ -731,16 +746,37 @@ features/shared/ui/
  */
 ```
 
-**d. Git差分で検証**
+**e. Git差分で最終検証**
 
 ```bash
 git diff features/shared/ui/figma_generated/atoms/TextLinkListItem/
 git diff features/shared/ui/atoms/TextLinkListItem/
 
 # 以下を確認:
-# - .figma-raw.tsx: Figmaの変更のみ
-# - .tsx: デザイントークン値のみ更新、カスタマイズは保持
+# - .figma-raw.tsx: Figmaの変更のみ（自動生成コード）
+# - .tsx: デザイントークン値のみ更新、カスタマイズ（forwardRef等）は保持
 ```
+
+### 更新フローのまとめ
+
+```
+Figma更新検出
+    ↓
+① figma-raw.tsx を最新版で更新
+    ↓
+② git diff で figma-raw.tsx の差分を確認
+    ↓
+③ 差分内容を理解（何が変わったか把握）
+    ↓
+④ 実装ファイル(.tsx)に差分を反映
+    ↓
+⑤ git diff で両ファイルを最終確認
+```
+
+この順序により：
+- Figmaの純粋な変更を先に確認できる
+- 実装時にカスタマイズ部分を誤って消すリスクが減る
+- 差分理解ミスを防げる
 
 ### 更新判断のガイドライン
 
