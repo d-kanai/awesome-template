@@ -136,6 +136,13 @@
 - `pnpm typecheck`を実行してTypeScriptエラーがないことを確認
 - 必要な型のエクスポートを`index.tsx`に追加
 
+### 6. Storybookファイル作成
+
+- `*.stories.tsx`ファイルには**必ず**`import React from "react";`を含めること
+  - Storybookの実行環境でReactが未定義エラーになるため必須
+  - 例: `import type { Meta, StoryObj } from "@storybook/react";` の後に `import React from "react";` を追加
+- 全てのバリエーション（variant、size、state等）をストーリーとして作成すること
+
 ## Figmaデータの解釈と調整
 
 ### 1. Figma定義と実際の使用方法の矛盾
@@ -766,7 +773,7 @@ git diff features/shared/ui/atoms/TextLinkListItem/
 - [ ] Figmaのデザイントークン（`--sds-*`）を使用している
 - [ ] Tailwind arbitrary valuesでプロパティ型を明示している（`border-[length:...]`, `text-[color:...]`など）
 - [ ] `index.tsx`で型を適切にエクスポートしている
-- [ ] Storybookストーリーを作成した
+- [ ] Storybookストーリーを作成した（`import React from "react";`を含む）
 - [ ] `pnpm typecheck`が成功した
 - [ ] 実際の見た目がFigmaスクリーンショットと一致している
 - [ ] Figma定義と実際の使用方法に矛盾がある場合、実際の見た目を優先した
