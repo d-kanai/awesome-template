@@ -14,6 +14,8 @@ const config: Config = {
           brand: {
             "on-brand-tertiary":
               "var(--sds-color-text-brand-on-brand-tertiary)",
+            "on-brand-secondary":
+              "var(--sds-color-text-brand-on-brand-secondary)",
             "on-brand": "var(--sds-color-text-brand-on-brand)",
             tertiary: "var(--sds-color-text-brand-tertiary)",
           },
@@ -81,6 +83,7 @@ const config: Config = {
       },
       // Spacing
       spacing: {
+        "050": "var(--sds-size-space-050)",
         100: "var(--sds-size-space-100)",
         200: "var(--sds-size-space-200)",
         300: "var(--sds-size-space-300)",
@@ -104,22 +107,30 @@ const config: Config = {
         subtitle: ["var(--sds-typography-subtitle-font-family)", "sans-serif"],
         body: ["var(--sds-typography-body-font-family)", "sans-serif"],
         heading: ["var(--sds-typography-heading-font-family)", "sans-serif"],
+        subheading: [
+          "var(--sds-typography-subheading-font-family)",
+          "sans-serif",
+        ],
       },
       // Font size
       fontSize: {
         "title-hero": "var(--sds-typography-title-hero-size)",
+        "title-page": "var(--sds-typography-title-page-size-base)",
         subtitle: "var(--sds-typography-subtitle-size-base)",
+        heading: "var(--sds-typography-heading-size-base)",
+        subheading: "var(--sds-typography-subheading-size-medium)",
         "body-medium": "var(--sds-typography-body-size-medium)",
         "body-small": "var(--sds-typography-body-size-small)",
-        heading: "var(--sds-typography-heading-size-base)",
       },
       // Font weight
       fontWeight: {
         "title-hero": "var(--sds-typography-title-hero-font-weight)",
+        "title-page": "var(--sds-typography-title-page-font-weight)",
         subtitle: "var(--sds-typography-subtitle-font-weight)",
+        heading: "var(--sds-typography-heading-font-weight)",
+        subheading: "var(--sds-typography-subheading-font-weight)",
         "body-regular": "var(--sds-typography-body-font-weight-regular)",
         "body-strong": "var(--sds-typography-body-font-weight-strong)",
-        heading: "var(--sds-typography-heading-font-weight)",
       },
       // Border width
       borderWidth: {
@@ -134,6 +145,13 @@ const config: Config = {
         body: "1.4",
         heading: "1.2",
         single: "1",
+      },
+      // Icon size
+      width: {
+        "icon-large": "var(--sds-size-icon-large)",
+      },
+      height: {
+        "icon-large": "var(--sds-size-icon-large)",
       },
     },
   },
