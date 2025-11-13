@@ -37,7 +37,7 @@
 
 以下の11ステップでタスクリストを作成：
 
-1. **MCP情報取得**: `get_design_context` + `get_screenshot` でFigma情報取得
+1. **MCP情報取得**: `get_design_context` + `get_screenshot` + `get_code_connect_map` + `get_metadata` でFigma情報取得
 2. **Figma Raw作成**: `figma_generated/pages/` にRawファイル作成
 3. **OpenAPI定義追加**: `backend/build/openapi/openapi.json` にAPI定義追加
 4. **Orval生成**: `pnpm generate:api` 実行
@@ -421,7 +421,7 @@ NEXT_PUBLIC_API_MOCK_MODE=enabled pnpm dev
 - [ ] **TodoWriteツールでタスクリスト作成**（11ステップ）
 
 **基本（Component Level参照）:**
-- [ ] `get_design_context`と`get_screenshot`で仕様確認
+- [ ] `get_design_context` + `get_screenshot` + `get_code_connect_map` + `get_metadata` で仕様確認
 - [ ] 依存する子コンポーネントを先に実装（Atomic Design順序）
 - [ ] Figma Rawファイル作成（`figma_generated/pages/`）
 - [ ] Figmaデザイントークン（`--sds-*`）使用

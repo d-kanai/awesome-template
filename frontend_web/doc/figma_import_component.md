@@ -27,7 +27,7 @@
 
 以下の7ステップでタスクリストを作成：
 
-1. **MCP情報取得**: `get_design_context` + `get_screenshot` でFigma情報取得
+1. **MCP情報取得**: `get_design_context` + `get_screenshot` + `get_code_connect_map` + `get_metadata` でFigma情報取得
 2. **Figma Raw作成**: `figma_generated/` にRawファイル作成
 3. **実装作成**: forwardRef対応のコンポーネント実装
 4. **Storybook作成**: `.stories.tsx` ファイル作成
@@ -41,7 +41,15 @@
 1. Figmaで実装するコンポーネント名を検索し、node IDを特定
 2. get_design_context(nodeId) でデザインコンテキスト取得
 3. get_screenshot(nodeId) でビジュアル確認
+4. get_code_connect_map(nodeId) でCode Connect情報確認（既存マッピング有無）
+5. get_metadata(nodeId) でノード構造確認（必要に応じて）
 ```
+
+**各MCPツールの役割:**
+- `get_design_context`: 実装コード生成（props、スタイル、構造）
+- `get_screenshot`: ビジュアル確認（見た目の正確性検証）
+- `get_code_connect_map`: 既存Code Connect確認（重複防止）
+- `get_metadata`: ノード構造確認（レイヤー階層、サイズ情報）
 
 ### 2. 依存確認
 
@@ -490,7 +498,7 @@ git diff features/shared/ui/atoms/Button/
 - [ ] **TodoWriteツールでタスクリスト作成**（7ステップ）
 
 **実装チェック:**
-- [ ] `get_design_context`と`get_screenshot`で仕様確認
+- [ ] `get_design_context` + `get_screenshot` + `get_code_connect_map` + `get_metadata` で仕様確認
 - [ ] 依存する子コンポーネントを先に実装（Atomic Design順序）
 - [ ] Figma Rawファイル作成（`figma_generated/`）
 - [ ] forwardRefパターン使用
