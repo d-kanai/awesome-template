@@ -22,7 +22,9 @@
     "build-storybook": "storybook build",
     "generate:api": "orval --config .config/orval.config.ts",
     "figma:connect:publish": "figma connect publish",
-    "figma:connect:unpublish": "figma connect unpublish"
+    "figma:connect:publish:dir": "figma connect publish --dir",
+    "figma:connect:unpublish": "figma connect unpublish",
+    "figma:connect:unpublish:node": "figma connect unpublish --label React --node"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
