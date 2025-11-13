@@ -1,4 +1,4 @@
-import { getTestimonials } from "@/features/home/data/getTestimonials";
+import { getTestimonials } from "@/features/home/queries/getTestimonials";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { HomeTestIds } from "../test-ids";

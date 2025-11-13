@@ -29,6 +29,11 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 - form validationはzodを利用し、client side, server action共通の定義(schemas.ts)を利用すること
 - form周りの情報(key名など)はzodのschema定義からできる限り取得し、SSOFとすること
 - 不要なobject destructureを利用しないこと（無駄にtmp変数を増やさないこと）
+- queries/とactions/でサーバーサイド処理を分類すること
+  - queries/: データ取得(読み込み専用)の処理。React.cacheでラップすること
+    - 例: `features/auth/queries/getSession.ts`, `features/home/queries/getTestimonials.ts`
+  - actions/: データ変更(mutations/commands)のServer Actions
+    - 例: `features/auth/actions/signin.ts`, `features/auth/actions/signout.ts`
 
 ### css
 

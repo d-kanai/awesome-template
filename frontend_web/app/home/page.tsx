@@ -7,7 +7,7 @@
  * ============================================
  */
 
-import { getTestimonials } from "@/features/home/data/getTestimonials";
+import { getTestimonials } from "@/features/home/queries/getTestimonials";
 import { HomeScreen } from "@/features/home/screens/HomeScreen";
 
 export default async function HomePage() {

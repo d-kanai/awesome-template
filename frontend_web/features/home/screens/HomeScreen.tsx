@@ -5,7 +5,7 @@ import { Footer } from "@/features/shared/ui/components/Footer";
 import { Header } from "@/features/shared/ui/components/Header";
 import { HeroActions } from "@/features/shared/ui/components/HeroActions";
 import React from "react";
-import type { Testimonial } from "../data/getTestimonials";
+import type { Testimonial } from "../queries/getTestimonials";
 import { HomeTestIds } from "../test-ids";
 
 interface HomeScreenProps {
