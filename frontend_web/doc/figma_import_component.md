@@ -260,6 +260,8 @@ export const Mobile: Story = {
 
 Figma上でコンポーネントを選択すると実装コードが表示されるようにCode Connectファイルを作成します。
 
+#### 基本的なCode Connect
+
 ```typescript
 // features/shared/ui/atoms/Button/Button.figma.tsx
 import { figma } from "@figma/code-connect";
@@ -286,20 +288,148 @@ figma.connect(Button, "https://www.figma.com/design/FILE_KEY/...?node-id=4185-37
       Default: false,
       Hover: false,
     }),
+    children: figma.string("Label"),  // ← テキストコンテンツをマッピング
   },
-  example: ({ variant, size, disabled }) => (
+  example: ({ variant, size, disabled, children }) => (
     <Button variant={variant} size={size} disabled={disabled}>
-      Button
+      {children}
     </Button>
   ),
 });
 ```
+
+#### 精度向上のベストプラクティス
+
+**重要**: Code Connect作成時は、**初回から可能な限り多くのプロパティをマッピング**してください。後から追加するのは手間がかかります。
+
+**推奨ワークフロー:**
+
+1. **MCPで利用可能な全プロパティを確認**
+   ```bash
+   # 既存の.figma.tsxファイルからNode IDを抽出
+   # 例: "node-id=4185-3778" → "4185-3778"
+
+   # MCPで全プロパティを取得（Figma Desktop選択不要）
+   get_design_context({
+     nodeId: "4185-3778",
+     clientLanguages: "typescript",
+     clientFrameworks: "react"
+   })
+
+   # 出力例から利用可能なプロパティを特定:
+   # type ButtonProps = {
+   #   label?: string;
+   #   iconEnd?: React.ReactNode;
+   #   hasIconEnd?: boolean;
+   #   hasIconStart?: boolean;
+   #   iconStart?: React.ReactNode;
+   #   variant?: "Primary" | "Neutral" | "Subtle";
+   #   state?: "Default" | "Hover" | "Disabled";
+   #   size?: "Medium" | "Small";
+   # }
+   ```
+
+2. **マッピング可能なプロパティを全て追加**
+   ```typescript
+   props: {
+     // 高優先度: バリアント・サイズ・状態
+     variant: figma.enum("Variant", { Primary: "primary", ... }),
+     size: figma.enum("Size", { Medium: "medium", ... }),
+     disabled: figma.enum("State", { Disabled: true, ... }),
+
+     // 中優先度: テキストコンテンツ
+     children: figma.string("Label"),
+
+     // 低優先度: アイコン等（可能なら追加）
+     leftIcon: figma.instance("Icon Start"),
+     rightIcon: figma.instance("Icon End"),
+   }
+   ```
+
+3. **Reactコンポーネントのプロパティ名と対応させる**
+   ```typescript
+   // Figma: "Icon Start" / "Icon End"
+   // React: leftIcon / rightIcon
+   // → マッピング時にReact側の名前を使う
+
+   props: {
+     leftIcon: figma.instance("Icon Start"),   // Figma名 → React名
+     rightIcon: figma.instance("Icon End"),
+   }
+   ```
+
+**マッチ率（紫色のバー）を高めるためのポイント:**
+
+1. **テキストコンテンツをマッピング**
+   ```typescript
+   props: {
+     children: figma.string("Label"),     // ボタンテキスト
+     title: figma.string("Title"),        // タイトル
+     subtitle: figma.string("Subtitle"),  // サブタイトル
+   }
+   ```
+
+2. **ブーリアンプロパティをマッピング**
+   ```typescript
+   props: {
+     hasSubtitle: figma.boolean("Has Subtitle"),
+     hasIcon: figma.boolean("Has Icon"),
+   }
+   ```
+
+3. **列挙型プロパティをマッピング**
+   ```typescript
+   props: {
+     align: figma.enum("Align", {
+       Start: "Start",
+       Center: "Center",
+       End: "End",
+     }),
+   }
+   ```
+
+4. **インスタンススワップをマッピング**
+   ```typescript
+   props: {
+     leftIcon: figma.instance("Icon Start"),
+     rightIcon: figma.instance("Icon End"),
+   }
+   ```
+
+#### マッピング可能なプロパティタイプ
+
+| Figmaプロパティ | Code Connect | 用途 |
+|---|---|---|
+| Text/String | `figma.string("Label")` | ボタンテキスト、タイトル等 |
+| Boolean/Toggle | `figma.boolean("Has Icon")` | 表示/非表示の制御 |
+| Variant/Enum | `figma.enum("State", {...})` | バリアント、状態選択 |
+| Instance Swap | `figma.instance("Icon")` | アイコン等の入れ替え（高度） |
+
+#### マッピングの優先順位
+
+マッチ率100%を目指さなくても、**主要なプロパティだけマッピングすれば実用上は十分**です：
+
+1. **高優先度**（必須）:
+   - バリアント（variant, state等）
+   - サイズ（size）
+   - 状態（disabled, active等）
+
+2. **中優先度**（推奨）:
+   - テキストコンテンツ（label, title, subtitle）
+   - ブーリアンフラグ（hasIcon, hasSubtitle等）
+
+3. **低優先度**（オプション）:
+   - アイコン（iconStart, iconEnd等）
+   - 配列データ（items, links等）
+
+#### 注意事項
 
 **重要なポイント:**
 - **第2引数は文字列リテラル必須**（変数不可）
 - **FILE_KEYは`.env.local`の`FIGMA_FILE_KEY`を手動でコピー**
 - **propsマッピング**: Figmaのプロパティ名とReact propsを紐付け
 - **children問題**: テキストが取得できない場合は固定値で対応（`figma.string()`や`figma.textContent()`でエラーが出る場合）
+- **マッチ率の影響**: 100%でなくてもCode Connectは正常に動作。主要プロパティのマッピングで十分実用的
 
 ### 8. Code Connect Publish
 

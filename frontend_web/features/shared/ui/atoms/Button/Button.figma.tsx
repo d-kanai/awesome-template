@@ -25,10 +25,19 @@ figma.connect(
         Default: false,
         Hover: false,
       }),
+      children: figma.string("Label"),
+      leftIcon: figma.instance("Icon Start"),
+      rightIcon: figma.instance("Icon End"),
     },
-    example: ({ variant, size, disabled }) => (
-      <Button variant={variant} size={size} disabled={disabled}>
-        Button
+    example: ({ variant, size, disabled, children, leftIcon, rightIcon }) => (
+      <Button
+        variant={variant}
+        size={size}
+        disabled={disabled}
+        leftIcon={leftIcon}
+        rightIcon={rightIcon}
+      >
+        {children}
       </Button>
     ),
   },
