@@ -44,13 +44,18 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 
 ### Figma component integration
 
-Figmaコンポーネントの取り込みについては、別ドキュメント [`figma_import.md`](./figma_import.md) を参照すること。
+Figmaコンポーネントの取り込みについては、レベルに応じて別ドキュメントを参照すること。
 
-**主な内容:**
-- Figma Desktop MCPツールの使用方法
-- Atomic Designに基づく段階的実装手順
-- Figmaデータの解釈と調整方法
-- よくある問題と対処法
+- **Component Level** (Atoms / Molecules / Organisms): [`figma_import_component.md`](./figma_import_component.md)
+  - Figma Desktop MCPツールの使用方法
+  - Atomic Designに基づく段階的実装手順
+  - forwardRefパターン、デザイントークン使用
+  - Figma更新時の差分同期
+
+- **Page Level** (Pages / Templates): [`figma_import_page.md`](./figma_import_page.md)
+  - API統合ワークフロー（バックエンド実装前でも完成）
+  - Screen Tests作成ルール
+  - モックモード（`api_mock_mode/`）の使用
 
 ### UT spec
 

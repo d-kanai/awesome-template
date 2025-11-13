@@ -1,0 +1,406 @@
+# Figma Component Import Guide (Component Level)
+
+このドキュメントは、Figma Desktop MCPを使用してFigmaデザインから**コンポーネントレベル**（Atoms / Molecules / Organisms）を実装するための具体的なプロセスとガイドラインを記載しています。
+
+**Page Level（Pages / Templates）の取り込みについては [`figma_import_page.md`](./figma_import_page.md) を参照してください。**
+
+**コーディング規約（一般的なルールやベストプラクティス）については [`code_rule.md`](./code_rule.md) を参照してください。**
+
+## 対象コンポーネント
+
+- **Atoms**: 単一コンポーネント（Button, Avatar, TextLinkListItemなど）
+- **Molecules**: Atomsの組み合わせ（FooterLinkSection, HeaderAuthなど）
+- **Organisms**: Moleculesの組み合わせ（Header, Footer, CardGridTestimonialsなど）
+
+## 基本方針
+
+1. **MCPツール使用**: Figma Desktop MCPの`get_design_context`と`get_screenshot`を使用
+2. **Atomic Design順序**: Atoms → Molecules → Organisms の順で段階的に実装
+3. **コンポーネント合成**: 既存の小さいコンポーネントを組み合わせて大きいコンポーネントを構築
+4. **レスポンシブ対応**: `platform` propは`.figma-raw.tsx`のみ保持、実装は Tailwind `md:`ブレークポイントで自動切り替え（Mobile First）
+
+## 実装手順
+
+### 1. Figmaノード取得
+
+```
+1. Figmaで実装するコンポーネント名を検索し、node IDを特定
+2. get_design_context(nodeId) でデザインコンテキスト取得
+3. get_screenshot(nodeId) でビジュアル確認
+```
+
+### 2. 依存確認
+
+- デザインコンテキストに含まれる子コンポーネントが実装済みか確認
+- 未実装の場合、依存する子コンポーネントから先に実装（Atomic Design順序）
+
+### 3. ディレクトリ構成
+
+#### Atoms
+
+```
+features/shared/ui/
+├── figma_generated/atoms/[ComponentName]/
+│   └── [ComponentName].figma-raw.tsx    # Figma生データ（差分比較用）
+└── atoms/[ComponentName]/
+    ├── [ComponentName].tsx               # 実装版（forwardRef対応）
+    ├── [ComponentName].stories.tsx       # Storybook
+    ├── [ComponentName].figma.tsx         # Code Connect
+    └── index.tsx                         # Export
+```
+
+#### Molecules/Organisms
+
+```
+features/shared/ui/
+├── figma_generated/components/[ComponentName]/
+│   └── [ComponentName].figma-raw.tsx
+└── components/[ComponentName]/
+    ├── [ComponentName].tsx
+    ├── [ComponentName].stories.tsx
+    ├── [ComponentName].figma.tsx
+    └── index.tsx
+```
+
+#### ファイルヘッダー（双方向参照）
+
+**Figma Raw:**
+```typescript
+/**
+ * ============================================
+ * 🎨 Button (Figma Raw)
+ * 📅 Generated at: 2025-11-15 10:00 JST
+ * 🔗 Node ID: 123-456
+ * 🔗 Figma URL: https://...
+ * 📍 Implementation: features/shared/ui/atoms/Button/Button.tsx
+ * ============================================
+ */
+```
+
+**Implementation:**
+```typescript
+/**
+ * ============================================
+ * 🎨 Button
+ * 📅 Synced at: 2025-11-15 10:00 JST
+ * 🔗 Figma Raw: features/shared/ui/figma_generated/atoms/Button/Button.figma-raw.tsx
+ * ============================================
+ */
+```
+
+**タイムスタンプラベル規約:**
+- Figma Raw: `Generated at` - 自動生成された静的ファイル（変更しない）
+- Implementation: `Synced at` - Figmaと同期しながら継続的に更新されるファイル
+
+### 4. コンポーネント実装
+
+#### forwardRefパターン（必須）
+
+```typescript
+import { forwardRef } from "react";
+import { cn } from "../../lib/utils";
+
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "primary" | "secondary";
+  className?: string;
+}
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = "primary", className, children, ...props }, ref) => {
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          "px-[var(--sds-size-space-400,16px)]",
+          "py-[var(--sds-size-space-300,12px)]",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  },
+);
+
+Button.displayName = "Button";
+```
+
+#### レスポンシブ実装（Mobile First）
+
+```typescript
+// ❌ platform propは削除（Figma rawにのみ存在）
+export interface HeaderProps {
+  // platform?: "Desktop" | "Mobile";  // 削除
+  logoSrc?: string;
+  className?: string;
+}
+
+export function Header({ logoSrc, className }: HeaderProps) {
+  return (
+    <header className={cn(
+      // Mobile (デフォルト)
+      "p-[var(--sds-size-space-600,24px)]",
+      "justify-between",
+
+      // Desktop (md: 768px以上)
+      "md:p-[var(--sds-size-space-800,32px)]",
+      "md:gap-[var(--sds-size-space-600,24px)]",
+      className,
+    )}>
+      {/* Navigation - Desktop only */}
+      <nav className={cn(
+        "hidden",           // Mobile: 非表示
+        "md:flex md:flex-1" // Desktop: 表示
+      )} />
+
+      {/* Hamburger - Mobile only */}
+      <button className="md:hidden"> {/* Desktop: 非表示 */}
+        Menu
+      </button>
+    </header>
+  );
+}
+```
+
+### 5. デザイントークン使用
+
+**必須**: Figma semantic tokensを使用すること（Tailwindユーティリティクラスは使わない）
+
+```typescript
+// ✅ Figmaトークン使用
+<div className={cn(
+  "gap-[var(--sds-size-space-200,8px)]",
+  "p-[var(--sds-size-space-300,12px)]",
+  "rounded-[var(--sds-size-radius-200,8px)]",
+  "border-[length:var(--sds-size-stroke-border,1px)]",
+  "border-[color:var(--sds-color-border-default-default,#d9d9d9)]",
+  "text-[color:var(--sds-color-text-default-default,#1e1e1e)]",
+  "text-[length:var(--sds-typography-body-size-medium,16px)]",
+  "font-[var(--sds-typography-body-font-weight-regular,400)]",
+)} />
+
+// ❌ Tailwindクラス使用（禁止）
+<div className="gap-2 px-3 py-3 rounded-lg border text-base" />
+```
+
+**重要**: Tailwind arbitrary valuesではプロパティ型を明示すること
+- border-width: `border-[length:var(...)]`
+- border-color: `border-[color:var(...)]`
+- text-color: `text-[color:var(...)]`
+- font-size: `text-[length:var(...)]`
+
+### 6. Storybook作成
+
+```typescript
+import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";  // ← 必須
+import { Button } from "./Button";
+
+const meta = {
+  title: "Atoms/Button",
+  component: Button,
+} satisfies Meta<typeof Button>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Primary: Story = {
+  args: {
+    variant: "primary",
+    children: "Button",
+  },
+};
+
+// レスポンシブStory
+export const Desktop: Story = {
+  args: {},
+  parameters: {
+    viewport: {
+      defaultViewport: "responsive", // 1200px
+    },
+  },
+};
+
+export const Mobile: Story = {
+  args: {},
+  parameters: {
+    viewport: {
+      defaultViewport: "mobile1", // 375px
+    },
+  },
+};
+```
+
+**重要**: `import React from "react";` は必須（Storybook実行環境で未定義エラーになるため）
+
+### 7. 型安全性確認
+
+```bash
+pnpm typecheck
+```
+
+- `index.tsx`で型を適切にエクスポート
+- TypeScriptエラーがないことを確認
+
+## Figmaデータ解釈
+
+### 1. Figma定義と実際の見た目が異なる場合
+
+**症状**: 固定幅で定義されているが、実際は可変幅で使われている
+
+**対処法**: 実際の見た目を優先
+
+```typescript
+// ❌ Figma定義通り（固定幅）
+<button className="w-[89px]">{text}</button>
+
+// ✅ 実際の使用方法（可変幅）
+<button className="text-left">{text}</button>
+```
+
+### 2. コンポーネント粒度調整
+
+Figmaで1つの大きなコンポーネントでも、実装時に適切な粒度で分割
+
+```typescript
+// TextLinkListItem（独立コンポーネント）
+export const TextLinkListItem = forwardRef<HTMLButtonElement, Props>(
+  ({ text, ...props }, ref) => <button ref={ref} {...props}>{text}</button>
+);
+
+// FooterLinkSection（TextLinkListItemを使用）
+export const FooterLinkSection = forwardRef<HTMLDivElement, Props>(
+  ({ links, ...props }, ref) => (
+    <div ref={ref} {...props}>
+      {links.map((link, i) => <TextLinkListItem key={i} text={link.label} />)}
+    </div>
+  )
+);
+```
+
+### 3. 配置・レイアウト確認
+
+`get_design_context`のコードで`items-start`や`items-center`を確認し、Figma定義に従う
+
+## Figma更新時の差分同期
+
+### ⚠️ 自動置換禁止
+
+既存実装にカスタマイズが含まれているため、ファイルを自動削除・再生成してはいけない
+
+**保持すべきカスタマイズ:**
+- forwardRef対応
+- イベントハンドラー（onClick, onChange等）
+- 型の拡張（HTMLAttributes継承等）
+- "use client" ディレクティブ
+- cn()によるclassName結合
+- アクセシビリティ属性（aria-*等）
+
+### 差分確認手順
+
+#### 1. Figmaから最新コードを取得してメモリ上で比較
+
+```
+AIに依頼: "Update Button from Figma"
+→ AIがMCPで取得し、メモリ上で既存の.figma-raw.tsxと比較
+```
+
+- 中間ファイル保存不要（メモリ上で比較）
+- `.figma-raw.tsx`同士の比較で正確な差分検出
+
+#### 2. AIが差分を検出して報告
+
+**差分なし:**
+```
+✅ Figma側で変更なし - 更新不要
+```
+
+**差分あり:**
+```
+## Figma側の変更
+- padding: var(--sds-size-space-300) → var(--sds-size-space-400)
+
+## 実装のカスタマイズ（保持すべき）
+- ✅ forwardRef対応
+- ✅ onClick等のイベントハンドラー
+
+## 更新が必要な箇所
+1. Button.tsx 行25: padding値を更新
+```
+
+#### 3. 更新作業（差分がある場合のみ）
+
+**重要: 必ず figma-raw → 実装 の順**
+
+**a. `.figma-raw.tsx`を最新版で更新**
+
+```bash
+# Writeツールで最新版を保存
+features/shared/ui/figma_generated/atoms/Button/Button.figma-raw.tsx
+```
+
+**b. git diff で figma-raw の差分を確認**
+
+```bash
+git diff features/shared/ui/figma_generated/atoms/Button/Button.figma-raw.tsx
+
+# どのデザイントークンが変わったか把握
+```
+
+**c. 実装版を更新（カスタマイズ保持）**
+
+```bash
+# Editツールで該当箇所のみ更新
+features/shared/ui/atoms/Button/Button.tsx
+
+# forwardRef、onClick等のカスタマイズは保持
+```
+
+**d. タイムスタンプ更新**
+
+両ファイルのタイムスタンプを現在日時に更新
+
+**e. Git差分で最終検証**
+
+```bash
+git diff features/shared/ui/figma_generated/atoms/Button/
+git diff features/shared/ui/atoms/Button/
+
+# 確認:
+# - .figma-raw.tsx: Figmaの変更のみ
+# - .tsx: デザイントークン値のみ更新、カスタマイズ保持
+```
+
+### 更新判断ガイドライン
+
+| Figma側の変更内容 | 実装への反映 |
+|---|---|
+| デザイントークン値（色、サイズ、spacing） | ✅ 反映 |
+| レイアウト構造（flex → grid等） | ⚠️ 慎重に判断 |
+| 固定サイズ → 可変サイズ | ✅ 反映 |
+| 要素タイプ（div → button） | ❌ 保持（実装側優先） |
+| テキスト内容 | ⚠️ デフォルト値として反映 |
+
+## よくある問題
+
+### 問題1: デザイントークンが不明確
+
+**対処法**: `get_design_context`のコードからトークン名をそのまま使用（推測しない）
+
+### 問題2: 配置が意図と異なる
+
+**対処法**: `get_design_context`で`items-start`/`items-center`等を確認し、Figma定義に従う
+
+## チェックリスト
+
+- [ ] `get_design_context`と`get_screenshot`で仕様確認
+- [ ] 依存する子コンポーネントを先に実装（Atomic Design順序）
+- [ ] forwardRefパターン使用
+- [ ] Figmaデザイントークン（`--sds-*`）使用
+- [ ] Tailwind arbitrary valuesでプロパティ型明示
+- [ ] `index.tsx`で型を適切にエクスポート
+- [ ] Storybookストーリー作成（`import React from "react";`含む）
+- [ ] `pnpm typecheck`成功
+- [ ] 見た目がFigmaスクリーンショットと一致
+- [ ] Figma定義と実際の見た目に矛盾がある場合、実際の見た目を優先
