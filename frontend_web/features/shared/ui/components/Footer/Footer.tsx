@@ -2,11 +2,11 @@
 
 import { cn } from "@/features/shared/lib/utils";
 import React from "react";
-import { type FooterLinkItem, FooterLinkSection } from "../FooterLinkSection";
+import { type TextLinkListLinkItem, TextLinkList } from "../TextLinkList";
 
 export interface FooterLinkSectionData {
   title: string;
-  links: FooterLinkItem[];
+  links: TextLinkListLinkItem[];
 }
 
 export interface SocialLink {
@@ -127,7 +127,7 @@ export function Footer({
 
         {/* Link Sections */}
         {linkSections.map((section) => (
-          <FooterLinkSection
+          <TextLinkList
             key={section.title}
             title={section.title}
             links={section.links}

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { FooterLinkSection } from "./FooterLinkSection";
+import { TextLinkList } from "./TextLinkList";
 
 const meta = {
-  title: "Components/FooterLinkSection",
-  component: FooterLinkSection,
+  title: "Components/TextLinkList",
+  component: TextLinkList,
   parameters: {
     layout: "centered",
   },
@@ -18,7 +18,7 @@ const meta = {
       description: "Array of link items",
     },
   },
-} satisfies Meta<typeof FooterLinkSection>;
+} satisfies Meta<typeof TextLinkList>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -128,7 +128,7 @@ export const MultipleSections: Story = {
   },
   render: () => (
     <div className="flex gap-8">
-      <FooterLinkSection
+      <TextLinkList
         title="Use cases"
         links={[
           { label: "UI design" },
@@ -138,7 +138,7 @@ export const MultipleSections: Story = {
           { label: "Brainstorming" },
         ]}
       />
-      <FooterLinkSection
+      <TextLinkList
         title="Explore"
         links={[
           { label: "Design" },
@@ -147,7 +147,7 @@ export const MultipleSections: Story = {
           { label: "Design systems" },
         ]}
       />
-      <FooterLinkSection
+      <TextLinkList
         title="Resources"
         links={[
           { label: "Blog" },
