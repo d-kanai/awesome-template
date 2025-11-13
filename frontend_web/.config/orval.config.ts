@@ -69,12 +69,7 @@ export default defineConfig({
       httpClient: "fetch",
       mock: true, // MSWハンドラー生成
       clean: false, // 既存のschema/modelを共有
-      override: {
-        mutator: {
-          path: "../features/shared/api/fetcher.ts",
-          name: "fetcher",
-        },
-      },
+      // Note: mutatorは指定しない（MSW専用でfetcherは不要、Client Componentでの使用を考慮）
     },
   },
 });
