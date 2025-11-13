@@ -956,43 +956,282 @@ describe("HomeScreen - TestC", () => {
 - Orval生成関数を直接モック
 - レスポンス構造は型安全（OpenAPI定義から生成）
 
-#### 5. ブラウザで確認
+#### 5. モックデータの準備
 
-開発環境でMSWを有効化してブラウザで動作確認します。
+`features/shared/api/tmp-mock-data.ts` にモックデータを定義します。
 
-```bash
-# 環境変数でMSW有効化
-export NEXT_PUBLIC_API_MOCKING=enabled
-pnpm dev
+```typescript
+// features/shared/api/tmp-mock-data.ts
+import type { Testimonial } from "./generated/model";
+
+export const mockTestimonials: Testimonial[] = [
+  {
+    quote: "This product has completely transformed how we work.",
+    title: "Sarah Johnson",
+    description: "CEO, TechCorp",
+    avatarSrc: "https://i.pravatar.cc/150?img=1",
+  },
+  // ... more items
+];
 ```
 
-MSWが自動的に起動し、Orval生成のモックハンドラーでAPIレスポンスがモックされます。
+**モックシステムの仕組み:**
+- `NEXT_PUBLIC_API_MOCKING=enabled` の場合、`fetcher.ts` が `tmp-fetcher.ts` にリダイレクト
+- **全てのAPI呼び出し**（`functions.ts` も `tmp-functions.ts` も）がモック化される
+- `tmp-mock-data.ts` からモックデータを返す
+- RSC（React Server Components）とClient Componentsの両方で動作
+- importの切り替え不要（環境変数だけで全体を制御）
 
-**MSWの仕組み:**
-- `MSWProvider` - 開発環境でMSW workerを初期化
-- `features/shared/api/mocks/browser.ts` - MSW設定
-- Orval生成のモックハンドラー - 自動的にfakerでダミーデータ生成
+#### 6. ブラウザで確認
+
+開発環境でモックモードを有効化してブラウザで動作確認します。
+
+```bash
+# Makefile経由で起動（推奨）
+make dev-mock
+
+# または直接pnpmで起動
+pnpm dev:mock
+```
+
+**動作:**
+- RSC（Server Components）でのAPI呼び出しがモックデータを返す
+- Client ComponentsでのAPI呼び出しもモックデータを返す
+- バックエンドサーバー不要で完全に動作確認可能
+
+### Figma Page Level取り込み時のAPI実装パターン
+
+Page Levelコンポーネントを取り込む際のAPI実装手順。
+
+#### 1. 本番openapi.jsonにAPI定義を追加
+
+バックエンド実装前でも、本番のopenapi.jsonにエンドポイント定義を追加する。
+
+**ファイル:** `backend/openapi.json`（またはバックエンドのAPI定義ファイル）
+
+**例:**
+```yaml
+paths:
+  /testimonials:
+    get:
+      operationId: getTestimonials
+      summary: Testimonials取得
+      description: バックエンド未実装（Figma取り込み用）
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  testimonials:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Testimonial'
+
+components:
+  schemas:
+    Testimonial:
+      type: object
+      required: [quote, title, description, avatarSrc]
+      properties:
+        quote:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        avatarSrc:
+          type: string
+          format: uri
+```
+
+**重要:**
+- バックエンド未実装でもOK（モックモードで動作確認可能）
+- 型定義も一緒に追加すること
+
+#### 2. Orval生成でAPI関数を自動生成
+
+**生成コマンド:**
+```bash
+pnpm generate:api
+```
+
+**自動生成されるファイル:**
+- `features/shared/api/generated/functions.ts` - API関数（`getTestimonials`など）
+- `features/shared/api/generated/model/` - 型定義（`Testimonial`, `GetTestimonials200`など）
+
+**生成される関数例:**
+```typescript
+// features/shared/api/generated/functions.ts
+export const getTestimonials = async ( options?: RequestInit): Promise<getTestimonialsResponse> => {
+  return fetcher<Promise<getTestimonialsResponse>>(getGetTestimonialsUrl(),
+  {
+    ...options,
+    method: 'GET'
+  }
+);
+}
+```
+
+#### 3. モックデータを追加
+
+**ファイル:** `api_mock_mode/data.ts`
+
+モックデータを追加:
+```typescript
+import type { Testimonial } from "@/features/shared/api/generated/model";
+
+export const mockTestimonials: Testimonial[] = [
+  {
+    quote: "This product has completely transformed how we work.",
+    title: "Sarah Johnson",
+    description: "CEO, TechCorp",
+    avatarSrc: "https://i.pravatar.cc/150?img=1",
+  },
+  // ... more items
+];
+```
+
+**ファイル:** `api_mock_mode/fetcher.ts`
+
+モックレスポンスを追加:
+```typescript
+import { mockTestimonials } from "./data";
+
+function getMockResponse(path: string, method: string): unknown {
+  // GET /testimonials
+  if (path === "/testimonials" && method === "GET") {
+    return {
+      data: { testimonials: mockTestimonials },
+      status: 200,
+    };
+  }
+
+  // ... other endpoints
+}
+```
+
+**重要:**
+- `api_mock_mode/`は**永続的に保持**（API実装後も使用）
+- 開発時に`NEXT_PUBLIC_API_MOCK_MODE=enabled`で全APIをモック化できる
+- バックエンドサーバー起動不要で高速開発が可能
+
+#### 4. Query/Action実装（統一パターン）
+
+**必ず本番関数をimportすること** - 環境変数による自動切り替えを利用。
+
+```typescript
+// features/home/queries/getTestimonials.ts
+import { getTestimonials as getTestimonialsAPI } from "@/features/shared/api/generated/functions";
+import type { Testimonial } from "@/features/shared/api/generated/model";
+import { cache } from "react";
+
+export type { Testimonial };
+
+/**
+ * Get testimonials data
+ * Server-side query function using Orval-generated API client
+ * Wrapped with React.cache for request deduplication
+ *
+ * Note: バックエンド未実装。NEXT_PUBLIC_API_MOCK_MODE=enabled でモックデータを使用
+ */
+export const getTestimonials = cache(async (): Promise<Testimonial[]> => {
+  const response = await getTestimonialsAPI();
+  return response.data.testimonials;
+});
+```
+
+**重要:**
+- 必ず`@/features/shared/api/generated/functions`をimport
+- 環境変数で自動的にモック/実APIが切り替わる
+
+#### 4. Screen Test実装（統一パターン）
+
+**必ず本番関数をモックすること** - Screen Testは本実装に対してテスト。
+
+```typescript
+// features/home/screens/HomeScreen.spec.tsx
+import { getTestimonials } from "@/features/home/queries/getTestimonials";
+import { render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// 本番API関数をモック（Screen Testは本実装に対してテスト）
+vi.mock("@/features/shared/api/generated/functions", () => ({
+  getTestimonials: vi.fn(),
+}));
+
+const { getTestimonials: getTestimonialsAPI } = await import(
+  "@/features/shared/api/generated/functions"
+);
+
+describe("HomeScreen - TestC", () => {
+  it("APIから取得したtestimonialsが表示される", async () => {
+    // Given: API レスポンスモック
+    const mockResponse = {
+      data: { testimonials: [...] },
+      status: 200,
+    };
+    vi.mocked(getTestimonialsAPI).mockResolvedValue(mockResponse);
+
+    // When: データ取得 → 画面レンダリング
+    const testimonials = await getTestimonials();
+    render(<HomeScreen testimonials={testimonials} />);
+
+    // Then: モックデータが表示される
+    expect(screen.getByText("Test quote")).toBeInTheDocument();
+  });
+});
+```
+
+**重要:**
+- 必ず本番関数をモック（`@/features/shared/api/generated/functions`）
+- Screen Testは本実装に対してテスト
+
+#### 5. 環境変数による切り替え
+
+**開発時（モックモード）:**
+```bash
+# Makefile経由（推奨）
+make dev-mock
+
+# または直接
+NEXT_PUBLIC_API_MOCK_MODE=enabled pnpm dev
+```
+
+**動作:**
+- `fetcher.ts`が環境変数を検出
+- 動的に`api_mock_mode/fetcher.ts`をimport
+- `api_mock_mode/data.ts`のモックデータを返す
+- importの切り替え不要（全てのAPIが自動的にモック化）
+
+**本番時（実API）:**
+```bash
+pnpm dev  # 環境変数なし
+```
+
+**動作:**
+- `fetcher`が実APIを呼ぶ
+- バックエンド未実装の場合はエラー（404など）
+- エラーで気づける
 
 ### バックエンド実装後の対応
 
-1. **tmp-openapi.jsonを本番openapi.jsonにマージ**
-2. **Query関数のimportを変更**
-   ```typescript
-   // Before
-   import { getTestimonials as getTestimonialsAPI } from "@/features/shared/api/generated/tmp-functions";
+1. **バックエンドがAPIを実装**
+   - すでにopenapi.jsonに定義済みなので、実装するだけ
 
-   // After
-   import { getTestimonials as getTestimonialsAPI } from "@/features/shared/api/generated/functions";
-   ```
-3. **テストのvi.mock()パスを変更**
-   ```typescript
-   // Before
-   vi.mock("@/features/shared/api/generated/tmp-functions", () => ({...}));
+2. **pnpm generate:apiを実行**
+   - 本番`functions.ts`が更新される（関数の内部ロジックは変わらない）
 
-   // After
-   vi.mock("@/features/shared/api/generated/functions", () => ({...}));
-   ```
-4. **MSWは開発環境で引き続き使用可能**
+3. **Query/Action/Test のコード変更不要**
+   - すでに本番関数をimportしているため、何も変更しなくて良い
+   - テストもすでに本番関数をモックしているため、そのまま動作
+
+4. **api_mock_mode/は永続的に保持**
+   - API実装後も開発環境で使用可能
+   - `NEXT_PUBLIC_API_MOCK_MODE=enabled`で全APIをモック化
+   - バックエンドサーバー起動不要で高速開発
 
 ### ワークフロー図
 
@@ -1004,36 +1243,45 @@ MSWが自動的に起動し、Orval生成のモックハンドラーでAPIレス
                    │
                    ▼
 ┌─────────────────────────────────────────────────────────┐
-│ 2. tmp-openapi.json作成                                   │
-│    バックエンド実装前の一時API定義                          │
+│ 2. 本番openapi.jsonにAPI定義を追加                         │
+│    backend/openapi.json（バックエンド未実装でもOK）         │
 └──────────────────┬──────────────────────────────────────┘
                    │
                    ▼
 ┌─────────────────────────────────────────────────────────┐
 │ 3. Orval生成                                              │
 │    pnpm generate:api                                     │
-│    → tmp-functions.ts (API client + MSWモック)           │
+│    → functions.ts (API client自動生成)                   │
+│    → model/ (型定義自動生成)                              │
 └──────────────────┬──────────────────────────────────────┘
                    │
                    ▼
 ┌─────────────────────────────────────────────────────────┐
-│ 4. Query/Action実装                                       │
+│ 4. モックデータ追加                                        │
+│    api_mock_mode/data.ts - モックデータ定義                │
+│    api_mock_mode/fetcher.ts - モックレスポンス追加          │
+└──────────────────┬──────────────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────────────────┐
+│ 5. Query/Action実装                                       │
 │    features/[feature]/queries/xxx.ts                    │
-│    → Orval生成関数をcache()でラップ                        │
+│    → 本番functions.tsをimport + cache()でラップ             │
 └──────────────────┬──────────────────────────────────────┘
                    │
                    ▼
 ┌─────────────────────────────────────────────────────────┐
-│ 5. Screen Test作成                                        │
-│    vi.mock()でOrval生成関数をモック                         │
+│ 6. Screen Test作成                                        │
+│    vi.mock()で本番functions.tsをモック                      │
 │    → 型安全なテスト                                         │
 └──────────────────┬──────────────────────────────────────┘
                    │
                    ▼
 ┌─────────────────────────────────────────────────────────┐
-│ 6. ブラウザで確認                                          │
-│    NEXT_PUBLIC_API_MOCKING=enabled pnpm dev             │
-│    → MSWでモックAPI動作                                    │
+│ 7. ブラウザで確認                                          │
+│    make dev-mock または pnpm dev:mock                    │
+│    → fetcher → mockFetcher（環境変数で自動切り替え）        │
+│    → モックデータ表示（RSC/Client両対応）                   │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -1049,12 +1297,14 @@ MSWが自動的に起動し、Orval生成のモックハンドラーでAPIレス
 - [ ] `index.tsx`で型を適切にエクスポートしている
 - [ ] Storybookストーリーを作成した（`import React from "react";`を含む）
 - [ ] **API連携が必要な場合:**
-  - [ ] tmp-openapi.jsonにAPI定義を追加した
-  - [ ] `pnpm generate:api`でOrval生成を実行した
-  - [ ] queries/またはactions/にラッパー関数を作成した
-  - [ ] vi.mock()を使ったScreen Testを作成した
+  - [ ] 本番openapi.jsonにAPI定義を追加した
+  - [ ] `pnpm generate:api`でOrval生成を実行した（functions.ts, model/が自動生成）
+  - [ ] api_mock_mode/data.tsにモックデータを追加した
+  - [ ] api_mock_mode/fetcher.tsにモックレスポンスを追加した
+  - [ ] queries/またはactions/にラッパー関数を作成した（本番functions.tsをimport）
+  - [ ] vi.mock()で本番functions.tsをモックしたScreen Testを作成した
   - [ ] `pnpm test`でテストが成功した
-  - [ ] NEXT_PUBLIC_API_MOCKING=enabledでブラウザ動作確認した
+  - [ ] `make dev-mock`でブラウザ動作確認した（環境変数でモック自動切り替え）
 - [ ] `pnpm typecheck`が成功した
 - [ ] 実際の見た目がFigmaスクリーンショットと一致している
 - [ ] Figma定義と実際の使用方法に矛盾がある場合、実際の見た目を優先した

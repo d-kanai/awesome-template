@@ -1,14 +1,17 @@
 import { getTestimonials } from "@/features/home/queries/getTestimonials";
-import { getTestimonials as getTestimonialsAPI } from "@/features/shared/api/generated/tmp-functions";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { HomeTestIds } from "../test-ids";
 import { HomeScreen } from "./HomeScreen";
 
-// Orval生成API関数をモック
-vi.mock("@/features/shared/api/generated/tmp-functions", () => ({
+// 本番API関数をモック（Screen Testは本実装に対してテスト）
+vi.mock("@/features/shared/api/generated/functions", () => ({
   getTestimonials: vi.fn(),
 }));
+
+const { getTestimonials: getTestimonialsAPI } = await import(
+  "@/features/shared/api/generated/functions"
+);
 
 describe("HomeScreen - TestC", () => {
   beforeEach(() => {

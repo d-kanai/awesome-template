@@ -9,8 +9,8 @@ help: ## Show this help message
 dev: ## Start development server
 	pnpm dev
 
-dev-mock: ## Start development server with MSW enabled
-	NEXT_PUBLIC_API_MOCKING=enabled pnpm dev
+dev-mock: ## Start development server with mock mode
+	NEXT_PUBLIC_API_MOCK_MODE=enabled pnpm dev
 
 build: ## Build for production
 	pnpm build

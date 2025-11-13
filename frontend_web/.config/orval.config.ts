@@ -1,7 +1,6 @@
 import { defineConfig } from "orval";
 
 const OPENAPI_SPEC_PATH = "../../backend/build/openapi/openapi.json";
-const TMP_OPENAPI_SPEC_PATH = "../doc/tmp-openapi.json";
 
 const schemaNameMap: Record<string, string> = {
   "ID 検索レスポンス": "FindUserByIdResponse",
@@ -57,19 +56,6 @@ export default defineConfig({
       },
       // @ts-ignore - schemaNameは実行時に使用されるが型定義に含まれていない
       schemaName: (name: string) => schemaNameMap[name] ?? name,
-    },
-  },
-  // Figma取り込み用の一時API定義（MSWモック生成）
-  awesomeTemplateMocks: {
-    input: TMP_OPENAPI_SPEC_PATH,
-    output: {
-      target: "../features/shared/api/generated/tmp-functions.ts",
-      schemas: "../features/shared/api/generated/model",
-      client: "fetch",
-      httpClient: "fetch",
-      mock: true, // MSWハンドラー生成
-      clean: false, // 既存のschema/modelを共有
-      // Note: mutatorは指定しない（MSW専用でfetcherは不要、Client Componentでの使用を考慮）
     },
   },
 });

@@ -63,19 +63,7 @@ Figmaコンポーネントの取り込みについては、別ドキュメント
     - 全てのScreenにTestCが作成されていること
     - Screenから呼び出しているComponent全てのカバレッジが90%以上になるように、eventを網羅するようにすること
   - Query
-    - **vi.mock()でOrval生成API関数をモック**（MSWは使用しない）
     - Given: Query APIレスポンスモック
-      ```typescript
-      vi.mock("@/features/shared/api/generated/tmp-functions", () => ({
-        getTestimonials: vi.fn(),
-      }));
-
-      const mockResponse = {
-        data: { testimonials: [...] },
-        status: 200,
-      };
-      vi.mocked(getTestimonialsAPI).mockResolvedValue(mockResponse);
-      ```
     - When: QueryするRSC実行 => Screen ComponentにRSCのdataをpropsで渡して実行
       - ※ spec上でRSCとScreenをpage.tsxのように統合してテストする
     - Then: 画面にAPIデータが表示されていること
@@ -88,10 +76,6 @@ Figmaコンポーネントの取り込みについては、別ドキュメント
       - Client Side URL遷移が起きていること
       - Toastなど、ユーザへのFBが起きていること
 - elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること
-- **MSWについて**
-  - vitestでは使用しない（vi.mock()を使用）
-  - ブラウザ（開発環境・Storybook）でのみ使用
-  - Orval生成のMSWハンドラーで自動的にモック
 
 ### E2E spec (playwright)
 

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "dev:mock": "NEXT_PUBLIC_API_MOCKING=enabled next dev",
+    "dev:mock": "NEXT_PUBLIC_API_MOCK_MODE=enabled next dev",
     "build": "next build",
     "start": "next start",
     "lint": "biome check --config-path .config/biome.json .",

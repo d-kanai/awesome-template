@@ -45,6 +45,13 @@ export async function fetcher<TData, TVariables = unknown>(
   path: string,
   options: FetcherOptions<TVariables> = {},
 ): Promise<TData> {
+  // Mock mode: Dynamic import to avoid bundling in production
+  if (process.env.NEXT_PUBLIC_API_MOCK_MODE === "enabled") {
+    const { mockFetcher } = await import("@/api_mock_mode/fetcher");
+    return mockFetcher<TData, TVariables>(path, options);
+  }
+
+  // Real API mode
   const { data, headers, ...rest } = options;
 
   const body = data !== undefined ? JSON.stringify(data) : rest.body;
