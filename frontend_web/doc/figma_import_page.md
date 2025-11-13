@@ -31,6 +31,24 @@
 
 ## 実装手順
 
+**重要**: ページ取り込み時は、必ずTodoWriteツールでタスクリストを作成し、進捗を可視化すること。
+
+### タスクリスト（必須）
+
+以下の11ステップでタスクリストを作成：
+
+1. **MCP情報取得**: `get_design_context` + `get_screenshot` でFigma情報取得
+2. **Figma Raw作成**: `figma_generated/pages/` にRawファイル作成
+3. **OpenAPI定義追加**: `backend/build/openapi/openapi.json` にAPI定義追加
+4. **Orval生成**: `pnpm generate:api` 実行
+5. **モックデータ追加**: `api_mock_mode/data.ts` + `api_mock_mode/fetcher.ts`
+6. **Query/Action実装**: データ取得・変更ロジック作成
+7. **Screen実装**: RSCパターンでScreen component作成
+8. **Screen Test作成**: vi.mock()による統合テスト作成
+9. **モック動作確認**: `make dev-mock` でブラウザ確認
+10. **Test実行**: `pnpm test` で全テスト成功確認
+11. **Type Check**: `pnpm typecheck` で型エラー確認
+
 ### 1. ディレクトリ構成
 
 ```
@@ -399,19 +417,24 @@ NEXT_PUBLIC_API_MOCK_MODE=enabled pnpm dev
 
 ## チェックリスト
 
-- [ ] **基本（Component Level参照）:**
-  - [ ] `get_design_context`と`get_screenshot`で仕様確認
-  - [ ] 依存する子コンポーネントを先に実装（Atomic Design順序）
-  - [ ] Figmaデザイントークン（`--sds-*`）使用
-  - [ ] `pnpm typecheck`成功
-  - [ ] 見た目がFigmaスクリーンショットと一致
+**進捗管理（必須）:**
+- [ ] **TodoWriteツールでタスクリスト作成**（11ステップ）
 
-- [ ] **API連携（Page Level固有）:**
-  - [ ] 本番openapi.jsonにAPI定義を追加（`x-figma-temporary: true`）
-  - [ ] `pnpm generate:api`でOrval生成を実行
-  - [ ] `api_mock_mode/data.ts`にモックデータを追加
-  - [ ] `api_mock_mode/fetcher.ts`にモックレスポンスを追加
-  - [ ] `queries/`または`actions/`にラッパー関数を作成（本番functions.tsをimport）
-  - [ ] vi.mock()で本番functions.tsをモックしたScreen Testを作成
-  - [ ] `pnpm test`でテストが成功
-  - [ ] `make dev-mock`でブラウザ動作確認（環境変数でモック自動切り替え）
+**基本（Component Level参照）:**
+- [ ] `get_design_context`と`get_screenshot`で仕様確認
+- [ ] 依存する子コンポーネントを先に実装（Atomic Design順序）
+- [ ] Figma Rawファイル作成（`figma_generated/pages/`）
+- [ ] Figmaデザイントークン（`--sds-*`）使用
+- [ ] `pnpm typecheck`成功
+- [ ] 見た目がFigmaスクリーンショットと一致
+
+**API連携（Page Level固有）:**
+- [ ] 本番openapi.jsonにAPI定義を追加（`x-figma-temporary: true`）
+- [ ] `pnpm generate:api`でOrval生成を実行
+- [ ] `api_mock_mode/data.ts`にモックデータを追加
+- [ ] `api_mock_mode/fetcher.ts`にモックレスポンスを追加
+- [ ] `queries/`または`actions/`にラッパー関数を作成（本番functions.tsをimport）
+- [ ] Screen component実装（RSCパターン）
+- [ ] vi.mock()で本番functions.tsをモックしたScreen Testを作成
+- [ ] `pnpm test`でテストが成功
+- [ ] `make dev-mock`でブラウザ動作確認（環境変数でモック自動切り替え）
