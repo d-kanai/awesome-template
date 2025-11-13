@@ -1,4 +1,5 @@
 import { FeatureFlagProvider } from "@/features/shared/providers/FeatureFlagProvider";
+import { MSWProvider } from "@/features/shared/providers/MSWProvider";
 import { QueryProvider } from "@/features/shared/providers/QueryProvider";
 import { ThemeProvider } from "@/features/shared/providers/ThemeProvider";
 import type { Metadata } from "next";
@@ -30,11 +31,13 @@ export default async function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body className={`${inter.variable} ${robotoMono.variable}`}>
-        <ThemeProvider>
-          <QueryProvider>
-            <FeatureFlagProvider>{children}</FeatureFlagProvider>
-          </QueryProvider>
-        </ThemeProvider>
+        <MSWProvider>
+          <ThemeProvider>
+            <QueryProvider>
+              <FeatureFlagProvider>{children}</FeatureFlagProvider>
+            </QueryProvider>
+          </ThemeProvider>
+        </MSWProvider>
       </body>
     </html>
   );

@@ -799,6 +799,244 @@ Figma更新検出
 - cn()によるclassName結合
 - アクセシビリティ属性（aria-*等）
 
+## API連携とテストのワークフロー
+
+Page LevelコンポーネントをFigmaから取り込む際に、バックエンド実装前でもAPI連携とテストを完成させる方法を説明します。
+
+### 概要
+
+1. **tmp-openapi.json作成** - 一時的なAPI定義を作成
+2. **Orval生成** - API client と MSWモックを自動生成
+3. **Query/Action実装** - Orval生成関数をラップ
+4. **Screen Test作成** - vi.mock()でテスト
+5. **ブラウザ確認** - MSWでモックAPI動作確認
+
+### 詳細手順
+
+#### 1. tmp-openapi.json作成
+
+`doc/tmp-openapi.json` にバックエンド実装前の一時的なAPI定義を作成します。
+
+```json
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Temporary API for Figma Import",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/testimonials": {
+      "get": {
+        "operationId": "getTestimonials",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "testimonials": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Testimonial" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Testimonial": {
+        "type": "object",
+        "required": ["quote", "title", "description", "avatarSrc"],
+        "properties": {
+          "quote": { "type": "string" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "avatarSrc": { "type": "string", "format": "uri" }
+        }
+      }
+    }
+  }
+}
+```
+
+#### 2. Orval生成
+
+API client と MSWモックハンドラーを自動生成します。
+
+```bash
+pnpm generate:api
+```
+
+以下が生成されます:
+- `features/shared/api/generated/tmp-functions.ts` - API関数
+- `features/shared/api/generated/model/testimonial.ts` - 型定義
+- MSWモックハンドラー（tmp-functions.ts内）
+
+#### 3. Query実装
+
+Orval生成関数をラップしてQuery関数を作成します。
+
+```typescript
+// features/home/queries/getTestimonials.ts
+import { getTestimonials as getTestimonialsAPI } from "@/features/shared/api/generated/tmp-functions";
+import type { Testimonial } from "@/features/shared/api/generated/model";
+import { cache } from "react";
+
+export type { Testimonial };
+
+export const getTestimonials = cache(async (): Promise<Testimonial[]> => {
+  const response = await getTestimonialsAPI();
+  return response.data.testimonials;
+});
+```
+
+**重要:**
+- `cache()`でラップして React Server Componentsでのリクエスト重複排除
+- Orval生成関数を直接exportせず、Wrapper関数を作成
+- 型もre-exportして使いやすくする
+
+#### 4. Screen Test作成
+
+vi.mock()でOrval生成関数をモックしてテストを作成します。
+
+```typescript
+// features/home/screens/HomeScreen.spec.tsx
+import { getTestimonials } from "@/features/home/queries/getTestimonials";
+import { getTestimonials as getTestimonialsAPI } from "@/features/shared/api/generated/tmp-functions";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// Orval生成API関数をモック
+vi.mock("@/features/shared/api/generated/tmp-functions", () => ({
+  getTestimonials: vi.fn(),
+}));
+
+describe("HomeScreen - TestC", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe("正常系", () => {
+    it("APIから取得したtestimonialsが表示される", async () => {
+      // Given: API レスポンスモック
+      const mockResponse = {
+        data: {
+          testimonials: [
+            {
+              quote: "Test quote",
+              title: "Test User",
+              description: "Test Role",
+              avatarSrc: "https://example.com/avatar.jpg",
+            },
+          ],
+        },
+        status: 200,
+      };
+      vi.mocked(getTestimonialsAPI).mockResolvedValue(mockResponse);
+
+      // When: データ取得 → 画面レンダリング
+      const testimonials = await getTestimonials();
+      render(<HomeScreen testimonials={testimonials} />);
+
+      // Then: モックデータが表示される
+      expect(screen.getByText("Test quote")).toBeInTheDocument();
+      expect(getTestimonialsAPI).toHaveBeenCalledTimes(1);
+    });
+  });
+});
+```
+
+**重要:**
+- **MSWは使わない** - vitestでは vi.mock()を使用
+- Orval生成関数を直接モック
+- レスポンス構造は型安全（OpenAPI定義から生成）
+
+#### 5. ブラウザで確認
+
+開発環境でMSWを有効化してブラウザで動作確認します。
+
+```bash
+# 環境変数でMSW有効化
+export NEXT_PUBLIC_API_MOCKING=enabled
+pnpm dev
+```
+
+MSWが自動的に起動し、Orval生成のモックハンドラーでAPIレスポンスがモックされます。
+
+**MSWの仕組み:**
+- `MSWProvider` - 開発環境でMSW workerを初期化
+- `features/shared/api/mocks/browser.ts` - MSW設定
+- Orval生成のモックハンドラー - 自動的にfakerでダミーデータ生成
+
+### バックエンド実装後の対応
+
+1. **tmp-openapi.jsonを本番openapi.jsonにマージ**
+2. **Query関数のimportを変更**
+   ```typescript
+   // Before
+   import { getTestimonials as getTestimonialsAPI } from "@/features/shared/api/generated/tmp-functions";
+
+   // After
+   import { getTestimonials as getTestimonialsAPI } from "@/features/shared/api/generated/functions";
+   ```
+3. **テストのvi.mock()パスを変更**
+   ```typescript
+   // Before
+   vi.mock("@/features/shared/api/generated/tmp-functions", () => ({...}));
+
+   // After
+   vi.mock("@/features/shared/api/generated/functions", () => ({...}));
+   ```
+4. **MSWは開発環境で引き続き使用可能**
+
+### ワークフロー図
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ 1. Figmaから取り込み                                       │
+│    get_design_context + get_screenshot                   │
+└──────────────────┬──────────────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────────────────┐
+│ 2. tmp-openapi.json作成                                   │
+│    バックエンド実装前の一時API定義                          │
+└──────────────────┬──────────────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────────────────┐
+│ 3. Orval生成                                              │
+│    pnpm generate:api                                     │
+│    → tmp-functions.ts (API client + MSWモック)           │
+└──────────────────┬──────────────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────────────────┐
+│ 4. Query/Action実装                                       │
+│    features/[feature]/queries/xxx.ts                    │
+│    → Orval生成関数をcache()でラップ                        │
+└──────────────────┬──────────────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────────────────┐
+│ 5. Screen Test作成                                        │
+│    vi.mock()でOrval生成関数をモック                         │
+│    → 型安全なテスト                                         │
+└──────────────────┬──────────────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────────────────┐
+│ 6. ブラウザで確認                                          │
+│    NEXT_PUBLIC_API_MOCKING=enabled pnpm dev             │
+│    → MSWでモックAPI動作                                    │
+└─────────────────────────────────────────────────────────┘
+```
+
 ## チェックリスト
 
 コンポーネント実装時には以下を確認すること:
@@ -810,6 +1048,13 @@ Figma更新検出
 - [ ] Tailwind arbitrary valuesでプロパティ型を明示している（`border-[length:...]`, `text-[color:...]`など）
 - [ ] `index.tsx`で型を適切にエクスポートしている
 - [ ] Storybookストーリーを作成した（`import React from "react";`を含む）
+- [ ] **API連携が必要な場合:**
+  - [ ] tmp-openapi.jsonにAPI定義を追加した
+  - [ ] `pnpm generate:api`でOrval生成を実行した
+  - [ ] queries/またはactions/にラッパー関数を作成した
+  - [ ] vi.mock()を使ったScreen Testを作成した
+  - [ ] `pnpm test`でテストが成功した
+  - [ ] NEXT_PUBLIC_API_MOCKING=enabledでブラウザ動作確認した
 - [ ] `pnpm typecheck`が成功した
 - [ ] 実際の見た目がFigmaスクリーンショットと一致している
 - [ ] Figma定義と実際の使用方法に矛盾がある場合、実際の見た目を優先した

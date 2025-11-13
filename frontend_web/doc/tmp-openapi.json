@@ -1,0 +1,75 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Temporary API for Figma Import",
+    "description": "Figma取り込み時に使用する一時的なAPI定義。バックエンド実装前のモック用。",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "/api",
+      "description": "API base path"
+    }
+  ],
+  "paths": {
+    "/testimonials": {
+      "get": {
+        "operationId": "getTestimonials",
+        "summary": "Get testimonials list",
+        "description": "お客様の声一覧を取得します",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["testimonials"],
+                  "properties": {
+                    "testimonials": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Testimonial"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Testimonial": {
+        "type": "object",
+        "required": ["quote", "title", "description", "avatarSrc"],
+        "properties": {
+          "quote": {
+            "type": "string",
+            "description": "お客様のコメント",
+            "example": "This product has completely transformed how we work. Highly recommended!"
+          },
+          "title": {
+            "type": "string",
+            "description": "お客様の名前",
+            "example": "Sarah Johnson"
+          },
+          "description": {
+            "type": "string",
+            "description": "お客様の役職・所属",
+            "example": "CEO, TechCorp"
+          },
+          "avatarSrc": {
+            "type": "string",
+            "format": "uri",
+            "description": "アバター画像URL",
+            "example": "https://i.pravatar.cc/150?img=1"
+          }
+        }
+      }
+    }
+  }
+}
