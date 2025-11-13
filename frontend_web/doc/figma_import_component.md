@@ -35,6 +35,34 @@
 6. **Code Connect Publish**: `pnpm figma:connect:publish` 実行
 7. **Type Check**: `pnpm typecheck` で型エラー確認
 
+### 進捗表示ルール（必須）
+
+**作業開始時と各ステップ完了時に、以下の形式で進捗状況を表示すること：**
+
+```
+## [コンポーネント名] コンポーネント取り込み - 進捗状況
+
+1. ✅ **MCP情報取得** - 完了
+2. 🔄 **Figma Raw作成** - 進行中
+3. ⏳ **実装作成**
+4. ⏳ **Storybook作成**
+5. ⏳ **Code Connect作成**
+6. ⏳ **Code Connect Publish**
+7. ⏳ **Type Check**
+
+---
+```
+
+**ステータス記号:**
+- ✅ = 完了 (completed)
+- 🔄 = 進行中 (in_progress)
+- ⏳ = 待機中 (pending)
+
+**表示タイミング:**
+- 作業開始時: 最初に全体の進捗を表示
+- 各ステップ完了時: 更新された進捗状況を表示
+- 作業完了時: 全ステップ完了を表示
+
 ### 1. Figmaノード取得
 
 ```
