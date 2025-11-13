@@ -6,32 +6,33 @@ import { UserTestIds } from "../test-ids";
 function UserListItem({ user }: { user: User }) {
   return (
     <div
-      className="border-b border-[var(--sds-color-border-default-default,#d9d9d9)] p-[var(--sds-size-space-400,16px)] last:border-b-0"
+      className="border-b border-border p-Space-400 last:border-b-0 hover:bg-muted/50 transition-colors"
       data-testid={UserTestIds.userListItem}
     >
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center justify-between gap-Space-400">
+        <div className="flex-1 min-w-0">
           <h3
-            className="font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)] font-[var(--sds-typography-body-font-weight-strong,600)] text-[length:var(--sds-typography-body-size-medium,16px)] leading-[1.4] text-[color:var(--sds-color-text-default-default,#1e1e1e)]"
+            className="text-body-medium font-semibold text-foreground truncate"
             data-testid={UserTestIds.userEmail}
           >
             {user.email}
           </h3>
           <p
-            className="font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] text-[length:var(--sds-typography-body-size-small,14px)] leading-[1.4] text-[color:var(--sds-color-text-default-secondary,#757575)]"
+            className="text-body-small text-foreground-secondary mt-Space-50"
             data-testid={UserTestIds.userId}
           >
             ID: {user.id}
           </p>
         </div>
-        <div
-          className="font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] text-[length:var(--sds-typography-body-size-small,14px)] leading-[1.4] text-[color:var(--sds-color-text-default-tertiary,#b3b3b3)]"
+        <time
+          className="text-body-small text-foreground-tertiary shrink-0"
           data-testid={UserTestIds.userCreatedAt}
+          dateTime={user.createdAt}
         >
           {user.createdAt
             ? new Date(user.createdAt).toLocaleDateString("ja-JP")
             : "-"}
-        </div>
+        </time>
       </div>
     </div>
   );
@@ -44,9 +45,9 @@ interface UserListProps {
 export function UserList({ users }: UserListProps) {
   if (!users || users.length === 0) {
     return (
-      <div className="bg-[var(--sds-color-background-default-default,#ffffff)] border-[var(--sds-color-border-default-default,#d9d9d9)] border-[var(--sds-size-stroke-border,1px)] border-solid rounded-[var(--sds-size-radius-200,8px)] p-[var(--sds-size-space-800,32px)] text-center">
+      <div className="bg-background border border-border rounded-Radius-200 p-Space-800 text-center">
         <p
-          className="font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)] font-[var(--sds-typography-body-font-weight-regular,400)] text-[length:var(--sds-typography-body-size-medium,16px)] leading-[1.4] text-[color:var(--sds-color-text-default-secondary,#757575)]"
+          className="text-body-medium text-foreground-secondary"
           data-testid={UserTestIds.emptyMessage}
         >
           ユーザーが見つかりません
@@ -57,7 +58,7 @@ export function UserList({ users }: UserListProps) {
 
   return (
     <div
-      className="bg-[var(--sds-color-background-default-default,#ffffff)] border-[var(--sds-color-border-default-default,#d9d9d9)] border-[var(--sds-size-stroke-border,1px)] border-solid rounded-[var(--sds-size-radius-200,8px)]"
+      className="bg-background border border-border rounded-Radius-200 overflow-hidden shadow-sm"
       data-testid={UserTestIds.userList}
     >
       {users.map((user) => (
