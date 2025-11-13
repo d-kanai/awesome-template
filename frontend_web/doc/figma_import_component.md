@@ -21,6 +21,20 @@
 
 ## 実装手順
 
+**重要**: コンポーネント取り込み時は、必ずTodoWriteツールでタスクリストを作成し、進捗を可視化すること。
+
+### タスクリスト（必須）
+
+以下の7ステップでタスクリストを作成：
+
+1. **MCP情報取得**: `get_design_context` + `get_screenshot` でFigma情報取得
+2. **Figma Raw作成**: `figma_generated/` にRawファイル作成
+3. **実装作成**: forwardRef対応のコンポーネント実装
+4. **Storybook作成**: `.stories.tsx` ファイル作成
+5. **Code Connect作成**: `.figma.tsx` ファイル作成
+6. **Code Connect Publish**: `pnpm figma:connect:publish` 実行
+7. **Type Check**: `pnpm typecheck` で型エラー確認
+
 ### 1. Figmaノード取得
 
 ```
@@ -234,7 +248,85 @@ export const Mobile: Story = {
 
 **重要**: `import React from "react";` は必須（Storybook実行環境で未定義エラーになるため）
 
-### 7. 型安全性確認
+### 7. Code Connect作成
+
+Figma上でコンポーネントを選択すると実装コードが表示されるようにCode Connectファイルを作成します。
+
+```typescript
+// features/shared/ui/atoms/Button/Button.figma.tsx
+import { figma } from "@figma/code-connect";
+import { Button } from "./Button";
+
+/**
+ * Code Connect for Button component
+ * Links Figma Button component to React implementation
+ */
+
+figma.connect(Button, "https://www.figma.com/design/FILE_KEY/...?node-id=4185-3778", {
+  props: {
+    variant: figma.enum("Variant", {
+      Primary: "primary",
+      Neutral: "neutral",
+      Subtle: "subtle",
+    }),
+    size: figma.enum("Size", {
+      Medium: "medium",
+      Small: "small",
+    }),
+    disabled: figma.enum("State", {
+      Disabled: true,
+      Default: false,
+      Hover: false,
+    }),
+  },
+  example: ({ variant, size, disabled }) => (
+    <Button variant={variant} size={size} disabled={disabled}>
+      Button
+    </Button>
+  ),
+});
+```
+
+**重要なポイント:**
+- **第2引数は文字列リテラル必須**（変数不可）
+- **FILE_KEYは`.env.local`の`FIGMA_FILE_KEY`を手動でコピー**
+- **propsマッピング**: Figmaのプロパティ名とReact propsを紐付け
+- **children問題**: テキストが取得できない場合は固定値で対応（`figma.string()`や`figma.textContent()`でエラーが出る場合）
+
+### 8. Code Connect Publish
+
+Code Connectファイルを作成したら、必ずFigmaにpublishします。
+
+```bash
+# 環境変数を読み込んでpublish
+FIGMA_ACCESS_TOKEN=<your_token> pnpm figma:connect:publish
+```
+
+**必要な設定:**
+1. **Figma Personal Access Token**（Code Connect Write スコープ必須）
+   - Settings → Account → Personal Access Tokens
+   - スコープ: ✅ File content (read) + ✅ Code Connect (write)
+   - `.env.local`の`FIGMA_ACCESS_TOKEN`に設定
+
+2. **figma.config.json確認**
+   ```json
+   {
+     "codeConnect": {
+       "include": ["features/shared/ui/**/*.tsx"],
+       "exclude": ["**/*.stories.tsx", "**/*.test.tsx"],
+       "parser": "react",
+       "label": "React"
+     }
+   }
+   ```
+
+**成功例:**
+```
+Successfully uploaded to Figma, for React:
+-> Button https://www.figma.com/design/...?node-id=4185-3778
+```
+
+### 9. 型安全性確認
 
 ```bash
 pnpm typecheck
@@ -394,13 +486,20 @@ git diff features/shared/ui/atoms/Button/
 
 ## チェックリスト
 
+**進捗管理（必須）:**
+- [ ] **TodoWriteツールでタスクリスト作成**（7ステップ）
+
+**実装チェック:**
 - [ ] `get_design_context`と`get_screenshot`で仕様確認
 - [ ] 依存する子コンポーネントを先に実装（Atomic Design順序）
+- [ ] Figma Rawファイル作成（`figma_generated/`）
 - [ ] forwardRefパターン使用
 - [ ] Figmaデザイントークン（`--sds-*`）使用
 - [ ] Tailwind arbitrary valuesでプロパティ型明示
 - [ ] `index.tsx`で型を適切にエクスポート
 - [ ] Storybookストーリー作成（`import React from "react";`含む）
+- [ ] **Code Connect ファイル作成**（`.figma.tsx`）
+- [ ] **Code Connect Publish成功**（`pnpm figma:connect:publish`）
 - [ ] `pnpm typecheck`成功
 - [ ] 見た目がFigmaスクリーンショットと一致
 - [ ] Figma定義と実際の見た目に矛盾がある場合、実際の見た目を優先
