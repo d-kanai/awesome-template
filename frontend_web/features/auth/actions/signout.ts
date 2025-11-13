@@ -2,10 +2,14 @@
 
 import { AUTH_ROUTES } from "@/features/auth/routes";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
-import { redirect } from "next/navigation";
 
-export async function signoutAction() {
+export type SignoutActionResponse = {
+  success?: boolean;
+  redirectTo?: string;
+};
+
+export async function signoutAction(): Promise<SignoutActionResponse> {
   await CookieManager.deleteAccessToken();
 
-  redirect(AUTH_ROUTES.SIGNIN);
+  return { success: true, redirectTo: AUTH_ROUTES.SIGNIN };
 }
