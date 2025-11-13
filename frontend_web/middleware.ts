@@ -33,7 +33,7 @@ export function middleware(request: NextRequest) {
 // Middlewareを適用するパスを設定
 export const config = {
   matcher: [
-    // 静的ファイル、API routes、Next.js内部パスを除外
-    "/((?!_next/static|_next/image|favicon.ico|api).*)",
+    // 静的ファイル、API routes、Next.js内部パス、MSW workerを除外
+    "/((?!_next/static|_next/image|favicon.ico|api|mockServiceWorker.js).*)",
   ],
 };
