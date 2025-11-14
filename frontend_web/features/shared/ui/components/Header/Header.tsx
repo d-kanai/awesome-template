@@ -8,6 +8,7 @@
 "use client";
 
 import { cn } from "@/features/shared/lib/utils";
+import Image from "next/image";
 // biome-ignore lint/correctness/noUnusedImports: React is needed for JSX in Storybook
 import React, { useState } from "react";
 import { HeaderAuth, type HeaderAuthState } from "../HeaderAuth";
@@ -103,9 +104,11 @@ export function Header({
           <div className="flex items-center gap-[24px] shrink-0">
             {logoSrc ? (
               <div className="relative w-[40px] h-[35px] shrink-0">
-                <img
+                <Image
                   src={logoSrc}
                   alt={logoAlt}
+                  width={40}
+                  height={35}
                   className="block max-w-none size-full"
                 />
               </div>
@@ -180,9 +183,11 @@ export function Header({
             <div className="flex items-center gap-[24px]">
               {logoSrc ? (
                 <div className="relative w-[40px] h-[35px] shrink-0">
-                  <img
+                  <Image
                     src={logoSrc}
                     alt={logoAlt}
+                    width={40}
+                    height={35}
                     className="block max-w-none size-full"
                   />
                 </div>

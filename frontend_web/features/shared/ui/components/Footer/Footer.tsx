@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/features/shared/lib/utils";
+import Image from "next/image";
 import React from "react";
 import { type TextLinkListLinkItem, TextLinkList } from "../TextLinkList";
 
@@ -97,9 +98,11 @@ export function Footer({
           {/* Logo */}
           {logoSrc ? (
             <div className="relative w-[23.333px] h-[35px] shrink-0">
-              <img
+              <Image
                 src={logoSrc}
                 alt={logoAlt}
+                width={23.333}
+                height={35}
                 className="block max-w-none size-full"
               />
             </div>
