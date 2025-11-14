@@ -142,6 +142,85 @@ features/shared/ui/
 - Figma Raw: `Generated at` - 自動生成された静的ファイル（変更しない）
 - Implementation: `Synced at` - Figmaと同期しながら継続的に更新されるファイル
 
+### 4. 画像アセット管理
+
+**重要**: Figma から画像アセットを必ずダウンロードして配置し、`next/image` で最適化すること。
+
+#### 画像の配置場所
+
+```
+public/
+└── images/
+    ├── logos/          # ロゴ画像
+    ├── icons/          # アイコン画像
+    ├── hero/           # ヒーローイメージ
+    └── testimonials/   # お客様の声など
+```
+
+#### 画像ダウンロード手順
+
+**推奨: MCP から自動取得**
+
+MCP の `get_design_context` で取得した Figma Raw に含まれる `localhost:3845` の画像 URL から直接ダウンロード可能：
+
+1. **Figma Raw から画像 URL を確認**
+   ```typescript
+   // Button.figma-raw.tsx
+   const imgIcon = "http://localhost:3845/assets/xxx.svg";
+   ```
+
+2. **curl でダウンロード**
+   ```bash
+   curl -s http://localhost:3845/assets/xxx.svg \
+     -o public/images/icons/icon-name.svg
+   ```
+
+**代替: 手動エクスポート**
+
+MCP で画像が取得できない場合：
+
+1. Figma Desktop でコンポーネントを開く
+2. 画像レイヤーを選択 → 右クリック → Export
+3. フォーマット: PNG（透過）、JPG（写真）、SVG（アイコン）
+4. 解像度: @2x または @3x（Retina 対応）
+5. `public/images/[カテゴリ]/` に配置
+6. 命名規則: `kebab-case.png` (例: `figma-logo.svg`)
+
+#### 実装で使用
+
+```tsx
+import Image from "next/image";
+
+// ✅ 推奨: next/image で最適化
+<Image
+  src="/images/logos/figma-logo.svg"
+  alt="Figma Logo"
+  width={40}
+  height={35}
+/>
+
+// ❌ 非推奨: 通常の img タグ（最適化されない）
+<img src="/images/logos/figma-logo.svg" alt="Figma Logo" />
+```
+
+#### next/image の利点
+
+- ✅ 自動的に WebP/AVIF に変換（対応ブラウザのみ）
+- ✅ レスポンシブサイズ自動生成
+- ✅ 遅延読み込み（Lazy Loading）
+- ✅ `.next/cache/images/` に60日間キャッシュ
+- ✅ ビルド時に最適化
+
+#### Figma Raw との使い分け
+
+- **Figma Raw (`.figma-raw.tsx`)**:
+  - 通常の `<img>` タグで保持（参考用）
+  - `http://localhost:3845/assets/...` のままでOK
+
+- **実装 (`Component.tsx`)**:
+  - `next/image` の `Image` コンポーネント使用
+  - `/images/` からの絶対パス
+
 ### 4. コンポーネント実装
 
 #### forwardRefパターン（必須）

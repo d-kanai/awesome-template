@@ -35,19 +35,25 @@
 
 ### タスクリスト（必須）
 
-以下の11ステップでタスクリストを作成：
+以下の12ステップでタスクリストを作成：
 
 1. **MCP情報取得**: `get_design_context` + `get_screenshot` + `get_code_connect_map` + `get_metadata` でFigma情報取得
 2. **Figma Raw作成**: `figma_generated/pages/` にRawファイル作成
-3. **OpenAPI定義追加**: `backend/build/openapi/openapi.json` にAPI定義追加
-4. **Orval生成**: `pnpm generate:api` 実行
-5. **モックデータ追加**: `api_mock_mode/data.ts` + `api_mock_mode/fetcher.ts`
-6. **Query/Action実装**: データ取得・変更ロジック作成
-7. **Screen実装**: RSCパターンでScreen component作成
-8. **Screen Test作成**: vi.mock()による統合テスト作成
-9. **モック動作確認**: `make dev-mock` でブラウザ確認
-10. **Test実行**: `pnpm test` で全テスト成功確認
-11. **Type Check**: `pnpm typecheck` で型エラー確認
+   - ⚠️ 作成後、importパスを相対パス→絶対パスに修正
+3. **画像アセットダウンロード**: Figma Raw の `localhost:3845` URL から画像を `public/images/` にダウンロード
+   - `curl` で一括ダウンロード推奨
+4. **OpenAPI定義追加**: `backend/build/openapi/openapi.json` にAPI定義追加
+   - ⚠️ backend側に追加（frontend_web/openapi.jsonではない）
+   - ⚠️ schema名は英語で定義（日本語はNG）
+5. **Orval生成**: `pnpm generate:api` 実行
+   - ⚠️ 生成後、`model/index.ts`と`functions.ts`で型・関数が生成されたか確認
+6. **モックデータ追加**: `api_mock_mode/data.ts` + `api_mock_mode/fetcher.ts`
+7. **Query/Action実装**: データ取得・変更ロジック作成
+8. **Screen実装**: RSCパターンでScreen component作成（`next/image` 使用）
+9. **Screen Test作成**: vi.mock()による統合テスト作成
+10. **モック動作確認**: `make dev-mock` でブラウザ確認
+11. **Test実行**: `pnpm test` で全テスト成功確認
+12. **Type Check**: `pnpm typecheck` で型エラー確認
 
 ### 進捗表示ルール（必須）
 
@@ -58,15 +64,16 @@
 
 1. ✅ **MCP情報取得** - 完了
 2. 🔄 **Figma Raw作成** - 進行中
-3. ⏳ **OpenAPI定義追加**
-4. ⏳ **Orval生成**
-5. ⏳ **モックデータ追加**
-6. ⏳ **Query/Action実装**
-7. ⏳ **Screen実装**
-8. ⏳ **Screen Test作成**
-9. ⏳ **モック動作確認**
-10. ⏳ **Test実行**
-11. ⏳ **Type Check**
+3. ⏳ **画像アセットダウンロード**
+4. ⏳ **OpenAPI定義追加**
+5. ⏳ **Orval生成**
+6. ⏳ **モックデータ追加**
+7. ⏳ **Query/Action実装**
+8. ⏳ **Screen実装**
+9. ⏳ **Screen Test作成**
+10. ⏳ **モック動作確認**
+11. ⏳ **Test実行**
+12. ⏳ **Type Check**
 
 ---
 ```
@@ -110,11 +117,128 @@ features/
         └── getTestimonials.ts
 ```
 
-### 2. API統合ワークフロー
+### 2. 画像アセット管理
+
+**重要**: Figma から画像アセットを必ずダウンロードして配置し、`next/image` で最適化すること。
+
+#### 画像の配置場所
+
+```
+public/
+└── images/
+    ├── logos/          # ロゴ画像
+    ├── icons/          # アイコン画像
+    ├── hero/           # ヒーローイメージ
+    └── testimonials/   # お客様の声など
+```
+
+#### 画像ダウンロード手順
+
+**推奨: MCP から自動取得（Page Level）**
+
+Page Level 取り込み時は、Figma Raw に含まれる `localhost:3845` の画像 URL から直接ダウンロード可能：
+
+1. **Figma Raw から画像 URL を確認**
+   ```typescript
+   // HomePage.figma-raw.tsx
+   const img = "http://localhost:3845/assets/d4c3bac78b200cfb907deaea86f331a1ec54cb0a.svg";
+   const img3 = "http://localhost:3845/assets/f7670ccd9f4a0daef6ffdd182abe963966b9e064.svg";
+   // ...
+   ```
+
+2. **curl でダウンロード**
+   ```bash
+   # ロゴ
+   curl -s http://localhost:3845/assets/d4c3bac78b200cfb907deaea86f331a1ec54cb0a.svg \
+     -o public/images/logos/figma-logo.svg
+
+   # ソーシャルアイコン
+   curl -s http://localhost:3845/assets/06d5686ebc43f358ce6232b368c6aaa3e6dc3c02.svg \
+     -o public/images/icons/social/x-logo.svg
+   ```
+
+3. **複数画像を一括ダウンロード**
+   ```bash
+   curl -s URL1 -o public/images/logos/logo.svg && \
+   curl -s URL2 -o public/images/icons/icon1.svg && \
+   curl -s URL3 -o public/images/icons/icon2.svg
+   ```
+
+**代替: 手動エクスポート（Component Level など）**
+
+Component Level や MCP で画像が取得できない場合：
+
+1. Figma Desktop でコンポーネントを開く
+2. 画像レイヤーを選択 → 右クリック → Export
+3. フォーマット: PNG（透過）、JPG（写真）、SVG（アイコン）
+4. 解像度: @2x または @3x（Retina 対応）
+5. `public/images/[カテゴリ]/` に配置
+6. 命名規則: `kebab-case.png` (例: `figma-logo.svg`)
+
+#### 実装で使用
+
+```tsx
+import Image from "next/image";
+
+// ✅ 推奨: next/image で最適化
+<Image
+  src="/images/logos/figma-logo.svg"
+  alt="Figma Logo"
+  width={40}
+  height={35}
+/>
+
+// ❌ 非推奨: 通常の img タグ（最適化されない）
+<img src="/images/logos/figma-logo.svg" alt="Figma Logo" />
+```
+
+#### next/image の利点
+
+- ✅ 自動的に WebP/AVIF に変換（対応ブラウザのみ）
+- ✅ レスポンシブサイズ自動生成
+- ✅ 遅延読み込み（Lazy Loading）
+- ✅ `.next/cache/images/` に60日間キャッシュ
+- ✅ ビルド時に最適化
+
+#### Figma Raw との使い分け
+
+- **Figma Raw (`.figma-raw.tsx`)**:
+  - 通常の `<img>` タグで保持（参考用）
+  - `http://localhost:3845/assets/...` のままでOK
+
+- **実装 (`Screen.tsx`, `Component.tsx`)**:
+  - `next/image` の `Image` コンポーネント使用
+  - `/images/` からの絶対パス
+
+### 3. API統合ワークフロー
 
 Page Levelコンポーネントは、バックエンド実装前でもAPI連携を完成させます。
 
+**⚠️ typecheck対策（必読）**
+
+以下の順序を守ることで、typecheck時のエラーを最小限に抑えられます：
+
+1. **OpenAPI定義は必ずbackend側に追加**
+   - `backend/build/openapi/openapi.json` に定義
+   - `frontend_web/openapi.json` には追加しない
+
+2. **schema名は英語で定義**
+   - ❌ `"ユーザーの声"` → Orvalで変換必要
+   - ✅ `"UserVoice"` → そのまま型として使える
+
+3. **Orval生成後にimport確認**
+   - `features/shared/api/generated/model/index.ts` に型がexportされているか確認
+   - `features/shared/api/generated/functions.ts` に関数が生成されているか確認
+
+4. **Figma Rawのimportパス修正**
+   - MCPで生成された相対パス（`./Header`）を絶対パスに修正
+   - `@/features/shared/ui/components/Header` に変更
+
 #### Step 1: 本番openapi.jsonにAPI定義を追加
+
+**⚠️ 重要: 定義場所**
+- **backend/build/openapi/openapi.json** に追加（backend側）
+- ~~frontend_web/openapi.json~~ には追加しない（Orvalはbackend側を参照）
 
 **ファイル:** `backend/build/openapi/openapi.json`
 
@@ -169,6 +293,7 @@ Page Levelコンポーネントは、バックエンド実装前でもAPI連携�
 - バックエンド未実装でもOK（モックモードで動作確認可能）
 - タグ `Figma取り込み (一時)` を付けて一時的な定義であることを明示
 - カスタムフィールド `x-figma-temporary: true` を追加
+- **schema名は必ず英語で定義すること**（日本語だとOrvalで型生成時にマッピングが必要になる）
 
 #### Step 2: Orval生成
 
@@ -447,6 +572,49 @@ NEXT_PUBLIC_API_MOCK_MODE=enabled pnpm dev
 └─────────────────────────────────────────────────────────┘
 ```
 
+## よくあるエラーとトラブルシューティング
+
+### エラー1: typecheck時に型が見つからない
+
+```
+error TS2305: Module '"@/features/shared/api/generated/model"' has no exported member 'UserVoice'.
+```
+
+**原因:**
+- OpenAPI定義が間違った場所にある（frontend_web/openapi.jsonに追加している）
+- schema名が日本語で定義されている
+
+**解決策:**
+1. `backend/build/openapi/openapi.json` に定義を追加
+2. schema名を英語で定義（例: `"UserVoice"`）
+3. `pnpm generate:api` 再実行
+4. `features/shared/api/generated/model/index.ts` でexportされているか確認
+
+### エラー2: Figma Rawファイルのimportエラー
+
+```
+error TS2307: Cannot find module './Header' or its corresponding type declarations.
+```
+
+**原因:**
+- MCPで生成されたimportパスが相対パスになっている
+
+**解決策:**
+- 相対パス `./Header` を絶対パス `@/features/shared/ui/components/Header` に変更
+
+### エラー3: fetch failed（実行時エラー）
+
+```
+Error: fetch failed
+```
+
+**原因:**
+- モックモードではなく通常モードで起動しているため、実際のバックエンドAPIにアクセスしようとして失敗
+
+**解決策:**
+- モックモードで再起動: `NEXT_PUBLIC_API_MOCK_MODE=enabled pnpm dev`
+- または: `make dev-mock`
+
 ## チェックリスト
 
 **進捗管理（必須）:**
@@ -456,13 +624,16 @@ NEXT_PUBLIC_API_MOCK_MODE=enabled pnpm dev
 - [ ] `get_design_context` + `get_screenshot` + `get_code_connect_map` + `get_metadata` で仕様確認
 - [ ] 依存する子コンポーネントを先に実装（Atomic Design順序）
 - [ ] Figma Rawファイル作成（`figma_generated/pages/`）
+- [ ] **Figma RawのimportパスをMCPの相対パスから絶対パスに修正**
 - [ ] Figmaデザイントークン（`--sds-*`）使用
 - [ ] `pnpm typecheck`成功
 - [ ] 見た目がFigmaスクリーンショットと一致
 
 **API連携（Page Level固有）:**
-- [ ] 本番openapi.jsonにAPI定義を追加（`x-figma-temporary: true`）
+- [ ] **backend側の**本番openapi.jsonにAPI定義を追加（`x-figma-temporary: true`）
+- [ ] **schema名は英語で定義**
 - [ ] `pnpm generate:api`でOrval生成を実行
+- [ ] **生成された型・関数が`model/index.ts`と`functions.ts`に存在するか確認**
 - [ ] `api_mock_mode/data.ts`にモックデータを追加
 - [ ] `api_mock_mode/fetcher.ts`にモックレスポンスを追加
 - [ ] `queries/`または`actions/`にラッパー関数を作成（本番functions.tsをimport）
