@@ -184,12 +184,23 @@ import Image from "next/image";
 <Image
   src="/images/logos/figma-logo.svg"
   alt="Figma Logo"
-  width={40}
-  height={35}
+  width={40}   // Figma Raw の className="w-[40px]" から取得
+  height={35}  // Figma Raw の className="h-[35px]" から取得
 />
 
 // ❌ 非推奨: 通常の img タグ（最適化されない）
 <img src="/images/logos/figma-logo.svg" alt="Figma Logo" />
+```
+
+**width/height の取得方法:**
+Figma Raw の画像を含む要素の `className` から読み取る：
+```tsx
+// Figma Raw
+<div className="h-[35px] relative shrink-0 w-[40px]">
+  <img src={imgFigma} ... />
+</div>
+
+// → width={40} height={35} を使用
 ```
 
 #### next/image の利点

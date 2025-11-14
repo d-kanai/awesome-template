@@ -251,6 +251,8 @@ import Image from "next/image";
 1. `import Image from "next/image"` を追加
 2. `<img>` → `<Image>` に変更
 3. `width` と `height` プロパティを追加（必須）
+   - **Figma Raw の親要素の className から読み取る**
+   - 例: `className="h-[35px] w-[40px]"` → `width={40} height={35}`
 4. その他のプロパティ（`className`, `alt` など）は維持
 
 #### forwardRefパターン（必須）
