@@ -223,6 +223,36 @@ import Image from "next/image";
 
 ### 4. コンポーネント実装
 
+#### 画像の扱い（重要）
+
+**Figma Raw に `<img>` タグがある場合、実装では必ず `next/image` の `<Image>` に変換すること。**
+
+```tsx
+// ❌ Figma Raw: そのまま保持（参考用）
+<img
+  src={logoSrc}
+  alt={logoAlt}
+  className="block max-w-none size-full"
+/>
+
+// ✅ 実装: next/image に変換
+import Image from "next/image";
+
+<Image
+  src={logoSrc}
+  alt={logoAlt}
+  width={40}
+  height={35}
+  className="block max-w-none size-full"
+/>
+```
+
+**変換ポイント:**
+1. `import Image from "next/image"` を追加
+2. `<img>` → `<Image>` に変更
+3. `width` と `height` プロパティを追加（必須）
+4. その他のプロパティ（`className`, `alt` など）は維持
+
 #### forwardRefパターン（必須）
 
 ```typescript
