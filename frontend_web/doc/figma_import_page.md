@@ -33,27 +33,59 @@
 
 **重要**: ページ取り込み時は、必ずTodoWriteツールでタスクリストを作成し、進捗を可視化すること。
 
+### プラン作成時の事前確認（必須）
+
+プラン作成前に、以下を**必ず**確認すること：
+
+1. **MCP情報の完全取得**
+   - ✅ `get_design_context` でコード取得
+   - ✅ `get_screenshot` でスクリーンショット取得
+   - ✅ `get_code_connect_map` で既存コンポーネントのマッピング確認
+   - ✅ `get_metadata` でノード構造確認
+
+2. **既存ファイル・ディレクトリの確認**
+   - ✅ `features/[feature]/routes.ts` の存在確認（なければ新規作成が必要）
+   - ✅ `features/[feature]/` ディレクトリの存在確認（既存featureか新規か）
+   - ✅ `public/images/[feature]/` の存在確認
+
+3. **Code Connect情報の理解**
+   - ✅ 既存コンポーネントがある場合でも、**Page Rawファイルは必ず作成する**（参考用として保持）
+   - ✅ 既存コンポーネント内に画像アセットが含まれているか確認
+   - ✅ 含まれていない場合は `public/images/` にダウンロードが必要
+
+4. **インタラクション要素の確認**
+   - ✅ ボタン、リンクなどのhref/onClick先をユーザーに質問
+   - ✅ 全てのインタラクション要素を洗い出してから質問する
+
 ### タスクリスト（必須）
 
 以下の12ステップでタスクリストを作成：
 
 1. **MCP情報取得**: `get_design_context` + `get_screenshot` + `get_code_connect_map` + `get_metadata` でFigma情報取得
+   - ⚠️ **4つすべて実行すること**（どれか1つでも欠けるとプラン不備の原因になる）
 2. **Figma Raw作成**: `figma_generated/pages/` にRawファイル作成
+   - ⚠️ Code Connectで既存コンポーネントがある場合でも、**Page Rawファイルは必ず作成する**
    - ⚠️ 作成後、importパスを相対パス→絶対パスに修正
 3. **画像アセットダウンロード**: Figma Raw の `localhost:3845` URL から画像を `public/images/` にダウンロード
+   - ⚠️ 既存コンポーネント内に画像がない場合は**必ずダウンロード**すること
    - `curl` で一括ダウンロード推奨
-4. **OpenAPI定義追加**: `backend/build/openapi/openapi.json` にAPI定義追加
+4. **routes.ts作成/確認**: `features/[feature]/routes.ts` の存在確認
+   - ⚠️ 存在しない場合は新規作成が必要
+   - 既存の `features/auth/routes.ts` や `features/user/routes.ts` を参考にする
+5. **OpenAPI定義追加**: `backend/build/openapi/openapi.json` にAPI定義追加
    - ⚠️ backend側に追加（frontend_web/openapi.jsonではない）
    - ⚠️ schema名は英語で定義（日本語はNG）
-5. **Orval生成**: `pnpm generate:api` 実行
+6. **Orval生成**: `pnpm generate:api` 実行
    - ⚠️ 生成後、`model/index.ts`と`functions.ts`で型・関数が生成されたか確認
-6. **モックデータ追加**: `api_mock_mode/data.ts` + `api_mock_mode/fetcher.ts`
-7. **Query/Action実装**: データ取得・変更ロジック作成
-8. **Screen実装**: RSCパターンでScreen component作成（`next/image` 使用）
-9. **Screen Test作成**: vi.mock()による統合テスト作成
-10. **モック動作確認**: `make dev-mock` でブラウザ確認
-11. **Test実行**: `pnpm test` で全テスト成功確認
-12. **Type Check**: `pnpm typecheck` で型エラー確認
+7. **モックデータ追加**: `api_mock_mode/data.ts` + `api_mock_mode/fetcher.ts`
+8. **Query/Action実装**: データ取得・変更ロジック作成
+9. **test-ids定義**: `features/[feature]/test-ids.ts` 作成
+10. **Screen実装**: RSCパターンでScreen component作成（`next/image` 使用）
+11. **Screen Test作成**: vi.mock()による統合テスト作成
+12. **app/[feature]/page.tsx作成**: RSCでqueryを呼び出し、Screenに渡す
+13. **モック動作確認**: `make dev-mock` でブラウザ確認
+14. **Test実行**: `pnpm test` で全テスト成功確認
+15. **Type Check**: `pnpm typecheck` で型エラー確認
 
 ### 進捗表示ルール（必須）
 
@@ -65,15 +97,18 @@
 1. ✅ **MCP情報取得** - 完了
 2. 🔄 **Figma Raw作成** - 進行中
 3. ⏳ **画像アセットダウンロード**
-4. ⏳ **OpenAPI定義追加**
-5. ⏳ **Orval生成**
-6. ⏳ **モックデータ追加**
-7. ⏳ **Query/Action実装**
-8. ⏳ **Screen実装**
-9. ⏳ **Screen Test作成**
-10. ⏳ **モック動作確認**
-11. ⏳ **Test実行**
-12. ⏳ **Type Check**
+4. ⏳ **routes.ts作成/確認**
+5. ⏳ **OpenAPI定義追加**
+6. ⏳ **Orval生成**
+7. ⏳ **モックデータ追加**
+8. ⏳ **Query/Action実装**
+9. ⏳ **test-ids定義**
+10. ⏳ **Screen実装**
+11. ⏳ **Screen Test作成**
+12. ⏳ **app/[feature]/page.tsx作成**
+13. ⏳ **モック動作確認**
+14. ⏳ **Test実行**
+15. ⏳ **Type Check**
 
 ---
 ```
