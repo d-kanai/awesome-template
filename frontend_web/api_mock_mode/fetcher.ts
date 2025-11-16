@@ -1,5 +1,6 @@
 import {
   mockTestimonials,
+  mockUserVoices,
   mockUsers,
   mockSigninResponse,
   mockSignupResponse,
@@ -15,6 +16,14 @@ function getMockResponse(path: string, method: string): unknown {
   if (path === "/testimonials" && method === "GET") {
     return {
       data: { testimonials: mockTestimonials },
+      status: 200,
+    };
+  }
+
+  // GET /user-voices
+  if (path === "/user-voices" && method === "GET") {
+    return {
+      data: { userVoices: mockUserVoices },
       status: 200,
     };
   }
