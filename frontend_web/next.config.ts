@@ -1,10 +1,28 @@
 import type { NextConfig } from "next";
+import { env, isDev } from "./features/shared/lib/env";
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env.ANALYZE === "true",
+  enabled: env.ANALYZE === "true",
 });
 
-const isDev = process.env.NODE_ENV === "development";
+// CSP（Content Security Policy）ホワイトリスト設定
+// 外部ドメインを追加する場合は、各配列に追加してください
+const CSP_WHITELIST = {
+  // スクリプトソース（例: ["'self'", "https://trusted-cdn.com"]）
+  scripts: ["'self'", ...(isDev ? ["'unsafe-eval'"] : [])],
+
+  // スタイルソース（Tailwind/CSS-in-JSのため 'unsafe-inline' が必要）
+  styles: ["'self'", "'unsafe-inline'"],
+
+  // 画像ソース（例: ["'self'", "data:", "blob:", "https://cdn.example.com"]）
+  images: ["'self'", "data:", "blob:"],
+
+  // フォントソース
+  fonts: ["'self'", "data:"],
+
+  // API接続先（例: ["'self'", "https://api.example.com"]）
+  connect: ["'self'"],
+};
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -19,12 +37,11 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              // Next.js開発環境では'unsafe-eval'が必要
-              `script-src 'self' ${isDev ? "'unsafe-eval'" : ""}`,
-              "style-src 'self' 'unsafe-inline'", // Tailwind/CSS-in-JSのため
-              "img-src 'self' data: blob:",
-              "font-src 'self' data:",
-              "connect-src 'self'",
+              `script-src ${CSP_WHITELIST.scripts.join(" ")}`,
+              `style-src ${CSP_WHITELIST.styles.join(" ")}`,
+              `img-src ${CSP_WHITELIST.images.join(" ")}`,
+              `font-src ${CSP_WHITELIST.fonts.join(" ")}`,
+              `connect-src ${CSP_WHITELIST.connect.join(" ")}`,
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",

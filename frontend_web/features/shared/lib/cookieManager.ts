@@ -1,3 +1,4 @@
+import { isProd } from "@/features/shared/lib/env";
 import { cookies } from "next/headers";
 
 type CookieOptions = {
@@ -34,7 +35,7 @@ export class CookieManager {
     const cookieStore = await cookies();
     cookieStore.set(key, value, {
       httpOnly: options?.httpOnly ?? true,
-      secure: options?.secure ?? process.env.NODE_ENV === "production",
+      secure: options?.secure ?? isProd,
       sameSite: options?.sameSite ?? "lax",
       maxAge: options?.maxAge ?? 60 * 60 * 24 * 30, // デフォルト30日
       path: options?.path ?? "/",

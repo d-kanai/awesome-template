@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@/features/shared/api/config";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
+import { env } from "@/features/shared/lib/env";
 import { logApiRequest } from "@/features/shared/lib/logger";
 import { headers } from "next/headers";
 
@@ -111,7 +112,7 @@ export async function fetcher<TData, TVariables = unknown>(
   options: FetcherOptions<TVariables> = {},
 ): Promise<TData> {
   // Mock mode: Dynamic import to avoid bundling in production
-  if (process.env.NEXT_PUBLIC_API_MOCK_MODE === "enabled") {
+  if (env.NEXT_PUBLIC_API_MOCK_MODE) {
     const { mockFetcher } = await import("@/api_mock_mode/fetcher");
     return mockFetcher<TData, TVariables>(path, options);
   }

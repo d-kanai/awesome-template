@@ -1,5 +1,6 @@
 "use client";
 
+import { isDev } from "@/features/shared/lib/env";
 import type { ErrorInfo, ReactNode } from "react";
 import { Component } from "react";
 import { Button } from "../atoms/Button";
@@ -125,7 +126,7 @@ function ErrorMessage({ message }: ErrorMessageProps) {
       <p className="text-muted-foreground mb-2">
         申し訳ございません。予期しないエラーが発生しました。
       </p>
-      {process.env.NODE_ENV === "development" && (
+      {isDev && (
         <details className="mt-4">
           <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
             エラー詳細
