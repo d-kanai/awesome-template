@@ -31,10 +31,10 @@ const clientSchema = z.object({
  * 環境変数のバリデーションと型推論
  */
 const processEnv = {
-  NODE_ENV: process.env["NODE_ENV"],
-  ANALYZE: process.env["ANALYZE"],
-  NEXT_PUBLIC_API_BASE_URL: process.env["NEXT_PUBLIC_API_BASE_URL"],
-  NEXT_PUBLIC_API_MOCK_MODE: process.env["NEXT_PUBLIC_API_MOCK_MODE"],
+  NODE_ENV: process.env.NODE_ENV,
+  ANALYZE: process.env.ANALYZE,
+  NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  NEXT_PUBLIC_API_MOCK_MODE: process.env.NEXT_PUBLIC_API_MOCK_MODE,
 };
 
 // サーバー環境変数のバリデーション（サーバー側でのみ実行）
