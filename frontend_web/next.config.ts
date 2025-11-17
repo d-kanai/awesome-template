@@ -28,6 +28,16 @@ const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
 
+  // TypeScriptの型エラーでビルドを失敗させる
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+
+  // ESLint/Biomeエラーでビルドを失敗させる
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
+
   async headers() {
     return [
       {

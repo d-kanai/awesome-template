@@ -57,7 +57,7 @@ AfterAll(async () => {
 
 Before(async function (this: CustomWorld) {
   this.context = await browser.newContext({
-    baseURL: process.env.BASE_URL || "http://localhost:3000",
+    baseURL: process.env["BASE_URL"] || "http://localhost:3000",
   });
   this.page = await this.context.newPage();
   this.browser = browser;

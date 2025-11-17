@@ -107,7 +107,12 @@ function extractUserContext(sessionCookie?: string): {
       return {};
     }
 
-    const payload = JSON.parse(Buffer.from(parts[1], "base64").toString());
+    const part1 = parts[1];
+    if (!part1) {
+      return {};
+    }
+
+    const payload = JSON.parse(Buffer.from(part1, "base64").toString());
     return {
       userId: payload.sub || payload.userId || undefined,
       sessionId: parts[2]?.slice(0, 8),

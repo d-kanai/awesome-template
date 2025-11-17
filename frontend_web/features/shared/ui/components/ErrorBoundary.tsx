@@ -28,7 +28,7 @@ export class ErrorBoundary extends Component<
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Client-side環境でのエラーは正常動作の範囲内（Server-side renderingのフォールバック）
     // ログ出力は行わず、UIのみでハンドリング
     console.error("Error caught by boundary:", error, errorInfo);
@@ -38,7 +38,7 @@ export class ErrorBoundary extends Component<
     this.setState({ hasError: false, error: null });
   };
 
-  render() {
+  override render() {
     if (this.state.hasError && this.state.error) {
       if (this.props.fallback) {
         return this.props.fallback(this.state.error, this.resetError);

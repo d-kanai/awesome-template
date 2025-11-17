@@ -18,6 +18,9 @@
       "style": {
         "useImportType": "off"
       },
+      "complexity": {
+        "useLiteralKeys": "off"
+      },
       "suspicious": {
         "noConsoleLog": "error"
       }
