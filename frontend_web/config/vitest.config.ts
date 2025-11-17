@@ -8,6 +8,12 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: ["./config/vitest.setup.ts"],
+    env: {
+      // .env.test から環境変数を読み込む
+      ...require("dotenv").config({
+        path: path.resolve(__dirname, "../.env.test"),
+      }).parsed,
+    },
     include: ["**/*.spec.{ts,tsx}"],
     exclude: [
       "node_modules",
