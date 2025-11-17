@@ -17,6 +17,9 @@
       },
       "style": {
         "useImportType": "off"
+      },
+      "suspicious": {
+        "noConsoleLog": "error"
       }
     }
   },
@@ -34,5 +37,17 @@
       "**/*.stories.tsx",
       "**/*.stories.ts"
     ]
-  }
+  },
+  "overrides": [
+    {
+      "include": ["features/shared/lib/logger.ts", "e2e/**/*"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsoleLog": "off"
+          }
+        }
+      }
+    }
+  ]
 }

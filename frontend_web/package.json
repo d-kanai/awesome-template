@@ -86,8 +86,6 @@
     "wait-on": "^9.0.1"
   },
   "msw": {
-    "workerDirectory": [
-      "public"
-    ]
+    "workerDirectory": ["public"]
   }
 }

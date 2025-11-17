@@ -17,7 +17,10 @@ function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some((path) => path === pathname);
 }
 
-function handleUnauthenticatedRequest(request: NextRequest, requestId: string): NextResponse {
+function handleUnauthenticatedRequest(
+  request: NextRequest,
+  requestId: string,
+): NextResponse {
   const signInUrl = new URL(AUTH_ROUTES.SIGNIN, request.url);
   signInUrl.searchParams.set("return_to", request.nextUrl.pathname);
 

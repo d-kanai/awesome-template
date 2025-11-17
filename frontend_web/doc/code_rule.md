@@ -16,6 +16,13 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
   - `new Date()`を直接使用しないこと（テストでモック可能にするため）
   - 使用例：`import { getNow } from "@/features/shared/lib/dateTime"`
   - タイムスタンプ生成には`getJSTTimestamp()`を使用すること（JST形式のISO 8601文字列を返す）
+- **`console.log`は禁止。ログは必ず`logger`経由で行うこと**
+  - `console.log`を使用するとLintエラーになる（Biomeの`noConsoleLog`ルール）
+  - Production環境にログを残す場合は`features/shared/lib/logger.ts`の`logAccess()`または`logApiRequest()`を使用すること
+  - 許可される例外:
+    - `features/shared/lib/logger.ts`内（実際のログ出力実装）
+    - `e2e/**/*`内（E2Eテストのデバッグ用）
+  - デバッグ時も`console.log`は使わず、削除すること
 
 ### code
 
