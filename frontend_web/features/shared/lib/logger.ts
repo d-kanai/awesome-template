@@ -32,6 +32,12 @@ interface ApiRequestLogData extends BaseLogData {
   body?: unknown;
 }
 
+interface InfoLogData extends BaseLogData {
+  type: "info";
+  message: string;
+  data?: unknown;
+}
+
 // Sensitive field names to mask in logs
 const SENSITIVE_FIELDS = [
   "password",
@@ -190,6 +196,53 @@ export async function logApiRequest(
   // Add body for POST/PUT/PATCH requests with sensitive data masked
   if (body && ["POST", "PUT", "PATCH"].includes(method.toUpperCase())) {
     logData.body = maskSensitiveData(body);
+  }
+
+  console.log(JSON.stringify(logData));
+}
+
+/**
+ * General purpose info logging
+ * Use this for production logs that don't fit into specific categories
+ *
+ * @param message - Log message (required)
+ * @param data - Additional data to log (optional, will be masked for sensitive fields)
+ * @param requestId - Optional request ID for correlation
+ *
+ * @example
+ * // Simple message
+ * logger.info("User profile updated");
+ *
+ * @example
+ * // With data
+ * logger.info("Payment processed", { amount: 1000, currency: "JPY" });
+ *
+ * @example
+ * // With request ID for correlation
+ * logger.info("Cache invalidated", { keys: ["user:123"] }, requestId);
+ */
+export async function info(
+  message: string,
+  data?: unknown,
+  requestId?: string,
+): Promise<void> {
+  let sessionCookie: string | undefined;
+
+  try {
+    sessionCookie = await CookieManager.getAccessTokenCookie();
+  } catch {
+    // Client-side or no cookie
+  }
+
+  const logData: InfoLogData = {
+    ...createBaseLogData(requestId || generateShortId(), sessionCookie),
+    type: "info",
+    message,
+  };
+
+  // Add data if provided, with sensitive field masking
+  if (data !== undefined) {
+    logData.data = maskSensitiveData(data);
   }
 
   console.log(JSON.stringify(logData));

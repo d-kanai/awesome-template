@@ -18,7 +18,23 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
   - タイムスタンプ生成には`getJSTTimestamp()`を使用すること（JST形式のISO 8601文字列を返す）
 - **`console.log`は禁止。ログは必ず`logger`経由で行うこと**
   - `console.log`を使用するとLintエラーになる（Biomeの`noConsoleLog`ルール）
-  - Production環境にログを残す場合は`features/shared/lib/logger.ts`の`logAccess()`または`logApiRequest()`を使用すること
+  - Production環境にログを残す場合は`features/shared/lib/logger.ts`を使用:
+    - `logger.info(message, data?, requestId?)` - 汎用的なログ出力（推奨）
+    - `logAccess()` - Middleware専用（自動呼び出し）
+    - `logApiRequest()` - API Request専用（fetcher内で自動呼び出し）
+  - 使用例:
+    ```typescript
+    import { info } from "@/features/shared/lib/logger";
+
+    // Simple message
+    await info("User profile updated");
+
+    // With data (sensitive fields are auto-masked)
+    await info("Payment processed", { amount: 1000, currency: "JPY" });
+
+    // With request ID for correlation
+    await info("Cache invalidated", { keys: ["user:123"] }, requestId);
+    ```
   - 許可される例外:
     - `features/shared/lib/logger.ts`内（実際のログ出力実装）
     - `e2e/**/*`内（E2Eテストのデバッグ用）
