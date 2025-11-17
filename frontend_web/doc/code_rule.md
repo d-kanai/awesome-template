@@ -19,10 +19,6 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 - コンポーネントは、export関数のreturn部分を見ただけでUIの構造が理解できるよう、ファイル内の内部コンポーネントに分割すること
   - 例: `<form><EmailField /><PasswordField /><SubmitButton /></form>` のような構造が一目でわかるように
   - 詳細な実装は内部コンポーネント定義に記述し、メインのreturn部分はUIの構造を表現することに専念すること
-- **コンポーネント実装前に必ずインターフェース（Props定義）を確認すること**
-  - 共有コンポーネント（features/shared/ui/components/）を利用する際は、事前にPropsの型定義を読み、必要なデータをすべて渡すこと
-  - 特に、配列やオブジェクトを受け取るPropsは見落としやすいため注意
-  - 例: Footerコンポーネントが `socialLinks?: SocialLink[]` を受け取る場合、空配列ではなく実データを渡すこと
 - 基本的にRSC・Server Actionを利用すること
   - ※ ClientSideのFormValidationも実装するため、react-hook-form x Server Actionの組み合わせにすること（useActionStateは利用しない）
   - ※ エラーハンドリングとフォーム状態管理を柔軟に行うため、ServerAction内でのnavigation(redirect)は利用せず、client side navigationにすること
@@ -71,9 +67,9 @@ Figmaコンポーネントの取り込みについては、レベルに応じて
   - 例: 「ページコンテナが表示される」「ヘッダーが表示される」など、UIが単に存在することを確認するだけのテストは不要
   - 理由: これらは実装の詳細であり、ユーザーにとって価値のある振る舞いをテストすべき
   - 代わりに: APIデータが表示される、ユーザーアクションに反応する、など意味のある振る舞いをテストすること
-- TestC: Screen Level Test (RSC, Server Action統合テスト)
+- Screen Level Test (RSC, Server Action統合テスト)
   - Common
-    - 全てのScreenにTestCが作成されていること
+    - 全てのScreenにTestが作成されていること
     - Screenから呼び出しているComponent全てのカバレッジが90%以上になるように、eventを網羅するようにすること
   - Query
     - Given: Query APIレスポンスモック
