@@ -67,13 +67,15 @@
     "@testing-library/jest-dom": "~6.6.4",
     "@testing-library/react": "~16.1.0",
     "@testing-library/user-event": "~14.5.2",
-    "@types/node": "~22.10.10",
+    "@types/node": "~22.12.0",
     "@types/react": "~19.1.17",
     "@types/react-dom": "~19.0.6",
-    "@vitejs/plugin-react": "~4.3.4",
-    "@vitest/coverage-v8": "~2.1.9",
+    "@vitejs/plugin-react": "~5.0.4",
+    "@vitest/coverage-v8": "~4.0.9",
+    "@vitest/ui": "~4.0.9",
     "autoprefixer": "~10.4.22",
     "dotenv": "~17.2.3",
+    "happy-dom": "~16.0.1",
     "jsdom": "~25.0.1",
     "knip": "~5.66.4",
     "next-router-mock": "~1.0.4",
@@ -86,7 +88,7 @@
     "tsx": "~4.20.6",
     "typescript": "~5.9.3",
     "unleash-proxy-client": "~3.7.8",
-    "vitest": "~2.1.9",
+    "vitest": "~4.0.9",
     "wait-on": "~9.0.3"
   }
 }
