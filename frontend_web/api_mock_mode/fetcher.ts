@@ -1,3 +1,4 @@
+import { logApiRequest } from "@/features/shared/lib/logger";
 import {
   mockMeResponse,
   mockSigninResponse,
@@ -83,16 +84,7 @@ export async function mockFetcher<TData, TVariables = unknown>(
   const result = getMockResponse(path, method) as TData;
   const duration = Date.now() - startTime;
 
-  console.log(
-    JSON.stringify({
-      type: "api_request_mock",
-      timestamp: new Date().toISOString(),
-      method,
-      path,
-      status: 200,
-      duration: `${duration}ms`,
-    }),
-  );
+  logApiRequest(method, path, 200, duration, true);
 
   return result;
 }

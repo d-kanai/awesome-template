@@ -1,5 +1,6 @@
 import { API_BASE_URL } from "@/features/shared/api/config";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
+import { logApiRequest } from "@/features/shared/lib/logger";
 
 type FetcherOptions<TVariables> = RequestInit & {
   data?: TVariables;
@@ -75,16 +76,7 @@ export async function fetcher<TData, TVariables = unknown>(
 
   const duration = Date.now() - startTime;
 
-  console.log(
-    JSON.stringify({
-      type: "api_request",
-      timestamp: new Date().toISOString(),
-      method: rest.method || "GET",
-      path,
-      status: response.status,
-      duration: `${duration}ms`,
-    }),
-  );
+  logApiRequest(rest.method || "GET", path, response.status, duration);
 
   if (!response.ok) {
     let errorMessage: string;

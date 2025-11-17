@@ -11,6 +11,15 @@ interface AccessLogData {
   redirectTo?: string;
 }
 
+interface ApiRequestLogData {
+  type: "api_request" | "api_request_mock";
+  timestamp: string;
+  method: string;
+  path: string;
+  status: number;
+  duration: string;
+}
+
 export function logAccess(
   request: NextRequest,
   status: number,
@@ -29,6 +38,25 @@ export function logAccess(
   if (redirectTo) {
     logData.redirectTo = redirectTo;
   }
+
+  console.log(JSON.stringify(logData));
+}
+
+export function logApiRequest(
+  method: string,
+  path: string,
+  status: number,
+  duration: number,
+  isMock = false,
+): void {
+  const logData: ApiRequestLogData = {
+    type: isMock ? "api_request_mock" : "api_request",
+    timestamp: new Date().toISOString(),
+    method,
+    path,
+    status,
+    duration: `${duration}ms`,
+  };
 
   console.log(JSON.stringify(logData));
 }
