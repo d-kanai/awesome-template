@@ -74,7 +74,9 @@ export async function mockFetcher<TData, TVariables = unknown>(
   options: RequestInit & { data?: TVariables } = {},
 ): Promise<TData> {
   const method = options.method || "GET";
-  const { data } = options;
+  const { data, body } = options;
+  // Parse body if it's a JSON string (from orval-generated code)
+  const requestBody = data || (body && typeof body === "string" ? JSON.parse(body) : body);
   const startTime = Date.now();
 
   // Get request ID from middleware
@@ -92,7 +94,7 @@ export async function mockFetcher<TData, TVariables = unknown>(
   const result = getMockResponse(path, method) as TData;
   const duration = Date.now() - startTime;
 
-  await logApiRequest(method, path, 200, duration, requestId, true, data);
+  await logApiRequest(method, path, 200, duration, requestId, true, requestBody);
 
   return result;
 }
