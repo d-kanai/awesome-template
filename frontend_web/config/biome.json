@@ -32,8 +32,7 @@
       "features/shared/figma_generated",
       "styles/figma",
       "**/*.stories.tsx",
-      "**/*.stories.ts",
-      "public/mockServiceWorker.js"
+      "**/*.stories.ts"
     ]
   }
 }
