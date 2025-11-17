@@ -1,12 +1,19 @@
 # Figma Variables Setup
 
-このドキュメントでは、Figma Design TokensをTailwind CSSに統合するセットアップ手順を説明します。
+**このドキュメントはプロジェクト初回セットアップ時に実施する内容です。**
+**コンポーネントやページの取り込みについては [`figma_import_component.md`](./figma_import_component.md) / [`figma_import_page.md`](./figma_import_page.md) を参照してください。**
+
+---
+
+このドキュメントでは、Figma Design TokensをTailwind CSSに統合する**初回セットアップ手順**と、継続的に参照する**リファレンス情報**を記載しています。
 
 ## 概要
 
 Figma MCP (Model Context Protocol) を使用して、Figmaのデザイントークン（変数）を取得し、CSS変数とTailwind設定に変換します。
 
-## セットアップ手順
+**⚠️ 注意**: この手順は通常プロジェクト開始時に1回のみ実施します。
+
+## セットアップ手順（初回のみ）
 
 ### 1. Figma変数の取得
 
@@ -194,9 +201,11 @@ const config: Config = {
 export default config;
 ```
 
-## 使用方法
+## リファレンス情報
 
-### Tailwindユーティリティクラス
+以下は、セットアップ完了後に継続的に参照する情報です。
+
+### Tailwindユーティリティクラスの使用方法
 
 セットアップ後、以下のようなTailwindクラスが使用可能になります：
 
