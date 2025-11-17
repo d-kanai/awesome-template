@@ -28,4 +28,4 @@ if [ "${#web_files[@]}" -eq 0 ]; then
   exit 0
 fi
 
-pnpm --dir frontend_web exec biome lint --config-path .config/biome.json "${web_files[@]}"
+pnpm --dir frontend_web exec biome lint --config-path config/biome.json "${web_files[@]}"

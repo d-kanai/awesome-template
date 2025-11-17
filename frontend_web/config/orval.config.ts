@@ -36,7 +36,7 @@ export default defineConfig({
     },
     hooks: {
       afterAllFilesWrite:
-        "cd .. && pnpm biome check --config-path .config/biome.json --write features/shared/api/generated",
+        "cd .. && pnpm biome check --config-path config/biome.json --write features/shared/api/generated",
     },
   },
   // Pure Functions用（Server Components/Server Actions用）
