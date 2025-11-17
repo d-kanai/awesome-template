@@ -75,9 +75,24 @@ export async function mockFetcher<TData, TVariables = unknown>(
   options: RequestInit & { data?: TVariables } = {},
 ): Promise<TData> {
   const method = options.method || "GET";
+  const startTime = Date.now();
 
   // Simulate network delay for realistic testing
   await new Promise((resolve) => setTimeout(resolve, 100));
 
-  return getMockResponse(path, method) as TData;
+  const result = getMockResponse(path, method) as TData;
+  const duration = Date.now() - startTime;
+
+  console.log(
+    JSON.stringify({
+      type: "api_request_mock",
+      timestamp: new Date().toISOString(),
+      method,
+      path,
+      status: 200,
+      duration: `${duration}ms`,
+    }),
+  );
+
+  return result;
 }

@@ -64,11 +64,7 @@ export async function fetcher<TData, TVariables = unknown>(
   const serverCookie = await getServerCookie();
   const cookieHeader = serverCookie ? { Cookie: serverCookie } : undefined;
 
-  console.log("[fetcher] Request:", {
-    url: `${API_BASE_URL}${path}`,
-    method: rest.method,
-    body: body ? JSON.parse(typeof body === "string" ? body : "{}") : undefined,
-  });
+  const startTime = Date.now();
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...rest,
@@ -77,11 +73,18 @@ export async function fetcher<TData, TVariables = unknown>(
     credentials: "include", // httpOnly Cookieを自動的に送信
   });
 
-  console.log("[fetcher] Response:", {
-    url: `${API_BASE_URL}${path}`,
-    status: response.status,
-    ok: response.ok,
-  });
+  const duration = Date.now() - startTime;
+
+  console.log(
+    JSON.stringify({
+      type: "api_request",
+      timestamp: new Date().toISOString(),
+      method: rest.method || "GET",
+      path,
+      status: response.status,
+      duration: `${duration}ms`,
+    }),
+  );
 
   if (!response.ok) {
     let errorMessage: string;
