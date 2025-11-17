@@ -1,5 +1,10 @@
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import type { StorybookConfig } from "@storybook/react-vite";
+
+// ESM-compatible __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const config: StorybookConfig = {
   stories: [
@@ -9,8 +14,7 @@ const config: StorybookConfig = {
   ],
   addons: [
     "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
+    // @storybook/addon-essentials and @storybook/addon-interactions are now in core
   ],
   framework: {
     name: "@storybook/react-vite",
