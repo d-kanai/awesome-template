@@ -30,7 +30,7 @@ function handleUnauthenticatedRequest(
   return NextResponse.redirect(signInUrl);
 }
 
-export function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const sessionCookie = request.cookies.get(CookieManager.KEYS.ACCESS_TOKEN);
 
   // Generate or use existing request ID
@@ -51,7 +51,7 @@ export function middleware(request: NextRequest) {
   return response;
 }
 
-// Middlewareを適用するパスを設定
+// Proxyを適用するパスを設定
 export const config = {
   matcher: [
     // 静的ファイル、Next.js内部パス、画像を除外（API routesは含める）

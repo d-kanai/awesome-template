@@ -13,7 +13,7 @@ interface BaseLogData {
 }
 
 interface AccessLogData extends BaseLogData {
-  type: "middleware";
+  type: "proxy";
   method: string;
   path: string;
   query: string;
@@ -156,7 +156,7 @@ export function logAccess(
 
   const logData: AccessLogData = {
     ...createBaseLogData(finalRequestId, sessionCookie),
-    type: "middleware",
+    type: "proxy",
     method: request.method,
     path: request.nextUrl.pathname,
     query: request.nextUrl.search,

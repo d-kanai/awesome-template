@@ -46,11 +46,19 @@ const _clientEnv = clientSchema.safeParse(processEnv);
 
 // バリデーションエラー時の処理
 if (_serverEnv && !_serverEnv.success) {
-  throw new Error("Invalid server environment variables");
+  console.error("❌ Server environment validation errors:");
+  console.error(_serverEnv.error.format());
+  throw new Error(
+    `Invalid server environment variables: ${JSON.stringify(_serverEnv.error.format(), null, 2)}`,
+  );
 }
 
 if (!_clientEnv.success) {
-  throw new Error("Invalid client environment variables");
+  console.error("❌ Client environment validation errors:");
+  console.error(_clientEnv.error.format());
+  throw new Error(
+    `Invalid client environment variables: ${JSON.stringify(_clientEnv.error.format(), null, 2)}`,
+  );
 }
 
 /**

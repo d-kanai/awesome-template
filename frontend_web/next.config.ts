@@ -9,7 +9,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 // 外部ドメインを追加する場合は、各配列に追加してください
 const CSP_WHITELIST = {
   // スクリプトソース（例: ["'self'", "https://trusted-cdn.com"]）
-  scripts: ["'self'", ...(isDev ? ["'unsafe-eval'"] : [])],
+  scripts: ["'self'", ...(isDev ? ["'unsafe-eval'", "'unsafe-inline'"] : [])],
 
   // スタイルソース（Tailwind/CSS-in-JSのため 'unsafe-inline' が必要）
   styles: ["'self'", "'unsafe-inline'"],
@@ -31,11 +31,6 @@ const nextConfig: NextConfig = {
   // TypeScriptの型エラーでビルドを失敗させる
   typescript: {
     ignoreBuildErrors: false,
-  },
-
-  // ESLint/Biomeエラーでビルドを失敗させる
-  eslint: {
-    ignoreDuringBuilds: false,
   },
 
   async headers() {
