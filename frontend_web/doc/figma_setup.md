@@ -87,101 +87,92 @@ body {
 }
 ```
 
-### 3. Tailwind設定の更新 (tailwind.config.ts)
+### 3. Tailwind設定の更新
 
-CSS変数をTailwindユーティリティクラスとして使用できるように設定します。
+#### 3-1. tailwind.config.ts（最小限の設定）
+
+Tailwind CSS v4では、設定ファイルは最小限にし、ダークモードのみを定義します。
 
 ```typescript
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: ["class"],
-  content: [
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./features/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
-  theme: {
-    extend: {
-      colors: {
-        // Text colors
-        text: {
-          brand: {
-            "on-brand-tertiary": "var(--sds-color-text-brand-on-brand-tertiary)",
-            "on-brand": "var(--sds-color-text-brand-on-brand)",
-            tertiary: "var(--sds-color-text-brand-tertiary)",
-          },
-          default: {
-            DEFAULT: "var(--sds-color-text-default-default)",
-            tertiary: "var(--sds-color-text-default-tertiary)",
-            secondary: "var(--sds-color-text-default-secondary)",
-          },
-        },
-        // Background colors
-        background: {
-          default: {
-            DEFAULT: "var(--sds-color-background-default-default)",
-            secondary: "var(--sds-color-background-default-secondary)",
-          },
-          brand: {
-            DEFAULT: "var(--sds-color-background-brand-default)",
-            secondary: "var(--sds-color-background-brand-secondary)",
-            tertiary: "var(--sds-color-background-brand-tertiary)",
-          },
-        },
-        // Border colors
-        border: {
-          default: {
-            DEFAULT: "var(--sds-color-border-default-default)",
-          },
-          brand: {
-            DEFAULT: "var(--sds-color-border-brand-default)",
-          },
-        },
-      },
-      // Spacing
-      spacing: {
-        100: "var(--sds-size-space-100)",
-        200: "var(--sds-size-space-200)",
-        300: "var(--sds-size-space-300)",
-        400: "var(--sds-size-space-400)",
-        600: "var(--sds-size-space-600)",
-        800: "var(--sds-size-space-800)",
-        1200: "var(--sds-size-space-1200)",
-        1600: "var(--sds-size-space-1600)",
-      },
-      // Border radius
-      borderRadius: {
-        100: "var(--sds-size-radius-100)",
-        200: "var(--sds-size-radius-200)",
-        400: "var(--sds-size-radius-400)",
-        full: "var(--sds-size-radius-full)",
-      },
-      // Font family
-      fontFamily: {
-        body: ["var(--sds-typography-body-font-family)", "sans-serif"],
-        heading: ["var(--sds-typography-heading-font-family)", "sans-serif"],
-      },
-      // Font size
-      fontSize: {
-        "title-hero": "var(--sds-typography-title-hero-size)",
-        subtitle: "var(--sds-typography-subtitle-size-base)",
-        "body-medium": "var(--sds-typography-body-size-medium)",
-        "body-small": "var(--sds-typography-body-size-small)",
-        heading: "var(--sds-typography-heading-size-base)",
-      },
-      // Font weight
-      fontWeight: {
-        "body-regular": "var(--sds-typography-body-font-weight-regular)",
-        "body-strong": "var(--sds-typography-body-font-weight-strong)",
-        heading: "var(--sds-typography-heading-font-weight)",
-      },
-    },
-  },
-  plugins: [],
+  darkMode: "class",
 };
 
 export default config;
 ```
+
+#### 3-2. globals.cssに@themeブロックを追加
+
+CSS変数をTailwindユーティリティクラスとして使用できるように、`@theme`ブロックを追加します。
+
+```css
+/* app/globals.css の最後に追加 */
+
+@theme {
+  /* Colors - Text */
+  --color-text-brand-on-brand-tertiary: var(--sds-color-text-brand-on-brand-tertiary);
+  --color-text-brand-on-brand: var(--sds-color-text-brand-on-brand);
+  --color-text-brand-tertiary: var(--sds-color-text-brand-tertiary);
+  --color-text-default: var(--sds-color-text-default-default);
+  --color-text-default-tertiary: var(--sds-color-text-default-tertiary);
+  --color-text-default-secondary: var(--sds-color-text-default-secondary);
+
+  /* Colors - Background */
+  --color-background-default: var(--sds-color-background-default-default);
+  --color-background-default-secondary: var(--sds-color-background-default-secondary);
+  --color-background-brand: var(--sds-color-background-brand-default);
+  --color-background-brand-secondary: var(--sds-color-background-brand-secondary);
+  --color-background-brand-tertiary: var(--sds-color-background-brand-tertiary);
+
+  /* Colors - Border */
+  --color-border-default: var(--sds-color-border-default-default);
+  --color-border-brand: var(--sds-color-border-brand-default);
+
+  /* Spacing */
+  --spacing-100: var(--sds-size-space-100);
+  --spacing-200: var(--sds-size-space-200);
+  --spacing-300: var(--sds-size-space-300);
+  --spacing-400: var(--sds-size-space-400);
+  --spacing-600: var(--sds-size-space-600);
+  --spacing-800: var(--sds-size-space-800);
+  --spacing-1200: var(--sds-size-space-1200);
+  --spacing-1600: var(--sds-size-space-1600);
+
+  /* Border radius */
+  --radius-100: var(--sds-size-radius-100);
+  --radius-200: var(--sds-size-radius-200);
+  --radius-400: var(--sds-size-radius-400);
+  --radius-full: var(--sds-size-radius-full);
+
+  /* Font family */
+  --font-family-body: var(--sds-typography-body-font-family), sans-serif;
+  --font-family-heading: var(--sds-typography-heading-font-family), sans-serif;
+
+  /* Font size */
+  --font-size-title-hero: var(--sds-typography-title-hero-size);
+  --font-size-subtitle: var(--sds-typography-subtitle-size-base);
+  --font-size-body-medium: var(--sds-typography-body-size-medium);
+  --font-size-body-small: var(--sds-typography-body-size-small);
+  --font-size-heading: var(--sds-typography-heading-size-base);
+
+  /* Font weight */
+  --font-weight-body-regular: var(--sds-typography-body-font-weight-regular);
+  --font-weight-body-strong: var(--sds-typography-body-font-weight-strong);
+  --font-weight-heading: var(--sds-typography-heading-font-weight);
+}
+
+/* コンテンツスキャン対象を指定 */
+@source "./**/*.{js,ts,jsx,tsx,mdx}";
+@source "../features/**/*.{js,ts,jsx,tsx,mdx}";
+```
+
+**重要な変更点（Tailwind CSS v3 → v4）:**
+- ✅ JavaScript設定ファイルからCSS-based設定に移行
+- ✅ `@theme`ブロックでデザイントークンを定義
+- ✅ `@source`ディレクティブでコンテンツスキャン対象を指定
+- ✅ `tailwind.config.ts`は最小限（darkModeのみ）
 
 ## リファレンス情報
 
