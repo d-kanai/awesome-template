@@ -1,4 +1,5 @@
 import { logApiRequest } from "@/features/shared/lib/logger";
+import { headers } from "next/headers";
 import {
   mockMeResponse,
   mockSigninResponse,
@@ -76,7 +77,17 @@ export async function mockFetcher<TData, TVariables = unknown>(
   options: RequestInit & { data?: TVariables } = {},
 ): Promise<TData> {
   const method = options.method || "GET";
+  const { data } = options;
   const startTime = Date.now();
+
+  // Get request ID from middleware
+  let requestId: string | undefined;
+  try {
+    const headersList = await headers();
+    requestId = headersList.get("x-request-id") || undefined;
+  } catch {
+    // Client-side or headers not available
+  }
 
   // Simulate network delay for realistic testing
   await new Promise((resolve) => setTimeout(resolve, 100));
@@ -84,7 +95,7 @@ export async function mockFetcher<TData, TVariables = unknown>(
   const result = getMockResponse(path, method) as TData;
   const duration = Date.now() - startTime;
 
-  await logApiRequest(method, path, 200, duration, true);
+  await logApiRequest(method, path, 200, duration, requestId, true, data);
 
   return result;
 }

@@ -92,18 +92,15 @@ export const Interactive: Story = {
 
     const handleSignIn = () => {
       setIsLoggedIn(true);
-      console.log("Sign in clicked");
     };
 
     const handleRegister = () => {
       setIsLoggedIn(true);
-      console.log("Register clicked");
     };
 
     const handleAvatarClick = () => {
       setIsLoggedIn(false);
       setIsHover(false);
-      console.log("Avatar clicked - logging out");
     };
 
     if (!isLoggedIn) {
