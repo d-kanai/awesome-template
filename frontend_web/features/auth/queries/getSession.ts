@@ -32,11 +32,13 @@ export const getSession = cache(async (): Promise<Session> => {
     return { user: null, isAuthenticated: false };
   } catch (error) {
     const logger = await createLoggerAsync();
-    logger.info({
-      type: "info",
-      message: "Session validation failed",
-      error,
-    });
+    logger.error(
+      {
+        err: error,
+        type: "session_validation_error",
+      },
+      "Session validation failed",
+    );
     return { user: null, isAuthenticated: false };
   }
 });

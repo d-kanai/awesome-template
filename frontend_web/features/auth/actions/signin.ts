@@ -36,6 +36,17 @@ export async function signinAction(
 
     return { success: true, redirectTo: USER_ROUTES.USER_LIST };
   } catch (error) {
+    const { createLoggerAsync } = await import("@/features/shared/lib/logger");
+    const logger = await createLoggerAsync();
+    logger.error(
+      {
+        err: error,
+        type: "server_action_error",
+        action: "signin",
+        email: validatedData.data.email,
+      },
+      "Signin action failed",
+    );
     return { error: (error as Error).message };
   }
 }

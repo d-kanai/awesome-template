@@ -29,6 +29,17 @@ export async function signupAction(
     await signupApi(validatedData.data);
     return { success: true, redirectTo: AUTH_ROUTES.SIGNIN };
   } catch (error) {
+    const { createLoggerAsync } = await import("@/features/shared/lib/logger");
+    const logger = await createLoggerAsync();
+    logger.error(
+      {
+        err: error,
+        type: "server_action_error",
+        action: "signup",
+        email: validatedData.data.email,
+      },
+      "Signup action failed",
+    );
     return { error: (error as Error).message };
   }
 }

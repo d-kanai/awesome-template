@@ -149,6 +149,22 @@ export async function fetcher<TData, TVariables = unknown>(
     error.status = response.status;
     // @ts-expect-error - responseを追加
     error.response = response;
+
+    // Log API error with full context
+    const { createLoggerAsync } = await import("@/features/shared/lib/logger");
+    const logger = await createLoggerAsync(requestId);
+    logger.error(
+      {
+        err: error,
+        type: "api_error",
+        method: rest.method || "GET",
+        path,
+        status: response.status,
+        duration: `${duration}ms`,
+      },
+      "API request failed",
+    );
+
     throw error;
   }
 
