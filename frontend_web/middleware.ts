@@ -16,28 +16,24 @@ function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some((path) => path === pathname);
 }
 
-function handleUnauthenticatedRequest(
-  request: NextRequest,
-  startTime: number,
-): NextResponse {
+function handleUnauthenticatedRequest(request: NextRequest): NextResponse {
   const signInUrl = new URL(AUTH_ROUTES.SIGNIN, request.url);
   signInUrl.searchParams.set("return_to", request.nextUrl.pathname);
 
-  logAccess(request, 307, startTime, signInUrl.pathname);
+  logAccess(request, 307, signInUrl.pathname);
 
   return NextResponse.redirect(signInUrl);
 }
 
 export function middleware(request: NextRequest) {
-  const startTime = Date.now();
   const sessionCookie = request.cookies.get(CookieManager.KEYS.ACCESS_TOKEN);
 
   // 公開パス以外で未認証の場合、サインインページにリダイレクト
   if (!isPublicPath(request.nextUrl.pathname) && !sessionCookie) {
-    return handleUnauthenticatedRequest(request, startTime);
+    return handleUnauthenticatedRequest(request);
   }
 
-  logAccess(request, 200, startTime);
+  logAccess(request, 200);
 
   return NextResponse.next();
 }
