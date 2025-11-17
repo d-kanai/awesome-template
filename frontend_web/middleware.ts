@@ -23,7 +23,8 @@ function handleUnauthenticatedRequest(
   const signInUrl = new URL(AUTH_ROUTES.SIGNIN, request.url);
   signInUrl.searchParams.set("return_to", request.nextUrl.pathname);
 
-  logAccess(request, 307, startTime, signInUrl.pathname);
+  // 401 Unauthorized (semantically correct, even though response is 307 redirect)
+  logAccess(request, 401, startTime, signInUrl.pathname);
 
   return NextResponse.redirect(signInUrl);
 }
