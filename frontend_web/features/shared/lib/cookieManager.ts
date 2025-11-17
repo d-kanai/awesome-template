@@ -1,5 +1,5 @@
-import { isProd } from "@/features/shared/lib/env";
 import { cookies } from "next/headers";
+import { isProd } from "./env";
 
 type CookieOptions = {
   httpOnly?: boolean;

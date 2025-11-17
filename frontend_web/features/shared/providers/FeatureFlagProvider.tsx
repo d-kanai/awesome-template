@@ -1,6 +1,5 @@
 "use client";
 
-import { API_BASE_URL } from "@/features/shared/api/config";
 import { env } from "@/features/shared/lib/env";
 import { FlagProvider } from "@unleash/proxy-client-react";
 
@@ -17,7 +16,7 @@ export const FEATURE_FLAGS = {
 } as const;
 
 const unleashConfig = {
-  url: `${API_BASE_URL}/featureflags/proxy`,
+  url: `${env.NEXT_PUBLIC_API_BASE_URL}/featureflags/proxy`,
   clientKey: "proxy",
   refreshInterval: 3, // 開発時は3秒、本番では60-300秒推奨
   appName: "awesome-template-web",

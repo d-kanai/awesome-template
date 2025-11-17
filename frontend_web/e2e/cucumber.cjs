@@ -1,3 +1,6 @@
+// .env.test を読み込む
+require("dotenv").config({ path: ".env.test" });
+
 module.exports = {
   default: {
     paths: ["e2e/features/**/*.feature"],

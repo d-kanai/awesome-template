@@ -1,4 +1,3 @@
-import { API_BASE_URL } from "@/features/shared/api/config";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
 import { env } from "@/features/shared/lib/env";
 import { logApiRequest } from "@/features/shared/lib/logger";
@@ -125,7 +124,7 @@ export async function fetcher<TData, TVariables = unknown>(
 
   const startTime = Date.now();
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}${path}`, {
     ...rest,
     headers: buildRequestHeaders(optionHeaders, body, serverCookie, requestId),
     body,
