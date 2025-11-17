@@ -17,10 +17,18 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 - **環境変数は`process.env`を直接参照せず、必ず`features/shared/lib/env.ts`経由で取得すること**
   - 型安全性とバリデーションが保証される
   - 全ての環境変数は必須（デフォルト値なし）。設定漏れがあると起動時にエラーになる
-- **エラーハンドリング**
+- **エラーハンドリングとログ出力**
   - エラーをcatchした場合、必ずログ出力するか、呼び出し元にエラーを伝播すること
   - 意図的にエラーを握りつぶす場合（例: Client-side環境での正常動作、フォールバック処理）は、必ずコメントで理由を明記すること
-  - Server Actionでエラーをレスポンスとして返す場合（`return { error: ... }`）は、エラーが呼び出し元に伝播するため、ログ出力は不要
+  - **Server Actionでのエラーログ出力は禁止**
+    - APIエラーは既にfetcher層で自動的にログ記録される（requestId, userId, sessionId, stack trace含む）
+    - Server Actionのcatchブロックではログを出さず、エラーをレスポンスとして返すだけにすること
+    - Stack traceにServer Actionのファイル名・行番号が含まれるため、トレース可能
+    - 例: `catch (error) { return { error: (error as Error).message }; }` （ログ出力なし）
+  - **Queryでのエラーログ出力**
+    - RSC（React Server Component）のQueryでエラーをcatchする場合は、`logger.error()` でログを出すこと
+    - Pino標準の `err` フィールドを使用（`error` ではなく `err`）: `logger.error({ err: error }, "message")`
+    - 例: getSession での認証エラーなど、握りつぶして fallback 値を返す場合
 
 ### code
 
