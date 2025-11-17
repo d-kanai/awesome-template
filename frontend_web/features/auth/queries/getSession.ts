@@ -3,7 +3,6 @@
 import { cache } from "react";
 import { me } from "@/features/shared/api/generated/functions";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
-import { createLoggerAsync } from "@/features/shared/lib/logger";
 
 export type Session = {
   user: {
@@ -30,15 +29,8 @@ export const getSession = cache(async (): Promise<Session> => {
     }
 
     return { user: null, isAuthenticated: false };
-  } catch (error) {
-    const logger = await createLoggerAsync();
-    logger.error(
-      {
-        err: error,
-        type: "session_validation_error",
-      },
-      "Session validation failed",
-    );
+  } catch {
+    // エラーログはfetcher層で既に記録済み（stack traceにこのQueryの情報が含まれる）
     return { user: null, isAuthenticated: false };
   }
 });

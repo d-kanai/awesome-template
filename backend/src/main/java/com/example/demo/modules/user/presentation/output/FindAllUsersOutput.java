@@ -51,22 +51,22 @@ public class FindAllUsersOutput {
           user.getId().getValue(), user.getEmail(), user.getCreatedAt(), user.getUpdatedAt());
     }
 
-    @Schema(description = "ユーザーの一意な識別子", type = "string", format = "uuid")
+    @Schema(description = "ユーザーの一意な識別子", type = "string", format = "uuid", requiredMode = Schema.RequiredMode.REQUIRED)
     public UUID getId() {
       return id;
     }
 
-    @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
+    @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com", requiredMode = Schema.RequiredMode.REQUIRED)
     public String getEmail() {
       return email;
     }
 
-    @Schema(description = "ユーザーの作成日時", type = "string", format = "date-time")
+    @Schema(description = "ユーザーの作成日時", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
     public LocalDateTime getCreatedAt() {
       return createdAt;
     }
 
-    @Schema(description = "ユーザーの最終更新日時", type = "string", format = "date-time")
+    @Schema(description = "ユーザーの最終更新日時", type = "string", format = "date-time", requiredMode = Schema.RequiredMode.REQUIRED)
     public LocalDateTime getUpdatedAt() {
       return updatedAt;
     }

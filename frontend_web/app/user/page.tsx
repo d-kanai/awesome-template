@@ -1,11 +1,10 @@
-import { getAllUsers } from "@/features/shared/api/generated/functions";
+import { getAllUsers } from "@/features/user/queries/getAllUsers";
 import { UserScreen } from "@/features/user/screens/UserScreen";
 
 export const dynamic = "force-dynamic";
 
 export default async function UserPage() {
-  const response = await getAllUsers();
-  const users = response.data?.users || [];
+  const users = await getAllUsers();
 
   return <UserScreen users={users} />;
 }

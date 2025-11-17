@@ -20,15 +20,12 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 - **エラーハンドリングとログ出力**
   - エラーをcatchした場合、必ずログ出力するか、呼び出し元にエラーを伝播すること
   - 意図的にエラーを握りつぶす場合（例: Client-side環境での正常動作、フォールバック処理）は、必ずコメントで理由を明記すること
-  - **Server Actionでのエラーログ出力は禁止**
+  - **Server ActionおよびQueryでのエラーログ出力は禁止**
     - APIエラーは既にfetcher層で自動的にログ記録される（requestId, userId, sessionId, stack trace含む）
-    - Server Actionのcatchブロックではログを出さず、エラーをレスポンスとして返すだけにすること
-    - Stack traceにServer Actionのファイル名・行番号が含まれるため、トレース可能
-    - 例: `catch (error) { return { error: (error as Error).message }; }` （ログ出力なし）
-  - **Queryでのエラーログ出力**
-    - RSC（React Server Component）のQueryでエラーをcatchする場合は、`logger.error()` でログを出すこと
-    - Pino標準の `err` フィールドを使用（`error` ではなく `err`）: `logger.error({ err: error }, "message")`
-    - 例: getSession での認証エラーなど、握りつぶして fallback 値を返す場合
+    - Server ActionおよびQueryのcatchブロックではログを出さず、エラー処理のみを行うこと
+    - Stack traceにServer ActionやQueryのファイル名・行番号が含まれるため、トレース可能
+    - 例（Server Action）: `catch (error) { return { error: (error as Error).message }; }` （ログ出力なし）
+    - 例（Query）: `catch { return { user: null, isAuthenticated: false }; }` （ログ出力なし）
 
 ### code
 
