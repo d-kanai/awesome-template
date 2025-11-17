@@ -1,8 +1,8 @@
 "use client";
 
-import { CompleteScreen } from "@/features/multi_flow/screens/CompleteScreen";
 import { useFlowContext } from "@/features/multi_flow/hooks/useFlowContext";
 import { MULTI_FLOW_ROUTES } from "@/features/multi_flow/routes";
+import { CompleteScreen } from "@/features/multi_flow/screens/CompleteScreen";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

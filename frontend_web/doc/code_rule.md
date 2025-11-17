@@ -40,6 +40,7 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
     - 例: `features/auth/queries/getSession.ts`, `features/home/queries/getTestimonials.ts`
   - actions/: データ変更(mutations/commands)のServer Actions
     - 例: `features/auth/actions/signin.ts`, `features/auth/actions/signout.ts`
+- **マルチステップフロー制御**: [`flow_control.md`](./flow_control.md)を参照すること
 
 ### css
 
