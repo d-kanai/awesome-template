@@ -28,4 +28,4 @@ if [ "${#web_files[@]}" -eq 0 ]; then
   exit 0
 fi
 
-pnpm --dir frontend_web exec biome format --config-path config/biome.json --write "${web_files[@]}"
+pnpm --dir frontend_web exec biome format --write "${web_files[@]}"

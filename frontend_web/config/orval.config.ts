@@ -31,7 +31,7 @@ export default defineConfig({
           name: "fetcher",
         },
       },
-      // @ts-ignore - schemaNameは実行時に使用されるが型定義に含まれていない
+      // @ts-expect-error - schemaNameは実行時に使用されるが型定義に含まれていない
       schemaName: (name: string) => schemaNameMap[name] ?? name,
     },
     hooks: {
@@ -54,7 +54,7 @@ export default defineConfig({
           name: "fetcher",
         },
       },
-      // @ts-ignore - schemaNameは実行時に使用されるが型定義に含まれていない
+      // @ts-expect-error - schemaNameは実行時に使用されるが型定義に含まれていない
       schemaName: (name: string) => schemaNameMap[name] ?? name,
     },
   },

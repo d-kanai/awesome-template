@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/features/shared/ui/atoms/Button";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Button } from "@/features/shared/ui/atoms/Button";
 import { useFlowContext } from "../hooks/useFlowContext";
 import { MULTI_FLOW_ROUTES } from "../routes";
 

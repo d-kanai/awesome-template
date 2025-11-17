@@ -1,2 +1,2 @@
+export type { TextLinkListLinkItem, TextLinkListProps } from "./TextLinkList";
 export { TextLinkList } from "./TextLinkList";
-export type { TextLinkListProps, TextLinkListLinkItem } from "./TextLinkList";

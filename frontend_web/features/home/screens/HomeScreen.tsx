@@ -1,13 +1,13 @@
 "use client";
 
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { AUTH_ROUTES } from "@/features/auth/routes";
 import type { UserVoice } from "@/features/home/queries/getUserVoices";
 import { CardGridTestimonials } from "@/features/shared/ui/components/CardGridTestimonials/CardGridTestimonials";
 import { Footer } from "@/features/shared/ui/components/Footer/Footer";
 import { Header } from "@/features/shared/ui/components/Header/Header";
 import { HeroActions } from "@/features/shared/ui/components/HeroActions/HeroActions";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 interface HomeScreenProps {
   userVoices: UserVoice[];

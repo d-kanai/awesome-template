@@ -1,6 +1,6 @@
-export { NavigationPillList } from "./NavigationPillList";
 export type {
-  NavigationPillListProps,
-  NavigationPillListItem,
   NavigationPillListDirection,
+  NavigationPillListItem,
+  NavigationPillListProps,
 } from "./NavigationPillList";
+export { NavigationPillList } from "./NavigationPillList";

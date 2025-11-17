@@ -1,9 +1,10 @@
 // import { FeatureFlagProvider } from "@/features/shared/providers/FeatureFlagProvider";
+
+import type { Metadata } from "next";
+import { Inter, Roboto_Mono } from "next/font/google";
 import { QueryProvider } from "@/features/shared/providers/QueryProvider";
 import { ThemeProvider } from "@/features/shared/providers/ThemeProvider";
 import { ErrorBoundary } from "@/features/shared/ui/components/ErrorBoundary";
-import type { Metadata } from "next";
-import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({

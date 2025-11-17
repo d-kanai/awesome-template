@@ -1,13 +1,13 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { signupAction } from "@/features/auth/actions/signup";
 import {
   type SignupFormData,
   signupFormDefaults,
   signupFormSchema,
 } from "@/features/auth/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 
 export function useSignupForm() {
   const router = useRouter();

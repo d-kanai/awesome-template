@@ -1,10 +1,10 @@
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { AUTH_ROUTES } from "@/features/auth/routes";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
 import { generateShortId } from "@/features/shared/lib/dateTime";
 import { logAccess } from "@/features/shared/lib/logger";
 import { SHARED_ROUTES } from "@/features/shared/lib/routes";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
 const PUBLIC_PATHS = [
   SHARED_ROUTES.HOME,

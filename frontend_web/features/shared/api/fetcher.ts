@@ -1,7 +1,7 @@
+import { headers } from "next/headers";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
 import { env } from "@/features/shared/lib/env";
 import { logApiRequest } from "@/features/shared/lib/logger";
-import { headers } from "next/headers";
 
 type FetcherOptions<TVariables> = RequestInit & {
   data?: TVariables;

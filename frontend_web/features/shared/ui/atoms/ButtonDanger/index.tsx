@@ -1,6 +1,6 @@
-export { ButtonDanger } from "./ButtonDanger";
 export type {
   ButtonDangerProps,
-  ButtonDangerVariant,
   ButtonDangerSize,
+  ButtonDangerVariant,
 } from "./ButtonDanger";
+export { ButtonDanger } from "./ButtonDanger";

@@ -14,6 +14,7 @@ export class CookieManager {
   static readonly KEYS = {
     ACCESS_TOKEN: "accessToken",
   } as const;
+
   private static async get(key: string): Promise<string | undefined> {
     const cookieStore = await cookies();
     const cookie = cookieStore.get(key);

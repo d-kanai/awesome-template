@@ -1,8 +1,7 @@
 "use client";
 
+import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
-import React from "react";
-import { forwardRef } from "react";
 import { Avatar, type AvatarShape, type AvatarSize } from "../../atoms/Avatar";
 
 export interface AvatarBlockProps extends React.HTMLAttributes<HTMLDivElement> {

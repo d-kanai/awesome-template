@@ -1,9 +1,8 @@
 "use client";
 
-import { cn } from "@/features/shared/lib/utils";
 import Link from "next/link";
-import React from "react";
-import { forwardRef } from "react";
+import React, { forwardRef } from "react";
+import { cn } from "@/features/shared/lib/utils";
 import { Button } from "../../atoms/Button";
 
 export type ButtonGroupAlign = "Justify" | "Start" | "End" | "Center" | "Stack";

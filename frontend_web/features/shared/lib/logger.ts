@@ -1,9 +1,9 @@
+import type { NextRequest } from "next/server";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
 import {
   generateShortId,
   getJSTTimestamp,
 } from "@/features/shared/lib/dateTime";
-import type { NextRequest } from "next/server";
 
 interface BaseLogData {
   timestamp: string;

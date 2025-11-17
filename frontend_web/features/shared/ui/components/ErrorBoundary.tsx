@@ -1,8 +1,8 @@
 "use client";
 
-import { isDev } from "@/features/shared/lib/env";
 import type { ErrorInfo, ReactNode } from "react";
 import { Component } from "react";
+import { isDev } from "@/features/shared/lib/env";
 import { Button } from "../atoms/Button";
 
 type ErrorBoundaryProps = {
@@ -28,11 +28,7 @@ export class ErrorBoundary extends Component<
     return { hasError: true, error };
   }
 
-  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Client-side環境でのエラーは正常動作の範囲内（Server-side renderingのフォールバック）
-    // ログ出力は行わず、UIのみでハンドリング
-    console.error("Error caught by boundary:", error, errorInfo);
-  }
+  override componentDidCatch(_error: Error, _errorInfo: ErrorInfo) {}
 
   resetError = () => {
     this.setState({ hasError: false, error: null });

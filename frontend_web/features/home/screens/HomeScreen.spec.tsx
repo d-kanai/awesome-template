@@ -1,9 +1,9 @@
-import { getUserVoices } from "@/features/home/queries/getUserVoices";
-import { HomeScreen } from "@/features/home/screens/HomeScreen";
 import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getUserVoices } from "@/features/home/queries/getUserVoices";
+import { HomeScreen } from "@/features/home/screens/HomeScreen";
 
 // 本番API関数をモック（Screen Testは本実装に対してテスト）
 vi.mock("@/features/shared/api/generated/functions", () => ({

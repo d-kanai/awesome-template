@@ -1,9 +1,8 @@
 "use client";
 
-import { cn } from "@/features/shared/lib/utils";
 import Link from "next/link";
-import React from "react";
-import { forwardRef } from "react";
+import React, { forwardRef } from "react";
+import { cn } from "@/features/shared/lib/utils";
 import { Avatar } from "../../atoms/Avatar";
 import { Button } from "../../atoms/Button";
 import { ChevronDown } from "../../atoms/ChevronDown";
@@ -43,6 +42,8 @@ export const HeaderAuth = forwardRef<HTMLDivElement, HeaderAuthProps>(
       return (
         <div
           ref={ref}
+          role="button"
+          tabIndex={0}
           className={cn(
             "flex items-center content-stretch",
             "gap-[var(--sds-size-space-200,8px)]",
@@ -53,6 +54,12 @@ export const HeaderAuth = forwardRef<HTMLDivElement, HeaderAuthProps>(
             className,
           )}
           onClick={onAvatarClick}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onAvatarClick?.();
+            }
+          }}
           {...props}
         >
           <Avatar
@@ -73,6 +80,8 @@ export const HeaderAuth = forwardRef<HTMLDivElement, HeaderAuthProps>(
       return (
         <div
           ref={ref}
+          role="button"
+          tabIndex={0}
           className={cn(
             "bg-[var(--sds-color-background-default-default-hover,#f5f5f5)]",
             "flex items-center content-stretch",
@@ -84,6 +93,12 @@ export const HeaderAuth = forwardRef<HTMLDivElement, HeaderAuthProps>(
             className,
           )}
           onClick={onAvatarClick}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onAvatarClick?.();
+            }
+          }}
           {...props}
         >
           <Avatar

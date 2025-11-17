@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/features/shared/lib/utils";
 import React, { forwardRef } from "react";
+import { cn } from "@/features/shared/lib/utils";
 
 export type TagScheme = "brand" | "neutral" | "positive" | "danger" | "warning";
 export type TagVariant = "primary" | "secondary";

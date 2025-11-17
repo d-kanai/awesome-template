@@ -1,7 +1,7 @@
 "use client";
 
-import { env } from "@/features/shared/lib/env";
 import { FlagProvider } from "@unleash/proxy-client-react";
+import { env } from "@/features/shared/lib/env";
 
 /**
  * FeatureFlagProvider

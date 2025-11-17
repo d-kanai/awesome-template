@@ -1,8 +1,7 @@
 "use client";
 
+import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
-import React from "react";
-import { forwardRef } from "react";
 
 export type ChevronDownSize = "16" | "20" | "24" | "32" | "40" | "48";
 
@@ -13,7 +12,7 @@ export interface ChevronDownProps extends React.SVGProps<SVGSVGElement> {
 
 export const ChevronDown = forwardRef<SVGSVGElement, ChevronDownProps>(
   ({ size = "16", className, ...props }, ref) => {
-    const sizeValue = Number.parseInt(size);
+    const sizeValue = Number.parseInt(size, 10);
 
     return (
       <svg

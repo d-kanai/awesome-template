@@ -1,6 +1,6 @@
-export { ButtonGroup } from "./ButtonGroup";
 export type {
-  ButtonGroupProps,
   ButtonGroupAlign,
   ButtonGroupButton,
+  ButtonGroupProps,
 } from "./ButtonGroup";
+export { ButtonGroup } from "./ButtonGroup";

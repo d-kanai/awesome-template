@@ -1,12 +1,12 @@
-import { logApiRequest } from "@/features/shared/lib/logger";
 import { headers } from "next/headers";
+import { logApiRequest } from "@/features/shared/lib/logger";
 import {
   mockMeResponse,
   mockSigninResponse,
   mockSignupResponse,
   mockTestimonials,
-  mockUserVoices,
   mockUsers,
+  mockUserVoices,
 } from "./data";
 
 /**
@@ -52,9 +52,6 @@ function getMockResponse(path: string, method: string): unknown {
       status: 200,
     };
   }
-
-  // Default: return empty response
-  console.warn(`[mockFetcher] No mock data defined for: ${method} ${path}`);
   return {
     data: {},
     status: 200,

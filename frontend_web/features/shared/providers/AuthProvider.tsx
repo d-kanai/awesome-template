@@ -1,7 +1,7 @@
 "use client";
 
-import type { Session } from "@/features/auth/queries/getSession";
 import { createContext, useContext } from "react";
+import type { Session } from "@/features/auth/queries/getSession";
 
 /**
  * AuthProvider

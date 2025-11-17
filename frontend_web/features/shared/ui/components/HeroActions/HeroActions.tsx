@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@/features/shared/lib/utils";
 // biome-ignore lint/correctness/noUnusedImports: React is needed for JSX in Storybook
 import React from "react";
+import { cn } from "@/features/shared/lib/utils";
 import { ButtonGroup } from "../ButtonGroup";
 import { TextContentTitle } from "../TextContentTitle";
 

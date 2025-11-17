@@ -156,12 +156,7 @@ export const AllSchemes: Story = {
         variant="secondary"
         removable
       />
-      <Tag
-        label="Danger Primary"
-        scheme="danger"
-        variant="primary"
-        removable
-      />
+      <Tag label="Danger Primary" scheme="danger" variant="primary" removable />
       <Tag
         label="Danger Secondary"
         scheme="danger"

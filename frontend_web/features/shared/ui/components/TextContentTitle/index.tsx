@@ -1,5 +1,5 @@
-export { TextContentTitle } from "./TextContentTitle";
 export type {
-  TextContentTitleProps,
   TextContentTitleAlign,
+  TextContentTitleProps,
 } from "./TextContentTitle";
+export { TextContentTitle } from "./TextContentTitle";
