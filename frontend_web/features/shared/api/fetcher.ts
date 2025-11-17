@@ -1,7 +1,7 @@
-import { headers } from "next/headers";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
 import { env } from "@/features/shared/lib/env";
-import { logApiRequest } from "@/features/shared/lib/logger";
+import { HeaderManager } from "@/features/shared/lib/headerManager";
+import { apiLog } from "@/features/shared/lib/logger";
 
 type FetcherOptions<TVariables> = RequestInit & {
   data?: TVariables;
@@ -44,13 +44,7 @@ async function getServerCookie(): Promise<string | undefined> {
 }
 
 async function getRequestId(): Promise<string | undefined> {
-  try {
-    const headersList = await headers();
-    return headersList.get("x-request-id") || undefined;
-  } catch {
-    // Client-side or headers not available
-  }
-  return undefined;
+  return await HeaderManager.getRequestId();
 }
 
 function buildRequestHeaders(
@@ -62,12 +56,19 @@ function buildRequestHeaders(
   const contentType =
     body !== undefined &&
     body !== null &&
-    !(optionHeaders && new Headers(optionHeaders).has("Content-Type"))
-      ? { "Content-Type": "application/json" }
+    !(
+      optionHeaders &&
+      new Headers(optionHeaders).has(HeaderManager.KEYS.CONTENT_TYPE)
+    )
+      ? { [HeaderManager.KEYS.CONTENT_TYPE]: "application/json" }
       : undefined;
 
-  const cookieHeader = serverCookie ? { Cookie: serverCookie } : undefined;
-  const requestIdHeader = requestId ? { "X-Request-Id": requestId } : undefined;
+  const cookieHeader = serverCookie
+    ? { [HeaderManager.KEYS.COOKIE]: serverCookie }
+    : undefined;
+  const requestIdHeader = requestId
+    ? { [HeaderManager.KEYS.REQUEST_ID]: requestId }
+    : undefined;
 
   return mergeHeaders(
     mergeHeaders(mergeHeaders(optionHeaders, contentType), cookieHeader),
@@ -133,15 +134,14 @@ export async function fetcher<TData, TVariables = unknown>(
 
   const duration = Date.now() - startTime;
 
-  await logApiRequest(
-    rest.method || "GET",
+  await apiLog({
+    method: rest.method || "GET",
     path,
-    response.status,
+    status: response.status,
     duration,
     requestId,
-    false,
-    data,
-  );
+    body: data,
+  });
 
   if (!response.ok) {
     const error = new Error(buildErrorMessage(response.status));

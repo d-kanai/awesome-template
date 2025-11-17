@@ -10,6 +10,10 @@ const serverSchema = z.object({
 
   // Bundle Analyzer有効化フラグ（必須: "true" | "false"）
   ANALYZE: z.enum(["true", "false"]),
+
+  // ログレベル（オプション: "debug" | "info" | "warn" | "error"）
+  // 未設定の場合: development=debug, production/test=info
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).optional(),
 });
 
 /**
@@ -33,6 +37,7 @@ const clientSchema = z.object({
 const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
   ANALYZE: process.env.ANALYZE,
+  LOG_LEVEL: process.env.LOG_LEVEL,
   NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
   NEXT_PUBLIC_API_MOCK_MODE: process.env.NEXT_PUBLIC_API_MOCK_MODE,
 };

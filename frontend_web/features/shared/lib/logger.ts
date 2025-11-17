@@ -1,42 +1,9 @@
 import type { NextRequest } from "next/server";
+import type { Logger } from "pino";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
-import {
-  generateShortId,
-  getJSTTimestamp,
-} from "@/features/shared/lib/dateTime";
-
-interface BaseLogData {
-  timestamp: string;
-  requestId: string;
-  userId?: string;
-  sessionId?: string;
-}
-
-interface AccessLogData extends BaseLogData {
-  type: "proxy";
-  method: string;
-  path: string;
-  query: string;
-  status: number;
-  userAgent: string;
-  ip: string;
-  redirectTo?: string;
-}
-
-interface ApiRequestLogData extends BaseLogData {
-  type: "api_request" | "api_request_mock";
-  method: string;
-  path: string;
-  status: number;
-  duration: string;
-  body?: unknown;
-}
-
-interface InfoLogData extends BaseLogData {
-  type: "info";
-  message: string;
-  data?: unknown;
-}
+import { generateShortId } from "@/features/shared/lib/dateTime";
+import { HeaderManager } from "@/features/shared/lib/headerManager";
+import { logger as baseLogger } from "@/features/shared/lib/pinoLogger";
 
 // Sensitive field names to mask in logs
 const SENSITIVE_FIELDS = [
@@ -61,14 +28,18 @@ const SENSITIVE_FIELDS = [
 
 /**
  * Mask sensitive fields in an object for logging
+ *
+ * @example
+ * maskSensitive({ email: "user@example.com", password: "secret" })
+ * // { email: "***MASKED***", password: "***MASKED***" }
  */
-function maskSensitiveData(data: unknown): unknown {
+export function maskSensitive(data: unknown): unknown {
   if (data === null || data === undefined) {
     return data;
   }
 
   if (Array.isArray(data)) {
-    return data.map(maskSensitiveData);
+    return data.map(maskSensitive);
   }
 
   if (typeof data === "object") {
@@ -81,7 +52,7 @@ function maskSensitiveData(data: unknown): unknown {
       masked[key] = isSensitive
         ? "***MASKED***"
         : typeof value === "object" && value !== null
-          ? maskSensitiveData(value)
+          ? maskSensitive(value)
           : value;
     }
     return masked;
@@ -123,132 +94,146 @@ function extractUserContext(sessionCookie?: string): {
 }
 
 /**
- * Create base log data with common fields
+ * Create a Pino child logger with request context from NextRequest
+ *
+ * @param request - Next.js request object
+ * @param requestId - Optional request ID (auto-generated if not provided)
+ * @returns Pino child logger with requestId, userId, sessionId bindings
+ *
+ * @example
+ * // In proxy.ts
+ * const logger = createLogger(request);
+ * logger.info({ type: "proxy", method: "GET", path: "/user", status: 200 });
  */
-function createBaseLogData(
-  requestId: string,
-  sessionCookie?: string,
-): BaseLogData {
-  const { userId, sessionId } = extractUserContext(sessionCookie);
-
-  return {
-    timestamp: getJSTTimestamp(),
-    requestId,
-    userId,
-    sessionId,
-  };
-}
-
-/**
- * Log middleware access
- */
-export function logAccess(
-  request: NextRequest,
-  status: number,
-  redirectTo?: string,
-  requestId?: string,
-): void {
+export function createLogger(request: NextRequest, requestId?: string): Logger {
   const sessionCookie = request.cookies.get(
     CookieManager.KEYS.ACCESS_TOKEN,
   )?.value;
   const finalRequestId =
-    requestId || request.headers.get("x-request-id") || generateShortId();
+    requestId ||
+    request.headers.get(HeaderManager.KEYS.REQUEST_ID) ||
+    generateShortId();
+  const { userId, sessionId } = extractUserContext(sessionCookie);
 
-  const logData: AccessLogData = {
-    ...createBaseLogData(finalRequestId, sessionCookie),
+  return baseLogger.child({
+    requestId: finalRequestId,
+    ...(userId && { userId }),
+    ...(sessionId && { sessionId }),
+  });
+}
+
+/**
+ * Create a Pino child logger with request context (async version for Server Components/Actions)
+ *
+ * @param requestId - Optional request ID (auto-generated if not provided)
+ * @returns Pino child logger with requestId, userId, sessionId bindings
+ *
+ * @example
+ * // In API route or Server Action
+ * const logger = await createLoggerAsync();
+ * logger.info({ type: "api_request", method: "POST", path: "/auth/signin", status: 200 });
+ */
+export async function createLoggerAsync(requestId?: string): Promise<Logger> {
+  let sessionCookie: string | undefined;
+
+  try {
+    sessionCookie = await CookieManager.getAccessTokenCookie();
+  } catch {
+    // Client-side or no cookie
+  }
+
+  const { userId, sessionId } = extractUserContext(sessionCookie);
+
+  return baseLogger.child({
+    requestId: requestId || generateShortId(),
+    ...(userId && { userId }),
+    ...(sessionId && { sessionId }),
+  });
+}
+
+/**
+ * Log proxy (middleware) access
+ *
+ * @param request - Next.js request object
+ * @param options - Logging options
+ *
+ * @example
+ * proxyLog(request, { status: 200, requestId });
+ * proxyLog(request, { status: 307, redirectTo: "/auth/signin" });
+ */
+export function proxyLog(
+  request: NextRequest,
+  options: {
+    status: number;
+    requestId?: string;
+    redirectTo?: string;
+  },
+): void {
+  const logger = createLogger(request, options.requestId);
+  logger.info({
     type: "proxy",
     method: request.method,
     path: request.nextUrl.pathname,
     query: request.nextUrl.search,
-    status,
-    userAgent: request.headers.get("user-agent") || "-",
-    ip: request.headers.get("x-forwarded-for") || "-",
-    ...(redirectTo && { redirectTo }),
-  };
-
-  console.log(JSON.stringify(logData));
+    status: options.status,
+    userAgent: request.headers.get(HeaderManager.KEYS.USER_AGENT) || "-",
+    ip: request.headers.get(HeaderManager.KEYS.FORWARDED_FOR) || "-",
+    ...(options.redirectTo && { redirectTo: options.redirectTo }),
+  });
 }
 
 /**
  * Log API request
+ *
+ * @param options - API logging options
+ *
+ * @example
+ * await apiLog({ method: "POST", path: "/auth/signin", status: 200, duration: 45 });
+ * await apiLog({ method: "POST", path: "/auth/signin", status: 200, duration: 45, body: requestData, isMock: true });
  */
-export async function logApiRequest(
-  method: string,
-  path: string,
-  status: number,
-  duration: number,
-  requestId?: string,
-  isMock = false,
-  body?: unknown,
-): Promise<void> {
-  let sessionCookie: string | undefined;
-
-  try {
-    sessionCookie = await CookieManager.getAccessTokenCookie();
-  } catch {
-    // Client-side or no cookie
-  }
-
-  const logData: ApiRequestLogData = {
-    ...createBaseLogData(requestId || generateShortId(), sessionCookie),
-    type: isMock ? "api_request_mock" : "api_request",
-    method,
-    path,
-    status,
-    duration: `${duration}ms`,
+export async function apiLog(options: {
+  method: string;
+  path: string;
+  status: number;
+  duration: number;
+  requestId?: string;
+  isMock?: boolean;
+  body?: unknown;
+}): Promise<void> {
+  const logger = await createLoggerAsync(options.requestId);
+  const logData: Record<string, unknown> = {
+    type: options.isMock ? "api_request_mock" : "api_request",
+    method: options.method,
+    path: options.path,
+    status: options.status,
+    duration: `${options.duration}ms`,
   };
 
   // Add body for POST/PUT/PATCH requests with sensitive data masked
-  if (body && ["POST", "PUT", "PATCH"].includes(method.toUpperCase())) {
-    logData.body = maskSensitiveData(body);
+  if (
+    options.body &&
+    ["POST", "PUT", "PATCH"].includes(options.method.toUpperCase())
+  ) {
+    logData.body = maskSensitive(options.body);
   }
 
-  console.log(JSON.stringify(logData));
+  logger.info(logData);
 }
 
 /**
- * General purpose info logging
- * Use this for production logs that don't fit into specific categories
- *
- * @param message - Log message (required)
- * @param data - Additional data to log (optional, will be masked for sensitive fields)
- * @param requestId - Optional request ID for correlation
+ * Export base Pino logger for direct use
  *
  * @example
- * // Simple message
- * logger.info("User profile updated");
+ * // Direct logging without context
+ * logger.info({ message: "Application started" });
  *
  * @example
- * // With data
- * logger.info("Payment processed", { amount: 1000, currency: "JPY" });
+ * // Create custom child logger
+ * const dbLogger = logger.child({ component: "database" });
+ * dbLogger.debug({ query: "SELECT * FROM users" }, "Executing query");
  *
  * @example
- * // With request ID for correlation
- * logger.info("Cache invalidated", { keys: ["user:123"] }, requestId);
+ * // Error logging
+ * logger.error({ err: error }, "Failed to process payment");
  */
-export async function info(
-  message: string,
-  data?: unknown,
-  requestId?: string,
-): Promise<void> {
-  let sessionCookie: string | undefined;
-
-  try {
-    sessionCookie = await CookieManager.getAccessTokenCookie();
-  } catch {
-    // Client-side or no cookie
-  }
-
-  const logData: InfoLogData = {
-    ...createBaseLogData(requestId || generateShortId(), sessionCookie),
-    type: "info",
-    message,
-  };
-
-  // Add data if provided, with sensitive field masking
-  if (data !== undefined) {
-    logData.data = maskSensitiveData(data);
-  }
-
-  console.log(JSON.stringify(logData));
-}
+export const logger = baseLogger;

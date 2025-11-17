@@ -1,5 +1,5 @@
-import { headers } from "next/headers";
-import { logApiRequest } from "@/features/shared/lib/logger";
+import { HeaderManager } from "@/features/shared/lib/headerManager";
+import { apiLog } from "@/features/shared/lib/logger";
 import {
   mockMeResponse,
   mockSigninResponse,
@@ -76,17 +76,12 @@ export async function mockFetcher<TData, TVariables = unknown>(
   const method = options.method || "GET";
   const { data, body } = options;
   // Parse body if it's a JSON string (from orval-generated code)
-  const requestBody = data || (body && typeof body === "string" ? JSON.parse(body) : body);
+  const requestBody =
+    data || (body && typeof body === "string" ? JSON.parse(body) : body);
   const startTime = Date.now();
 
-  // Get request ID from middleware
-  let requestId: string | undefined;
-  try {
-    const headersList = await headers();
-    requestId = headersList.get("x-request-id") || undefined;
-  } catch {
-    // Client-side or headers not available
-  }
+  // Get request ID from proxy
+  const requestId = await HeaderManager.getRequestId();
 
   // Simulate network delay for realistic testing
   await new Promise((resolve) => setTimeout(resolve, 100));
@@ -94,7 +89,15 @@ export async function mockFetcher<TData, TVariables = unknown>(
   const result = getMockResponse(path, method) as TData;
   const duration = Date.now() - startTime;
 
-  await logApiRequest(method, path, 200, duration, requestId, true, requestBody);
+  await apiLog({
+    method,
+    path,
+    status: 200,
+    duration,
+    requestId,
+    isMock: true,
+    body: requestBody,
+  });
 
   return result;
 }

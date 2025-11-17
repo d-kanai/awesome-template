@@ -1,6 +1,6 @@
 "use server";
 
-import { info } from "@/features/shared/lib/logger";
+import { createLoggerAsync } from "@/features/shared/lib/logger";
 import type { FlowData } from "../types";
 
 type CompleteFlowResponse = {
@@ -11,7 +11,10 @@ type CompleteFlowResponse = {
 export async function completeFlow(
   data: FlowData,
 ): Promise<CompleteFlowResponse> {
-  await info("Flow completion requested", {
+  const logger = await createLoggerAsync();
+  logger.info({
+    type: "info",
+    message: "Flow completion requested",
     action: "completeFlow",
     data,
     note: "In real implementation, this would call Java API /flow/complete with Redis validation",

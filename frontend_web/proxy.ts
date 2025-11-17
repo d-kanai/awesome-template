@@ -3,7 +3,8 @@ import { NextResponse } from "next/server";
 import { AUTH_ROUTES } from "@/features/auth/routes";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
 import { generateShortId } from "@/features/shared/lib/dateTime";
-import { logAccess } from "@/features/shared/lib/logger";
+import { HeaderManager } from "@/features/shared/lib/headerManager";
+import { proxyLog } from "@/features/shared/lib/logger";
 import { SHARED_ROUTES } from "@/features/shared/lib/routes";
 
 const PUBLIC_PATHS = [
@@ -25,7 +26,11 @@ function handleUnauthenticatedRequest(
   const signInUrl = new URL(AUTH_ROUTES.SIGNIN, request.url);
   signInUrl.searchParams.set("return_to", request.nextUrl.pathname);
 
-  logAccess(request, 307, signInUrl.pathname, requestId);
+  proxyLog(request, {
+    status: 307,
+    requestId,
+    redirectTo: signInUrl.pathname,
+  });
 
   return NextResponse.redirect(signInUrl);
 }
@@ -34,19 +39,20 @@ export default function proxy(request: NextRequest) {
   const sessionCookie = request.cookies.get(CookieManager.KEYS.ACCESS_TOKEN);
 
   // Generate or use existing request ID
-  const requestId = request.headers.get("x-request-id") || generateShortId();
+  const requestId =
+    request.headers.get(HeaderManager.KEYS.REQUEST_ID) || generateShortId();
 
   // 公開パス以外で未認証の場合、サインインページにリダイレクト
   if (!isPublicPath(request.nextUrl.pathname) && !sessionCookie) {
     return handleUnauthenticatedRequest(request, requestId);
   }
 
-  logAccess(request, 200, undefined, requestId);
+  proxyLog(request, { status: 200, requestId });
 
   const response = NextResponse.next();
 
   // Pass request ID to downstream handlers (Server Components, Server Actions)
-  response.headers.set("x-request-id", requestId);
+  response.headers.set(HeaderManager.KEYS.REQUEST_ID, requestId);
 
   return response;
 }

@@ -3,7 +3,7 @@
 import { cache } from "react";
 import { me } from "@/features/shared/api/generated/functions";
 import { CookieManager } from "@/features/shared/lib/cookieManager";
-import { info as logInfo } from "@/features/shared/lib/logger";
+import { createLoggerAsync } from "@/features/shared/lib/logger";
 
 export type Session = {
   user: {
@@ -31,7 +31,12 @@ export const getSession = cache(async (): Promise<Session> => {
 
     return { user: null, isAuthenticated: false };
   } catch (error) {
-    await logInfo("Session validation failed", { error });
+    const logger = await createLoggerAsync();
+    logger.info({
+      type: "info",
+      message: "Session validation failed",
+      error,
+    });
     return { user: null, isAuthenticated: false };
   }
 });

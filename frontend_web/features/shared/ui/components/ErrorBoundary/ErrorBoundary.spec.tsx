@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ErrorBoundary } from "@/features/shared/ui/components/ErrorBoundary";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 // console.errorをモック（Error Boundaryが出力するエラーログを抑制）
 const originalError = console.error;

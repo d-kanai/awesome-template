@@ -33,6 +33,9 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
 
+  // Pino logger を外部パッケージとして扱う（Turbopackでバンドルしない）
+  serverExternalPackages: ["pino", "pino-pretty"],
+
   async headers() {
     return [
       {
