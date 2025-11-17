@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   :root {
@@ -179,3 +177,95 @@ body {
     line-height: 1.2;
   }
 }
+
+@theme {
+  /* Dark mode */
+  --color-*: initial;
+  --color-text-brand-on-brand-tertiary: var(--sds-color-text-brand-on-brand-tertiary);
+  --color-text-brand-on-brand-secondary: var(--sds-color-text-brand-on-brand-secondary);
+  --color-text-brand-on-brand: var(--sds-color-text-brand-on-brand);
+  --color-text-brand-tertiary: var(--sds-color-text-brand-tertiary);
+  --color-text-default: var(--sds-color-text-default-default);
+  --color-text-default-tertiary: var(--sds-color-text-default-tertiary);
+  --color-text-default-secondary: var(--sds-color-text-default-secondary);
+  --color-text-neutral: var(--sds-color-text-neutral-default);
+  --color-text-disabled-on-disabled: var(--sds-color-text-disabled-on-disabled);
+  --color-background-default: var(--sds-color-background-default-default);
+  --color-background-default-secondary: var(--sds-color-background-default-secondary);
+  --color-background-brand: var(--sds-color-background-brand-default);
+  --color-background-brand-hover: var(--sds-color-background-brand-hover);
+  --color-background-brand-secondary: var(--sds-color-background-brand-secondary);
+  --color-background-brand-tertiary: var(--sds-color-background-brand-tertiary);
+  --color-background-neutral-tertiary: var(--sds-color-background-neutral-tertiary);
+  --color-background-neutral-tertiary-hover: var(--sds-color-background-neutral-tertiary-hover);
+  --color-background-disabled: var(--sds-color-background-disabled-default);
+  --color-background-utilities-scrim: var(--sds-color-background-utilities-scrim);
+  --color-border-default: var(--sds-color-border-default-default);
+  --color-border-brand: var(--sds-color-border-brand-default);
+  --color-border-neutral-secondary: var(--sds-color-border-neutral-secondary);
+  --color-border-disabled: var(--sds-color-border-disabled-default);
+  --color-icon-default-tertiary: var(--sds-color-icon-default-tertiary);
+  --color-icon-default: var(--sds-color-icon-default-default);
+  --color-icon-brand-on-brand: var(--sds-color-icon-brand-on-brand);
+
+  /* Spacing */
+  --spacing-050: var(--sds-size-space-050);
+  --spacing-100: var(--sds-size-space-100);
+  --spacing-200: var(--sds-size-space-200);
+  --spacing-300: var(--sds-size-space-300);
+  --spacing-400: var(--sds-size-space-400);
+  --spacing-600: var(--sds-size-space-600);
+  --spacing-800: var(--sds-size-space-800);
+  --spacing-1200: var(--sds-size-space-1200);
+  --spacing-1600: var(--sds-size-space-1600);
+  --spacing-4000: var(--sds-size-space-4000);
+
+  /* Border radius */
+  --radius-100: var(--sds-size-radius-100);
+  --radius-200: var(--sds-size-radius-200);
+  --radius-400: var(--sds-size-radius-400);
+  --radius-full: var(--sds-size-radius-full);
+
+  /* Font family */
+  --font-family-title: var(--sds-typography-title-hero-font-family), sans-serif;
+  --font-family-subtitle: var(--sds-typography-subtitle-font-family), sans-serif;
+  --font-family-body: var(--sds-typography-body-font-family), sans-serif;
+  --font-family-heading: var(--sds-typography-heading-font-family), sans-serif;
+  --font-family-subheading: var(--sds-typography-subheading-font-family), sans-serif;
+
+  /* Font size */
+  --font-size-title-hero: var(--sds-typography-title-hero-size);
+  --font-size-title-page: var(--sds-typography-title-page-size-base);
+  --font-size-subtitle: var(--sds-typography-subtitle-size-base);
+  --font-size-heading: var(--sds-typography-heading-size-base);
+  --font-size-subheading: var(--sds-typography-subheading-size-medium);
+  --font-size-body-medium: var(--sds-typography-body-size-medium);
+  --font-size-body-small: var(--sds-typography-body-size-small);
+
+  /* Font weight */
+  --font-weight-title-hero: var(--sds-typography-title-hero-font-weight);
+  --font-weight-title-page: var(--sds-typography-title-page-font-weight);
+  --font-weight-subtitle: var(--sds-typography-subtitle-font-weight);
+  --font-weight-heading: var(--sds-typography-heading-font-weight);
+  --font-weight-subheading: var(--sds-typography-subheading-font-weight);
+  --font-weight-body-regular: var(--sds-typography-body-font-weight-regular);
+  --font-weight-body-strong: var(--sds-typography-body-font-weight-strong);
+
+  /* Border width */
+  --border-width: var(--sds-size-stroke-border);
+
+  /* Blur */
+  --blur-100: var(--sds-size-blur-100);
+
+  /* Line height */
+  --line-height-body: 1.4;
+  --line-height-heading: 1.2;
+  --line-height-single: 1;
+
+  /* Icon size */
+  --width-icon-large: var(--sds-size-icon-large);
+  --height-icon-large: var(--sds-size-icon-large);
+}
+
+@source "./**/*.{js,ts,jsx,tsx,mdx}";
+@source "../features/**/*.{js,ts,jsx,tsx,mdx}";
