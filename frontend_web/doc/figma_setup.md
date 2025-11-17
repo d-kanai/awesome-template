@@ -299,42 +299,6 @@ Figmaのデザイントークンが更新された場合：
 4. 必要に応じて`tailwind.config.ts`を更新
 5. 変更をコミット
 
-### Styles（スタイル）の追加
-
-Figmaコンポーネントを実装する際に、新しいスタイルが必要な場合は `globals.css` に直接CSSクラスを追加します。
-
-#### ワークフロー
-
-1. **MCPでデザインコンテキストを取得**
-   ```typescript
-   mcp__figma-desktop__get_design_context()
-   ```
-
-2. **スタイル情報を確認**
-   - 取得したコード内の `Font(...)` パターンを探す
-   - 例: `Font(family: "Inter", style: Regular, size: 16, weight: 400, lineHeight: 1.4)`
-
-3. **`globals.css`にCSSクラスを追加**
-   ```css
-   .text-new-style-name {
-     font-family: var(--sds-typography-body-font-family), sans-serif;
-     font-size: 16px;
-     font-weight: 400;
-     line-height: 1.4;
-   }
-   ```
-
-4. **コンポーネントを実装**
-   - スタイルクラスを使用してコンポーネントを実装
-
-#### スタイル名の命名規則
-
-- `text-{component}-{variant}`: コンポーネント固有のスタイル
-  - 例: `text-button-label`, `text-card-title`
-
-- `text-{semantic-name}`: 汎用的なスタイル
-  - 例: `text-body-base`, `text-heading`, `text-caption`
-
 ## Figma Styles (Text Styles)
 
 Figma Stylesは、デザイントークン(Variables)の上位レイヤーで、複数のプロパティを組み合わせた再利用可能なスタイル定義です。
