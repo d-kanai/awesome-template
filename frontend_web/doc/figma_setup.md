@@ -299,44 +299,22 @@ Figmaのデザイントークンが更新された場合：
 4. 必要に応じて`tailwind.config.ts`を更新
 5. 変更をコミット
 
-### Styles（スタイル）の段階的な追加
+### Styles（スタイル）の追加
 
-**推奨アプローチ: コンポーネント実装と同時にスタイルを追加**
-
-Figmaコンポーネントを実装する際に、そのコンポーネントで使用されているスタイルを同時に追加します。
+Figmaコンポーネントを実装する際に、新しいスタイルが必要な場合は `globals.css` に直接CSSクラスを追加します。
 
 #### ワークフロー
 
-1. **Figmaコンポーネントを選択**
-   - 実装したいコンポーネントをFigmaで選択
-
-2. **MCPでデザインコンテキストを取得**
+1. **MCPでデザインコンテキストを取得**
    ```typescript
    mcp__figma-desktop__get_design_context()
    ```
 
-3. **スタイル情報を確認**
+2. **スタイル情報を確認**
    - 取得したコード内の `Font(...)` パターンを探す
    - 例: `Font(family: "Inter", style: Regular, size: 16, weight: 400, lineHeight: 1.4)`
 
-4. **新しいスタイルがあれば追加**
-
-   a. `design-tokens/figma-styles.json`に追加:
-   ```json
-   {
-     "typography": {
-       "new-style-name": {
-         "fontFamily": "Inter",
-         "fontSize": 16,
-         "fontWeight": 400,
-         "lineHeight": 1.4,
-         "description": "コンポーネント名での用途"
-       }
-     }
-   }
-   ```
-
-   b. `globals.css`にCSSクラスを追加:
+3. **`globals.css`にCSSクラスを追加**
    ```css
    .text-new-style-name {
      font-family: var(--sds-typography-body-font-family), sans-serif;
@@ -346,31 +324,16 @@ Figmaコンポーネントを実装する際に、そのコンポーネントで
    }
    ```
 
-5. **コンポーネントを実装**
+4. **コンポーネントを実装**
    - スタイルクラスを使用してコンポーネントを実装
 
-6. **コミット**
-   - コンポーネントとスタイルを一緒にコミット
-
-#### メリット
-
-- ✅ 実際に使われるスタイルのみが定義される
-- ✅ 未使用のスタイルで肥大化しない
-- ✅ コンポーネントとスタイルの対応が明確
-- ✅ 段階的に進められる
-- ✅ テストしながら進められる
-
 #### スタイル名の命名規則
-
-コンポーネントから抽出したスタイル名は、以下の形式を推奨:
 
 - `text-{component}-{variant}`: コンポーネント固有のスタイル
   - 例: `text-button-label`, `text-card-title`
 
 - `text-{semantic-name}`: 汎用的なスタイル
   - 例: `text-body-base`, `text-heading`, `text-caption`
-
-既に同じスタイルが存在する場合は、既存のスタイル名を再利用してください。
 
 ## Figma Styles (Text Styles)
 
@@ -477,7 +440,6 @@ Figma Stylesは、デザイントークン(Variables)の上位レイヤーで、
 ## 関連ファイル
 
 - `design-tokens/figma-variables.json` - 構造化されたデザイントークン（Variables）
-- `design-tokens/figma-styles.json` - 構造化されたデザインスタイル（Styles）
 - `app/globals.css` - CSS変数定義 + スタイルクラス定義
 - `tailwind.config.ts` - Tailwind設定
 - `doc/figma_import.md` - Figmaインポート全般のドキュメント
