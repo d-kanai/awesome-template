@@ -1,7 +1,7 @@
-import { Header } from "@/features/shared/ui/components/Header/Header";
-import { HeroActions } from "@/features/shared/ui/components/HeroActions/HeroActions";
 import { CardGridTestimonials } from "@/features/shared/ui/components/CardGridTestimonials/CardGridTestimonials";
 import { Footer } from "@/features/shared/ui/components/Footer/Footer";
+import { Header } from "@/features/shared/ui/components/Header/Header";
+import { HeroActions } from "@/features/shared/ui/components/HeroActions/HeroActions";
 
 const img1 =
   "http://localhost:3845/assets/0707e6b2022462187b7b2dab43ed95bab6b24a66.png";

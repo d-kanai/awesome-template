@@ -1,10 +1,10 @@
 import {
+  mockMeResponse,
+  mockSigninResponse,
+  mockSignupResponse,
   mockTestimonials,
   mockUserVoices,
   mockUsers,
-  mockSigninResponse,
-  mockSignupResponse,
-  mockMeResponse,
 } from "./data";
 
 /**

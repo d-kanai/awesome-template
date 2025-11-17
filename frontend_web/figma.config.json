@@ -1,8 +1,6 @@
 {
   "codeConnect": {
-    "include": [
-      "features/shared/ui/**/*.tsx"
-    ],
+    "include": ["features/shared/ui/**/*.tsx"],
     "exclude": ["**/*.stories.tsx", "**/*.test.tsx", "**/node_modules/**"],
     "parser": "react",
     "label": "React",

@@ -3,7 +3,7 @@
 import { cn } from "@/features/shared/lib/utils";
 import Image from "next/image";
 import React from "react";
-import { type TextLinkListLinkItem, TextLinkList } from "../TextLinkList";
+import { TextLinkList, type TextLinkListLinkItem } from "../TextLinkList";
 
 export interface FooterLinkSectionData {
   title: string;
