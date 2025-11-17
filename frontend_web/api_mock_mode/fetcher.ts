@@ -84,7 +84,7 @@ export async function mockFetcher<TData, TVariables = unknown>(
   const result = getMockResponse(path, method) as TData;
   const duration = Date.now() - startTime;
 
-  logApiRequest(method, path, 200, duration, true);
+  await logApiRequest(method, path, 200, duration, true);
 
   return result;
 }

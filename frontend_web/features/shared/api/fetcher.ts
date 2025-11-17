@@ -76,7 +76,7 @@ export async function fetcher<TData, TVariables = unknown>(
 
   const duration = Date.now() - startTime;
 
-  logApiRequest(rest.method || "GET", path, response.status, duration);
+  await logApiRequest(rest.method || "GET", path, response.status, duration);
 
   if (!response.ok) {
     let errorMessage: string;
