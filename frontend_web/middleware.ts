@@ -11,6 +11,7 @@ const PUBLIC_PATHS = [
   "/home", // HomePage demo
   AUTH_ROUTES.SIGNIN,
   AUTH_ROUTES.SIGNUP,
+  "/api/health", // Health check endpoint
 ];
 
 function isPublicPath(pathname: string): boolean {
