@@ -90,7 +90,7 @@
 10. **Screen実装**: RSCパターンでScreen component作成（`next/image` 使用）
 11. **Screen Test作成**: vi.mock()による統合テスト作成
 12. **app/[feature]/page.tsx作成**: RSCでqueryを呼び出し、Screenに渡す
-13. **モック動作確認**: `make dev-mock` でブラウザ確認
+13. **モック動作確認**: `pnpm dev:mock` でブラウザ確認
 14. **Test実行**: `pnpm test` で全テスト成功確認
 15. **Type Check**: `pnpm typecheck` で型エラー確認
 
@@ -513,11 +513,7 @@ describe("HomeScreen - TestC", () => {
 #### Step 6: ブラウザで確認
 
 ```bash
-# Makefile経由（推奨）
-make dev-mock
-
-# または直接
-NEXT_PUBLIC_API_MOCK_MODE=enabled pnpm dev
+pnpm dev:mock
 ```
 
 **動作:**
@@ -620,7 +616,7 @@ NEXT_PUBLIC_API_MOCK_MODE=enabled pnpm dev
                    ▼
 ┌─────────────────────────────────────────────────────────┐
 │ 7. ブラウザで確認                                          │
-│    make dev-mock                                         │
+│    pnpm dev:mock                                         │
 │    → fetcher → mockFetcher（環境変数で自動切り替え）        │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -666,7 +662,7 @@ Error: fetch failed
 
 **解決策:**
 - モックモードで再起動: `NEXT_PUBLIC_API_MOCK_MODE=enabled pnpm dev`
-- または: `make dev-mock`
+- または: `pnpm dev:mock`
 
 ## チェックリスト
 
@@ -693,4 +689,4 @@ Error: fetch failed
 - [ ] Screen component実装（RSCパターン）
 - [ ] vi.mock()で本番functions.tsをモックしたScreen Testを作成
 - [ ] `pnpm test`でテストが成功
-- [ ] `make dev-mock`でブラウザ動作確認（環境変数でモック自動切り替え）
+- [ ] `pnpm dev:mock`でブラウザ動作確認（環境変数でモック自動切り替え）
