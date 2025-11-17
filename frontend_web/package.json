@@ -36,7 +36,6 @@
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "5.90.5",
     "@tanstack/react-query-devtools": "5.90.2",
-    "@tanstack/zod-form-adapter": "^0.42.1",
     "@unleash/proxy-client-react": "5.0.1",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
@@ -53,7 +52,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@cucumber/cucumber": "11.1.0",
-    "@faker-js/faker": "^10.1.0",
+    "@faker-js/faker": "^9.9.0",
     "@figma/code-connect": "^1.3.8",
     "@next/bundle-analyzer": "^16.0.3",
     "@playwright/test": "1.49.1",
@@ -77,6 +76,7 @@
     "jsdom": "25.0.1",
     "knip": "5.66.4",
     "next-router-mock": "^1.0.4",
+    "openapi-types": "^12.1.3",
     "orval": "7.1.1",
     "postcss": "8.4.49",
     "storybook": "^8.6.14",
@@ -84,6 +84,7 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typescript": "5.9.2",
+    "unleash-proxy-client": "^3.7.8",
     "vitest": "2.1.8",
     "wait-on": "^9.0.1"
   },
