@@ -275,10 +275,10 @@ web-e2e:
 	cd frontend_web && pnpm test:e2e
 
 web-docker-build:
-	docker build -t frontend_web:latest ./frontend_web
+	cd frontend_web && pnpm docker:build
 
 web-docker-run:
-	docker run -p 3000:3000 frontend_web:latest
+	cd frontend_web && pnpm docker:run
 
 ###############################################################
 # Combined
