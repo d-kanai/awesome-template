@@ -30,25 +30,7 @@ mcp__figma-desktop__get_variable_defs()
 - **Size**: スペーシング、ボーダーラディウス、ストローク、深度、ブラー
 - **Responsive**: デバイス幅、ボーダー幅
 
-### 2. 構造化データの保存
-
-取得した変数を構造化して`design-tokens/figma-variables.json`に保存します。
-
-```json
-{
-  "color": {
-    "text": { ... },
-    "background": { ... },
-    "border": { ... },
-    "icon": { ... }
-  },
-  "typography": { ... },
-  "size": { ... },
-  "responsive": { ... }
-}
-```
-
-### 3. CSS変数の定義 (globals.css)
+### 2. CSS変数の定義 (globals.css)
 
 `app/globals.css`にCSS変数として定義します。
 
@@ -105,7 +87,7 @@ body {
 }
 ```
 
-### 4. Tailwind設定の更新 (tailwind.config.ts)
+### 3. Tailwind設定の更新 (tailwind.config.ts)
 
 CSS変数をTailwindユーティリティクラスとして使用できるように設定します。
 
@@ -303,10 +285,9 @@ CSS変数を直接使用することもできます：
 Figmaのデザイントークンが更新された場合：
 
 1. MCPツールで最新の変数を取得
-2. `design-tokens/figma-variables.json`を更新
-3. `globals.css`のCSS変数を更新
-4. 必要に応じて`tailwind.config.ts`を更新
-5. 変更をコミット
+2. `app/globals.css`のCSS変数を更新
+3. 必要に応じて`tailwind.config.ts`を更新
+4. 変更をコミット
 
 ## Figma Styles (Text Styles)
 
@@ -412,7 +393,7 @@ Figma Stylesは、デザイントークン(Variables)の上位レイヤーで、
 
 ## 関連ファイル
 
-- `design-tokens/figma-variables.json` - 構造化されたデザイントークン（Variables）
 - `app/globals.css` - CSS変数定義 + スタイルクラス定義
 - `tailwind.config.ts` - Tailwind設定
-- `doc/figma_import.md` - Figmaインポート全般のドキュメント
+- `doc/figma_import_component.md` - Figmaコンポーネント取り込みガイド
+- `doc/figma_import_page.md` - Figmaページ取り込みガイド
