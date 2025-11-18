@@ -7,10 +7,10 @@
     "pnpm": "~10.10.0"
   },
   "scripts": {
-    "dev": "next dev",
-    "dev:mock": "NEXT_PUBLIC_API_MOCK_MODE=true next dev",
-    "dev:webpack": "next dev --webpack",
-    "dev:mock:webpack": "NEXT_PUBLIC_API_MOCK_MODE=true next dev --webpack",
+    "dev": "next dev --webpack",
+    "dev:mock": "NEXT_PUBLIC_API_MOCK_MODE=true next dev --webpack",
+    "dev:turbo": "next dev",
+    "dev:mock:turbo": "NEXT_PUBLIC_API_MOCK_MODE=true next dev",
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
     "start": "next start",
