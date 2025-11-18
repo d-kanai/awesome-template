@@ -2,6 +2,7 @@
 
 import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
+import { SharedTestIds } from "@/features/shared/test-ids";
 
 export type InputFieldState = "default" | "error" | "disabled";
 
@@ -113,6 +114,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
 
         {hasError && error && (
           <p
+            data-testid={SharedTestIds.textFieldError}
             className={cn(
               "font-[family-name:var(--sds-typography-body-font-family,'Inter',sans-serif)]",
               "font-[var(--sds-typography-body-font-weight-regular,400)]",
