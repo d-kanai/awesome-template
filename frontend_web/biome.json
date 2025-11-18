@@ -28,13 +28,14 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": [
-      "**/*.stories.tsx",
-      "**/*.stories.ts",
-      "**/*.figma.tsx",
-      "**/*.figma-raw.tsx",
-      "**/figma_generated",
-      "**/api/generated"
+    "includes": [
+      "**/*",
+      "!**/*.stories.tsx",
+      "!**/*.stories.ts",
+      "!**/*.figma.tsx",
+      "!**/*.figma-raw.tsx",
+      "!**/figma_generated",
+      "!**/api/generated"
     ]
   },
   "css": {
