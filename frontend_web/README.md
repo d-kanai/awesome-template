@@ -46,6 +46,9 @@ Web版フロントエンドアプリケーション（Next.js + React + TypeScri
 - **Playwright**: E2Eテスト
 - **@cucumber/cucumber**: Gherkin BDD
 
+### UI開発
+- **Storybook**: コンポーネントカタログ・ビジュアルテスト
+
 ### コード品質
 - **Biome**: リント・フォーマット（ESLint/Prettier代替）
 - **Knip**: デッドコード検出
@@ -132,6 +135,16 @@ pnpm test:coverage
 
 # E2Eテスト
 pnpm test:e2e
+```
+
+### Storybook
+
+```bash
+# Storybook起動（開発モード）
+pnpm storybook
+
+# Storybookビルド（静的サイト生成）
+pnpm build-storybook
 ```
 
 ### ビルド
