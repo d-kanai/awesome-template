@@ -29,6 +29,12 @@ const clientSchema = z.object({
   NEXT_PUBLIC_API_MOCK_MODE: z
     .enum(["true", "false"])
     .transform((val) => val === "true"),
+
+  // APIタイムアウト（オプション: ミリ秒、デフォルト30000ms = 30秒）
+  NEXT_PUBLIC_API_TIMEOUT_MS: z
+    .string()
+    .optional()
+    .transform((val) => (val ? Number.parseInt(val, 10) : 30000)),
 });
 
 /**
@@ -40,6 +46,7 @@ const processEnv = {
   LOG_LEVEL: process.env.LOG_LEVEL,
   NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
   NEXT_PUBLIC_API_MOCK_MODE: process.env.NEXT_PUBLIC_API_MOCK_MODE,
+  NEXT_PUBLIC_API_TIMEOUT_MS: process.env.NEXT_PUBLIC_API_TIMEOUT_MS,
 };
 
 // サーバー環境変数のバリデーション（サーバー側でのみ実行）
