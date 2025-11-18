@@ -10,40 +10,46 @@ import { env } from "../../features/shared/lib/env";
 import type { CustomWorld } from "../steps/world";
 
 const API_BASE_URL = env.NEXT_PUBLIC_API_BASE_URL;
+const IS_MOCK_MODE = env.NEXT_PUBLIC_API_MOCK_MODE;
 
 setDefaultTimeout(30000);
 
 let browser: Browser;
 
 BeforeAll(async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/e2e/reset_data`, {
-      method: "POST",
-    });
-    if (!response.ok) {
-      console.warn(`Failed to reset database: ${response.status}`);
-    } else {
-      console.log("[E2E] Database reset successful");
+  // Mock mode: Skip backend API calls
+  if (!IS_MOCK_MODE) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/e2e/reset_data`, {
+        method: "POST",
+      });
+      if (!response.ok) {
+        console.warn(`Failed to reset database: ${response.status}`);
+      } else {
+        console.log("[E2E] Database reset successful");
+      }
+    } catch (error) {
+      console.warn("[E2E] Failed to reset database:", error);
     }
-  } catch (error) {
-    console.warn("[E2E] Failed to reset database:", error);
-  }
 
-  try {
-    const response = await fetch(`${API_BASE_URL}/e2e/create_data`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ table: "user" }),
-    });
-    if (!response.ok) {
-      console.warn(`Failed to create test data: ${response.status}`);
-    } else {
-      console.log("[E2E] Test data created successfully");
+    try {
+      const response = await fetch(`${API_BASE_URL}/e2e/create_data`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ table: "user" }),
+      });
+      if (!response.ok) {
+        console.warn(`Failed to create test data: ${response.status}`);
+      } else {
+        console.log("[E2E] Test data created successfully");
+      }
+    } catch (error) {
+      console.warn("[E2E] Failed to create test data:", error);
     }
-  } catch (error) {
-    console.warn("[E2E] Failed to create test data:", error);
+  } else {
+    console.log("[E2E] Mock mode enabled - skipping backend data setup");
   }
 
   browser = await chromium.launch({
