@@ -2,13 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useFlowContext } from "@/features/multi_flow/hooks/useFlowContext";
+import { useFlowStore } from "@/features/multi_flow/stores/useFlowStore";
 import { MULTI_FLOW_ROUTES } from "@/features/multi_flow/routes";
 import { CompleteScreen } from "@/features/multi_flow/screens/CompleteScreen";
 
 export default function CompletePage() {
   const router = useRouter();
-  const { currentStep } = useFlowContext();
+  const currentStep = useFlowStore((state) => state.currentStep);
 
   useEffect(() => {
     if (currentStep !== "complete") {

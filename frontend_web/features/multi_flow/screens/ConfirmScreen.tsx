@@ -4,12 +4,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/features/shared/ui/atoms/Button";
 import { completeFlow } from "../actions/completeFlow";
-import { useFlowContext } from "../hooks/useFlowContext";
+import { useFlowStore } from "../stores/useFlowStore";
 import { MULTI_FLOW_ROUTES } from "../routes";
 
 export function ConfirmScreen() {
   const router = useRouter();
-  const { formData, goToComplete } = useFlowContext();
+  const formData = useFlowStore((state) => state.formData);
+  const goToComplete = useFlowStore((state) => state.goToComplete);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

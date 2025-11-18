@@ -1,7 +1,7 @@
 "use server";
 
 import { createLoggerAsync } from "@/features/shared/lib/logger";
-import type { FlowData } from "../types";
+import type { FlowData } from "../stores/useFlowStore";
 
 type CompleteFlowResponse = {
   success: boolean;

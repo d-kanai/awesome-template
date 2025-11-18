@@ -5,12 +5,13 @@ import { useState } from "react";
 import { Button } from "@/features/shared/ui/atoms/Button";
 import { InputField } from "@/features/shared/ui/atoms/InputField";
 import { startFlow } from "../actions/startFlow";
-import { useFlowContext } from "../hooks/useFlowContext";
+import { useFlowStore } from "../stores/useFlowStore";
 import { MULTI_FLOW_ROUTES } from "../routes";
 
 export function InputScreen() {
   const router = useRouter();
-  const { setFormData, goToConfirm } = useFlowContext();
+  const setFormData = useFlowStore((state) => state.setFormData);
+  const goToConfirm = useFlowStore((state) => state.goToConfirm);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

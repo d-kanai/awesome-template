@@ -3,12 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/features/shared/ui/atoms/Button";
-import { useFlowContext } from "../hooks/useFlowContext";
+import { useFlowStore } from "../stores/useFlowStore";
 import { MULTI_FLOW_ROUTES } from "../routes";
 
 export function CompleteScreen() {
   const router = useRouter();
-  const { reset } = useFlowContext();
+  const reset = useFlowStore((state) => state.reset);
 
   useEffect(() => {
     reset();
