@@ -10,7 +10,7 @@ interface UserScreenProps {
 
 function ScreenContainer({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-background-secondary py-Space-800">
+    <div className="min-h-screen bg-[var(--sds-color-background-default-secondary)] py-[var(--sds-size-space-800)]">
       {children}
     </div>
   );
@@ -18,7 +18,7 @@ function ScreenContainer({ children }: { children: React.ReactNode }) {
 
 function ContentWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mx-auto max-w-4xl px-Space-400 sm:px-Space-600 lg:px-Space-800">
+    <div className="mx-auto max-w-4xl px-[var(--sds-size-space-400)] sm:px-[var(--sds-size-space-600)] lg:px-[var(--sds-size-space-800)]">
       {children}
     </div>
   );
@@ -26,16 +26,20 @@ function ContentWrapper({ children }: { children: React.ReactNode }) {
 
 function PageHeader() {
   return (
-    <div className="mb-Space-800">
-      <h1
-        className="text-subtitle text-foreground"
-        data-testid={UserTestIds.pageTitle}
-      >
-        ユーザー一覧
-      </h1>
-      <p className="mt-Space-200 text-body-small text-foreground-secondary">
-        登録されているユーザーの一覧です
-      </p>
+    <div className="mb-[var(--sds-size-space-800)]">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1
+            className="text-subtitle text-[var(--sds-color-text-default-default)]"
+            data-testid={UserTestIds.pageTitle}
+          >
+            ユーザー一覧
+          </h1>
+          <p className="mt-[var(--sds-size-space-200)] text-body-small text-[var(--sds-color-text-default-secondary)]">
+            登録されているユーザーの一覧です
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
