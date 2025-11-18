@@ -1,24 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { AUTH_ROUTES } from "@/features/auth/routes";
 import type { UserVoice } from "@/features/home/queries/getUserVoices";
 import { CardGridTestimonials } from "@/features/shared/ui/components/CardGridTestimonials/CardGridTestimonials";
-import { Footer } from "@/features/shared/ui/components/Footer/Footer";
-import { Header } from "@/features/shared/ui/components/Header/Header";
 import { HeroActions } from "@/features/shared/ui/components/HeroActions/HeroActions";
 
 interface HomeScreenProps {
   userVoices: UserVoice[];
-}
-
-function ScreenContainer({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="bg-[var(--sds-color-background-default-default,#ffffff)] content-stretch flex flex-col items-start w-full">
-      {children}
-    </div>
-  );
 }
 
 function HeroSection({
@@ -72,78 +61,14 @@ export function HomeScreen({ userVoices }: HomeScreenProps) {
     router.push("/contact");
   };
 
-  const socialLinks = [
-    {
-      icon: (
-        <Image
-          src="/images/icons/social/x-logo.svg"
-          alt="X (Twitter)"
-          width={24}
-          height={24}
-        />
-      ),
-      href: "#",
-      label: "X (Twitter)",
-    },
-    {
-      icon: (
-        <Image
-          src="/images/icons/social/instagram-logo.svg"
-          alt="Instagram"
-          width={24}
-          height={24}
-        />
-      ),
-      href: "#",
-      label: "Instagram",
-    },
-    {
-      icon: (
-        <Image
-          src="/images/icons/social/youtube-logo.svg"
-          alt="YouTube"
-          width={24}
-          height={24}
-        />
-      ),
-      href: "#",
-      label: "YouTube",
-    },
-    {
-      icon: (
-        <Image
-          src="/images/icons/social/linkedin-logo.svg"
-          alt="LinkedIn"
-          width={24}
-          height={24}
-        />
-      ),
-      href: "#",
-      label: "LinkedIn",
-    },
-  ];
-
   return (
-    <ScreenContainer>
-      <Header
-        logoSrc="/images/logos/figma-logo.svg"
-        logoAlt="Figma Logo"
-        navigationItems={[
-          { label: "Products", isActive: true },
-          { label: "Solutions" },
-          { label: "Community" },
-          { label: "Resources" },
-          { label: "Pricing" },
-          { label: "Contact" },
-        ]}
-      />
+    <>
       <HeroSection
         onPrimaryClick={handlePrimaryClick}
         onSecondaryClick={handleSecondaryClick}
       />
       <PlaceholderSection />
       <UserVoicesSection userVoices={userVoices} />
-      <Footer socialLinks={socialLinks} />
-    </ScreenContainer>
+    </>
   );
 }

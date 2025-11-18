@@ -8,10 +8,12 @@ import {
   signinFormDefaults,
   signinFormSchema,
 } from "@/features/auth/schemas";
+import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 
 export function useSigninForm() {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const form = useForm<SigninFormData>({
     resolver: zodResolver(signinFormSchema),
@@ -26,6 +28,10 @@ export function useSigninForm() {
     if (result.error) {
       setSubmitError(result.error);
       return;
+    }
+
+    if (result.user) {
+      setUser(result.user);
     }
 
     if (result.redirectTo) {

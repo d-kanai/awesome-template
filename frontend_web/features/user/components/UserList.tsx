@@ -7,7 +7,7 @@ function UserAvatar({ email }: { email: string }) {
   const initial = email.charAt(0).toUpperCase();
 
   return (
-    <div className="flex h-[48px] w-[48px] items-center justify-center rounded-[var(--sds-size-radius-full)] bg-[var(--sds-color-background-brand-default)] text-heading text-[var(--sds-color-text-brand-on-brand)] shadow-sm">
+    <div className="flex h-[48px] w-[48px] items-center justify-center rounded-[var(--sds-size-radius-full)] bg-[var(--sds-color-background-brand-default)] text-heading text-[var(--sds-color-text-brand-on-brand)] shadow-sm shrink-0">
       {initial}
     </div>
   );
@@ -19,7 +19,7 @@ function UserListItem({ user }: { user: User }) {
       className="group relative overflow-hidden rounded-[var(--sds-size-radius-200)] border border-[var(--sds-color-border-default-default)] bg-[var(--sds-color-background-default-default)] p-[var(--sds-size-space-600)] transition-all hover:shadow-md hover:border-[var(--sds-color-border-brand-default)]"
       data-testid={UserTestIds.userListItem}
     >
-      <div className="flex items-start gap-[var(--sds-size-space-500)]">
+      <div className="flex items-start gap-[var(--sds-size-space-600)]">
         <UserAvatar email={user.email} />
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-[var(--sds-size-space-400)]">

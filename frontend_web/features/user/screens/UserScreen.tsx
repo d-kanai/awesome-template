@@ -8,14 +8,6 @@ interface UserScreenProps {
   users: UserListItem[];
 }
 
-function ScreenContainer({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen bg-[var(--sds-color-background-default-secondary)] py-[var(--sds-size-space-800)]">
-      {children}
-    </div>
-  );
-}
-
 function ContentWrapper({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto max-w-4xl px-[var(--sds-size-space-400)] sm:px-[var(--sds-size-space-600)] lg:px-[var(--sds-size-space-800)]">
@@ -50,11 +42,11 @@ function UserListSection({ users }: { users: UserListItem[] }) {
 
 export function UserScreen({ users }: UserScreenProps) {
   return (
-    <ScreenContainer>
+    <div className="bg-[var(--sds-color-background-default-secondary)] py-[var(--sds-size-space-800)]">
       <ContentWrapper>
         <PageHeader />
         <UserListSection users={users} />
       </ContentWrapper>
-    </ScreenContainer>
+    </div>
   );
 }
