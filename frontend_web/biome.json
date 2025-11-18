@@ -34,8 +34,8 @@
       "!**/*.stories.ts",
       "!**/*.figma.tsx",
       "!**/*.figma-raw.tsx",
-      "!**/figma_generated/**",
-      "!**/api/generated/**"
+      "!**/figma_generated",
+      "!**/api/generated"
     ]
   },
   "css": {

@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/features/shared/ui/atoms/Button";
-import { useFlowStore } from "../stores/useFlowStore";
 import { MULTI_FLOW_ROUTES } from "../routes";
+import { useFlowStore } from "../stores/useFlowStore";
 
 export function CompleteScreen() {
   const router = useRouter();

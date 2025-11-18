@@ -1,4 +1,4 @@
-import { Given, When, Then } from "@cucumber/cucumber";
+import { Given, Then, When } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
 import { AUTH_ROUTES } from "../../features/auth/routes";
 import { SigninTestIds, SignupTestIds } from "../../features/auth/test-ids";

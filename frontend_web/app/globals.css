@@ -181,8 +181,12 @@ body {
 @theme {
   /* Dark mode */
   --color-*: initial;
-  --color-text-brand-on-brand-tertiary: var(--sds-color-text-brand-on-brand-tertiary);
-  --color-text-brand-on-brand-secondary: var(--sds-color-text-brand-on-brand-secondary);
+  --color-text-brand-on-brand-tertiary: var(
+    --sds-color-text-brand-on-brand-tertiary
+  );
+  --color-text-brand-on-brand-secondary: var(
+    --sds-color-text-brand-on-brand-secondary
+  );
   --color-text-brand-on-brand: var(--sds-color-text-brand-on-brand);
   --color-text-brand-tertiary: var(--sds-color-text-brand-tertiary);
   --color-text-default: var(--sds-color-text-default-default);
@@ -191,15 +195,25 @@ body {
   --color-text-neutral: var(--sds-color-text-neutral-default);
   --color-text-disabled-on-disabled: var(--sds-color-text-disabled-on-disabled);
   --color-background-default: var(--sds-color-background-default-default);
-  --color-background-default-secondary: var(--sds-color-background-default-secondary);
+  --color-background-default-secondary: var(
+    --sds-color-background-default-secondary
+  );
   --color-background-brand: var(--sds-color-background-brand-default);
   --color-background-brand-hover: var(--sds-color-background-brand-hover);
-  --color-background-brand-secondary: var(--sds-color-background-brand-secondary);
+  --color-background-brand-secondary: var(
+    --sds-color-background-brand-secondary
+  );
   --color-background-brand-tertiary: var(--sds-color-background-brand-tertiary);
-  --color-background-neutral-tertiary: var(--sds-color-background-neutral-tertiary);
-  --color-background-neutral-tertiary-hover: var(--sds-color-background-neutral-tertiary-hover);
+  --color-background-neutral-tertiary: var(
+    --sds-color-background-neutral-tertiary
+  );
+  --color-background-neutral-tertiary-hover: var(
+    --sds-color-background-neutral-tertiary-hover
+  );
   --color-background-disabled: var(--sds-color-background-disabled-default);
-  --color-background-utilities-scrim: var(--sds-color-background-utilities-scrim);
+  --color-background-utilities-scrim: var(
+    --sds-color-background-utilities-scrim
+  );
   --color-border-default: var(--sds-color-border-default-default);
   --color-border-brand: var(--sds-color-border-brand-default);
   --color-border-neutral-secondary: var(--sds-color-border-neutral-secondary);
@@ -228,10 +242,12 @@ body {
 
   /* Font family */
   --font-family-title: var(--sds-typography-title-hero-font-family), sans-serif;
-  --font-family-subtitle: var(--sds-typography-subtitle-font-family), sans-serif;
+  --font-family-subtitle:
+    var(--sds-typography-subtitle-font-family), sans-serif;
   --font-family-body: var(--sds-typography-body-font-family), sans-serif;
   --font-family-heading: var(--sds-typography-heading-font-family), sans-serif;
-  --font-family-subheading: var(--sds-typography-subheading-font-family), sans-serif;
+  --font-family-subheading:
+    var(--sds-typography-subheading-font-family), sans-serif;
 
   /* Font size */
   --font-size-title-hero: var(--sds-typography-title-hero-size);

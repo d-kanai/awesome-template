@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/features/shared/ui/atoms/Button";
 import { completeFlow } from "../actions/completeFlow";
-import { useFlowStore } from "../stores/useFlowStore";
 import { MULTI_FLOW_ROUTES } from "../routes";
+import { useFlowStore } from "../stores/useFlowStore";
 
 export function ConfirmScreen() {
   const router = useRouter();
