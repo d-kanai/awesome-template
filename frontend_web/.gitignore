@@ -44,7 +44,7 @@ yarn-error.log*
 next-env.d.ts
 
 # API generated
-features/shared/api/generated/
+# features/shared/api/generated/
 
 # Figma design tokens
 # 全てコミット対象（中間ファイルも構造理解のため含める）
