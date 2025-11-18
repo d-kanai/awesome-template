@@ -33,7 +33,7 @@ describe("InputScreen", () => {
       prefetch: vi.fn(),
     } as ReturnType<typeof useRouter>);
 
-    vi.mocked(startFlow).mockResolvedValue();
+    vi.mocked(startFlow).mockResolvedValue({ success: true });
   });
 
   describe("正常系", () => {
