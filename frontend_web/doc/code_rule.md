@@ -45,6 +45,13 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
   - actions/: データ変更(mutations/commands)のServer Actions
     - 例: `features/auth/actions/signin.ts`, `features/auth/actions/signout.ts`
 - **マルチステップフロー制御**: [`flow_control.md`](./flow_control.md)を参照すること
+- **グローバル状態管理（Zustand）**
+  - ページをまたぐ状態、複数コンポーネントをまたぐ状態はZustandのstoreを利用すること
+  - **下の層に渡すのが面倒という理由だけで安易にstoreを使わないこと**
+    - Props drilling が2-3層程度なら、Propsで渡す方がシンプル
+    - 本当にグローバルに共有が必要な状態だけをstoreに入れること
+  - storeは`features/*/stores/`に配置すること
+  - 例: マルチステップフロー、カート状態、通知状態など
 
 ### css
 
@@ -95,6 +102,9 @@ Figmaコンポーネントの取り込みについては、レベルに応じて
         - ※ エラーハンドリングを柔軟にするためにServer Side Navigation(redirect)しないルールなので、結果としてServerActionも統合したテストが動作する
       - Client Side URL遷移が起きていること
       - Toastなど、ユーザへのFBが起きていること
+  - **Zustand Storeを使用する画面のテスト**
+    - beforeEach で `useFlowStore.getState().reset()` を呼び出してストアをリセットすること
+    - Then: **ストアの状態変化を検証すること**
 - **data-testid の使い方**
   - elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること
   - **共有コンポーネント（features/shared/ui/components/）に無理やり data-testid プロパティを追加しないこと**

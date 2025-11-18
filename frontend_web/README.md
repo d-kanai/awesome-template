@@ -25,6 +25,7 @@ Web版フロントエンドアプリケーション（Next.js + React + TypeScri
 ### 状態管理・データフェッチング
 - **Server Components (RSC)**: デフォルトのデータ取得
 - **Server Actions**: データ変更処理
+- **Zustand**: グローバル状態管理（ページ跨ぎ、コンポーネント跨ぎの状態）
 - **react-hook-form**: クライアントサイドフォーム状態管理
 - **Zod**: バリデーション、フォームスキーマ（client/server共通）
 
@@ -70,6 +71,7 @@ frontend_web/
 │   ├── auth/                 # 機能モジュール
 │   │   ├── queries/          # データ取得
 │   │   ├── actions/          # データ変更
+│   │   ├── stores/           # Zustandストア（グローバル状態）
 │   │   ├── components/       # 内部コンポーネント
 │   │   ├── hooks/            # カスタムフック
 │   │   ├── screens/          # Screen Component
