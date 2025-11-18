@@ -2,6 +2,10 @@
 
 Web版フロントエンドアプリケーション（Next.js + React + TypeScript）
 
+## アーキテクチャ概要
+
+![Next.js Architecture Overview](./doc/nextjs_overview.png)
+
 ## Documentation
 
 - [コーディング規約](./doc/code_rule.md) - AIが順守すべきルール

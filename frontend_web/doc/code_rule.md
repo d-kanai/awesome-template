@@ -7,7 +7,6 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 ### common
 
 - URLはハードコードでなくROUTES定数で管理すること
-- 基本メソッドコメントは不要
 - 論理的凝集でなく、機能的凝集を優先すること（カプセル化）
   - 技術的分類（「定数である」「ユーティリティである」）でなく、ビジネス機能・ドメイン・責務（「Cookie管理」「認証」）で分類する
   - 例：Cookie定数とCookie操作を同じCookieManagerクラスに持つ。定数だけを集めたファイルには持たせない
@@ -20,12 +19,9 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 - **エラーハンドリングとログ出力**
   - エラーをcatchした場合、必ずログ出力するか、呼び出し元にエラーを伝播すること
   - 意図的にエラーを握りつぶす場合（例: Client-side環境での正常動作、フォールバック処理）は、必ずコメントで理由を明記すること
-  - **Server ActionおよびQueryでのエラーログ出力は禁止**
+  - **Server ActionおよびQueryでのエラーログ出力は不要**
     - APIエラーは既にfetcher層で自動的にログ記録される（requestId, userId, sessionId, stack trace含む）
     - Server ActionおよびQueryのcatchブロックではログを出さず、エラー処理のみを行うこと
-    - Stack traceにServer ActionやQueryのファイル名・行番号が含まれるため、トレース可能
-    - 例（Server Action）: `catch (error) { return { error: (error as Error).message }; }` （ログ出力なし）
-    - 例（Query）: `catch { return { user: null, isAuthenticated: false }; }` （ログ出力なし）
 
 ### code
 
