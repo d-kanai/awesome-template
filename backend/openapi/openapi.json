@@ -27,6 +27,10 @@
     {
       "name": "ユーザー",
       "description": "ユーザーを管理するための操作です"
+    },
+    {
+      "name": "ユーザーの声",
+      "description": "ユーザーの声に関連する操作です"
     }
   ],
   "paths": {
@@ -270,6 +274,28 @@
           }
         }
       }
+    },
+    "/user-voices": {
+      "get": {
+        "tags": [
+          "ユーザーの声"
+        ],
+        "summary": "ユーザーの声取得",
+        "description": "ユーザーの声一覧を取得します。",
+        "operationId": "getUserVoices",
+        "responses": {
+          "200": {
+            "description": "ユーザーの声の取得に成功しました。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserVoicesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -495,6 +521,51 @@
           }
         },
         "description": "認証済みユーザーの情報を表します"
+      },
+      "UserVoice": {
+        "required": [
+          "avatarSrc",
+          "description",
+          "quote",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "avatarSrc": {
+            "type": "string",
+            "description": "アバター画像のURL",
+            "example": "/images/avatars/user1.jpg"
+          },
+          "title": {
+            "type": "string",
+            "description": "ユーザー名",
+            "example": "田中太郎"
+          },
+          "description": {
+            "type": "string",
+            "description": "役職・所属",
+            "example": "株式会社サンプル CTO"
+          },
+          "quote": {
+            "type": "string",
+            "description": "ユーザーの声（引用）",
+            "example": "このサービスは素晴らしいです。"
+          }
+        },
+        "description": "ユーザーの声"
+      },
+      "GetUserVoicesResponse": {
+        "type": "object",
+        "properties": {
+          "userVoices": {
+            "type": "array",
+            "description": "ユーザーの声一覧",
+            "items": {
+              "$ref": "#/components/schemas/UserVoice"
+            }
+          }
+        },
+        "description": "ユーザーの声一覧レスポンス"
       }
     }
   }
