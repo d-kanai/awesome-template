@@ -1,6 +1,6 @@
 import { defineConfig } from "orval";
 
-const OPENAPI_SPEC_PATH = "../../backend/build/openapi/openapi.json";
+const OPENAPI_SPEC_PATH = "../../backend/openapi/openapi.json";
 
 const schemaNameMap: Record<string, string> = {
   "ID 検索レスポンス": "FindUserByIdResponse",

@@ -14,7 +14,7 @@ plugins {
 
 openApi {
     apiDocsUrl = 'http://localhost:8080/v3/api-docs'
-    outputDir = file("$buildDir/openapi")
+    outputDir = file("$projectDir/openapi")
     outputFileName = 'openapi.json'
     waitTimeInSeconds = 10
 }
