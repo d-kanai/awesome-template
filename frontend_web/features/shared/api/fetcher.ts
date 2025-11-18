@@ -2,7 +2,6 @@ import { CookieManager } from "@/features/shared/lib/cookieManager";
 import { env } from "@/features/shared/lib/env";
 import { HeaderManager } from "@/features/shared/lib/headerManager";
 import { apiLog } from "@/features/shared/lib/logger";
-import { TimeoutError, fetchWithTimeout } from "@/features/shared/lib/timeout";
 
 export type FetcherOptions<TVariables> = RequestInit & {
   data?: TVariables;
@@ -19,6 +18,67 @@ type FetchResult = {
   response: Response;
   duration: number;
 };
+
+/**
+ * タイムアウトエラー
+ *
+ * APIリクエストがタイムアウトした際にスローされる
+ */
+class TimeoutError extends Error {
+  public readonly timeoutMs: number;
+  public readonly operation: string;
+
+  constructor(message: string, timeoutMs: number, operation = "Operation") {
+    super(message);
+    this.name = "TimeoutError";
+    this.timeoutMs = timeoutMs;
+    this.operation = operation;
+
+    // V8のstack traceサポート
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, TimeoutError);
+    }
+  }
+
+  /**
+   * Type guard: TimeoutErrorかどうかを判定
+   */
+  static isTimeoutError(error: unknown): error is TimeoutError {
+    return error instanceof TimeoutError;
+  }
+}
+
+/**
+ * AbortController を使用したタイムアウト付き fetch
+ */
+async function fetchWithTimeout(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+  timeoutMs = 30000,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(input, {
+      ...init,
+      signal: controller.signal,
+    });
+    return response;
+  } catch (error) {
+    // AbortError をより分かりやすい TimeoutError に変換
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new TimeoutError(
+        `Request to ${input.toString()} timed out after ${timeoutMs}ms`,
+        timeoutMs,
+        "API Request",
+      );
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 
 /**
  * ヘッダーをマージする
