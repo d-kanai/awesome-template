@@ -1,6 +1,6 @@
 import { defineConfig } from "orval";
 
-const OPENAPI_SPEC_PATH = "../backend/openapi/openapi.json";
+const OPENAPI_SPEC_PATH = "../../backend/openapi/openapi.json";
 
 const schemaNameMap: Record<string, string> = {
   "ID 検索レスポンス": "FindUserByIdResponse",
@@ -20,14 +20,14 @@ export default defineConfig({
   awesomeTemplateHooks: {
     input: OPENAPI_SPEC_PATH,
     output: {
-      target: "../frontend_web/features/shared/api/generated/hooks.ts",
-      schemas: "../frontend_web/features/shared/api/generated/model",
+      target: "../features/shared/api/generated/hooks.ts",
+      schemas: "../features/shared/api/generated/model",
       client: "react-query",
       httpClient: "fetch",
       clean: true,
       override: {
         mutator: {
-          path: "../frontend_web/features/shared/api/fetcher.ts",
+          path: "../features/shared/api/fetcher.ts",
           name: "fetcher",
         },
       },
@@ -36,21 +36,21 @@ export default defineConfig({
     },
     hooks: {
       afterAllFilesWrite:
-        "cd ../frontend_web && pnpm biome check --write features/shared/api/generated",
+        "cd .. && pnpm biome check --config-path config/biome.json --write features/shared/api/generated",
     },
   },
   // Pure Functions用（Server Components/Server Actions用）
   awesomeTemplateFunctions: {
     input: OPENAPI_SPEC_PATH,
     output: {
-      target: "../frontend_web/features/shared/api/generated/functions.ts",
-      schemas: "../frontend_web/features/shared/api/generated/model",
+      target: "../features/shared/api/generated/functions.ts",
+      schemas: "../features/shared/api/generated/model",
       client: "fetch",
       httpClient: "fetch",
       clean: false, // hooks.tsと同じschema/modelを共有するためcleanしない
       override: {
         mutator: {
-          path: "../frontend_web/features/shared/api/fetcher.ts",
+          path: "../features/shared/api/fetcher.ts",
           name: "fetcher",
         },
       },
