@@ -7,11 +7,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: ["./config/vitest.setup.ts"],
+    setupFiles: ["./vitest.setup.ts"],
     env: {
       // .env.test から環境変数を読み込む
       ...require("dotenv").config({
-        path: path.resolve(__dirname, "../.env.test"),
+        path: path.resolve(__dirname, "../frontend_web/.env.test"),
       }).parsed,
     },
     include: ["**/*.spec.{ts,tsx}"],
@@ -37,7 +37,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "../"),
+      "@": path.resolve(__dirname, "../frontend_web"),
     },
   },
 });
