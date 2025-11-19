@@ -5,8 +5,11 @@
  * Awesome Template バックエンドサービスの API ドキュメントです。
  * OpenAPI spec version: 1.0.0
  */
-import type { FeatureToggle } from './featureToggle';
 
-export interface ProxyResponse {
-  toggles?: FeatureToggle[];
+/**
+ * テストデータセットアップリクエスト
+ */
+export interface SetupDataRequest {
+  /** テーブル名 (例: user) */
+  table?: string;
 }

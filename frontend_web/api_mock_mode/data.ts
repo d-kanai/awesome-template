@@ -5,15 +5,14 @@
  */
 
 import type {
-  Testimonial,
   UserListItem,
   UserVoice,
 } from "@/features/shared/api/generated/model";
 
 // ============================================
-// Testimonials (openapi.json)
+// User Voices
 // ============================================
-export const mockTestimonials: Testimonial[] = [
+export const mockTestimonials: UserVoice[] = [
   {
     quote:
       "This product has completely transformed how we work. Highly recommended!",

@@ -5,8 +5,12 @@
  * Awesome Template バックエンドサービスの API ドキュメントです。
  * OpenAPI spec version: 1.0.0
  */
-import type { UserVoice } from "./userVoice";
+import type { UserVoice } from './userVoice';
 
-export type GetUserVoices200 = {
+/**
+ * ユーザーの声一覧レスポンス
+ */
+export interface GetUserVoicesResponse {
+  /** ユーザーの声一覧 */
   userVoices?: UserVoice[];
-};
+}

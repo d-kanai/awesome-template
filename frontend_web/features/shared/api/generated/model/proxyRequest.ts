@@ -5,7 +5,7 @@
  * Awesome Template バックエンドサービスの API ドキュメントです。
  * OpenAPI spec version: 1.0.0
  */
-import type { ProxyRequestProperties } from "./proxyRequestProperties";
+import type { ProxyRequestProperties } from './proxyRequestProperties';
 
 export interface ProxyRequest {
   properties?: ProxyRequestProperties;

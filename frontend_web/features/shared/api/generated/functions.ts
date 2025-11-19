@@ -7,16 +7,20 @@
  */
 import type {
   FindAllUsersResponse,
-  GetUserVoices200,
+  GenerateDummyTokenParams,
+  GetUserVoicesResponse,
   MeResponse,
   ProxyRequest,
   ProxyResponse,
+  SetupDataRequest,
   SigninRequest,
   SigninResponse,
   SignupRequest,
   SignupResponse,
-} from "./model";
-import { fetcher } from "../fetcher";
+  TestTokenResponse
+} from './model'
+import { fetcher } from '../fetcher';
+
 
 /**
  * すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。
@@ -25,20 +29,26 @@ import { fetcher } from "../fetcher";
 export type getFeaturesGetResponse = {
   data: ProxyResponse;
   status: number;
-};
+}
 
 export const getGetFeaturesGetUrl = () => {
-  return `/featureflags/proxy`;
-};
 
-export const getFeaturesGet = async (
-  options?: RequestInit,
-): Promise<getFeaturesGetResponse> => {
-  return fetcher<Promise<getFeaturesGetResponse>>(getGetFeaturesGetUrl(), {
+
+  return `/featureflags/proxy`
+}
+
+export const getFeaturesGet = async ( options?: RequestInit): Promise<getFeaturesGetResponse> => {
+  
+  return fetcher<Promise<getFeaturesGetResponse>>(getGetFeaturesGetUrl(),
+  {      
     ...options,
-    method: "GET",
-  });
-};
+    method: 'GET'
+    
+    
+  }
+);}
+
+
 
 /**
  * すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。
@@ -47,23 +57,119 @@ export const getFeaturesGet = async (
 export type getFeaturesPostResponse = {
   data: ProxyResponse;
   status: number;
-};
+}
 
 export const getGetFeaturesPostUrl = () => {
-  return `/featureflags/proxy`;
-};
 
-export const getFeaturesPost = async (
-  proxyRequest: ProxyRequest,
-  options?: RequestInit,
-): Promise<getFeaturesPostResponse> => {
-  return fetcher<Promise<getFeaturesPostResponse>>(getGetFeaturesPostUrl(), {
+
+  return `/featureflags/proxy`
+}
+
+export const getFeaturesPost = async (proxyRequest: ProxyRequest, options?: RequestInit): Promise<getFeaturesPostResponse> => {
+  
+  return fetcher<Promise<getFeaturesPostResponse>>(getGetFeaturesPostUrl(),
+  {      
     ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(proxyRequest),
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      proxyRequest,)
+  }
+);}
+
+
+
+/**
+ * アプリケーションが管理するテーブルからデータをすべて削除します。
+ * @summary DBをリセット
+ */
+export type resetDataResponse = {
+  data: void;
+  status: number;
+}
+
+export const getResetDataUrl = () => {
+
+
+  return `/e2e/reset_data`
+}
+
+export const resetData = async ( options?: RequestInit): Promise<resetDataResponse> => {
+  
+  return fetcher<Promise<resetDataResponse>>(getResetDataUrl(),
+  {      
+    ...options,
+    method: 'POST'
+    
+    
+  }
+);}
+
+
+
+/**
+ * E2Eテストでauth guardをバイパスするためのダミートークンを生成します。setCookie=trueの場合、httpOnly Cookieとしても設定します。
+ * @summary E2Eテスト用トークン生成
+ */
+export type generateDummyTokenResponse = {
+  data: TestTokenResponse;
+  status: number;
+}
+
+export const getGenerateDummyTokenUrl = (params?: GenerateDummyTokenParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
   });
-};
+
+  return normalizedParams.size ? `/e2e/dummy_token?${normalizedParams.toString()}` : `/e2e/dummy_token`
+}
+
+export const generateDummyToken = async (params?: GenerateDummyTokenParams, options?: RequestInit): Promise<generateDummyTokenResponse> => {
+  
+  return fetcher<Promise<generateDummyTokenResponse>>(getGenerateDummyTokenUrl(params),
+  {      
+    ...options,
+    method: 'POST'
+    
+    
+  }
+);}
+
+
+
+/**
+ * 指定されたテーブルにテストデータを1レコード作成します。
+ * @summary テストデータをセットアップ
+ */
+export type createDataResponse = {
+  data: void;
+  status: number;
+}
+
+export const getCreateDataUrl = () => {
+
+
+  return `/e2e/create_data`
+}
+
+export const createData = async (setupDataRequest: SetupDataRequest, options?: RequestInit): Promise<createDataResponse> => {
+  
+  return fetcher<Promise<createDataResponse>>(getCreateDataUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      setupDataRequest,)
+  }
+);}
+
+
 
 /**
  * 指定した情報で新しいユーザーを登録します。
@@ -72,45 +178,27 @@ export const getFeaturesPost = async (
 export type signupResponse = {
   data: SignupResponse;
   status: number;
-};
+}
 
 export const getSignupUrl = () => {
-  return `/auth/signup`;
-};
 
-export const signup = async (
-  signupRequest: SignupRequest,
-  options?: RequestInit,
-): Promise<signupResponse> => {
-  return fetcher<Promise<signupResponse>>(getSignupUrl(), {
+
+  return `/auth/signup`
+}
+
+export const signup = async (signupRequest: SignupRequest, options?: RequestInit): Promise<signupResponse> => {
+  
+  return fetcher<Promise<signupResponse>>(getSignupUrl(),
+  {      
     ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(signupRequest),
-  });
-};
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      signupRequest,)
+  }
+);}
 
-/**
- * サインアウトしてCookieを削除します。
- * @summary サインアウト
- */
-export type signoutResponse = {
-  data: void;
-  status: number;
-};
 
-export const getSignoutUrl = () => {
-  return `/auth/signout`;
-};
-
-export const signout = async (
-  options?: RequestInit,
-): Promise<signoutResponse> => {
-  return fetcher<Promise<signoutResponse>>(getSignoutUrl(), {
-    ...options,
-    method: "POST",
-  });
-};
 
 /**
  * メールアドレスとパスワードでサインインします。
@@ -119,23 +207,27 @@ export const signout = async (
 export type signinResponse = {
   data: SigninResponse;
   status: number;
-};
+}
 
 export const getSigninUrl = () => {
-  return `/auth/signin`;
-};
 
-export const signin = async (
-  signinRequest: SigninRequest,
-  options?: RequestInit,
-): Promise<signinResponse> => {
-  return fetcher<Promise<signinResponse>>(getSigninUrl(), {
+
+  return `/auth/signin`
+}
+
+export const signin = async (signinRequest: SigninRequest, options?: RequestInit): Promise<signinResponse> => {
+  
+  return fetcher<Promise<signinResponse>>(getSigninUrl(),
+  {      
     ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(signinRequest),
-  });
-};
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      signinRequest,)
+  }
+);}
+
+
 
 /**
  * 登録されているすべてのユーザーを取得します。
@@ -144,20 +236,26 @@ export const signin = async (
 export type getAllUsersResponse = {
   data: FindAllUsersResponse;
   status: number;
-};
+}
 
 export const getGetAllUsersUrl = () => {
-  return `/users`;
-};
 
-export const getAllUsers = async (
-  options?: RequestInit,
-): Promise<getAllUsersResponse> => {
-  return fetcher<Promise<getAllUsersResponse>>(getGetAllUsersUrl(), {
+
+  return `/users`
+}
+
+export const getAllUsers = async ( options?: RequestInit): Promise<getAllUsersResponse> => {
+  
+  return fetcher<Promise<getAllUsersResponse>>(getGetAllUsersUrl(),
+  {      
     ...options,
-    method: "GET",
-  });
-};
+    method: 'GET'
+    
+    
+  }
+);}
+
+
 
 /**
  * 現在認証されているユーザーの情報を取得します。
@@ -166,37 +264,52 @@ export const getAllUsers = async (
 export type meResponse = {
   data: MeResponse;
   status: number;
-};
+}
 
 export const getMeUrl = () => {
-  return `/auth/me`;
-};
 
-export const me = async (options?: RequestInit): Promise<meResponse> => {
-  return fetcher<Promise<meResponse>>(getMeUrl(), {
+
+  return `/auth/me`
+}
+
+export const me = async ( options?: RequestInit): Promise<meResponse> => {
+  
+  return fetcher<Promise<meResponse>>(getMeUrl(),
+  {      
     ...options,
-    method: "GET",
-  });
-};
+    method: 'GET'
+    
+    
+  }
+);}
+
+
 
 /**
- * 【注意】この定義はFigma取り込み用の一時的なものです。Springでコードファーストから生成された際に上書きされます。
+ * ユーザーの声一覧を取得します。
  * @summary ユーザーの声取得
  */
 export type getUserVoicesResponse = {
-  data: GetUserVoices200;
+  data: GetUserVoicesResponse;
   status: number;
-};
+}
 
 export const getGetUserVoicesUrl = () => {
-  return `/user-voices`;
-};
 
-export const getUserVoices = async (
-  options?: RequestInit,
-): Promise<getUserVoicesResponse> => {
-  return fetcher<Promise<getUserVoicesResponse>>(getGetUserVoicesUrl(), {
+
+  return `/user-voices`
+}
+
+export const getUserVoices = async ( options?: RequestInit): Promise<getUserVoicesResponse> => {
+  
+  return fetcher<Promise<getUserVoicesResponse>>(getGetUserVoicesUrl(),
+  {      
     ...options,
-    method: "GET",
-  });
-};
+    method: 'GET'
+    
+    
+  }
+);}
+
+
+

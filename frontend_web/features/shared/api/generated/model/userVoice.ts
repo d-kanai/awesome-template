@@ -7,7 +7,7 @@
  */
 
 /**
- * ユーザーの声を表します
+ * ユーザーの声
  */
 export interface UserVoice {
   /** アバター画像のURL */
