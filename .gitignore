@@ -1,6 +1,4 @@
 logs/
-app.apk
 
 # Frontend web test artifacts
 frontend_web/e2e-report.html
-frontend_web/user-list-screenshot.png

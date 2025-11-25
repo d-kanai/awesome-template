@@ -3,8 +3,6 @@
 **重要**: セッション開始時に、まず以下のドキュメントをすべて読み込んでください：
 
 - `/doc/development_workflow.md` - 開発ワークフローとプロセス
-- `/backend/doc/code_rule.md` - バックエンドコーディング規約
-- `/frontend_native/doc/code_rule.md` - フロントエンド(React Native)コーディング規約
 - `/frontend_web/doc/code_rule.md` - フロントエンド(Web)コーディング規約
 
 これらのドキュメントには、このガイドラインに加えて遵守すべき重要なルールが記載されています。
