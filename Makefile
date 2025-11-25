@@ -3,7 +3,7 @@ ROOT_DIR := $(CURDIR)
 
 .PHONY: help \
         install \
-        web-install web-dev web-dev-mock web-build web-lint web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-e2e-mock web-docker-build web-docker-run \
+        web-install web-dev web-dev-mock web-build web-lint web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-e2e-mock web-podman-build web-podman-run \
         lefthook-install
 
 help:
@@ -21,8 +21,8 @@ help:
 	@echo "  make web-ut-coverage      # Run web unit tests with coverage"
 	@echo "  make web-e2e              # Run web E2E tests (Playwright + Cucumber)"
 	@echo "  make web-e2e-mock         # Run web E2E tests with mock API"
-	@echo "  make web-docker-build     # Build web Docker image"
-	@echo "  make web-docker-run       # Run web Docker container"
+	@echo "  make web-podman-build     # Build web container image with Podman"
+	@echo "  make web-podman-run       # Run web container with Podman"
 	@echo ""
 	@echo "Setup:"
 	@echo "  make install             # Install Lefthook hooks and web dependencies"
@@ -77,8 +77,8 @@ web-e2e:
 web-e2e-mock:
 	cd frontend_web && pnpm test:e2e:mock
 
-web-docker-build:
-	cd frontend_web && pnpm docker:build
+web-podman-build:
+	cd frontend_web && pnpm podman:build
 
-web-docker-run:
-	cd frontend_web && pnpm docker:run
+web-podman-run:
+	cd frontend_web && pnpm podman:run

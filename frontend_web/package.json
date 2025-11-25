@@ -29,11 +29,11 @@
     "figma:connect:publish:dir": "export $(cat .env.local | grep FIGMA_ACCESS_TOKEN) && figma connect publish --dir",
     "figma:connect:unpublish": "export $(cat .env.local | grep FIGMA_ACCESS_TOKEN) && figma connect unpublish",
     "figma:connect:unpublish:node": "export $(cat .env.local | grep FIGMA_ACCESS_TOKEN) && figma connect unpublish --label React --node",
-    "docker:build": "docker build -f Dockerfile -t frontend_web:latest .",
-    "docker:run": "docker run -p 3000:3000 -e NODE_ENV=production -e NEXT_PUBLIC_API_BASE_URL=http://localhost:8080 frontend_web:latest",
-    "docker:up": "docker-compose -f docker-compose.yml up -d",
-    "docker:down": "docker-compose -f docker-compose.yml down",
-    "docker:logs": "docker-compose -f docker-compose.yml logs -f"
+    "podman:build": "podman build -f Dockerfile -t frontend_web:latest .",
+    "podman:run": "podman run -p 3000:3000 -e NODE_ENV=production -e NEXT_PUBLIC_API_BASE_URL=http://localhost:8080 frontend_web:latest",
+    "podman:up": "podman-compose -f docker-compose.yml up -d",
+    "podman:down": "podman-compose -f docker-compose.yml down",
+    "podman:logs": "podman-compose -f docker-compose.yml logs -f"
   },
   "dependencies": {
     "@hookform/resolvers": "~5.2.2",
