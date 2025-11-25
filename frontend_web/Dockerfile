@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
-# Base stage with Node.js 22.12.0
-FROM node:22.12.0-alpine AS base
+# Base stage with Node.js 22.21.1
+FROM node:22.21.1-alpine AS base
 
 # Install pnpm directly
 RUN npm install -g pnpm@10.10.0
@@ -14,7 +14,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml* ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Builder stage
 FROM base AS builder
