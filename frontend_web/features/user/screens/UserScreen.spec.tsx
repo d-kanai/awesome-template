@@ -48,12 +48,12 @@ describe("UserScreen - TestC", () => {
       expect(userEmails[1]).toHaveTextContent("hanako@example.com");
 
       const userIds = screen.getAllByTestId(UserTestIds.userId);
-      expect(userIds[0]).toHaveTextContent("ID: user-1");
-      expect(userIds[1]).toHaveTextContent("ID: user-2");
+      expect(userIds[0]).toHaveTextContent("user-1");
+      expect(userIds[1]).toHaveTextContent("user-2");
 
       const createdAts = screen.getAllByTestId(UserTestIds.userCreatedAt);
-      expect(createdAts[0]).toHaveTextContent("2024/1/1");
-      expect(createdAts[1]).toHaveTextContent("2024/1/3");
+      expect(createdAts[0]).toHaveTextContent("2024年1月1日");
+      expect(createdAts[1]).toHaveTextContent("2024年1月3日");
 
       // Then: API呼び出し
       expect(getAllUsers).toHaveBeenCalledTimes(1);
