@@ -1,4 +1,5 @@
-logs/
+logs/*
+!logs/.gitkeep
 
 # Frontend web test artifacts
 frontend_web/e2e-report.html
