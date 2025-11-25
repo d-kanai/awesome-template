@@ -3,7 +3,7 @@ ROOT_DIR := $(CURDIR)
 
 .PHONY: help \
         install \
-        web-install web-dev web-dev-mock web-build web-lint web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run \
+        web-install web-dev web-dev-mock web-build web-lint web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-e2e-mock web-docker-build web-docker-run \
         lefthook-install
 
 help:
@@ -20,6 +20,7 @@ help:
 	@echo "  make web-ut               # Run web unit tests (Vitest)"
 	@echo "  make web-ut-coverage      # Run web unit tests with coverage"
 	@echo "  make web-e2e              # Run web E2E tests (Playwright + Cucumber)"
+	@echo "  make web-e2e-mock         # Run web E2E tests with mock API"
 	@echo "  make web-docker-build     # Build web Docker image"
 	@echo "  make web-docker-run       # Run web Docker container"
 	@echo ""
@@ -72,6 +73,9 @@ web-ut-coverage:
 
 web-e2e:
 	cd frontend_web && pnpm test:e2e
+
+web-e2e-mock:
+	cd frontend_web && pnpm test:e2e:mock
 
 web-docker-build:
 	cd frontend_web && pnpm docker:build
