@@ -3,7 +3,7 @@ ROOT_DIR := $(CURDIR)
 
 .PHONY: help \
         install \
-        web-install web-dev web-build web-lint web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run \
+        web-install web-dev web-dev-mock web-build web-lint web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run \
         lefthook-install
 
 help:
@@ -12,6 +12,7 @@ help:
 	@echo "Web:"
 	@echo "  make web-install          # Install web dependencies (pnpm install)"
 	@echo "  make web-dev              # Start Next.js dev server"
+	@echo "  make web-dev-mock         # Start Next.js dev server with mock API"
 	@echo "  make web-build            # Build Next.js production bundle"
 	@echo "  make web-lint             # Run Biome lint/format check"
 	@echo "  make web-typecheck        # Run TypeScript type checking"
@@ -47,6 +48,9 @@ web-install:
 
 web-dev:
 	cd frontend_web && pnpm dev
+
+web-dev-mock:
+	cd frontend_web && pnpm dev:mock
 
 web-build:
 	cd frontend_web && pnpm build
