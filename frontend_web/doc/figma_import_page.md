@@ -30,6 +30,33 @@
 3. **Server Components**: RSC（React Server Components）パターンを使用
 4. **Screen Tests**: vi.mock()による統合テスト
 
+### コンポーネント採用ルール（Product固有ラッパー優先）
+
+`@awesome/design-system` のコンポーネントをimportしているProduct固有のラッパーが存在する場合は、そちらを優先して使用すること。
+
+**判断フロー:**
+1. Code Connectで `@awesome/design-system` のコンポーネントが提示される
+2. Product側（`features/`）に同じコンポーネントをimportしているラッパーがあるか確認
+3. **ラッパーあり** → Product固有のラッパーを使用
+4. **ラッパーなし** → `@awesome/design-system` をそのまま使用
+
+**例:**
+```tsx
+// ❌ design-systemのButtonをそのまま使う（ラッパーがある場合）
+import { Button } from "@awesome/design-system";
+<Button>Submit</Button>
+
+// ✅ Product固有のラッパーを使う
+import { SubmitButton } from "@/features/shared/ui/components/SubmitButton";
+<SubmitButton>Submit</SubmitButton>
+// ※ SubmitButton内部で @awesome/design-system の Button を使用
+```
+
+**理由:**
+- Figmaはビジュアルデザインツール → UIレベルではdesign-systemで組む
+- Product固有のロジック（アナリティクス、バリデーション等）はコード側の関心事
+- ラッパーでロジックを追加しつつ、UIの一貫性を保つ
+
 ## 実装手順
 
 **重要**: ページ取り込み時は、必ずTodoWriteツールでタスクリストを作成し、進捗を可視化すること。
