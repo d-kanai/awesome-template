@@ -2,7 +2,7 @@
 
 このドキュメントは、Figma Desktop MCPを使用してFigmaデザインから**ページレベル**（Pages / Templates）を実装するための具体的なプロセスとガイドラインを記載しています。
 
-**Component Level（Atoms / Molecules / Organisms）の取り込みについては [`figma_import_component.md`](./figma_import_component.md) を参照してください。**
+**Component Level（Atoms / Molecules / Organisms）の取り込みについては `@awesome/design-system` リポジトリの `doc/figma_import_component.md` を参照してください。**
 
 **コーディング規約（一般的なルールやベストプラクティス）については [`code_rule.md`](./code_rule.md) を参照してください。**
 
@@ -15,16 +15,17 @@
 
 | 特徴 | Component Level | Page Level |
 |-----|-----------------|------------|
-| 配置場所 | `ui/atoms/`, `ui/components/` | `features/[feature]/screens/` |
-| Figma Raw配置 | `figma_generated/atoms/`, `figma_generated/components/` | `figma_generated/pages/` |
+| 配置場所 | `@awesome/design-system` | `features/[feature]/screens/` |
+| Figma Raw配置 | design-system内のコンポーネントフォルダ | `app/[route]/` に `page.tsx` の横 |
 | API呼び出し | ❌ なし | ✅ あり（queries/actions） |
 | テスト | Storybookのみ | Screen Tests (`.spec.tsx`) |
 | forwardRef | ✅ 必須 | ⚠️ オプション |
 | モックワークフロー | N/A | ✅ `api_mock_mode/` |
+| Code Connect | design-systemで管理 | ❌ 不要（コンポーネント経由） |
 
 ## 基本方針
 
-1. **コンポーネントレベルの基本ルールを踏襲** - `figma_import_component.md`の基本方針を参照
+1. **コンポーネントは design-system から import** - `@awesome/design-system` を使用
 2. **API統合**: バックエンド未実装でもAPI連携とテストを完成させる
 3. **Server Components**: RSC（React Server Components）パターンを使用
 4. **Screen Tests**: vi.mock()による統合テスト
@@ -49,12 +50,13 @@
    - ✅ `public/images/[feature]/` の存在確認
 
 3. **Code Connect情報の理解**
-   - ✅ 既存コンポーネントがある場合でも、**Page Rawファイルは必ず作成する**（参考用として保持）
+   - ✅ 既存コンポーネントは `@awesome/design-system` からimport
+   - ✅ **Page Rawファイルは `app/[route]/` に page.tsx の横に作成**
    - ✅ 既存コンポーネント内に画像アセットが含まれているか確認
    - ✅ 含まれていない場合は `public/images/` にダウンロードが必要
 
 4. **コンポーネントPropsインターフェースの事前確認**
-   - ✅ 使用する共有コンポーネント（`features/shared/ui/components/`）のPropsファイルを読む
+   - ✅ 使用する共有コンポーネント（`@awesome/design-system`）のPropsを確認
    - ✅ 各コンポーネントが受け取るべきデータ構造を把握する
    - ✅ 特に配列・オブジェクト型のPropsを見落とさない
    - ⚠️ **よくある間違い**: Footerコンポーネントが `socialLinks?: SocialLink[]` を受け取るのに空配列を渡してしまう
@@ -70,9 +72,9 @@
 
 1. **MCP情報取得**: `get_design_context` + `get_screenshot` + `get_code_connect_map` + `get_metadata` でFigma情報取得
    - ⚠️ **4つすべて実行すること**（どれか1つでも欠けるとプラン不備の原因になる）
-2. **Figma Raw作成**: `figma_generated/pages/` にRawファイル作成
+2. **Figma Raw作成**: `app/[route]/` に page.tsx の横に `figma-raw.tsx` 作成
    - ⚠️ Code Connectで既存コンポーネントがある場合でも、**Page Rawファイルは必ず作成する**
-   - ⚠️ 作成後、importパスを相対パス→絶対パスに修正
+   - ⚠️ 作成後、importパスを `@awesome/design-system` に修正
 3. **画像アセットダウンロード**: Figma Raw の `localhost:3845` URL から画像を `public/images/` にダウンロード
    - ⚠️ 既存コンポーネント内に画像がない場合は**必ずダウンロード**すること
    - `curl` で一括ダウンロード推奨
@@ -133,24 +135,32 @@
 ### 1. ディレクトリ構成
 
 ```
+app/
+└── (authenticated)/
+    └── [feature]/
+        ├── page.tsx                      # ページエントリーポイント（RSC）
+        └── figma-raw.tsx                 # Figma生データ（参考用）
+
 features/
-├── shared/ui/figma_generated/pages/HomePage/
-│   └── HomePage.figma-raw.tsx          # Figma生データ（参考用）
 └── [feature]/
     ├── screens/
-    │   ├── [ScreenName].tsx            # 実装版（RSC）
-    │   └── [ScreenName].spec.tsx       # Screen Test
+    │   ├── [ScreenName].tsx              # 実装版（RSC）
+    │   └── [ScreenName].spec.tsx         # Screen Test
     ├── queries/
-    │   └── get[Data].ts                # データ取得（React.cache）
+    │   └── get[Data].ts                  # データ取得（React.cache）
     └── actions/
-        └── [action].ts                 # データ変更（Server Actions）
+        └── [action].ts                   # データ変更（Server Actions）
 ```
 
 **例:**
 ```
+app/
+└── (authenticated)/
+    └── home/
+        ├── page.tsx
+        └── figma-raw.tsx
+
 features/
-├── shared/ui/figma_generated/pages/HomePage/
-│   └── HomePage.figma-raw.tsx
 └── home/
     ├── screens/
     │   ├── HomeScreen.tsx
@@ -206,9 +216,9 @@ Page Level 取り込み時は、Figma Raw に含まれる `localhost:3845` の�
    curl -s URL3 -o public/images/icons/icon2.svg
    ```
 
-**代替: 手動エクスポート（Component Level など）**
+**代替: 手動エクスポート**
 
-Component Level や MCP で画像が取得できない場合：
+MCP で画像が取得できない場合：
 
 1. Figma Desktop でコンポーネントを開く
 2. 画像レイヤーを選択 → 右クリック → Export
@@ -284,8 +294,7 @@ Page Levelコンポーネントは、バックエンド実装前でもAPI連携�
    - `features/shared/api/generated/functions.ts` に関数が生成されているか確認
 
 4. **Figma Rawのimportパス修正**
-   - MCPで生成された相対パス（`./Header`）を絶対パスに修正
-   - `@/features/shared/ui/components/Header` に変更
+   - MCPで生成されたコンポーネントimportを `@awesome/design-system` に修正
 
 #### Step 1: 本番openapi.jsonにAPI定義を追加
 
@@ -646,10 +655,11 @@ error TS2307: Cannot find module './Header' or its corresponding type declaratio
 ```
 
 **原因:**
-- MCPで生成されたimportパスが相対パスになっている
+- MCPで生成されたimportパスが相対パスやFigma MCPのパスになっている
 
 **解決策:**
-- 相対パス `./Header` を絶対パス `@/features/shared/ui/components/Header` に変更
+- コンポーネントimportを `@awesome/design-system` に変更
+- 例: `import { Header } from "@awesome/design-system";`
 
 ### エラー3: fetch failed（実行時エラー）
 
@@ -667,13 +677,12 @@ Error: fetch failed
 ## チェックリスト
 
 **進捗管理（必須）:**
-- [ ] **TodoWriteツールでタスクリスト作成**（11ステップ）
+- [ ] **TodoWriteツールでタスクリスト作成**（15ステップ）
 
-**基本（Component Level参照）:**
+**基本:**
 - [ ] `get_design_context` + `get_screenshot` + `get_code_connect_map` + `get_metadata` で仕様確認
-- [ ] 依存する子コンポーネントを先に実装（Atomic Design順序）
-- [ ] Figma Rawファイル作成（`figma_generated/pages/`）
-- [ ] **Figma RawのimportパスをMCPの相対パスから絶対パスに修正**
+- [ ] Figma Rawファイル作成（`app/[route]/` に page.tsx の横）
+- [ ] **Figma Rawのコンポーネントimportを `@awesome/design-system` に修正**
 - [ ] Figmaデザイントークン（`--sds-*`）使用
 - [ ] `pnpm typecheck`成功
 - [ ] 見た目がFigmaスクリーンショットと一致

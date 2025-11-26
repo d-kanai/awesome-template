@@ -33,6 +33,9 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
 
+  // link: で参照しているローカルパッケージをトランスパイル対象にする
+  transpilePackages: ["@awesome/design-system"],
+
   // Pino logger を外部パッケージとして扱う（Turbopackでバンドルしない）
   serverExternalPackages: ["pino", "pino-pretty"],
 

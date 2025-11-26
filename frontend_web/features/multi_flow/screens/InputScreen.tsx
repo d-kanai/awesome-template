@@ -2,8 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/features/shared/ui/atoms/Button";
-import { InputField } from "@/features/shared/ui/atoms/InputField";
+import { Button, InputField } from "@awesome/design-system";
 import { startFlow } from "../actions/startFlow";
 import { MULTI_FLOW_ROUTES } from "../routes";
 import { useFlowStore } from "../stores/useFlowStore";

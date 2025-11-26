@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Button } from "../../atoms/Button";
+import { Button } from "@awesome/design-system";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();

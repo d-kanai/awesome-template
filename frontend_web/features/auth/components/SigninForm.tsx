@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { AUTH_ROUTES } from "@/features/auth/routes";
-import { Button } from "@/features/shared/ui/atoms/Button";
-import { InputField } from "@/features/shared/ui/atoms/InputField";
+import { Button, InputField } from "@awesome/design-system";
 import { useSigninForm } from "../hooks/useSigninForm";
 import { SigninTestIds } from "../test-ids";
 

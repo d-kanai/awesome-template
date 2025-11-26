@@ -11,7 +11,7 @@
     "dev:mock": "NEXT_PUBLIC_API_MOCK_MODE=true next dev --webpack",
     "dev:turbo": "next dev",
     "dev:mock:turbo": "NEXT_PUBLIC_API_MOCK_MODE=true next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "build:analyze": "ANALYZE=true next build",
     "start": "next start",
     "lint": "biome check app features e2e api_mock_mode",
@@ -36,6 +36,7 @@
     "podman:logs": "podman-compose -f docker-compose.yml logs -f"
   },
   "dependencies": {
+    "@awesome/design-system": "link:../../awesome-designsystem",
     "@hookform/resolvers": "~5.2.2",
     "@tanstack/react-query": "~5.90.10",
     "@tanstack/react-query-devtools": "~5.90.2",

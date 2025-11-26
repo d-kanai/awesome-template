@@ -3,7 +3,7 @@
 import type { ErrorInfo, ReactNode } from "react";
 import { Component } from "react";
 import { isDev } from "@/features/shared/lib/env";
-import { Button } from "../../atoms/Button";
+import { Button } from "@awesome/design-system";
 
 type ErrorBoundaryProps = {
   children: ReactNode;

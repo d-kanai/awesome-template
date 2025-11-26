@@ -285,3 +285,4 @@ body {
 
 @source "./**/*.{js,ts,jsx,tsx,mdx}";
 @source "../features/**/*.{js,ts,jsx,tsx,mdx}";
+@source "../node_modules/@awesome/design-system/dist/**/*.js";

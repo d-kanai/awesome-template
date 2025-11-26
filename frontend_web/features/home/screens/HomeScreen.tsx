@@ -3,8 +3,7 @@
 import { useRouter } from "next/navigation";
 import { AUTH_ROUTES } from "@/features/auth/routes";
 import type { UserVoice } from "@/features/home/queries/getUserVoices";
-import { CardGridTestimonials } from "@/features/shared/ui/components/CardGridTestimonials/CardGridTestimonials";
-import { HeroActions } from "@/features/shared/ui/components/HeroActions/HeroActions";
+import { CardGridTestimonials, HeroActions } from "@awesome/design-system";
 
 interface HomeScreenProps {
   userVoices: UserVoice[];

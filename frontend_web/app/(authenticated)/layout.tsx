@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Footer } from "@/features/shared/ui/components/Footer/Footer";
-import { Header } from "@/features/shared/ui/components/Header/Header";
+import { Footer, Header } from "@awesome/design-system";
 
 export default function AuthenticatedLayout({
   children,
