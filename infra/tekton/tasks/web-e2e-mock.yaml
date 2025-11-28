@@ -94,22 +94,21 @@ spec:
         # E2E テスト実行
         echo "🧪 Running Cucumber E2E tests..."
         set +e
-        pnpm test:e2e:mock 2>&1 | tee e2e-output.txt
+        pnpm test:e2e:mock > e2e-output.txt 2>&1
         TEST_EXIT_CODE=$?
         set -e
+        cat e2e-output.txt
 
         # サーバー停止
         kill $SERVER_PID 2>/dev/null || true
 
         # 結果をパース
-        # Cucumber出力から scenarios (X passed) を抽出
-        PASSED=$(grep -o '[0-9]* passed' e2e-output.txt | head -1 | grep -o '[0-9]*' || echo "0")
-        FAILED=$(grep -o '[0-9]* failed' e2e-output.txt | head -1 | grep -o '[0-9]*' || echo "0")
-        TOTAL=$((PASSED + FAILED))
-
-        if [ "$TOTAL" -eq 0 ]; then
-          TOTAL=$PASSED
-        fi
+        # Cucumber出力から scenarios 行を抽出 (例: "4 scenarios (3 failed, 1 undefined)")
+        SCENARIOS_LINE=$(grep 'scenarios' e2e-output.txt | tail -1 || echo "")
+        TOTAL=$(echo "$SCENARIOS_LINE" | grep -o '^[0-9]*' || echo "0")
+        FAILED=$(echo "$SCENARIOS_LINE" | grep -o '[0-9]* failed' | grep -o '[0-9]*' || echo "0")
+        UNDEFINED=$(echo "$SCENARIOS_LINE" | grep -o '[0-9]* undefined' | grep -o '[0-9]*' || echo "0")
+        PASSED=$((TOTAL - FAILED - UNDEFINED))
 
         # Tekton Results に書き出し
         echo -n "${PASSED}/${TOTAL}" > $(results.test-result.path)
