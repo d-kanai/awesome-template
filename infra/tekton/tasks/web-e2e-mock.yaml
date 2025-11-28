@@ -1,0 +1,140 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🎭 Web E2E Test Task (Mock Mode)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 Cucumber + Playwright で E2E テストを実行 (Mock API Mode)
+# 📍 web-install Task の後に実行 (lint/ut と並列可)
+# 📊 Results: テスト結果をダッシュボードに表示
+#
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: web-e2e-mock
+spec:
+  params:
+    - name: pnpm-version
+      type: string
+      default: "10.10.0"
+      description: "📦 pnpm バージョン"
+
+  # 🗂️ ソースコードを受け取る workspace
+  workspaces:
+    - name: source
+      description: "クローン済みソースコード"
+
+  # 📊 結果 (Dashboard に表示)
+  results:
+    - name: test-result
+      description: "E2E テスト結果 (passed/total)"
+
+  steps:
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🏗️ Step 1: Build Next.js App (Mock Mode)
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: build-app
+      image: node:22.21.1-bookworm
+      env:
+        - name: NEXT_PUBLIC_API_BASE_URL
+          value: "http://localhost:8080"
+        - name: NEXT_PUBLIC_API_MOCK_MODE
+          value: "true"
+        - name: NEXT_PUBLIC_API_TIMEOUT_MS
+          value: "10000"
+        - name: ANALYZE
+          value: "false"
+      script: |
+        #!/bin/bash
+        set -e
+        cd $(workspaces.source.path)/source/frontend_web
+        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+        echo "🏗️ Building Next.js app (Mock Mode)..."
+        pnpm build
+        echo "✅ Build complete!"
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🎭 Step 2: Run E2E Tests
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: run-e2e
+      image: node:22.21.1-bookworm
+      env:
+        - name: CI
+          value: "true"
+        - name: BASE_URL
+          value: "http://localhost:3000"
+        - name: NEXT_PUBLIC_API_BASE_URL
+          value: "http://localhost:8080"
+        - name: NEXT_PUBLIC_API_MOCK_MODE
+          value: "true"
+        - name: NEXT_PUBLIC_API_TIMEOUT_MS
+          value: "10000"
+        - name: ANALYZE
+          value: "false"
+      script: |
+        #!/bin/bash
+        set -e
+        cd $(workspaces.source.path)/source/frontend_web
+        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+
+        echo "🎭 Installing Playwright browsers..."
+        npx playwright install chromium --with-deps
+
+        echo "🎭 Starting E2E tests (Mock Mode)..."
+
+        # Next.js サーバーをバックグラウンドで起動
+        echo "🚀 Starting Next.js server..."
+        pnpm start &
+        SERVER_PID=$!
+
+        # サーバー起動を待機
+        echo "⏳ Waiting for server to be ready..."
+        npx wait-on http://localhost:3000 --timeout 60000
+
+        echo "✅ Server is ready!"
+
+        # E2E テスト実行
+        echo "🧪 Running Cucumber E2E tests..."
+        set +e
+        pnpm test:e2e:mock 2>&1 | tee e2e-output.txt
+        TEST_EXIT_CODE=$?
+        set -e
+
+        # サーバー停止
+        kill $SERVER_PID 2>/dev/null || true
+
+        # 結果をパース
+        # Cucumber出力から scenarios (X passed) を抽出
+        PASSED=$(grep -o '[0-9]* passed' e2e-output.txt | head -1 | grep -o '[0-9]*' || echo "0")
+        FAILED=$(grep -o '[0-9]* failed' e2e-output.txt | head -1 | grep -o '[0-9]*' || echo "0")
+        TOTAL=$((PASSED + FAILED))
+
+        if [ "$TOTAL" -eq 0 ]; then
+          TOTAL=$PASSED
+        fi
+
+        # Tekton Results に書き出し
+        echo -n "${PASSED}/${TOTAL}" > $(results.test-result.path)
+
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "📊 E2E Results: ${PASSED}/${TOTAL} scenarios passed"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+        # 失敗時はエラー終了
+        if [ "$TEST_EXIT_CODE" -ne 0 ]; then
+          echo ""
+          echo "╔════════════════════════════════════════════════════════════╗"
+          echo "║                                                            ║"
+          echo "║   ███████╗██████╗ ███████╗    ███████╗ █████╗ ██╗██╗      ║"
+          echo "║   ██╔════╝╚════██╗██╔════╝    ██╔════╝██╔══██╗██║██║      ║"
+          echo "║   █████╗   █████╔╝█████╗      █████╗  ███████║██║██║      ║"
+          echo "║   ██╔══╝  ██╔═══╝ ██╔══╝      ██╔══╝  ██╔══██║██║██║      ║"
+          echo "║   ███████╗███████╗███████╗    ██║     ██║  ██║██║███████╗ ║"
+          echo "║   ╚══════╝╚══════╝╚══════╝    ╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝ ║"
+          echo "║                                                            ║"
+          echo "║   ${PASSED}/${TOTAL} scenarios passed                             ║"
+          echo "║                                                            ║"
+          echo "╚════════════════════════════════════════════════════════════╝"
+          exit 1
+        fi
+
+        echo "✅ E2E tests passed!"

@@ -1,14 +1,15 @@
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 🔍 Web Lint Task
+# 📦 Web Install Task
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #
-# 📦 TypeScript 型チェック + Biome リント を実行
-# 📍 web-install Task の後に実行
+# 📦 pnpm install + Playwright browsers
+# 📍 git-clone Task の後に実行
+# 📍 lint/ut/e2e-mock の前に実行
 #
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
-  name: web-lint
+  name: web-install
 spec:
   params:
     - name: pnpm-version
@@ -23,29 +24,17 @@ spec:
 
   steps:
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    # 🔎 Step 1: TypeScript Type Check
+    # 📦 Install Dependencies + Playwright
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    - name: typecheck
-      image: node:22.21.1-alpine
+    - name: install
+      image: node:22.21.1-bookworm
       script: |
-        #!/bin/sh
+        #!/bin/bash
         set -e
         cd $(workspaces.source.path)/source/frontend_web
         corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
-        echo "🔎 Running TypeScript type check..."
-        pnpm typecheck
-        echo "✅ Type check passed!"
 
-    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    # 🧹 Step 2: Biome Lint Check
-    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    - name: biome-check
-      image: node:22.21.1-alpine
-      script: |
-        #!/bin/sh
-        set -e
-        cd $(workspaces.source.path)/source/frontend_web
-        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
-        echo "🧹 Running Biome lint check..."
-        pnpm biome check
-        echo "✅ Biome check passed!"
+        echo "📦 Installing dependencies..."
+        pnpm install --frozen-lockfile
+
+        echo "✅ Dependencies installed!"

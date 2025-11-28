@@ -5,9 +5,9 @@
 # 📦 Next.js アプリの CI パイプライン
 #
 # 🔄 実行フロー:
-#                    ┌─── lint ───┐
-#   clone ───────────┤            ├──── build
-#                    └─── ut ─────┘
+#                              ┌─── lint ─────┐
+#   clone ─── install ─────────┼─── ut ───────┼──── build
+#                              └─── e2e-mock ─┘
 #
 # 使い方:
 #   kubectl apply -f infra/tekton/tasks/
@@ -68,12 +68,25 @@ spec:
         - name: output
           workspace: shared-workspace
 
-    # 2️⃣ Lint (typecheck + biome) - clone 後に実行
+    # 2️⃣ Install Dependencies + Playwright
+    - name: install
+      taskRef:
+        name: web-install
+      runAfter:
+        - clone
+      params:
+        - name: pnpm-version
+          value: $(params.pnpm-version)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # 3️⃣ Lint (typecheck + biome) - install 後に実行
     - name: lint
       taskRef:
         name: web-lint
       runAfter:
-        - clone
+        - install
       params:
         - name: pnpm-version
           value: $(params.pnpm-version)
@@ -81,12 +94,12 @@ spec:
         - name: source
           workspace: shared-workspace
 
-    # 3️⃣ Unit Test (vitest) - clone 後に実行 (lint と並列)
+    # 4️⃣ Unit Test (vitest) - install 後に実行 (lint と並列)
     - name: ut
       taskRef:
         name: web-ut
       runAfter:
-        - clone
+        - install
       params:
         - name: pnpm-version
           value: $(params.pnpm-version)
@@ -94,13 +107,27 @@ spec:
         - name: source
           workspace: shared-workspace
 
-    # 4️⃣ Build (Docker image) - lint と ut 両方完了後に実行
+    # 5️⃣ E2E Test (Cucumber + Playwright, Mock Mode) - install 後に実行 (lint/ut と並列)
+    - name: e2e-mock
+      taskRef:
+        name: web-e2e-mock
+      runAfter:
+        - install
+      params:
+        - name: pnpm-version
+          value: $(params.pnpm-version)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # 6️⃣ Build (Docker image) - lint, ut, e2e-mock すべて完了後に実行
     - name: build
       taskRef:
         name: web-build
       runAfter:
         - lint
         - ut
+        - e2e-mock
       params:
         - name: image-name
           value: $(params.image-name)

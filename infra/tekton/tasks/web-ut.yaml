@@ -3,7 +3,7 @@
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #
 # 📦 Vitest でユニットテスト + カバレッジを実行
-# 📍 git-clone Task の後に実行 (lint と並列可)
+# 📍 web-install Task の後に実行 (lint と並列可)
 # 📊 Results: coverage-summary をダッシュボードに表示
 #
 apiVersion: tekton.dev/v1
@@ -31,21 +31,7 @@ spec:
 
   steps:
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    # 📦 Step 1: Install Dependencies
-    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    - name: install-deps
-      image: node:22.21.1-alpine
-      script: |
-        #!/bin/sh
-        set -e
-        cd $(workspaces.source.path)/source/frontend_web
-        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
-        echo "📦 Installing dependencies..."
-        pnpm install --frozen-lockfile
-        echo "✅ Dependencies installed!"
-
-    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    # 🧪 Step 2: Run Unit Tests with Coverage
+    # 🧪 Run Unit Tests with Coverage
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: vitest-coverage
       image: node:22.21.1-alpine

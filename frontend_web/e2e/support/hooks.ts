@@ -53,7 +53,7 @@ BeforeAll(async () => {
   }
 
   browser = await chromium.launch({
-    headless: false,
+    headless: !!process.env.CI,
   });
 });
 
