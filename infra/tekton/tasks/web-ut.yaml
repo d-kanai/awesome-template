@@ -85,3 +85,14 @@ spec:
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo "📊 Coverage: ${COVERAGE_DETAIL}"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+        # カバレッジしきい値チェック (Lines 90%以上)
+        if [ "$LINES" != "N/A" ]; then
+          LINES_INT=$(echo "$LINES" | cut -d. -f1)
+          if [ "$LINES_INT" -lt 90 ]; then
+            echo ""
+            echo "❌ Coverage check FAILED: Lines ${LINES}% < 90%"
+            exit 1
+          fi
+          echo "✅ Coverage check passed: Lines ${LINES}% >= 90%"
+        fi
