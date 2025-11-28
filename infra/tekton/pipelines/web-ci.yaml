@@ -1,0 +1,111 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🚀 Web CI Pipeline
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 Next.js アプリの CI パイプライン
+#
+# 🔄 実行フロー:
+#                    ┌─── lint ───┐
+#   clone ───────────┤            ├──── build
+#                    └─── ut ─────┘
+#
+# 使い方:
+#   kubectl apply -f infra/tekton/tasks/
+#   kubectl apply -f infra/tekton/pipelines/web-ci.yaml
+#   kubectl create -f infra/tekton/pipelineruns/web-ci.yaml
+#
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: web-ci
+spec:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📝 パラメータ (すべてデフォルト値あり)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  params:
+    - name: repo-url
+      type: string
+      default: https://github.com/d-kanai/awesome-template.git
+      description: "📂 Git リポジトリ URL"
+    - name: branch
+      type: string
+      default: main
+      description: "🌿 ブランチ名"
+    - name: image-name
+      type: string
+      default: kind-registry:5000/awesome-template/web
+      description: "🐳 Docker イメージ名 (レジストリ含む)"
+    - name: image-tag
+      type: string
+      default: latest
+      description: "🏷️ イメージタグ"
+    - name: pnpm-version
+      type: string
+      default: "10.10.0"
+      description: "📦 pnpm バージョン"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🗂️ 共有 Workspace
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  workspaces:
+    - name: shared-workspace
+      description: "Task 間で共有するワークスペース"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🔧 Tasks
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  tasks:
+    # 1️⃣ Git Clone
+    - name: clone
+      taskRef:
+        name: git-clone
+      params:
+        - name: repo-url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.branch)
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+
+    # 2️⃣ Lint (typecheck + biome) - clone 後に実行
+    - name: lint
+      taskRef:
+        name: web-lint
+      runAfter:
+        - clone
+      params:
+        - name: pnpm-version
+          value: $(params.pnpm-version)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # 3️⃣ Unit Test (vitest) - clone 後に実行 (lint と並列)
+    - name: ut
+      taskRef:
+        name: web-ut
+      runAfter:
+        - clone
+      params:
+        - name: pnpm-version
+          value: $(params.pnpm-version)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # 4️⃣ Build (Docker image) - lint と ut 両方完了後に実行
+    - name: build
+      taskRef:
+        name: web-build
+      runAfter:
+        - lint
+        - ut
+      params:
+        - name: image-name
+          value: $(params.image-name)
+        - name: image-tag
+          value: $(params.image-tag)
+      workspaces:
+        - name: source
+          workspace: shared-workspace

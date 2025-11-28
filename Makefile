@@ -7,7 +7,7 @@ ROOT_DIR := $(CURDIR)
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
         web-install web-dev web-build web-lint web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run \
         unleash-up unleash-down unleash-open \
-        tekton-setup tekton-teardown tekton-dashboard tekton-web-build tekton-logs \
+        tekton-setup tekton-teardown tekton-dashboard tekton-web-build tekton-web-lint tekton-web-ut tekton-web-ci tekton-logs \
         openapi-client lefthook-install
 
 help:
@@ -73,6 +73,9 @@ help:
 	@echo "  make tekton-teardown      # Delete kind cluster"
 	@echo "  make tekton-dashboard     # Open Tekton Dashboard in browser"
 	@echo "  make tekton-web-build     # Run Next.js build task"
+	@echo "  make tekton-web-lint      # Run typecheck + Biome lint task"
+	@echo "  make tekton-web-ut        # Run unit tests (vitest)"
+	@echo "  make tekton-web-ci        # Run full CI pipeline (lint || ut → build)"
 	@echo "  make tekton-logs          # Show latest TaskRun logs"
 	@echo ""
 	@echo "Setup:"
@@ -313,6 +316,23 @@ tekton-web-build:
 	kubectl create -f infra/tekton/taskruns/web-build.yaml
 	@echo ""
 	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
+
+tekton-web-lint:
+	kubectl create -f infra/tekton/taskruns/web-lint.yaml
+	@echo ""
+	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
+
+tekton-web-ut:
+	kubectl create -f infra/tekton/taskruns/web-ut.yaml
+	@echo ""
+	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
+
+tekton-web-ci:
+	kubectl apply -f infra/tekton/tasks/
+	kubectl apply -f infra/tekton/pipelines/web-ci.yaml
+	kubectl create -f infra/tekton/pipelineruns/web-ci.yaml
+	@echo ""
+	@echo "PipelineRun created. Run 'make tekton-logs' to see the output."
 
 tekton-logs:
 	@LATEST_RUN=$$(kubectl get taskrun --sort-by=.metadata.creationTimestamp -o jsonpath='{.items[-1].metadata.name}' 2>/dev/null); \

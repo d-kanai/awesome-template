@@ -1,0 +1,121 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🧪 Web Unit Test TaskRun
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 Vitest でユニットテスト + カバレッジを実行
+# 📊 Results: coverage-summary をダッシュボードに表示
+#
+# 使い方:
+#   kubectl create -f infra/tekton/taskruns/web-ut.yaml
+#   または
+#   make tekton-web-ut
+#
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  generateName: web-ut-run-
+spec:
+  # 📝 パラメータ (実行時に変更可能)
+  params:
+    - name: repo-url
+      value: https://github.com/d-kanai/awesome-template.git
+    - name: revision
+      value: main
+    - name: pnpm-version
+      value: "10.10.0"
+
+  # 🔧 タスク定義 (埋め込み形式)
+  taskSpec:
+    params:
+      - name: repo-url
+        type: string
+        description: "📂 Git リポジトリ URL"
+      - name: revision
+        type: string
+        default: main
+        description: "🌿 ブランチ名またはコミットハッシュ"
+      - name: pnpm-version
+        type: string
+        default: "10.10.0"
+        description: "📦 pnpm バージョン"
+
+    # 📊 結果 (Dashboard に表示)
+    results:
+      - name: coverage-summary
+        description: "カバレッジサマリー"
+      - name: tests-passed
+        description: "パスしたテスト数"
+      - name: tests-total
+        description: "総テスト数"
+
+    steps:
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # 📥 Step 1: Git Clone
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - name: git-clone
+        image: alpine/git:2.43.0
+        script: |
+          #!/bin/sh
+          set -e
+          rm -rf /workspace/source
+          echo "📥 Cloning $(params.repo-url) @ $(params.revision)..."
+          git clone --depth 1 --branch $(params.revision) $(params.repo-url) /workspace/source
+          echo "✅ Clone complete!"
+
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # 📦 Step 2: Install Dependencies
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - name: install-deps
+        image: node:22.21.1-alpine
+        script: |
+          #!/bin/sh
+          set -e
+          cd /workspace/source/frontend_web
+          corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+          echo "📦 Installing dependencies..."
+          pnpm install --frozen-lockfile
+          echo "✅ Dependencies installed!"
+
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # 🧪 Step 3: Run Unit Tests with Coverage
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - name: vitest-coverage
+        image: node:22.21.1-alpine
+        script: |
+          #!/bin/sh
+          set -e
+          cd /workspace/source/frontend_web
+          corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+
+          echo "🧪 Running unit tests with coverage..."
+
+          # カバレッジ付きで実行、JSON レポート出力
+          pnpm vitest run --coverage --reporter=json --outputFile=test-results.json 2>&1 | tee test-output.txt
+
+          # テスト結果をパース
+          if [ -f test-results.json ]; then
+            PASSED=$(cat test-results.json | grep -o '"numPassedTests":[0-9]*' | grep -o '[0-9]*' || echo "0")
+            TOTAL=$(cat test-results.json | grep -o '"numTotalTests":[0-9]*' | grep -o '[0-9]*' || echo "0")
+          else
+            PASSED=$(grep -o '[0-9]* passed' test-output.txt | grep -o '[0-9]*' || echo "0")
+            TOTAL=$PASSED
+          fi
+
+          # カバレッジサマリーを取得
+          if [ -f coverage/coverage-summary.json ]; then
+            LINES=$(cat coverage/coverage-summary.json | grep -A4 '"total"' | grep '"lines"' -A1 | grep '"pct"' | grep -o '[0-9.]*' | head -1 || echo "N/A")
+            BRANCHES=$(cat coverage/coverage-summary.json | grep -A4 '"total"' | grep '"branches"' -A1 | grep '"pct"' | grep -o '[0-9.]*' | head -1 || echo "N/A")
+            FUNCS=$(cat coverage/coverage-summary.json | grep -A4 '"total"' | grep '"functions"' -A1 | grep '"pct"' | grep -o '[0-9.]*' | head -1 || echo "N/A")
+            SUMMARY="Lines: ${LINES}% | Branches: ${BRANCHES}% | Functions: ${FUNCS}%"
+          else
+            SUMMARY="Coverage data not available"
+          fi
+
+          # Tekton Results に書き出し
+          echo -n "$SUMMARY" > $(results.coverage-summary.path)
+          echo -n "$PASSED" > $(results.tests-passed.path)
+          echo -n "$TOTAL" > $(results.tests-total.path)
+
+          echo ""
+          echo "📊 Coverage Summary: $SUMMARY"
+          echo "✅ Tests: $PASSED/$TOTAL passed"

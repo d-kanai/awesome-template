@@ -1,0 +1,58 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🚀 Web CI PipelineRun
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 web-ci Pipeline を実行
+#
+# 使い方:
+#   # デフォルト値で実行
+#   kubectl create -f infra/tekton/pipelineruns/web-ci.yaml
+#
+#   # ブランチ指定で実行
+#   kubectl create -f - <<EOF
+#   apiVersion: tekton.dev/v1
+#   kind: PipelineRun
+#   metadata:
+#     generateName: web-ci-run-
+#   spec:
+#     pipelineRef:
+#       name: web-ci
+#     params:
+#       - name: branch
+#         value: feature/my-branch
+#     workspaces:
+#       - name: shared-workspace
+#         volumeClaimTemplate:
+#           spec:
+#             accessModes: [ReadWriteOnce]
+#             resources:
+#               requests:
+#                 storage: 1Gi
+#   EOF
+#
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: web-ci-run-
+spec:
+  pipelineRef:
+    name: web-ci
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📝 パラメータ値 (デフォルト値を使用)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Pipeline 側の default 値が使われる
+  # 必要に応じてここで上書き可能
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🗂️ Workspace バインディング
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi

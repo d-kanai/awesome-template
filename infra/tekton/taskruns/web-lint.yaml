@@ -1,0 +1,95 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🔍 Web フロントエンド Lint TaskRun
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 TypeScript 型チェック + Biome リント を実行
+#
+# 使い方:
+#   kubectl create -f infra/tekton/taskruns/web-lint.yaml
+#   または
+#   make tekton-web-lint
+#
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  generateName: web-lint-run-
+spec:
+  # 📝 パラメータ (実行時に変更可能)
+  params:
+    - name: repo-url
+      value: https://github.com/d-kanai/awesome-template.git
+    - name: revision
+      value: main
+    - name: pnpm-version
+      value: "10.10.0"
+
+  # 🔧 タスク定義 (埋め込み形式)
+  taskSpec:
+    params:
+      - name: repo-url
+        type: string
+        description: "📂 Git リポジトリ URL"
+      - name: revision
+        type: string
+        default: main
+        description: "🌿 ブランチ名またはコミットハッシュ"
+      - name: pnpm-version
+        type: string
+        default: "10.10.0"
+        description: "📦 pnpm バージョン"
+
+    steps:
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # 📥 Step 1: Git Clone
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - name: git-clone
+        image: alpine/git:2.43.0
+        script: |
+          #!/bin/sh
+          set -e
+          rm -rf /workspace/source
+          echo "📥 Cloning $(params.repo-url) @ $(params.revision)..."
+          git clone --depth 1 --branch $(params.revision) $(params.repo-url) /workspace/source
+          echo "✅ Clone complete!"
+
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # 📦 Step 2: Install Dependencies
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - name: install-deps
+        image: node:22.21.1-alpine
+        script: |
+          #!/bin/sh
+          set -e
+          cd /workspace/source/frontend_web
+          corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+          echo "📦 Installing dependencies..."
+          pnpm install --frozen-lockfile
+          echo "✅ Dependencies installed!"
+
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # 🔎 Step 3: TypeScript Type Check
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - name: typecheck
+        image: node:22.21.1-alpine
+        script: |
+          #!/bin/sh
+          set -e
+          cd /workspace/source/frontend_web
+          corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+          echo "🔎 Running TypeScript type check..."
+          pnpm typecheck
+          echo "✅ Type check passed!"
+
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      # 🧹 Step 4: Biome Lint Check
+      # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      - name: biome-check
+        image: node:22.21.1-alpine
+        script: |
+          #!/bin/sh
+          set -e
+          cd /workspace/source/frontend_web
+          corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+          echo "🧹 Running Biome lint check..."
+          pnpm biome check
+          echo "✅ Biome check passed!"
