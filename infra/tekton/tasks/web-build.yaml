@@ -48,6 +48,10 @@ spec:
         # ⚡ レイヤーキャッシュ
         - --cache=true
         - --cache-repo=$(params.image-name)-cache
+        # 🚀 ビルド高速化オプション
+        - --use-new-run
+        - --compressed-caching=false
+        - --snapshot-mode=redo
         # 🏠 ローカルレジストリ用 (HTTP許可)
         # ⚠️  本番では削除すること!
         - --insecure
