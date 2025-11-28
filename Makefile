@@ -7,6 +7,7 @@ ROOT_DIR := $(CURDIR)
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
         web-install web-dev web-build web-lint web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run \
         unleash-up unleash-down unleash-open \
+        tekton-setup tekton-teardown tekton-dashboard tekton-web-build tekton-logs \
         openapi-client lefthook-install
 
 help:
@@ -66,6 +67,13 @@ help:
 	@echo ""
 	@echo "Combined:"
 	@echo "  make openapi-client       # Export OpenAPI spec then generate native client/hooks"
+	@echo ""
+	@echo "Tekton:"
+	@echo "  make tekton-setup         # Setup kind cluster with Tekton + Dashboard"
+	@echo "  make tekton-teardown      # Delete kind cluster"
+	@echo "  make tekton-dashboard     # Open Tekton Dashboard in browser"
+	@echo "  make tekton-web-build     # Run Next.js build task"
+	@echo "  make tekton-logs          # Show latest TaskRun logs"
 	@echo ""
 	@echo "Setup:"
 	@echo "  make install             # Install Lefthook hooks and native dependencies"
@@ -284,3 +292,33 @@ web-docker-run:
 # Combined
 ###############################################################
 openapi-client: backend-openapi native-generate-api
+
+###############################################################
+# Tekton
+###############################################################
+tekton-setup:
+	./infra/tekton/setup-local.sh
+
+tekton-teardown:
+	kind delete cluster --name tekton-local
+
+tekton-dashboard:
+	@echo "Opening Tekton Dashboard at http://localhost:9097"
+	@echo "Press Ctrl+C to stop port-forwarding"
+	kubectl port-forward -n tekton-pipelines svc/tekton-dashboard 9097:9097 &
+	sleep 2
+	open http://localhost:9097
+
+tekton-web-build:
+	kubectl create -f infra/tekton/taskruns/web-build.yaml
+	@echo ""
+	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
+
+tekton-logs:
+	@LATEST_RUN=$$(kubectl get taskrun --sort-by=.metadata.creationTimestamp -o jsonpath='{.items[-1].metadata.name}' 2>/dev/null); \
+	if [ -z "$$LATEST_RUN" ]; then \
+		echo "No TaskRuns found. Run 'make tekton-hello' first."; \
+	else \
+		echo "=== Logs for $$LATEST_RUN ==="; \
+		kubectl logs --selector=tekton.dev/taskRun=$$LATEST_RUN --all-containers=true; \
+	fi

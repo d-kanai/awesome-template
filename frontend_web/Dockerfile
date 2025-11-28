@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
-# Base stage with Node.js 22.12.0
-FROM node:22.12.0-alpine AS base
+# Base stage with Node.js 22.21.1
+FROM node:22.21.1-alpine AS base
 
 # Install pnpm directly
 RUN npm install -g pnpm@10.10.0
@@ -10,8 +10,8 @@ RUN npm install -g pnpm@10.10.0
 FROM base AS deps
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml* ./
+# Copy package files and pnpm config
+COPY package.json pnpm-lock.yaml* .npmrc ./
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
@@ -26,9 +26,19 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy source code
 COPY . .
 
+# Build arguments (値は --build-arg で渡す、Secret で一元管理)
+ARG NEXT_PUBLIC_API_BASE_URL
+ARG NEXT_PUBLIC_API_MOCK_MODE
+ARG NEXT_PUBLIC_API_TIMEOUT_MS
+ARG ANALYZE
+
 # Set environment variables for build
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    NODE_ENV=production \
+    NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL} \
+    NEXT_PUBLIC_API_MOCK_MODE=${NEXT_PUBLIC_API_MOCK_MODE} \
+    NEXT_PUBLIC_API_TIMEOUT_MS=${NEXT_PUBLIC_API_TIMEOUT_MS} \
+    ANALYZE=${ANALYZE}
 
 # Ensure public directory exists
 RUN mkdir -p public
