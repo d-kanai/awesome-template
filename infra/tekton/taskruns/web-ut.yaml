@@ -101,8 +101,8 @@ spec:
 
           # カバレッジ (Lines %) を取得
           if [ -f coverage/coverage-summary.json ]; then
-            # "lines":{"total":X,"covered":Y,"skipped":Z,"pct":NN.NN} から pct を抽出
-            COVERAGE=$(cat coverage/coverage-summary.json | sed 's/.*"total":{[^}]*"lines":{[^}]*"pct":\([0-9.]*\).*/\1/' | head -1 || echo "N/A")
+            # "total":{"lines":{"pct":NN.NN}...} から lines.pct を抽出
+            COVERAGE=$(grep -o '"lines":{[^}]*}' coverage/coverage-summary.json | head -1 | grep -o '"pct":[0-9.]*' | grep -o '[0-9.]*' || echo "N/A")
           else
             COVERAGE="N/A"
           fi
