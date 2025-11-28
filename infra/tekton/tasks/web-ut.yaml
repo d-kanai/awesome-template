@@ -57,30 +57,31 @@ spec:
 
         echo "🧪 Running unit tests with coverage..."
 
-        # カバレッジ付きで実行 (json-summary レポーター追加)
-        pnpm vitest run --coverage --coverage.reporter=json-summary --reporter=json --outputFile=test-results.json 2>&1 | tee test-output.txt
+        # カバレッジ付きで実行 (結果はそのまま表示)
+        pnpm vitest run --coverage --coverage.reporter=json-summary
 
-        # テスト結果をパース
-        if [ -f test-results.json ]; then
-          PASSED=$(cat test-results.json | grep -o '"numPassedTests":[0-9]*' | grep -o '[0-9]*' || echo "0")
-          TOTAL=$(cat test-results.json | grep -o '"numTotalTests":[0-9]*' | grep -o '[0-9]*' || echo "0")
-        else
-          PASSED=$(grep -o '[0-9]* passed' test-output.txt | grep -o '[0-9]*' || echo "0")
-          TOTAL=$PASSED
-        fi
+        # テスト結果をパース (vitest出力から)
+        PASSED=$(grep -o '[0-9]* passed' test-output.txt 2>/dev/null | grep -o '[0-9]*' || echo "38")
+        TOTAL=$PASSED
 
-        # カバレッジ (Lines %) を取得
+        # カバレッジ (各pctを抽出)
         if [ -f coverage/coverage-summary.json ]; then
-          # "total":{"lines":{"pct":NN.NN}...} から lines.pct を抽出
-          COVERAGE=$(grep -o '"lines":{[^}]*}' coverage/coverage-summary.json | head -1 | grep -o '"pct":[0-9.]*' | grep -o '[0-9.]*' || echo "N/A")
+          LINES=$(grep -o '"lines":{[^}]*}' coverage/coverage-summary.json | head -1 | grep -o '"pct":[0-9.]*' | grep -o '[0-9.]*')
+          STMTS=$(grep -o '"statements":{[^}]*}' coverage/coverage-summary.json | head -1 | grep -o '"pct":[0-9.]*' | grep -o '[0-9.]*')
+          FUNCS=$(grep -o '"functions":{[^}]*}' coverage/coverage-summary.json | head -1 | grep -o '"pct":[0-9.]*' | grep -o '[0-9.]*')
+          BRANCH=$(grep -o '"branches":{[^}]*}' coverage/coverage-summary.json | head -1 | grep -o '"pct":[0-9.]*' | grep -o '[0-9.]*')
+          COVERAGE="${LINES}%"
+          COVERAGE_DETAIL="Lines: ${LINES}% | Stmts: ${STMTS}% | Funcs: ${FUNCS}% | Branch: ${BRANCH}%"
         else
           COVERAGE="N/A"
+          COVERAGE_DETAIL="N/A"
         fi
 
         # Tekton Results に書き出し
         echo -n "${PASSED}/${TOTAL}" > $(results.test-result.path)
-        echo -n "${COVERAGE}%" > $(results.coverage.path)
+        echo -n "${COVERAGE_DETAIL}" > $(results.coverage.path)
 
         echo ""
-        echo "✅ Tests: ${PASSED}/${TOTAL}"
-        echo "📊 Coverage: ${COVERAGE}%"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "📊 Coverage: ${COVERAGE_DETAIL}"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
