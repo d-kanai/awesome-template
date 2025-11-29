@@ -1,0 +1,16 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ⚙️ Web ConfigMap
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-config
+  labels:
+    app: web
+    app.kubernetes.io/name: web
+    app.kubernetes.io/component: frontend
+data:
+  # API設定 (環境に応じてKustomize overlayで上書き)
+  NEXT_PUBLIC_API_BASE_URL: "http://api:8080"
+  NEXT_PUBLIC_API_MOCK_MODE: "false"
+  NEXT_PUBLIC_API_TIMEOUT_MS: "30000"
