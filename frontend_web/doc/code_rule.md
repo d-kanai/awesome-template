@@ -7,6 +7,26 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
 ### common
 
 - URLはハードコードでなくROUTES定数で管理すること
+- **ID管理は`ids.ts`で一元管理すること**
+  - 各featureモジュールに`ids.ts`を配置（例: `features/auth/ids.ts`）
+  - **Button IDs（クリックイベントログ用）を先頭に、Test IDs（非ボタン要素用）を後に配置**
+  - Button ID値は`-button`サフィックスを付けること（ログでボタンクリックと識別するため）
+  - 例:
+    ```typescript
+    // Button IDs (for click event logging)
+    export const SigninButtonIds = {
+      submit: "auth-signin-submit-button",
+    } as const;
+
+    // Test IDs (for non-button elements)
+    export const SigninTestIds = {
+      emailInput: "signin-email",
+      passwordInput: "signin-password",
+    } as const;
+    ```
+- **Button/ButtonDangerコンポーネントは`id`プロパティが必須**
+  - クリックイベントログ（`sendClickEvent`）に使用される
+  - ButtonGroup使用時も各ボタンに`id`を指定すること
 - 論理的凝集でなく、機能的凝集を優先すること（カプセル化）
   - 技術的分類（「定数である」「ユーティリティである」）でなく、ビジネス機能・ドメイン・責務（「Cookie管理」「認証」）で分類する
   - 例：Cookie定数とCookie操作を同じCookieManagerクラスに持つ。定数だけを集めたファイルには持たせない
@@ -103,7 +123,8 @@ Figmaコンポーネントの取り込みについては、レベルに応じて
     - beforeEach で `useFlowStore.getState().reset()` を呼び出してストアをリセットすること
     - Then: **ストアの状態変化を検証すること**
 - **data-testid の使い方**
-  - elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること
+  - elementを特定する際はdata-testid属性を利用し、ハードコードでなく`ids.ts`の定数を参照すること
+  - ボタン要素は`ButtonIds`を、非ボタン要素は`TestIds`を使用すること
   - **共有コンポーネント（features/shared/ui/components/）に無理やり data-testid プロパティを追加しないこと**
     - 理由: 特定のページテストのためだけに共有コンポーネントのインターフェースを変更すると、コンポーネントが複雑化し保守性が下がる
     - もし wrapper が必要な場合は、Fragment (`<>`) など UI に影響しないタグを使うこと（`div` を使わない）
@@ -121,4 +142,4 @@ Figmaコンポーネントの取り込みについては、レベルに応じて
 
 step definition file
 - signinする場合はbypassSigninを基本利用し、高速にすること
-- elementを特定する際はdata-test-id属性を利用し、ハードコードはなく、実装と同じ定数参照をすること
+- elementを特定する際はdata-testid属性を利用し、ハードコードでなく`ids.ts`の定数を参照すること
