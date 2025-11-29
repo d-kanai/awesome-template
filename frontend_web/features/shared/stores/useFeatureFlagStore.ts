@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { env } from "@/features/shared/lib/env";
+import { fetcher } from "@/features/shared/api/fetcher";
 
 /**
  * 機能フラグの定数
@@ -26,20 +26,18 @@ interface UnleashToggle {
   enabled: boolean;
 }
 
+interface FeatureFlagsResponse {
+  toggles: UnleashToggle[];
+}
+
 /**
  * Fetch feature flags from API
+ * Uses app fetcher for consistent timeout handling and logging
  */
 async function fetchFeatureFlagsFromApi(): Promise<Record<string, boolean>> {
-  const response = await fetch(
-    `${env.NEXT_PUBLIC_API_BASE_URL}/featureflags/proxy`,
-    { headers: { Authorization: "proxy" } },
-  );
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch feature flags: ${response.status}`);
-  }
-
-  const data = await response.json();
+  const data = await fetcher<FeatureFlagsResponse>("/featureflags/proxy", {
+    headers: { Authorization: "proxy" },
+  });
   return parseToggles(data.toggles);
 }
 

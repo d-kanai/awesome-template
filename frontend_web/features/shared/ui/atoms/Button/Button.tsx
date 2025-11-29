@@ -2,6 +2,7 @@
 
 import React, { forwardRef } from "react";
 import { sendClickEvent } from "@/features/shared/lib/clickTracker";
+import { getNow } from "@/features/shared/lib/dateTime";
 import { cn } from "@/features/shared/lib/utils";
 
 export type ButtonVariant = "primary" | "neutral" | "subtle";
@@ -44,7 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           id,
           label: typeof children === "string" ? children : undefined,
           pathname: window.location.pathname,
-          timestamp: new Date().toISOString(),
+          timestamp: getNow().toISOString(),
         });
       }
       onClick?.(e);
