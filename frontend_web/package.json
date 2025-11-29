@@ -17,7 +17,7 @@
     "lint": "biome check app features shared e2e api_mock_mode",
     "lint:fix": "biome check --write app features shared e2e api_mock_mode",
     "lint:deps": "depcruise shared features --config .dependency-cruiser.cjs",
-    "show:routes": "tsx scripts/show-routes.ts",
+    "show:routes": "tsx scripts/show-route/show-routes.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",

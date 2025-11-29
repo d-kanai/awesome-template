@@ -217,6 +217,21 @@ function buildGraph(): Map<string, string[]> {
   return graph;
 }
 
+// URL パスに応じた絵文字を取得
+function getEmoji(url: string): string {
+  if (url === "/") return "🏠";
+  if (url.includes("signin") || url.includes("login")) return "🔐";
+  if (url.includes("signup") || url.includes("register")) return "📝";
+  if (url.includes("user")) return "👤";
+  if (url.includes("setting")) return "⚙️";
+  if (url.includes("confirm")) return "✅";
+  if (url.includes("complete")) return "🎉";
+  if (url.includes("input")) return "📋";
+  if (url.includes("error")) return "❌";
+  if (url.includes("auth")) return "🔑";
+  return "📄";
+}
+
 function printTree(
   graph: Map<string, string[]>,
   node: string,
@@ -224,15 +239,16 @@ function printTree(
   visited: Set<string>,
   isLast: boolean,
 ): void {
-  const prefix = indent + (isLast ? "└─ " : "├─ ");
-  const childIndent = indent + (isLast ? "   " : "│  ");
+  const prefix = indent + (isLast ? "└── " : "├── ");
+  const childIndent = indent + (isLast ? "    " : "│   ");
+  const emoji = getEmoji(node);
 
   if (visited.has(node)) {
-    console.log(`${prefix}${node} (循環)`);
+    console.log(`${prefix}${emoji} ${node} 🔄`);
     return;
   }
 
-  console.log(`${prefix}${node}`);
+  console.log(`${prefix}${emoji} ${node}`);
   visited.add(node);
 
   const children = (graph.get(node) ?? []).sort();
@@ -245,14 +261,22 @@ function printTree(
 function main() {
   const graph = buildGraph();
 
-  console.log("=== 画面遷移ツリー ===\n");
-  console.log("/");
+  console.log("");
+  console.log("🗺️  画面遷移ツリー");
+  console.log("━".repeat(40));
+  console.log("");
+  console.log("🏠 /");
 
   const rootChildren = (graph.get("/") ?? []).sort();
   rootChildren.forEach((child, i) => {
     const isLast = i === rootChildren.length - 1;
     printTree(graph, child, "", new Set(["/"]), isLast);
   });
+
+  console.log("");
+  console.log("━".repeat(40));
+  console.log(`📊 総ページ数: ${graph.size}`);
+  console.log("");
 }
 
 main();
