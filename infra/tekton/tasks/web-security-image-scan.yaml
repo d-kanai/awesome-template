@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: web-security-image-scan
+  namespace: default
+spec:
+  description: "Trivy - コンテナイメージ脆弱性スキャン"
+  params:
+    - name: image-name
+      type: string
+      description: "スキャン対象イメージ名"
+    - name: image-tag
+      type: string
+      default: latest
+      description: "イメージタグ"
+  steps:
+    - name: trivy-image-scan
+      image: aquasec/trivy:latest
+      args:
+        - image
+        - --severity
+        - HIGH,CRITICAL
+        - --exit-code
+        - "1"
+        - --insecure
+        - $(params.image-name):$(params.image-tag)

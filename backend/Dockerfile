@@ -23,8 +23,17 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
+# 非rootユーザーを作成
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+
 # ビルドステージから JAR ファイルをコピー
 COPY --from=builder /app/build/libs/*.jar app.jar
+
+# ファイルの所有者を変更
+RUN chown -R appuser:appgroup /app
+
+# 非rootユーザーに切り替え
+USER appuser
 
 # ヘルスチェック用の actuator を有効化
 EXPOSE 8080

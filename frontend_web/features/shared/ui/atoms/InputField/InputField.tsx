@@ -1,8 +1,8 @@
 "use client";
 
 import React, { forwardRef } from "react";
+import { SharedTestIds } from "@/features/shared/ids";
 import { cn } from "@/features/shared/lib/utils";
-import { SharedTestIds } from "@/features/shared/test-ids";
 
 export type InputFieldState = "default" | "error" | "disabled";
 

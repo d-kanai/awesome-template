@@ -4,12 +4,12 @@ metadata:
   name: web-security-pkg-scan
   namespace: default
 spec:
-  description: "Trivy - ファイルシステム脆弱性スキャン"
+  description: "Trivy - 脆弱性スキャン (依存パッケージ + Dockerfile/K8s設定)"
   workspaces:
     - name: source
       description: "クローン済みソースコード"
   steps:
-    - name: trivy-scan
+    - name: trivy-fs-scan
       image: aquasec/trivy:latest
       workingDir: $(workspaces.source.path)/source/frontend_web
       args:
@@ -18,4 +18,16 @@ spec:
         - HIGH,CRITICAL
         - --exit-code
         - "1"
+        - .
+    - name: trivy-config-scan
+      image: aquasec/trivy:latest
+      workingDir: $(workspaces.source.path)/source
+      args:
+        - config
+        - --severity
+        - HIGH,CRITICAL
+        - --exit-code
+        - "1"
+        - --skip-dirs
+        - node_modules
         - .

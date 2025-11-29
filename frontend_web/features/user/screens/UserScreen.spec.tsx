@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getAllUsers } from "@/features/shared/api/generated/functions";
+import { UserTestIds } from "@/features/user/ids";
 import { UserScreen } from "@/features/user/screens/UserScreen";
-import { UserTestIds } from "@/features/user/test-ids";
 
 vi.mock("@/features/shared/api/generated/functions", () => ({
   getAllUsers: vi.fn(),

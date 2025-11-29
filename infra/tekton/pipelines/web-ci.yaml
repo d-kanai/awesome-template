@@ -7,7 +7,7 @@
 # 🔄 実行フロー:
 #                              ┌─── quality-lint ──────┐
 #                              ├─── test-ut ───────────┤
-#   clone ─── install ─────────┼─── test-e2e-mock ─────┼──── build
+#   clone ─── install ─────────┼─── test-e2e-mock ─────┼── build ── image-scan
 #                              ├─── security-pnpm-audit┤
 #                              ├─── security-pkg-scan ─┤
 #                              ├─── security-secret-scan
@@ -197,3 +197,17 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
+
+    # ─────────────────────────────────────────────
+    # Stage 5: Image Scan (after build)
+    # ─────────────────────────────────────────────
+    - name: security-image-scan
+      taskRef:
+        name: web-security-image-scan
+      runAfter:
+        - build
+      params:
+        - name: image-name
+          value: $(params.image-name)
+        - name: image-tag
+          value: $(params.image-tag)

@@ -2,7 +2,7 @@
 
 import type { UserListItem } from "@/features/shared/api/generated/model";
 import { UserList } from "../components/UserList";
-import { UserTestIds } from "../test-ids";
+import { UserTestIds } from "../ids";
 
 interface UserScreenProps {
   users: UserListItem[];

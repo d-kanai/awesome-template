@@ -1,7 +1,7 @@
 "use client";
 
 import type { UserListItem as User } from "@/features/shared/api/generated/model";
-import { UserTestIds } from "../test-ids";
+import { UserTestIds } from "../ids";
 
 function UserAvatar({ email }: { email: string }) {
   const initial = email.charAt(0).toUpperCase();
