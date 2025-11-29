@@ -49,6 +49,8 @@ spec:
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: dast-scan
       image: ghcr.io/zaproxy/zaproxy:stable
+      securityContext:
+        runAsUser: 0  # ZAPイメージはデフォルト非rootなのでrootで実行
       env:
         - name: CI
           value: "true"
@@ -64,6 +66,8 @@ spec:
           value: "false"
         - name: ZAP_PORT
           value: "8090"
+        - name: npm_config_engine_strict
+          value: "false"
       script: |
         #!/bin/bash
         set -e
@@ -94,6 +98,7 @@ spec:
         apt-get update && apt-get install -y curl gnupg
         curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
         apt-get install -y nodejs
+        node --version
 
         npm install -g corepack
         corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
@@ -143,6 +148,10 @@ spec:
         # ─────────────────────────────────────────────
         # 5. Run ZAP Active Scan
         # ─────────────────────────────────────────────
+        # Disable UserAgentScanRule (ID: 10104) - false positive noise
+        echo "🔧 Disabling UserAgentScanRule..."
+        curl -s "http://localhost:$ZAP_PORT/JSON/ascan/action/disableScanners/?ids=10104" > /dev/null
+
         echo "🔍 Running ZAP Active Scan..."
         curl -s "http://localhost:$ZAP_PORT/JSON/ascan/action/scan/?url=http://localhost:3000&recurse=true" > /dev/null
 
@@ -181,14 +190,11 @@ spec:
         # ─────────────────────────────────────────────
         echo "📈 Parsing scan results..."
 
-        HIGH=$(curl -s "http://localhost:$ZAP_PORT/JSON/core/view/alerts/?riskid=3" | \
-          python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d.get('alerts',[])))" 2>/dev/null || echo "0")
-        MEDIUM=$(curl -s "http://localhost:$ZAP_PORT/JSON/core/view/alerts/?riskid=2" | \
-          python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d.get('alerts',[])))" 2>/dev/null || echo "0")
-        LOW=$(curl -s "http://localhost:$ZAP_PORT/JSON/core/view/alerts/?riskid=1" | \
-          python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d.get('alerts',[])))" 2>/dev/null || echo "0")
-        INFO=$(curl -s "http://localhost:$ZAP_PORT/JSON/core/view/alerts/?riskid=0" | \
-          python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d.get('alerts',[])))" 2>/dev/null || echo "0")
+        # Count from saved JSON file
+        HIGH=$(grep -o '"risk":"High"' $REPORT_DIR/zap-alerts.json 2>/dev/null | wc -l | tr -d ' ')
+        MEDIUM=$(grep -o '"risk":"Medium"' $REPORT_DIR/zap-alerts.json 2>/dev/null | wc -l | tr -d ' ')
+        LOW=$(grep -o '"risk":"Low"' $REPORT_DIR/zap-alerts.json 2>/dev/null | wc -l | tr -d ' ')
+        INFO=$(grep -o '"risk":"Informational"' $REPORT_DIR/zap-alerts.json 2>/dev/null | wc -l | tr -d ' ')
 
         LOW_TOTAL=$((LOW + INFO))
 
@@ -197,44 +203,44 @@ spec:
         echo -n "$LOW_TOTAL" > $(results.low-alerts.path)
 
         # ─────────────────────────────────────────────
-        # 8. Cleanup
+        # 8. Print Alert Details
+        # ─────────────────────────────────────────────
+
+        # ─────────────────────────────────────────────
+        # 9. Cleanup
         # ─────────────────────────────────────────────
         kill $SERVER_PID 2>/dev/null || true
         kill $ZAP_PID 2>/dev/null || true
 
         # ─────────────────────────────────────────────
-        # 9. Determine Status
+        # 10. Determine Status
         # ─────────────────────────────────────────────
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "📊 DAST Scan Summary:"
+        echo "   🔴 High/Critical: $HIGH"
+        echo "   🟠 Medium: $MEDIUM"
+        echo "   🟡 Low/Info: $LOW_TOTAL"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+        # Print all alerts with URLs
         echo ""
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo "📊 DAST Scan Results:"
-        echo "   High/Critical: $HIGH"
-        echo "   Medium: $MEDIUM"
-        echo "   Low/Info: $LOW_TOTAL"
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "📋 Detected Alerts (Risk | Name | URL):"
+        echo "───────────────────────────────────────"
+        cat $REPORT_DIR/zap-alerts.json 2>/dev/null | \
+          tr ',' '\n' | grep -E '"(risk|name|url)"' | \
+          sed 's/.*"risk":"\([^"]*\)".*/\1/; s/.*"name":"\([^"]*\)".*/\1/; s/.*"url":"\([^"]*\)".*/\1/' | \
+          paste - - - | sort || echo "   (none)"
+        echo "───────────────────────────────────────"
 
         if [ "$HIGH" -gt 0 ]; then
           echo -n "FAIL" > $(results.scan-status.path)
-          echo ""
-          echo "╔════════════════════════════════════════════════════════════╗"
-          echo "║                                                            ║"
-          echo "║   ██████╗  █████╗ ███████╗████████╗    ███████╗ █████╗ ██╗██╗     ║"
-          echo "║   ██╔══██╗██╔══██╗██╔════╝╚══██╔══╝    ██╔════╝██╔══██╗██║██║     ║"
-          echo "║   ██║  ██║███████║███████╗   ██║       █████╗  ███████║██║██║     ║"
-          echo "║   ██║  ██║██╔══██║╚════██║   ██║       ██╔══╝  ██╔══██║██║██║     ║"
-          echo "║   ██████╔╝██║  ██║███████║   ██║       ██║     ██║  ██║██║███████╗║"
-          echo "║   ╚═════╝ ╚═╝  ╚═╝╚══════╝   ╚═╝       ╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝║"
-          echo "║                                                            ║"
-          echo "║   $HIGH High/Critical severity findings detected!          ║"
-          echo "║   Check: $REPORT_DIR/zap-report.html                       ║"
-          echo "║                                                            ║"
-          echo "╚════════════════════════════════════════════════════════════╝"
+          echo "❌ DAST FAIL - $HIGH High/Critical findings"
           exit 1
         elif [ "$MEDIUM" -gt 0 ]; then
           echo -n "WARN" > $(results.scan-status.path)
-          echo "⚠️ DAST Scan completed with $MEDIUM medium severity warnings"
-          echo "✅ No high/critical findings - proceeding"
+          echo "⚠️ DAST WARN - $MEDIUM medium severity warnings"
+          echo "✅ No high/critical - proceeding"
         else
           echo -n "PASS" > $(results.scan-status.path)
-          echo "✅ DAST Scan PASSED - No significant findings!"
+          echo "✅ DAST PASS - No significant findings!"
         fi

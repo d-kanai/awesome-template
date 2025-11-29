@@ -1,0 +1,172 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ⏱️ Build Performance Check Task
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# Next.js のビルド時間とバンドルサイズを計測
+# 独自にcloneして完全クリーンな環境で計測
+#
+# Results:
+#   - typecheck-time: TypeCheck秒数
+#   - build-time: Build秒数
+#   - total-time: 合計秒数
+#   - bundle-size-kb: 総バンドルサイズ (KB)
+#   - largest-chunk-kb: 最大チャンク (KB)
+#   - status: PASSED / WARNING
+#
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: web-perf-build-time
+spec:
+  params:
+    - name: repo-url
+      type: string
+      default: "https://github.com/d-kanai/awesome-template.git"
+    - name: branch
+      type: string
+      default: "main"
+    - name: pnpm-version
+      type: string
+      default: "10.10.0"
+    - name: max-build-seconds
+      type: string
+      default: "120"
+    - name: max-typecheck-seconds
+      type: string
+      default: "30"
+    - name: max-bundle-size-kb
+      type: string
+      default: "500"
+  results:
+    - name: typecheck-time
+      description: "TypeCheck時間 (秒)"
+    - name: build-time
+      description: "Build時間 (秒)"
+    - name: total-time
+      description: "合計時間 (秒)"
+    - name: bundle-size-kb
+      description: "総バンドルサイズ (KB)"
+    - name: largest-chunk-kb
+      description: "最大チャンク (KB)"
+    - name: status
+      description: "PASSED or WARNING"
+  steps:
+    - name: measure-build-perf
+      image: node:22-slim
+      env:
+        - name: NEXT_PUBLIC_API_BASE_URL
+          value: "http://localhost:8080"
+        - name: NEXT_PUBLIC_API_MOCK_MODE
+          value: "true"
+        - name: NEXT_PUBLIC_API_TIMEOUT_MS
+          value: "10000"
+        - name: ANALYZE
+          value: "false"
+      script: |
+        #!/bin/bash
+        set -e
+
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "⏱️  Build Performance Analysis"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+        # git インストール
+        apt-get update > /dev/null 2>&1 && apt-get install -y git > /dev/null 2>&1
+
+        # 独自クローン
+        echo ""
+        echo "📂 Cloning repository..."
+        cd /tmp
+        git clone --depth 1 --branch $(params.branch) $(params.repo-url) repo
+        cd repo/frontend_web
+
+        # pnpm インストール
+        echo "📦 Installing pnpm..."
+        npm install -g pnpm@$(params.pnpm-version) > /dev/null 2>&1
+
+        # 依存関係インストール
+        echo "📦 Installing dependencies..."
+        pnpm install --frozen-lockfile
+
+        MAX_BUILD=$(params.max-build-seconds)
+        MAX_TYPECHECK=$(params.max-typecheck-seconds)
+        MAX_BUNDLE=$(params.max-bundle-size-kb)
+        STATUS="PASSED"
+
+        # ─────────────────────────────────────────────
+        # TypeCheck 時間計測
+        # ─────────────────────────────────────────────
+        echo ""
+        echo "📋 TypeCheck..."
+        START_TC=$(date +%s)
+        pnpm typecheck
+        END_TC=$(date +%s)
+        TYPECHECK_TIME=$((END_TC - START_TC))
+
+        if [ "$TYPECHECK_TIME" -gt "$MAX_TYPECHECK" ]; then
+          echo "⚠️  ${TYPECHECK_TIME}s (> ${MAX_TYPECHECK}s)"
+          STATUS="WARNING"
+        else
+          echo "✅ ${TYPECHECK_TIME}s"
+        fi
+
+        # ─────────────────────────────────────────────
+        # Build 時間計測
+        # ─────────────────────────────────────────────
+        echo ""
+        echo "🔨 Build..."
+        START_BUILD=$(date +%s)
+        pnpm build
+        END_BUILD=$(date +%s)
+        BUILD_TIME=$((END_BUILD - START_BUILD))
+
+        if [ "$BUILD_TIME" -gt "$MAX_BUILD" ]; then
+          echo "⚠️  ${BUILD_TIME}s (> ${MAX_BUILD}s)"
+          STATUS="WARNING"
+        else
+          echo "✅ ${BUILD_TIME}s"
+        fi
+
+        TOTAL_TIME=$((TYPECHECK_TIME + BUILD_TIME))
+
+        # ─────────────────────────────────────────────
+        # Bundle Size 分析
+        # ─────────────────────────────────────────────
+        echo ""
+        echo "📊 Bundle Size..."
+
+        BUNDLE_SIZE_KB=0
+        LARGEST_CHUNK_KB=0
+
+        if [ -d ".next/static/chunks" ]; then
+          TOTAL_BYTES=$(find .next/static/chunks -name "*.js" -exec ls -l {} \; 2>/dev/null | awk '{sum+=$5} END {print sum}')
+          BUNDLE_SIZE_KB=$((TOTAL_BYTES / 1024))
+
+          LARGEST_FILE=$(find .next/static/chunks -name "*.js" -exec ls -l {} \; 2>/dev/null | sort -k5 -rn | head -1)
+          if [ -n "$LARGEST_FILE" ]; then
+            LARGEST_BYTES=$(echo "$LARGEST_FILE" | awk '{print $5}')
+            LARGEST_CHUNK_KB=$((LARGEST_BYTES / 1024))
+          fi
+
+          if [ "$BUNDLE_SIZE_KB" -gt "$MAX_BUNDLE" ]; then
+            echo "⚠️  ${BUNDLE_SIZE_KB}KB (> ${MAX_BUNDLE}KB)"
+            STATUS="WARNING"
+          else
+            echo "✅ ${BUNDLE_SIZE_KB}KB"
+          fi
+        fi
+
+        # ─────────────────────────────────────────────
+        # Results 出力
+        # ─────────────────────────────────────────────
+        echo -n "${TYPECHECK_TIME}" > $(results.typecheck-time.path)
+        echo -n "${BUILD_TIME}" > $(results.build-time.path)
+        echo -n "${TOTAL_TIME}" > $(results.total-time.path)
+        echo -n "${BUNDLE_SIZE_KB}" > $(results.bundle-size-kb.path)
+        echo -n "${LARGEST_CHUNK_KB}" > $(results.largest-chunk-kb.path)
+        echo -n "${STATUS}" > $(results.status.path)
+
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "📊 TypeCheck=${TYPECHECK_TIME}s Build=${BUILD_TIME}s Bundle=${BUNDLE_SIZE_KB}KB Status=${STATUS}"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

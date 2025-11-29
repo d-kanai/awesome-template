@@ -13,8 +13,8 @@ WORKDIR /app
 # Copy package files and pnpm config
 COPY package.json pnpm-lock.yaml* .npmrc ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies (--ignore-scripts to skip prepare/lefthook in CI)
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Builder stage
 FROM base AS builder
