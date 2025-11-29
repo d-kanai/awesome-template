@@ -33,7 +33,8 @@
     "docker:run": "docker run -p 3000:3000 -e NODE_ENV=production -e NEXT_PUBLIC_API_BASE_URL=http://localhost:8080 frontend_web:latest",
     "docker:up": "docker-compose -f docker-compose.yml up -d",
     "docker:down": "docker-compose -f docker-compose.yml down",
-    "docker:logs": "docker-compose -f docker-compose.yml logs -f"
+    "docker:logs": "docker-compose -f docker-compose.yml logs -f",
+    "prepare": "cd .. && npx lefthook install"
   },
   "dependencies": {
     "@hookform/resolvers": "~5.2.2",
@@ -83,6 +84,7 @@
     "happy-dom": "~20.0.10",
     "jsdom": "~27.0.1",
     "knip": "~5.66.4",
+    "lefthook": "^2.0.4",
     "next-router-mock": "~1.0.4",
     "openapi-types": "~12.1.3",
     "orval": "~7.1.1",

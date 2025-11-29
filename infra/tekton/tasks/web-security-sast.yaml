@@ -14,4 +14,4 @@ spec:
       workingDir: $(workspaces.source.path)/source/frontend_web
       script: |
         #!/bin/sh
-        semgrep scan --config auto --severity ERROR --error --verbose .
+        semgrep scan --config auto --severity WARNING --error --verbose .

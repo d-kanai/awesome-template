@@ -18,6 +18,10 @@
       },
       "suspicious": {
         "noConsole": { "level": "error", "options": { "allow": ["log"] } }
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "error",
+        "noGlobalEval": "error"
       }
     }
   },
