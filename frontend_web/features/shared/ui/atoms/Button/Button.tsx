@@ -1,6 +1,7 @@
 "use client";
 
 import React, { forwardRef } from "react";
+import { sendClickEvent } from "@/features/shared/lib/clickTracker";
 import { cn } from "@/features/shared/lib/utils";
 
 export type ButtonVariant = "primary" | "neutral" | "subtle";
@@ -13,6 +14,8 @@ export interface ButtonProps
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   children?: React.ReactNode;
+  /** Enable/disable click tracking (default: true) */
+  trackClick?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -25,10 +28,25 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       className,
       disabled,
+      trackClick = true,
+      onClick,
+      id,
       ...props
     },
     ref,
   ) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      // Send click event if enabled and not disabled
+      if (trackClick && !disabled) {
+        sendClickEvent({
+          id: id || undefined,
+          label: typeof children === "string" ? children : undefined,
+          pathname: window.location.pathname,
+          timestamp: new Date().toISOString(),
+        });
+      }
+      onClick?.(e);
+    };
     const baseStyles = cn(
       // Base styles - using semantic tokens
       "inline-flex items-center justify-center",
@@ -69,7 +87,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     );
 
     return (
-      <button ref={ref} className={baseStyles} disabled={disabled} {...props}>
+      <button
+        ref={ref}
+        id={id}
+        className={baseStyles}
+        disabled={disabled}
+        onClick={handleClick}
+        {...props}
+      >
         {leftIcon && <span className="flex-shrink-0">{leftIcon}</span>}
         {children && <span>{children}</span>}
         {rightIcon && <span className="flex-shrink-0">{rightIcon}</span>}

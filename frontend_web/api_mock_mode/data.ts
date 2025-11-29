@@ -106,10 +106,17 @@ export const mockUser = {
   email: "mock@example.com",
 };
 
+// Mock JWT token (header.payload.signature format)
+// Payload: { sub: "mock-user-id", email: "mock@example.com", iat: 1700000000 }
+const mockJwtPayload = Buffer.from(
+  JSON.stringify({ sub: "mock-user-id", email: "mock@example.com", iat: 1700000000 }),
+).toString("base64");
+const mockAccessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${mockJwtPayload}.mock-signature`;
+
 export const mockSigninResponse = {
   data: {
     user: mockUser,
-    accessToken: "mock-access-token",
+    accessToken: mockAccessToken,
   },
   status: 200,
 };
@@ -117,7 +124,7 @@ export const mockSigninResponse = {
 export const mockSignupResponse = {
   data: {
     user: mockUser,
-    accessToken: "mock-access-token",
+    accessToken: mockAccessToken,
   },
   status: 201,
 };

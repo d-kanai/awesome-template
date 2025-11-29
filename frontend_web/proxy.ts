@@ -11,9 +11,11 @@ import { SHARED_ROUTES } from "@/features/shared/lib/routes";
 // Note: Next.js 16では動的レンダリング時にnonceを自動生成するが、
 // Proxyで設定したCSPヘッダーのnonceと一致しないため、'unsafe-inline'を使用
 // TODO: Next.jsが公式にCSP nonce対応したら、'unsafe-inline'を削除してnonceに移行
+const isDev = process.env.NODE_ENV === "development";
 const CSP_HEADER = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'", // Next.jsのインラインスクリプト用
+  // Next.jsのインラインスクリプト用。devモードではHMR等のためunsafe-evalも許可
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'", // Tailwind/CSS-in-JS用
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
@@ -31,10 +33,18 @@ const PUBLIC_PATHS = [
   AUTH_ROUTES.SIGNIN,
   AUTH_ROUTES.SIGNUP,
   "/api/health", // Health check endpoint
+  "/api/log/click", // Click event logging endpoint (public for Beacon API)
 ];
+
+// Proxyログを出力しないパス（自身でログを出力するエンドポイント）
+const SILENT_PATHS = ["/api/log/click"];
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some((path) => path === pathname);
+}
+
+function isSilentPath(pathname: string): boolean {
+  return SILENT_PATHS.some((path) => path === pathname);
 }
 
 function handleUnauthenticatedRequest(
@@ -65,7 +75,10 @@ export default function proxy(request: NextRequest) {
     return handleUnauthenticatedRequest(request, requestId);
   }
 
-  proxyLog(request, { status: 200, requestId });
+  // Silent paths skip proxy logging (they log themselves)
+  if (!isSilentPath(request.nextUrl.pathname)) {
+    proxyLog(request, { status: 200, requestId });
+  }
 
   const response = NextResponse.next();
 

@@ -5,6 +5,19 @@ import { generateShortId } from "@/features/shared/lib/dateTime";
 import { HeaderManager } from "@/features/shared/lib/headerManager";
 import { logger as baseLogger } from "@/features/shared/lib/pinoLogger";
 
+/**
+ * Log event types
+ */
+export const LogType = {
+  PROXY: "proxy",
+  API_REQUEST: "api_request",
+  API_REQUEST_MOCK: "api_request_mock",
+  CLICK_EVENT: "click_event",
+  INFO: "info",
+} as const;
+
+export type LogType = (typeof LogType)[keyof typeof LogType];
+
 // Sensitive field names to mask in logs
 const SENSITIVE_FIELDS = [
   "password",
@@ -171,7 +184,7 @@ export function proxyLog(
 ): void {
   const logger = createLogger(request, options.requestId);
   logger.info({
-    type: "proxy",
+    type: LogType.PROXY,
     method: request.method,
     path: request.nextUrl.pathname,
     query: request.nextUrl.search,
@@ -202,7 +215,7 @@ export async function apiLog(options: {
 }): Promise<void> {
   const logger = await createLoggerAsync(options.requestId);
   const logData: Record<string, unknown> = {
-    type: options.isMock ? "api_request_mock" : "api_request",
+    type: options.isMock ? LogType.API_REQUEST_MOCK : LogType.API_REQUEST,
     method: options.method,
     path: options.path,
     status: options.status,
