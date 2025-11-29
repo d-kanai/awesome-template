@@ -52,6 +52,7 @@ Web版フロントエンドアプリケーション（Next.js + React + TypeScri
 
 ### コード品質
 - **Biome**: リント・フォーマット（ESLint/Prettier代替）
+- **dependency-cruiser**: 依存方向チェック（shared → features 禁止）
 - **Knip**: デッドコード検出
 
 ### デザイン連携
@@ -65,7 +66,7 @@ frontend_web/
 ├── app/                      # Next.js App Router（ルーティングのみ）
 │   ├── layout.tsx            # ルートレイアウト（プロバイダー設定）
 │   ├── page.tsx              # ホームページ（RSC + Screen呼び出し）
-│   ├── auth/                 # 機能ごとのルーティング
+│   └── auth/                 # 機能ごとのルーティング
 │
 ├── features/                 # 機能ベースの構成（Feature-Sliced Design）
 │   ├── auth/                 # 機能モジュール
@@ -78,27 +79,40 @@ frontend_web/
 │   │   ├── routes.ts         # ルーティング定数
 │   │   ├── schemas.ts        # Zodスキーマ（client/server共通）
 │   │   └── test-ids.ts       # data-testid定数
-│   └── shared/               # 共通機能
-│       ├── api/
-│       │   ├── generated/    # Orvalで生成（hooks.ts, functions.ts, model/）
-│       ├── ui/
-│       │   ├── atoms/        # Atoms（Button, Input, Label）
-│       │   ├── components/   # 汎用コンポーネント
-│       │   └── figma_generated/  # Figma自動生成コンポーネント
-│       ├── providers/        
-│       ├── hooks/            
-│       └── lib/
+│   ├── home/
+│   ├── user/
+│   └── multi_flow/
+│
+├── shared/                   # 共通機能（⚠️ features に依存してはいけない）
+│   ├── api/
+│   │   └── generated/        # Orvalで生成（hooks.ts, functions.ts, model/）
+│   ├── ui/
+│   │   ├── atoms/            # Atoms（Button, Input, Label）
+│   │   ├── components/       # 汎用コンポーネント
+│   │   └── figma_generated/  # Figma自動生成コンポーネント
+│   ├── providers/
+│   ├── hooks/
+│   └── lib/
+│
+├── scripts/                  # 開発ツール
+│   └── show-route/           # 画面遷移可視化ツール
+│
 ├── api_mock_mode/            # モックモード（NEXT_PUBLIC_API_MOCK_MODE=true時）
 ├── e2e/                      # E2Eテスト（Playwright + Cucumber）
 ├── config/                   # 設定ファイル
 ├── doc/                      # ドキュメント
-│   ├── code_rule.md          # コーディング規約
-│   ├── figma_import_component.md
-│   ├── figma_import_page.md
-│   └── flow_control.md
-│
 └── public/                   # 静的アセット
 ```
+
+### 依存方向ルール
+
+```
+features/ ──→ shared/    ✅ OK
+shared/   ──→ features/  ❌ NG（shared は features に依存してはいけない）
+feature A ──→ feature B  ❌ NG（routes.ts のみ許可）
+```
+
+`pnpm lint:deps` で依存方向をチェックできます。
 
 ## セットアップ
 
@@ -161,7 +175,29 @@ pnpm build:analyze  # バンドルサイズ分析
 ```bash
 pnpm lint           # Biomeチェック
 pnpm lint:fix       # Biome自動修正
+pnpm lint:deps      # 依存方向チェック（shared → features 禁止）
 pnpm typecheck      # TypeScriptチェック
+```
+
+### 開発ツール
+
+```bash
+pnpm show:routes    # 画面遷移ツリーを可視化
+```
+
+出力例:
+```
+🗺️  画面遷移ツリー
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🏠 /
+├── 🔐 /auth/signin
+│   └── 📝 /auth/signup
+├── 📄 /contact
+└── 👤 /user
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 総ページ数: 6
 ```
 
 ### API型生成
