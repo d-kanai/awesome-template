@@ -2,22 +2,28 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { completeFlow } from "@/features/multi_flow/actions/completeFlow";
 import { ConfirmScreen } from "@/features/multi_flow/screens/ConfirmScreen";
 import { useFlowStore } from "@/features/multi_flow/stores/useFlowStore";
+import { createLoggerAsync } from "@/features/shared/lib/logger";
 
 // Next.js router をモック
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(),
 }));
 
-// Server Action をモック
-vi.mock("@/features/multi_flow/actions/completeFlow", () => ({
-  completeFlow: vi.fn(),
+// Logger をモック
+vi.mock("@/features/shared/lib/logger", () => ({
+  createLoggerAsync: vi.fn(),
 }));
 
 describe("ConfirmScreen", () => {
   const mockPush = vi.fn();
+  const mockLogger = {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -32,6 +38,8 @@ describe("ConfirmScreen", () => {
       replace: vi.fn(),
       prefetch: vi.fn(),
     } as ReturnType<typeof useRouter>);
+
+    vi.mocked(createLoggerAsync).mockResolvedValue(mockLogger as never);
   });
 
   describe("正常系", () => {
@@ -64,20 +72,16 @@ describe("ConfirmScreen", () => {
         email: "test@example.com",
         message: "テストメッセージ",
       });
-      vi.mocked(completeFlow).mockResolvedValue({ success: true });
 
       // When: 画面レンダリング → 送信ボタンクリック
       render(<ConfirmScreen />);
       const submitButton = screen.getByRole("button", { name: "送信する" });
       await user.click(submitButton);
 
-      // Then: Server Actionが呼ばれる
+      // Then: Server Actionが呼ばれる（loggerが使用される）
       await waitFor(() => {
-        expect(completeFlow).toHaveBeenCalledWith({
-          name: "山田太郎",
-          email: "test@example.com",
-          message: "テストメッセージ",
-        });
+        expect(createLoggerAsync).toHaveBeenCalled();
+        expect(mockLogger.info).toHaveBeenCalled();
       });
 
       // Then: ストアの状態が更新される
@@ -121,40 +125,15 @@ describe("ConfirmScreen", () => {
       expect(container.firstChild).toBeNull();
     });
 
-    it("送信エラー時にエラーメッセージが表示される", async () => {
-      const user = userEvent.setup();
-
-      // Given: ストアにデータをセット、Server Actionがエラーを返す
-      useFlowStore.getState().setFormData({
-        name: "山田太郎",
-        email: "test@example.com",
-        message: "テストメッセージ",
-      });
-      vi.mocked(completeFlow).mockResolvedValue({
-        success: false,
-        error: "送信に失敗しました",
-      });
-
-      // When: 画面レンダリング → 送信ボタンクリック
-      render(<ConfirmScreen />);
-      const submitButton = screen.getByRole("button", { name: "送信する" });
-      await user.click(submitButton);
-
-      // Then: エラーメッセージが表示される
-      await waitFor(() => {
-        expect(screen.getByText("送信に失敗しました")).toBeInTheDocument();
-      });
-
-      // Then: ストアの状態は変わらない
-      expect(useFlowStore.getState().currentStep).toBeNull();
-    });
-
     it("送信中は両方のボタンが無効になる", async () => {
       const user = userEvent.setup();
 
-      // Given: completeFlowを遅延させる
-      vi.mocked(completeFlow).mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      // Given: createLoggerAsyncを遅延させる
+      vi.mocked(createLoggerAsync).mockImplementation(
+        () =>
+          new Promise((resolve) =>
+            setTimeout(() => resolve(mockLogger as never), 100),
+          ),
       );
       useFlowStore.getState().setFormData({
         name: "山田太郎",

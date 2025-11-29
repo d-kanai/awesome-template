@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getAllUsers } from "@/features/shared/api/generated/functions";
+import { getAllUsers as getAllUsersApi } from "@/features/shared/api/generated/functions";
 import { UserTestIds } from "@/features/user/ids";
+import { getAllUsers } from "@/features/user/queries/getAllUsers";
 import { UserScreen } from "@/features/user/screens/UserScreen";
 
 vi.mock("@/features/shared/api/generated/functions", () => ({
@@ -16,30 +17,27 @@ describe("UserScreen - TestC", () => {
   describe("正常系", () => {
     it("ユーザー一覧が表示される", async () => {
       // Given: Query APIレスポンスモック
-      const mockResponse = {
-        data: {
-          users: [
-            {
-              id: "user-1",
-              email: "taro@example.com",
-              createdAt: "2024-01-01T12:34:56.000Z",
-              updatedAt: "2024-01-02T12:34:56.000Z",
-            },
-            {
-              id: "user-2",
-              email: "hanako@example.com",
-              createdAt: "2024-01-03T12:34:56.000Z",
-              updatedAt: "2024-01-04T12:34:56.000Z",
-            },
-          ],
+      const mockUsers = [
+        {
+          id: "user-1",
+          email: "taro@example.com",
+          createdAt: "2024-01-01T12:34:56.000Z",
+          updatedAt: "2024-01-02T12:34:56.000Z",
         },
+        {
+          id: "user-2",
+          email: "hanako@example.com",
+          createdAt: "2024-01-03T12:34:56.000Z",
+          updatedAt: "2024-01-04T12:34:56.000Z",
+        },
+      ];
+      vi.mocked(getAllUsersApi).mockResolvedValue({
+        data: { users: mockUsers },
         status: 200,
-      };
-      vi.mocked(getAllUsers).mockResolvedValue(mockResponse);
+      });
 
       // When: データ取得 → 画面レンダリング
-      const response = await getAllUsers();
-      const users = response.data?.users || [];
+      const users = await getAllUsers();
       render(<UserScreen users={users} />);
 
       // Then: 画面にAPIデータ表示
@@ -56,24 +54,20 @@ describe("UserScreen - TestC", () => {
       expect(createdAts[1]).toHaveTextContent("2024年1月3日");
 
       // Then: API呼び出し
-      expect(getAllUsers).toHaveBeenCalledTimes(1);
+      expect(getAllUsersApi).toHaveBeenCalledTimes(1);
     });
   });
 
   describe("異常系", () => {
     it("ユーザーが0件の場合に空メッセージが表示される", async () => {
       // Given: 空のレスポンス
-      const mockResponse = {
-        data: {
-          users: [],
-        },
+      vi.mocked(getAllUsersApi).mockResolvedValue({
+        data: { users: [] },
         status: 200,
-      };
-      vi.mocked(getAllUsers).mockResolvedValue(mockResponse);
+      });
 
       // When: データ取得 → 画面レンダリング
-      const response = await getAllUsers();
-      const users = response.data?.users || [];
+      const users = await getAllUsers();
       render(<UserScreen users={users} />);
 
       // Then: 空メッセージが表示される

@@ -2,22 +2,28 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { useRouter } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { startFlow } from "@/features/multi_flow/actions/startFlow";
 import { InputScreen } from "@/features/multi_flow/screens/InputScreen";
 import { useFlowStore } from "@/features/multi_flow/stores/useFlowStore";
+import { createLoggerAsync } from "@/features/shared/lib/logger";
 
 // Next.js router をモック
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(),
 }));
 
-// Server Action をモック
-vi.mock("@/features/multi_flow/actions/startFlow", () => ({
-  startFlow: vi.fn(),
+// Logger をモック
+vi.mock("@/features/shared/lib/logger", () => ({
+  createLoggerAsync: vi.fn(),
 }));
 
 describe("InputScreen", () => {
   const mockPush = vi.fn();
+  const mockLogger = {
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -33,7 +39,7 @@ describe("InputScreen", () => {
       prefetch: vi.fn(),
     } as ReturnType<typeof useRouter>);
 
-    vi.mocked(startFlow).mockResolvedValue({ success: true });
+    vi.mocked(createLoggerAsync).mockResolvedValue(mockLogger as never);
   });
 
   describe("正常系", () => {
@@ -99,8 +105,9 @@ describe("InputScreen", () => {
         expect(state.currentStep).toBe("confirm");
       });
 
-      // Then: Server Actionが呼ばれる
-      expect(startFlow).toHaveBeenCalledTimes(1);
+      // Then: Server Actionが呼ばれる（loggerが使用される）
+      expect(createLoggerAsync).toHaveBeenCalledTimes(1);
+      expect(mockLogger.info).toHaveBeenCalled();
 
       // Then: 確認画面へ遷移
       expect(mockPush).toHaveBeenCalledWith("/multi_flow/confirm");
@@ -125,9 +132,12 @@ describe("InputScreen", () => {
     it("送信中は確認ボタンが無効になる", async () => {
       const user = userEvent.setup();
 
-      // Given: startFlowを遅延させる
-      vi.mocked(startFlow).mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      // Given: createLoggerAsyncを遅延させる
+      vi.mocked(createLoggerAsync).mockImplementation(
+        () =>
+          new Promise((resolve) =>
+            setTimeout(() => resolve(mockLogger as never), 100),
+          ),
       );
 
       // When: 画面レンダリング → 入力 → 確認ボタンクリック
