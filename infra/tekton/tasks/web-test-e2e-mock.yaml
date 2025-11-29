@@ -9,7 +9,7 @@
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
-  name: web-e2e-mock
+  name: web-test-e2e-mock
 spec:
   params:
     - name: pnpm-version

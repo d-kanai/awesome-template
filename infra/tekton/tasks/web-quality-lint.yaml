@@ -8,7 +8,7 @@
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
-  name: web-lint
+  name: web-quality-lint
 spec:
   params:
     - name: pnpm-version

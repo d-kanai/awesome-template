@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: web-security-pnpm-audit
+  namespace: default
+spec:
+  description: "pnpm audit - 依存関係の脆弱性スキャン"
+  params:
+    - name: pnpm-version
+      type: string
+      default: "10.10.0"
+      description: "pnpm バージョン"
+  workspaces:
+    - name: source
+      description: "クローン済みソースコード"
+  steps:
+    - name: pnpm-audit
+      image: node:22-slim
+      workingDir: $(workspaces.source.path)/source/frontend_web
+      script: |
+        #!/bin/bash
+        set -e
+        echo "📦 Installing pnpm..."
+        npm install -g pnpm@$(params.pnpm-version)
+
+        echo "🔍 Running pnpm audit..."
+        pnpm audit --audit-level=high
+
+        echo "✅ pnpm audit completed"

@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: web-security-pkg-scan
+  namespace: default
+spec:
+  description: "Trivy - ファイルシステム脆弱性スキャン"
+  workspaces:
+    - name: source
+      description: "クローン済みソースコード"
+  steps:
+    - name: trivy-scan
+      image: aquasec/trivy:latest
+      workingDir: $(workspaces.source.path)/source/frontend_web
+      args:
+        - fs
+        - --severity
+        - HIGH,CRITICAL
+        - --exit-code
+        - "1"
+        - .

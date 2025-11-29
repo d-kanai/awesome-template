@@ -5,9 +5,13 @@
 # 📦 Next.js アプリの CI パイプライン
 #
 # 🔄 実行フロー:
-#                              ┌─── lint ─────┐
-#   clone ─── install ─────────┼─── ut ───────┼──── build
-#                              └─── e2e-mock ─┘
+#                              ┌─── quality-lint ──────┐
+#                              ├─── test-ut ───────────┤
+#   clone ─── install ─────────┼─── test-e2e-mock ─────┼──── build
+#                              ├─── security-pnpm-audit┤
+#                              ├─── security-pkg-scan ─┤
+#                              ├─── security-secret-scan
+#                              └─── security-sast ─────┘
 #
 # 使い方:
 #   kubectl apply -f infra/tekton/tasks/
@@ -55,7 +59,9 @@ spec:
   # 🔧 Tasks
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   tasks:
-    # 1️⃣ Git Clone
+    # ─────────────────────────────────────────────
+    # Stage 1: Clone
+    # ─────────────────────────────────────────────
     - name: clone
       taskRef:
         name: git-clone
@@ -68,7 +74,9 @@ spec:
         - name: output
           workspace: shared-workspace
 
-    # 2️⃣ Install Dependencies + Playwright
+    # ─────────────────────────────────────────────
+    # Stage 2: Install
+    # ─────────────────────────────────────────────
     - name: install
       taskRef:
         name: web-install
@@ -81,10 +89,14 @@ spec:
         - name: source
           workspace: shared-workspace
 
-    # 3️⃣ Lint (typecheck + biome) - install 後に実行
-    - name: lint
+    # ─────────────────────────────────────────────
+    # Stage 3: Parallel Checks (7 tasks)
+    # ─────────────────────────────────────────────
+
+    # 📋 Quality: Lint (typecheck + biome)
+    - name: quality-lint
       taskRef:
-        name: web-lint
+        name: web-quality-lint
       runAfter:
         - install
       params:
@@ -94,10 +106,10 @@ spec:
         - name: source
           workspace: shared-workspace
 
-    # 4️⃣ Unit Test (vitest) - install 後に実行 (lint と並列)
-    - name: ut
+    # 🧪 Test: Unit Test (vitest)
+    - name: test-ut
       taskRef:
-        name: web-ut
+        name: web-test-ut
       runAfter:
         - install
       params:
@@ -107,10 +119,10 @@ spec:
         - name: source
           workspace: shared-workspace
 
-    # 5️⃣ E2E Test (Cucumber + Playwright, Mock Mode) - install 後に実行 (lint/ut と並列)
-    - name: e2e-mock
+    # 🧪 Test: E2E Test (Cucumber + Playwright, Mock Mode)
+    - name: test-e2e-mock
       taskRef:
-        name: web-e2e-mock
+        name: web-test-e2e-mock
       runAfter:
         - install
       params:
@@ -120,14 +132,63 @@ spec:
         - name: source
           workspace: shared-workspace
 
-    # 6️⃣ Build (Docker image) - lint, ut, e2e-mock すべて完了後に実行
+    # 🔒 Security: pnpm audit (dependency vulnerabilities)
+    - name: security-pnpm-audit
+      taskRef:
+        name: web-security-pnpm-audit
+      runAfter:
+        - install
+      params:
+        - name: pnpm-version
+          value: $(params.pnpm-version)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # 🔒 Security: Package Scan (Trivy - filesystem vulnerabilities)
+    - name: security-pkg-scan
+      taskRef:
+        name: web-security-pkg-scan
+      runAfter:
+        - install
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # 🔒 Security: Secret Scan (Gitleaks - credential detection)
+    - name: security-secret-scan
+      taskRef:
+        name: web-security-secret-scan
+      runAfter:
+        - install
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # 🔒 Security: SAST (Semgrep - static analysis)
+    - name: security-sast
+      taskRef:
+        name: web-security-sast
+      runAfter:
+        - install
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # ─────────────────────────────────────────────
+    # Stage 4: Build (after all checks pass)
+    # ─────────────────────────────────────────────
     - name: build
       taskRef:
         name: web-build
       runAfter:
-        - lint
-        - ut
-        - e2e-mock
+        - quality-lint
+        - test-ut
+        - test-e2e-mock
+        - security-pnpm-audit
+        - security-pkg-scan
+        - security-secret-scan
+        - security-sast
       params:
         - name: image-name
           value: $(params.image-name)

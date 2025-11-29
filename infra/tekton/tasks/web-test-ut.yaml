@@ -9,7 +9,7 @@
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
-  name: web-ut
+  name: web-test-ut
 spec:
   params:
     - name: pnpm-version
