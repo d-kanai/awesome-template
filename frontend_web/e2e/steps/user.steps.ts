@@ -1,9 +1,9 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
+import { SigninTestIds } from "../../features/auth/ids";
 import { AUTH_ROUTES } from "../../features/auth/routes";
-import { SigninTestIds } from "../../features/auth/test-ids";
+import { UserTestIds } from "../../features/user/ids";
 import { USER_ROUTES } from "../../features/user/routes";
-import { UserTestIds } from "../../features/user/test-ids";
 import type { CustomWorld } from "./world";
 
 // 認証済みユーザーとしてログイン（サインインしてユーザー画面に遷移した状態にする）

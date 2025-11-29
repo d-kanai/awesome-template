@@ -5,7 +5,7 @@ import { AUTH_ROUTES } from "@/features/auth/routes";
 import { Button } from "@/features/shared/ui/atoms/Button";
 import { InputField } from "@/features/shared/ui/atoms/InputField";
 import { useSignupForm } from "../hooks/useSignupForm";
-import { SignupTestIds } from "../test-ids";
+import { SignupButtonIds, SignupTestIds } from "../ids";
 
 function EmailField({
   register,
@@ -71,6 +71,7 @@ function ErrorMessage({ error }: { error: string }) {
 function SubmitButton({ disabled }: { disabled: boolean }) {
   return (
     <Button
+      id={SignupButtonIds.submit}
       type="submit"
       variant="primary"
       size="medium"

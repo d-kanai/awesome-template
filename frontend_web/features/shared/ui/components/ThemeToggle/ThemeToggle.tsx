@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { ThemeToggleButtonIds } from "@/features/shared/ids";
 import { Button } from "../../atoms/Button";
 
 export function ThemeToggle() {
@@ -26,7 +27,12 @@ export function ThemeToggle() {
 
 function ThemePlaceholder() {
   return (
-    <Button variant="neutral" size="small" disabled>
+    <Button
+      id={ThemeToggleButtonIds.toggle}
+      variant="neutral"
+      size="small"
+      disabled
+    >
       <span className="h-5 w-5" />
     </Button>
   );
@@ -40,7 +46,12 @@ function ToggleButton({
   onToggle: () => void;
 }) {
   return (
-    <Button variant="neutral" size="small" onClick={onToggle}>
+    <Button
+      id={ThemeToggleButtonIds.toggle}
+      variant="neutral"
+      size="small"
+      onClick={onToggle}
+    >
       {currentTheme === "dark" ? <SunIcon /> : <MoonIcon />}
     </Button>
   );

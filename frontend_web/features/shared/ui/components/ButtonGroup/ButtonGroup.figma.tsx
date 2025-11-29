@@ -22,8 +22,8 @@ figma.connect(
     example: ({ align }) => (
       <ButtonGroup
         align={align}
-        startButton={{ label: "Button", variant: "neutral" }}
-        endButton={{ label: "Button", variant: "primary" }}
+        startButton={{ id: "example-start-button", label: "Button", variant: "neutral" }}
+        endButton={{ id: "example-end-button", label: "Button", variant: "primary" }}
       />
     ),
   },

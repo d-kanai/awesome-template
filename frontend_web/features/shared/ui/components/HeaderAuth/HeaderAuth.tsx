@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React, { forwardRef } from "react";
+import { HeaderAuthButtonIds } from "@/features/shared/ids";
 import { cn } from "@/features/shared/lib/utils";
 import { Avatar } from "../../atoms/Avatar";
 import { Button } from "../../atoms/Button";
@@ -116,6 +117,7 @@ export const HeaderAuth = forwardRef<HTMLDivElement, HeaderAuthProps>(
 
     // Logged Out state (default)
     const renderButton = (
+      id: string,
       variant: "neutral" | "primary",
       label: string,
       href?: string,
@@ -123,6 +125,7 @@ export const HeaderAuth = forwardRef<HTMLDivElement, HeaderAuthProps>(
     ) => {
       const button = (
         <Button
+          id={id}
           variant={variant}
           size="medium"
           onClick={onClick}
@@ -161,8 +164,20 @@ export const HeaderAuth = forwardRef<HTMLDivElement, HeaderAuthProps>(
         )}
         {...props}
       >
-        {renderButton("neutral", "Sign in", signInHref, onSignIn)}
-        {renderButton("primary", "Register", registerHref, onRegister)}
+        {renderButton(
+          HeaderAuthButtonIds.signIn,
+          "neutral",
+          "Sign in",
+          signInHref,
+          onSignIn,
+        )}
+        {renderButton(
+          HeaderAuthButtonIds.register,
+          "primary",
+          "Register",
+          registerHref,
+          onRegister,
+        )}
       </div>
     );
   },

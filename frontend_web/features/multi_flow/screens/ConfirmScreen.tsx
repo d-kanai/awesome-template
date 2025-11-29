@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/features/shared/ui/atoms/Button";
 import { completeFlow } from "../actions/completeFlow";
+import { ConfirmScreenButtonIds } from "../ids";
 import { MULTI_FLOW_ROUTES } from "../routes";
 import { useFlowStore } from "../stores/useFlowStore";
 
@@ -118,6 +119,7 @@ function ActionButtons({ onBack, onSubmit, isSubmitting }: ActionButtonsProps) {
   return (
     <div className="mt-8 flex gap-4">
       <Button
+        id={ConfirmScreenButtonIds.back}
         variant="neutral"
         onClick={onBack}
         disabled={isSubmitting}
@@ -126,6 +128,7 @@ function ActionButtons({ onBack, onSubmit, isSubmitting }: ActionButtonsProps) {
         戻る
       </Button>
       <Button
+        id={ConfirmScreenButtonIds.submit}
         variant="primary"
         onClick={onSubmit}
         disabled={isSubmitting}

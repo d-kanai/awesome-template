@@ -1,7 +1,7 @@
 import { Given, Then, When } from "@cucumber/cucumber";
 import { expect } from "@playwright/test";
+import { SigninTestIds, SignupTestIds } from "../../features/auth/ids";
 import { AUTH_ROUTES } from "../../features/auth/routes";
-import { SigninTestIds, SignupTestIds } from "../../features/auth/test-ids";
 import { USER_ROUTES } from "../../features/user/routes";
 import type { CustomWorld } from "./world";
 

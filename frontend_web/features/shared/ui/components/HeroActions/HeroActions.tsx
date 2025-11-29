@@ -2,6 +2,7 @@
 
 // biome-ignore lint/correctness/noUnusedImports: React is needed for JSX in Storybook
 import React from "react";
+import { HeroActionsButtonIds } from "@/features/home/ids";
 import { cn } from "@/features/shared/lib/utils";
 import { ButtonGroup } from "../ButtonGroup";
 import { TextContentTitle } from "../TextContentTitle";
@@ -49,12 +50,14 @@ export function HeroActions({
         align="Justify"
         size="large"
         startButton={{
+          id: HeroActionsButtonIds.secondary,
           label: secondaryButtonText,
           variant: "neutral",
           onClick: onSecondaryButtonClick,
           href: secondaryButtonHref,
         }}
         endButton={{
+          id: HeroActionsButtonIds.primary,
           label: primaryButtonText,
           variant: "primary",
           onClick: onPrimaryButtonClick,

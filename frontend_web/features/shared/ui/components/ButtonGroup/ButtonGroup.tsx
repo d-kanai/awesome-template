@@ -8,6 +8,8 @@ import { Button } from "../../atoms/Button";
 export type ButtonGroupAlign = "Justify" | "Start" | "End" | "Center" | "Stack";
 
 export interface ButtonGroupButton {
+  /** Required button ID for click event logging */
+  id: string;
   label: string;
   variant?: "primary" | "neutral";
   onClick?: () => void;
@@ -23,11 +25,13 @@ export interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const defaultStartButton: ButtonGroupButton = {
+  id: "button-group-start-button",
   label: "Button",
   variant: "neutral",
 };
 
 const defaultEndButton: ButtonGroupButton = {
+  id: "button-group-end-button",
   label: "Button",
   variant: "primary",
 };
@@ -50,6 +54,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
     ) => {
       const buttonElement = (
         <Button
+          id={button.id}
           variant={button.variant || "neutral"}
           size={size}
           onClick={button.onClick}

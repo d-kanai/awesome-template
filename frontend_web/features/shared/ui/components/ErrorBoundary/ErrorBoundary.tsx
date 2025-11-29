@@ -2,6 +2,7 @@
 
 import type { ErrorInfo, ReactNode } from "react";
 import { Component } from "react";
+import { ErrorBoundaryButtonIds } from "@/features/shared/ids";
 import { isDev } from "@/features/shared/lib/env";
 import { Button } from "../../atoms/Button";
 
@@ -147,10 +148,20 @@ function ActionButtons({ reset }: ActionButtonsProps) {
 
   return (
     <div className="flex gap-3">
-      <Button variant="primary" onClick={reset} className="flex-1">
+      <Button
+        id={ErrorBoundaryButtonIds.retry}
+        variant="primary"
+        onClick={reset}
+        className="flex-1"
+      >
         再試行
       </Button>
-      <Button variant="neutral" onClick={handleGoHome} className="flex-1">
+      <Button
+        id={ErrorBoundaryButtonIds.goHome}
+        variant="neutral"
+        onClick={handleGoHome}
+        className="flex-1"
+      >
         ホームへ
       </Button>
     </div>

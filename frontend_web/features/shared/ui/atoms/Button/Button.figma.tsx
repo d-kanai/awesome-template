@@ -31,6 +31,7 @@ figma.connect(
     },
     example: ({ variant, size, disabled, children, leftIcon, rightIcon }) => (
       <Button
+        id="example-button"
         variant={variant}
         size={size}
         disabled={disabled}

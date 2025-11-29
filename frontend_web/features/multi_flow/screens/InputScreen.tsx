@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@/features/shared/ui/atoms/Button";
 import { InputField } from "@/features/shared/ui/atoms/InputField";
 import { startFlow } from "../actions/startFlow";
+import { InputScreenButtonIds } from "../ids";
 import { MULTI_FLOW_ROUTES } from "../routes";
 import { useFlowStore } from "../stores/useFlowStore";
 
@@ -150,6 +151,7 @@ function NextButton({ onClick, disabled, isSubmitting }: NextButtonProps) {
   return (
     <div className="mt-8">
       <Button
+        id={InputScreenButtonIds.next}
         variant="primary"
         onClick={onClick}
         disabled={disabled}

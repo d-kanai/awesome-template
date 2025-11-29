@@ -8,9 +8,8 @@ import {
   type MockedFunction,
   vi,
 } from "vitest";
-
+import { SignupTestIds } from "@/features/auth/ids";
 import { SignupScreen } from "@/features/auth/screens/SignupScreen";
-import { SignupTestIds } from "@/features/auth/test-ids";
 import { fetcher } from "@/features/shared/api/fetcher";
 import type { signupResponse } from "@/features/shared/api/generated/functions";
 import { renderWithProviders } from "@/features/shared/lib/testsupport";

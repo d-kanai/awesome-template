@@ -27,7 +27,7 @@ figma.connect(
       children: figma.textContent("Button text content"),
     },
     example: ({ variant, size, disabled, children }) => (
-      <ButtonDanger variant={variant} size={size} disabled={disabled}>
+      <ButtonDanger id="example-button-danger" variant={variant} size={size} disabled={disabled}>
         {children}
       </ButtonDanger>
     ),

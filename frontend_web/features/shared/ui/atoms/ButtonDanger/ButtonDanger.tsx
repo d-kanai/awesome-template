@@ -8,18 +8,23 @@
 "use client";
 
 import React, { forwardRef } from "react";
+import { sendClickEvent } from "@/features/shared/lib/clickTracker";
 import { cn } from "@/features/shared/lib/utils";
 
 export type ButtonDangerVariant = "primary" | "subtle";
 export type ButtonDangerSize = "small" | "medium";
 
 export interface ButtonDangerProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "id"> {
+  /** Required button ID for click event logging */
+  id: string;
   variant?: ButtonDangerVariant;
   size?: ButtonDangerSize;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   children?: React.ReactNode;
+  /** Enable/disable click tracking (default: true) */
+  trackClick?: boolean;
 }
 
 export const ButtonDanger = forwardRef<HTMLButtonElement, ButtonDangerProps>(
@@ -32,10 +37,26 @@ export const ButtonDanger = forwardRef<HTMLButtonElement, ButtonDangerProps>(
       children,
       className,
       disabled,
+      trackClick = true,
+      onClick,
+      id,
       ...props
     },
     ref,
   ) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      // Send click event if enabled and not disabled
+      if (trackClick && !disabled) {
+        sendClickEvent({
+          id,
+          label: typeof children === "string" ? children : undefined,
+          pathname: window.location.pathname,
+          timestamp: new Date().toISOString(),
+        });
+      }
+      onClick?.(e);
+    };
+
     const baseStyles = cn(
       // Base styles - using semantic tokens
       "inline-flex items-center justify-center",
@@ -70,7 +91,14 @@ export const ButtonDanger = forwardRef<HTMLButtonElement, ButtonDangerProps>(
     );
 
     return (
-      <button ref={ref} className={baseStyles} disabled={disabled} {...props}>
+      <button
+        ref={ref}
+        id={id}
+        className={baseStyles}
+        disabled={disabled}
+        onClick={handleClick}
+        {...props}
+      >
         {leftIcon && <span className="flex-shrink-0">{leftIcon}</span>}
         {children && <span>{children}</span>}
         {rightIcon && <span className="flex-shrink-0">{rightIcon}</span>}

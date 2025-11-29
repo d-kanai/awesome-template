@@ -8,7 +8,9 @@ export type ButtonVariant = "primary" | "neutral" | "subtle";
 export type ButtonSize = "small" | "medium" | "large";
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "id"> {
+  /** Required button ID for click event logging */
+  id: string;
   variant?: ButtonVariant;
   size?: ButtonSize;
   leftIcon?: React.ReactNode;
@@ -39,7 +41,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       // Send click event if enabled and not disabled
       if (trackClick && !disabled) {
         sendClickEvent({
-          id: id || undefined,
+          id,
           label: typeof children === "string" ? children : undefined,
           pathname: window.location.pathname,
           timestamp: new Date().toISOString(),

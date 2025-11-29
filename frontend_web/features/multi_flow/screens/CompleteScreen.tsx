@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/features/shared/ui/atoms/Button";
+import { CompleteScreenButtonIds } from "../ids";
 import { MULTI_FLOW_ROUTES } from "../routes";
 import { useFlowStore } from "../stores/useFlowStore";
 
@@ -80,7 +81,11 @@ type ActionButtonProps = {
 function ActionButton({ onClick }: ActionButtonProps) {
   return (
     <div className="mt-8 flex justify-center">
-      <Button variant="primary" onClick={onClick}>
+      <Button
+        id={CompleteScreenButtonIds.backToInput}
+        variant="primary"
+        onClick={onClick}
+      >
         最初に戻る
       </Button>
     </div>
