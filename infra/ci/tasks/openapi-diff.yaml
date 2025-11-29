@@ -1,0 +1,66 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 📋 OpenAPI Diff Task
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 🎯 目的:
+#   モノレポ解消後、Backend API の Breaking Change を検出する
+#
+# 🔧 使用ツール:
+#   oasdiff - OpenAPI spec の差分比較ツール
+#   https://github.com/Tufin/oasdiff
+#
+# 📖 使い方:
+#   kubectl apply -f infra/ci/tasks/openapi-diff.yaml
+#
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: openapi-diff
+spec:
+  description: |
+    OpenAPI spec の Breaking Change を検出します。
+    現在のspec (frontend_web/api/openapi.json) と
+    新しいspec (URL から取得) を比較します。
+  params:
+    - name: new-spec-url
+      type: string
+      description: "🔗 新しい OpenAPI spec の URL"
+      default: "https://api.example.com/openapi.json"
+  workspaces:
+    - name: source
+      description: "ソースコードを含むワークスペース"
+  steps:
+    - name: diff
+      image: tufin/oasdiff:latest
+      script: |
+        #!/bin/sh
+        set -e
+
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "📋 OpenAPI Diff Check"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+        CURRENT_SPEC="$(workspaces.source.path)/frontend_web/api/openapi.json"
+        NEW_SPEC_URL="$(params.new-spec-url)"
+        TEMP_SPEC="/tmp/new-openapi.json"
+
+        echo "📂 Current spec: ${CURRENT_SPEC}"
+        echo "🔗 New spec URL: ${NEW_SPEC_URL}"
+        echo ""
+
+        # 新しい spec を取得
+        echo "⬇️  Fetching new spec..."
+        wget -q -O "${TEMP_SPEC}" "${NEW_SPEC_URL}"
+
+        # Breaking change をチェック
+        echo "🔍 Checking for breaking changes..."
+        echo ""
+
+        if oasdiff breaking "${CURRENT_SPEC}" "${TEMP_SPEC}"; then
+          echo ""
+          echo "✅ No breaking changes detected!"
+        else
+          echo ""
+          echo "❌ Breaking changes detected!"
+          exit 1
+        fi

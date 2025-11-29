@@ -12,6 +12,7 @@
 #                              ├─── security-pkg-scan ─┤                    │
 #                              ├─── security-secret-scan                    │
 #                              ├─── security-sast ─────┤                    │
+#                              ├─── (openapi-diff) ────┘  # disabled        │
 #                              └─── (perf-build-time) ─┘  # disabled        │
 #                                                                           │
 #   ※ security-dast は test-e2e-mock の後に実行 (HAR ファイルを使用)
@@ -50,6 +51,10 @@ spec:
       type: string
       default: "10.10.0"
       description: "📦 pnpm バージョン"
+    - name: openapi-spec-url
+      type: string
+      default: "https://api.example.com/openapi.json"
+      description: "🔗 新しい OpenAPI spec の URL (openapi-diff 用)"
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # 🗂️ 共有 Workspace
@@ -181,6 +186,19 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
+
+    # 📋 OpenAPI Diff (disabled - モノレポ解消後に有効化)
+    # - name: openapi-diff
+    #   taskRef:
+    #     name: openapi-diff
+    #   runAfter:
+    #     - install
+    #   params:
+    #     - name: new-spec-url
+    #       value: $(params.openapi-spec-url)
+    #   workspaces:
+    #     - name: source
+    #       workspace: shared-workspace
 
     # 🔒 Security: DAST (OWASP ZAP - dynamic analysis)
     # E2Eテストで記録したHARファイルを使用するため、test-e2e-mockの後に実行
