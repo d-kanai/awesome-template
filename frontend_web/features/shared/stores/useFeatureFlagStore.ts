@@ -21,6 +21,49 @@ interface FeatureFlagActions {
   getFlag: (flagName: string) => boolean;
 }
 
+interface UnleashToggle {
+  name: string;
+  enabled: boolean;
+}
+
+/**
+ * Fetch feature flags from API
+ */
+async function fetchFeatureFlagsFromApi(): Promise<Record<string, boolean>> {
+  const response = await fetch(
+    `${env.NEXT_PUBLIC_API_BASE_URL}/featureflags/proxy`,
+    { headers: { Authorization: "proxy" } },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch feature flags: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return parseToggles(data.toggles);
+}
+
+/**
+ * Parse Unleash toggles to flags record
+ */
+function parseToggles(toggles: unknown): Record<string, boolean> {
+  const flags: Record<string, boolean> = {};
+  if (!Array.isArray(toggles)) {
+    return flags;
+  }
+  for (const toggle of toggles as UnleashToggle[]) {
+    flags[toggle.name] = toggle.enabled;
+  }
+  return flags;
+}
+
+/**
+ * Convert error to Error instance
+ */
+function toError(error: unknown): Error {
+  return error instanceof Error ? error : new Error("Unknown error");
+}
+
 export const useFeatureFlagStore = create<
   FeatureFlagState & FeatureFlagActions
 >((set, get) => ({
@@ -31,35 +74,10 @@ export const useFeatureFlagStore = create<
   fetchFlags: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch(
-        `${env.NEXT_PUBLIC_API_BASE_URL}/featureflags/proxy`,
-        {
-          headers: {
-            Authorization: "proxy",
-          },
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch feature flags: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const flags: Record<string, boolean> = {};
-
-      // Unleash proxy format: { toggles: [{ name: string, enabled: boolean }] }
-      if (data.toggles && Array.isArray(data.toggles)) {
-        for (const toggle of data.toggles) {
-          flags[toggle.name] = toggle.enabled;
-        }
-      }
-
+      const flags = await fetchFeatureFlagsFromApi();
       set({ flags, isLoading: false });
     } catch (error) {
-      set({
-        error: error instanceof Error ? error : new Error("Unknown error"),
-        isLoading: false,
-      });
+      set({ error: toError(error), isLoading: false });
     }
   },
 

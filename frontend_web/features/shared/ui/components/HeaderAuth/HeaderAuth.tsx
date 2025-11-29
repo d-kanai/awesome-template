@@ -4,9 +4,9 @@ import Link from "next/link";
 import React, { forwardRef } from "react";
 import { HeaderAuthButtonIds } from "@/features/shared/ids";
 import { cn } from "@/features/shared/lib/utils";
-import { Avatar } from "../../atoms/Avatar";
-import { Button } from "../../atoms/Button";
-import { ChevronDown } from "../../atoms/ChevronDown";
+import { Avatar } from "../../atoms/Avatar/Avatar";
+import { Button } from "../../atoms/Button/Button";
+import { ChevronDown } from "../../atoms/ChevronDown/ChevronDown";
 
 export type HeaderAuthState = "Logged Out" | "Logged In" | "Logged In - Hover";
 

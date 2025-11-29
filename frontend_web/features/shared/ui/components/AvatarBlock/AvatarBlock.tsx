@@ -2,7 +2,11 @@
 
 import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
-import { Avatar, type AvatarShape, type AvatarSize } from "../../atoms/Avatar";
+import {
+  Avatar,
+  type AvatarShape,
+  type AvatarSize,
+} from "../../atoms/Avatar/Avatar";
 
 export interface AvatarBlockProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;

@@ -11,8 +11,8 @@
 // biome-ignore lint/correctness/noUnusedImports: React is needed for JSX in Storybook
 import React from "react";
 import { cn } from "@/features/shared/lib/utils";
-import { AvatarBlock } from "../AvatarBlock";
-import { TextContentHeading } from "../TextContentHeading";
+import { AvatarBlock } from "../AvatarBlock/AvatarBlock";
+import { TextContentHeading } from "../TextContentHeading/TextContentHeading";
 
 export interface TestimonialCardProps {
   quote: string;

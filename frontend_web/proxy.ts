@@ -7,25 +7,35 @@ import { HeaderManager } from "@/features/shared/lib/headerManager";
 import { proxyLog } from "@/features/shared/lib/logger";
 import { SHARED_ROUTES } from "@/features/shared/lib/routes";
 
-// CSP (Content Security Policy) 設定
-// Note: Next.js 16では動的レンダリング時にnonceを自動生成するが、
-// Proxyで設定したCSPヘッダーのnonceと一致しないため、'unsafe-inline'を使用
-// TODO: Next.jsが公式にCSP nonce対応したら、'unsafe-inline'を削除してnonceに移行
+// CSP (Content Security Policy) 設定 - Level 3 with nonce
 const isDev = process.env.NODE_ENV === "development";
-const CSP_HEADER = [
-  "default-src 'self'",
-  // Next.jsのインラインスクリプト用。devモードではHMR等のためunsafe-evalも許可
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
-  "style-src 'self' 'unsafe-inline'", // Tailwind/CSS-in-JS用
-  "img-src 'self' data: blob:",
-  "font-src 'self' data:",
-  "connect-src 'self'",
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-]
-  .join("; ")
-  .trim();
+
+/**
+ * Generate a cryptographically secure nonce for CSP
+ */
+function generateNonce(): string {
+  return Buffer.from(crypto.randomUUID()).toString("base64");
+}
+
+/**
+ * Build CSP header with nonce
+ * @param nonce - The nonce to include in script-src and style-src
+ */
+function buildCspHeader(nonce: string): string {
+  return [
+    "default-src 'self'",
+    // nonce-based CSP Level 3. devモードではHMR等のためunsafe-evalも許可
+    `script-src 'self' 'nonce-${nonce}'${isDev ? " 'unsafe-eval'" : ""}`,
+    `style-src 'self' 'nonce-${nonce}'`,
+    "img-src 'self' data: blob:",
+    "font-src 'self' data:",
+    "connect-src 'self'",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "object-src 'none'",
+  ].join("; ");
+}
 
 const PUBLIC_PATHS = [
   SHARED_ROUTES.HOME,
@@ -85,8 +95,14 @@ export default function proxy(request: NextRequest) {
   // Pass request ID to downstream handlers (Server Components, Server Actions)
   response.headers.set(HeaderManager.KEYS.REQUEST_ID, requestId);
 
+  // Generate nonce for CSP Level 3
+  const nonce = generateNonce();
+
+  // Pass nonce to layout.tsx via header (for next-themes and other inline scripts)
+  response.headers.set("x-nonce", nonce);
+
   // セキュリティヘッダー
-  response.headers.set("Content-Security-Policy", CSP_HEADER);
+  response.headers.set("Content-Security-Policy", buildCspHeader(nonce));
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");

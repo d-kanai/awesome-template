@@ -17,11 +17,24 @@
         "useImportType": "off"
       },
       "suspicious": {
-        "noConsole": { "level": "error", "options": { "allow": ["log"] } }
+        "noConsole": { "level": "error", "options": { "allow": ["log"] } },
+        "noSkippedTests": "error"
       },
       "security": {
         "noDangerouslySetInnerHtml": "error",
         "noGlobalEval": "error"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": { "maxAllowedComplexity": 10 }
+        },
+        "noVoid": "error",
+        "useFlatMap": "error"
+      },
+      "performance": {
+        "noBarrelFile": "error",
+        "noReExportAll": "error"
       }
     }
   },
@@ -82,6 +95,16 @@
         "rules": {
           "correctness": {
             "noUnusedPrivateClassMembers": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.tsx"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
           }
         }
       }

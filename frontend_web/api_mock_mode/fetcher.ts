@@ -1,61 +1,32 @@
 import { HeaderManager } from "@/features/shared/lib/headerManager";
 import { apiLog } from "@/features/shared/lib/logger";
-import {
-  mockMeResponse,
-  mockSigninResponse,
-  mockSignupResponse,
-  mockTestimonials,
-  mockUsers,
-  mockUserVoices,
-} from "./index";
+import { mockMeResponse } from "./api/auth-me";
+import { mockSigninResponse } from "./api/auth-signin";
+import { mockSignupResponse } from "./api/auth-signup";
+import { mockTestimonials, mockUserVoices } from "./api/user-voices";
+import { mockUsers } from "./api/users";
+
+// Route map for mock responses: "METHOD:path" -> response
+const MOCK_ROUTES: Record<string, unknown> = {
+  "GET:/testimonials": {
+    data: { testimonials: mockTestimonials },
+    status: 200,
+  },
+  "GET:/user-voices": { data: { userVoices: mockUserVoices }, status: 200 },
+  "POST:/auth/signin": mockSigninResponse,
+  "POST:/auth/signup": mockSignupResponse,
+  "GET:/auth/me": mockMeResponse,
+  "GET:/users": { data: { users: mockUsers }, status: 200 },
+};
+
+const DEFAULT_RESPONSE = { data: {}, status: 200 };
 
 /**
  * Get mock response for a given path
- * Returns mock data based on the API endpoint
  */
 function getMockResponse(path: string, method: string): unknown {
-  // GET /testimonials
-  if (path === "/testimonials" && method === "GET") {
-    return {
-      data: { testimonials: mockTestimonials },
-      status: 200,
-    };
-  }
-
-  // GET /user-voices
-  if (path === "/user-voices" && method === "GET") {
-    return {
-      data: { userVoices: mockUserVoices },
-      status: 200,
-    };
-  }
-
-  // POST /auth/signin
-  if (path === "/auth/signin" && method === "POST") {
-    return mockSigninResponse;
-  }
-
-  // POST /auth/signup
-  if (path === "/auth/signup" && method === "POST") {
-    return mockSignupResponse;
-  }
-
-  // GET /auth/me
-  if (path === "/auth/me" && method === "GET") {
-    return mockMeResponse;
-  }
-
-  // GET /users
-  if (path === "/users" && method === "GET") {
-    return {
-      data: { users: mockUsers },
-      status: 200,
-    };
-  }
-  return {
-    data: {},
-    status: 200,
-  };
+  const key = `${method}:${path}`;
+  return MOCK_ROUTES[key] ?? DEFAULT_RESPONSE;
 }
 
 /**

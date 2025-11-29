@@ -4,7 +4,7 @@ import type { ErrorInfo, ReactNode } from "react";
 import { Component } from "react";
 import { ErrorBoundaryButtonIds } from "@/features/shared/ids";
 import { isDev } from "@/features/shared/lib/env";
-import { Button } from "../../atoms/Button";
+import { Button } from "../../atoms/Button/Button";
 
 type ErrorBoundaryProps = {
   children: ReactNode;

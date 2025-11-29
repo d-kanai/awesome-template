@@ -10,7 +10,7 @@
 
 import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
-import { TextLinkListItem } from "../../atoms/TextLinkListItem";
+import { TextLinkListItem } from "../../atoms/TextLinkListItem/TextLinkListItem";
 
 export interface TextLinkListLinkItem {
   label: string;

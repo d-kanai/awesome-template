@@ -3,7 +3,7 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { ThemeToggleButtonIds } from "@/features/shared/ids";
-import { Button } from "../../atoms/Button";
+import { Button } from "../../atoms/Button/Button";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();

@@ -9,8 +9,8 @@
 
 import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
-import { TestimonialCard } from "../TestimonialCard";
-import { TextContentHeading } from "../TextContentHeading";
+import { TestimonialCard } from "../TestimonialCard/TestimonialCard";
+import { TextContentHeading } from "../TextContentHeading/TextContentHeading";
 
 export interface Testimonial {
   quote: string;

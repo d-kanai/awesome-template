@@ -39,6 +39,42 @@ const SENSITIVE_FIELDS = [
   "secret",
 ] as const;
 
+const MASKED_VALUE = "***MASKED***";
+
+/**
+ * Check if a field name is sensitive
+ */
+function isSensitiveField(key: string): boolean {
+  const lowerKey = key.toLowerCase();
+  return SENSITIVE_FIELDS.some((field) =>
+    lowerKey.includes(field.toLowerCase()),
+  );
+}
+
+/**
+ * Mask a single value based on key sensitivity
+ */
+function maskValue(key: string, value: unknown): unknown {
+  if (isSensitiveField(key)) {
+    return MASKED_VALUE;
+  }
+  if (typeof value === "object" && value !== null) {
+    return maskSensitive(value);
+  }
+  return value;
+}
+
+/**
+ * Mask object fields
+ */
+function maskObject(data: Record<string, unknown>): Record<string, unknown> {
+  const masked: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(data)) {
+    masked[key] = maskValue(key, value);
+  }
+  return masked;
+}
+
 /**
  * Mask sensitive fields in an object for logging
  *
@@ -50,27 +86,12 @@ export function maskSensitive(data: unknown): unknown {
   if (data === null || data === undefined) {
     return data;
   }
-
   if (Array.isArray(data)) {
     return data.map(maskSensitive);
   }
-
   if (typeof data === "object") {
-    const masked: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(data)) {
-      const isSensitive = SENSITIVE_FIELDS.some((field) =>
-        key.toLowerCase().includes(field.toLowerCase()),
-      );
-
-      masked[key] = isSensitive
-        ? "***MASKED***"
-        : typeof value === "object" && value !== null
-          ? maskSensitive(value)
-          : value;
-    }
-    return masked;
+    return maskObject(data as Record<string, unknown>);
   }
-
   return data;
 }
 

@@ -6,7 +6,7 @@ import { cn } from "@/features/shared/lib/utils";
 import {
   NavigationPill,
   type NavigationPillState,
-} from "../../atoms/NavigationPill";
+} from "../../atoms/NavigationPill/NavigationPill";
 
 export type NavigationPillListDirection = "Row" | "Column";
 

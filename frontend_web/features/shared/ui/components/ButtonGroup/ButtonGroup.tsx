@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { forwardRef } from "react";
 import { cn } from "@/features/shared/lib/utils";
-import { Button } from "../../atoms/Button";
+import { Button } from "../../atoms/Button/Button";
 
 export type ButtonGroupAlign = "Justify" | "Start" | "End" | "Center" | "Stack";
 

@@ -4,8 +4,8 @@
 import React from "react";
 import { HeroActionsButtonIds } from "@/features/home/ids";
 import { cn } from "@/features/shared/lib/utils";
-import { ButtonGroup } from "../ButtonGroup";
-import { TextContentTitle } from "../TextContentTitle";
+import { ButtonGroup } from "../ButtonGroup/ButtonGroup";
+import { TextContentTitle } from "../TextContentTitle/TextContentTitle";
 
 export interface HeroActionsProps {
   title: string;

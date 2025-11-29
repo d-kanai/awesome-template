@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
+import { getNonce } from "@/features/shared/lib/csp";
 import { QueryProvider } from "@/features/shared/providers/QueryProvider";
 import { ThemeProvider } from "@/features/shared/providers/ThemeProvider";
-import { ErrorBoundary } from "@/features/shared/ui/components/ErrorBoundary";
+import { ErrorBoundary } from "@/features/shared/ui/components/ErrorBoundary/ErrorBoundary";
 import "./globals.css";
 
 const inter = Inter({
@@ -27,10 +28,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = await getNonce();
+
   return (
     <html lang="ja" suppressHydrationWarning>
       <body className={`${inter.variable} ${robotoMono.variable}`}>
-        <ThemeProvider>
+        <ThemeProvider nonce={nonce}>
           <QueryProvider>
             <ErrorBoundary>{children}</ErrorBoundary>
           </QueryProvider>
