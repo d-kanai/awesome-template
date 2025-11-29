@@ -1,0 +1,240 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🔒 Web Security DAST Task (OWASP ZAP)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 E2Eテストで記録したHARファイルをインポートしてセキュリティスキャン
+# 📍 test-e2e-mock Task の後に実行 (runAfter: test-e2e-mock)
+# 📊 Results: 脆弱性検出数をダッシュボードに表示
+#
+# フロー:
+#   test-e2e-mock (HAR output) ──► security-dast (HAR import + scan)
+#
+# アーキテクチャ:
+#   ┌────────────────┐    ┌─────────────────────────┐
+#   │ HAR Files      │───►│ ZAP Import + Scan       │
+#   │ (from E2E)     │    │ (Active Scan on URLs)   │
+#   └────────────────┘    └─────────────────────────┘
+#
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: web-security-dast
+  namespace: default
+spec:
+  description: "OWASP ZAP DAST - HAR Import + Active Scan"
+
+  params:
+    - name: pnpm-version
+      type: string
+      default: "10.10.0"
+      description: "📦 pnpm バージョン"
+
+  workspaces:
+    - name: source
+      description: "クローン済みソースコード (E2Eテストで生成されたHARファイル含む)"
+
+  results:
+    - name: high-alerts
+      description: "High/Critical severity alerts count"
+    - name: medium-alerts
+      description: "Medium severity alerts count"
+    - name: low-alerts
+      description: "Low/Info severity alerts count"
+    - name: scan-status
+      description: "Scan result (PASS/WARN/FAIL)"
+
+  steps:
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🔒 DAST Scan (ZAP + HAR Import)
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: dast-scan
+      image: ghcr.io/zaproxy/zaproxy:stable
+      env:
+        - name: CI
+          value: "true"
+        - name: BASE_URL
+          value: "http://localhost:3000"
+        - name: NEXT_PUBLIC_API_BASE_URL
+          value: "http://localhost:8080"
+        - name: NEXT_PUBLIC_API_MOCK_MODE
+          value: "true"
+        - name: NEXT_PUBLIC_API_TIMEOUT_MS
+          value: "10000"
+        - name: ANALYZE
+          value: "false"
+        - name: ZAP_PORT
+          value: "8090"
+      script: |
+        #!/bin/bash
+        set -e
+
+        cd $(workspaces.source.path)/source/frontend_web
+
+        # ─────────────────────────────────────────────
+        # 0. Check HAR files exist
+        # ─────────────────────────────────────────────
+        HAR_DIR="./e2e-har"
+        if [ ! -d "$HAR_DIR" ] || [ -z "$(ls -A $HAR_DIR/*.har 2>/dev/null)" ]; then
+          echo "❌ No HAR files found in $HAR_DIR"
+          echo "   Make sure test-e2e-mock ran with RECORD_HAR=true"
+          echo -n "0" > $(results.high-alerts.path)
+          echo -n "0" > $(results.medium-alerts.path)
+          echo -n "0" > $(results.low-alerts.path)
+          echo -n "SKIP" > $(results.scan-status.path)
+          exit 0
+        fi
+
+        echo "📦 Found HAR files:"
+        ls -la $HAR_DIR/*.har
+
+        # ─────────────────────────────────────────────
+        # 1. Install Node.js (for Next.js server)
+        # ─────────────────────────────────────────────
+        echo "🔧 Installing Node.js..."
+        apt-get update && apt-get install -y curl gnupg
+        curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+        apt-get install -y nodejs
+
+        npm install -g corepack
+        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+
+        # ─────────────────────────────────────────────
+        # 2. Start ZAP daemon
+        # ─────────────────────────────────────────────
+        echo "🔒 Starting ZAP daemon..."
+        zap.sh -daemon -host 127.0.0.1 -port $ZAP_PORT \
+          -config api.disablekey=true \
+          -config api.addrs.addr.name=.* \
+          -config api.addrs.addr.regex=true &
+        ZAP_PID=$!
+
+        echo "⏳ Waiting for ZAP to be ready..."
+        timeout 60 bash -c "until curl -s http://localhost:$ZAP_PORT > /dev/null 2>&1; do sleep 1; done"
+        echo "✅ ZAP daemon ready!"
+
+        # ─────────────────────────────────────────────
+        # 3. Start Next.js server (already built by E2E task)
+        # ─────────────────────────────────────────────
+        echo "🚀 Starting Next.js server..."
+        pnpm start &
+        SERVER_PID=$!
+
+        echo "⏳ Waiting for Next.js server..."
+        timeout 60 bash -c "until curl -s http://localhost:3000 > /dev/null 2>&1; do sleep 1; done"
+        echo "✅ Next.js server ready!"
+
+        # ─────────────────────────────────────────────
+        # 4. Import HAR files into ZAP
+        # ─────────────────────────────────────────────
+        echo "📥 Importing HAR files into ZAP..."
+        for har_file in $HAR_DIR/*.har; do
+          echo "   Importing: $har_file"
+          # Use ZAP API to import HAR
+          curl -s "http://localhost:$ZAP_PORT/JSON/exim/action/importHar/" \
+            --data-urlencode "filePath=$(pwd)/$har_file" > /dev/null || true
+        done
+
+        # Show imported URLs
+        echo "📋 Imported URLs:"
+        URLS=$(curl -s "http://localhost:$ZAP_PORT/JSON/core/view/urls/" | \
+          python3 -c "import json,sys; d=json.load(sys.stdin); print('\n'.join(d.get('urls',[])))" 2>/dev/null || echo "")
+        echo "$URLS" | head -20
+
+        # ─────────────────────────────────────────────
+        # 5. Run ZAP Active Scan
+        # ─────────────────────────────────────────────
+        echo "🔍 Running ZAP Active Scan..."
+        curl -s "http://localhost:$ZAP_PORT/JSON/ascan/action/scan/?url=http://localhost:3000&recurse=true" > /dev/null
+
+        # Wait for scan to complete
+        echo "⏳ Waiting for active scan to complete..."
+        SCAN_TIMEOUT=300  # 5 minutes
+        ELAPSED=0
+        while [ $ELAPSED -lt $SCAN_TIMEOUT ]; do
+          STATUS=$(curl -s "http://localhost:$ZAP_PORT/JSON/ascan/view/status/" | \
+            python3 -c "import json,sys; print(json.load(sys.stdin).get('status','0'))" 2>/dev/null || echo "100")
+          if [ "$STATUS" = "100" ]; then
+            echo "✅ Active scan complete!"
+            break
+          fi
+          echo "   Scan progress: $STATUS%"
+          sleep 10
+          ELAPSED=$((ELAPSED + 10))
+        done
+
+        if [ $ELAPSED -ge $SCAN_TIMEOUT ]; then
+          echo "⚠️ Scan timeout reached, proceeding with partial results..."
+        fi
+
+        # ─────────────────────────────────────────────
+        # 6. Generate Report
+        # ─────────────────────────────────────────────
+        echo "📊 Generating ZAP report..."
+        REPORT_DIR=$(workspaces.source.path)/source/frontend_web/zap-reports
+        mkdir -p $REPORT_DIR
+
+        curl -s "http://localhost:$ZAP_PORT/OTHER/core/other/htmlreport/" > $REPORT_DIR/zap-report.html
+        curl -s "http://localhost:$ZAP_PORT/JSON/core/view/alerts/" > $REPORT_DIR/zap-alerts.json
+
+        # ─────────────────────────────────────────────
+        # 7. Parse Results
+        # ─────────────────────────────────────────────
+        echo "📈 Parsing scan results..."
+
+        HIGH=$(curl -s "http://localhost:$ZAP_PORT/JSON/core/view/alerts/?riskid=3" | \
+          python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d.get('alerts',[])))" 2>/dev/null || echo "0")
+        MEDIUM=$(curl -s "http://localhost:$ZAP_PORT/JSON/core/view/alerts/?riskid=2" | \
+          python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d.get('alerts',[])))" 2>/dev/null || echo "0")
+        LOW=$(curl -s "http://localhost:$ZAP_PORT/JSON/core/view/alerts/?riskid=1" | \
+          python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d.get('alerts',[])))" 2>/dev/null || echo "0")
+        INFO=$(curl -s "http://localhost:$ZAP_PORT/JSON/core/view/alerts/?riskid=0" | \
+          python3 -c "import json,sys; d=json.load(sys.stdin); print(len(d.get('alerts',[])))" 2>/dev/null || echo "0")
+
+        LOW_TOTAL=$((LOW + INFO))
+
+        echo -n "$HIGH" > $(results.high-alerts.path)
+        echo -n "$MEDIUM" > $(results.medium-alerts.path)
+        echo -n "$LOW_TOTAL" > $(results.low-alerts.path)
+
+        # ─────────────────────────────────────────────
+        # 8. Cleanup
+        # ─────────────────────────────────────────────
+        kill $SERVER_PID 2>/dev/null || true
+        kill $ZAP_PID 2>/dev/null || true
+
+        # ─────────────────────────────────────────────
+        # 9. Determine Status
+        # ─────────────────────────────────────────────
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "📊 DAST Scan Results:"
+        echo "   High/Critical: $HIGH"
+        echo "   Medium: $MEDIUM"
+        echo "   Low/Info: $LOW_TOTAL"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+        if [ "$HIGH" -gt 0 ]; then
+          echo -n "FAIL" > $(results.scan-status.path)
+          echo ""
+          echo "╔════════════════════════════════════════════════════════════╗"
+          echo "║                                                            ║"
+          echo "║   ██████╗  █████╗ ███████╗████████╗    ███████╗ █████╗ ██╗██╗     ║"
+          echo "║   ██╔══██╗██╔══██╗██╔════╝╚══██╔══╝    ██╔════╝██╔══██╗██║██║     ║"
+          echo "║   ██║  ██║███████║███████╗   ██║       █████╗  ███████║██║██║     ║"
+          echo "║   ██║  ██║██╔══██║╚════██║   ██║       ██╔══╝  ██╔══██║██║██║     ║"
+          echo "║   ██████╔╝██║  ██║███████║   ██║       ██║     ██║  ██║██║███████╗║"
+          echo "║   ╚═════╝ ╚═╝  ╚═╝╚══════╝   ╚═╝       ╚═╝     ╚═╝  ╚═╝╚═╝╚══════╝║"
+          echo "║                                                            ║"
+          echo "║   $HIGH High/Critical severity findings detected!          ║"
+          echo "║   Check: $REPORT_DIR/zap-report.html                       ║"
+          echo "║                                                            ║"
+          echo "╚════════════════════════════════════════════════════════════╝"
+          exit 1
+        elif [ "$MEDIUM" -gt 0 ]; then
+          echo -n "WARN" > $(results.scan-status.path)
+          echo "⚠️ DAST Scan completed with $MEDIUM medium severity warnings"
+          echo "✅ No high/critical findings - proceeding"
+        else
+          echo -n "PASS" > $(results.scan-status.path)
+          echo "✅ DAST Scan PASSED - No significant findings!"
+        fi

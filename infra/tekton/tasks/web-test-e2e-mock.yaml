@@ -69,6 +69,11 @@ spec:
           value: "10000"
         - name: ANALYZE
           value: "false"
+        # HAR recording for DAST
+        - name: RECORD_HAR
+          value: "true"
+        - name: HAR_OUTPUT_DIR
+          value: "./e2e-har"
       script: |
         #!/bin/bash
         set -e

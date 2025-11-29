@@ -1,3 +1,5 @@
+import * as fs from "node:fs";
+import * as path from "node:path";
 import {
   After,
   AfterAll,
@@ -11,6 +13,10 @@ import type { CustomWorld } from "../steps/world";
 
 const API_BASE_URL = env.NEXT_PUBLIC_API_BASE_URL;
 const IS_MOCK_MODE = env.NEXT_PUBLIC_API_MOCK_MODE;
+
+// HAR recording for DAST (enabled via environment variable)
+const RECORD_HAR = process.env.RECORD_HAR === "true";
+const HAR_OUTPUT_DIR = process.env.HAR_OUTPUT_DIR || "./e2e-har";
 
 setDefaultTimeout(30000);
 
@@ -61,10 +67,32 @@ AfterAll(async () => {
   await browser.close();
 });
 
+// Track scenario count for unique HAR filenames
+let scenarioCount = 0;
+
 Before(async function (this: CustomWorld) {
-  this.context = await browser.newContext({
+  scenarioCount++;
+
+  // Create HAR output directory if recording is enabled
+  if (RECORD_HAR && !fs.existsSync(HAR_OUTPUT_DIR)) {
+    fs.mkdirSync(HAR_OUTPUT_DIR, { recursive: true });
+  }
+
+  // Context options with optional HAR recording
+  const contextOptions: Parameters<Browser["newContext"]>[0] = {
     baseURL: process.env.BASE_URL || "http://localhost:3000",
-  });
+  };
+
+  if (RECORD_HAR) {
+    contextOptions.recordHar = {
+      path: path.join(HAR_OUTPUT_DIR, `scenario-${scenarioCount}.har`),
+      mode: "full",
+      content: "omit", // Don't record response content to reduce size
+    };
+    console.log(`[E2E] HAR recording enabled: scenario-${scenarioCount}.har`);
+  }
+
+  this.context = await browser.newContext(contextOptions);
   this.page = await this.context.newPage();
   this.browser = browser;
 
