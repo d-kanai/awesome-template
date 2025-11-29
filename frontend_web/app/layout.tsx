@@ -1,5 +1,3 @@
-// import { FeatureFlagProvider } from "@/features/shared/providers/FeatureFlagProvider";
-
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
 import { QueryProvider } from "@/features/shared/providers/QueryProvider";
@@ -34,10 +32,7 @@ export default async function RootLayout({
       <body className={`${inter.variable} ${robotoMono.variable}`}>
         <ThemeProvider>
           <QueryProvider>
-            <ErrorBoundary>
-              {/* <FeatureFlagProvider>{children}</FeatureFlagProvider> */}
-              {children}
-            </ErrorBoundary>
+            <ErrorBoundary>{children}</ErrorBoundary>
           </QueryProvider>
         </ThemeProvider>
       </body>

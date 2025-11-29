@@ -1,12 +1,22 @@
-import { useFlag } from "@unleash/proxy-client-react";
+import { useEffect } from "react";
+import { useFeatureFlagStore } from "@/features/shared/stores/useFeatureFlagStore";
 
 /**
  * useFeatureFlag
- * Unleashの機能フラグを取得するカスタムフック
+ * Zustandストアから機能フラグを取得するカスタムフック
  *
  * @param flagName - 機能フラグ名（FEATURE_FLAGS定数から取得）
  * @returns 機能フラグの有効/無効状態
  */
 export function useFeatureFlag(flagName: string): boolean {
-  return useFlag(flagName);
+  const { flags, fetchFlags, isLoading } = useFeatureFlagStore();
+
+  useEffect(() => {
+    // 初回のみフェッチ（フラグが空の場合）
+    if (Object.keys(flags).length === 0 && !isLoading) {
+      fetchFlags();
+    }
+  }, [flags, isLoading, fetchFlags]);
+
+  return flags[flagName] ?? false;
 }
