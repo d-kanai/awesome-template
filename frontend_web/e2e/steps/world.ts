@@ -1,9 +1,9 @@
 import { setWorldConstructor, World } from "@cucumber/cucumber";
 import type { Browser, BrowserContext, Page } from "@playwright/test";
-import { CookieManager } from "../../features/shared/lib/cookieManager";
-import { env } from "../../features/shared/lib/env";
-import { SHARED_ROUTES } from "../../features/shared/lib/routes";
 import { USER_ROUTES } from "../../features/user/routes";
+import { CookieManager } from "../../shared/lib/cookieManager";
+import { env } from "../../shared/lib/env";
+import { SHARED_ROUTES } from "../../shared/lib/routes";
 
 const API_BASE_URL = env.NEXT_PUBLIC_API_BASE_URL;
 const IS_MOCK_MODE = env.NEXT_PUBLIC_API_MOCK_MODE;

@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/features/shared/ui/atoms/Button/Button";
-import { InputField } from "@/features/shared/ui/atoms/InputField/InputField";
+import { Button } from "@/shared/ui/atoms/Button/Button";
+import { InputField } from "@/shared/ui/atoms/InputField/InputField";
 import { startFlow } from "../actions/startFlow";
 import { InputScreenButtonIds } from "../ids";
 import { MULTI_FLOW_ROUTES } from "../routes";

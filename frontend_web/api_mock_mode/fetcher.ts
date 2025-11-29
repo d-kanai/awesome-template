@@ -1,5 +1,5 @@
-import { HeaderManager } from "@/features/shared/lib/headerManager";
-import { apiLog } from "@/features/shared/lib/logger";
+import { HeaderManager } from "@/shared/lib/headerManager";
+import { apiLog } from "@/shared/lib/logger";
 import { mockMeResponse } from "./api/auth-me";
 import { mockSigninResponse } from "./api/auth-signin";
 import { mockSignupResponse } from "./api/auth-signup";

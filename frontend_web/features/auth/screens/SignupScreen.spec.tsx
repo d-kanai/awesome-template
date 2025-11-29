@@ -10,16 +10,16 @@ import {
 } from "vitest";
 import { SignupTestIds } from "@/features/auth/ids";
 import { SignupScreen } from "@/features/auth/screens/SignupScreen";
-import { fetcher } from "@/features/shared/api/fetcher";
-import type { signupResponse } from "@/features/shared/api/generated/functions";
-import { renderWithProviders } from "@/features/shared/lib/testsupport";
+import { fetcher } from "@/shared/api/fetcher";
+import type { signupResponse } from "@/shared/api/generated/functions";
+import { renderWithProviders } from "@/shared/lib/testsupport";
 
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(),
   redirect: vi.fn(),
 }));
 
-vi.mock("@/features/shared/api/fetcher", () => ({
+vi.mock("@/shared/api/fetcher", () => ({
   fetcher: vi.fn(),
 }));
 

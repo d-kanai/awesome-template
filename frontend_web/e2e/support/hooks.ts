@@ -8,7 +8,7 @@ import {
   setDefaultTimeout,
 } from "@cucumber/cucumber";
 import { type Browser, chromium } from "@playwright/test";
-import { env } from "../../features/shared/lib/env";
+import { env } from "../../shared/lib/env";
 import type { CustomWorld } from "../steps/world";
 
 const API_BASE_URL = env.NEXT_PUBLIC_API_BASE_URL;

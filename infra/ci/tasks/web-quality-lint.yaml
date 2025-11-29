@@ -49,3 +49,17 @@ spec:
         echo "🧹 Running Biome lint check..."
         pnpm biome check
         echo "✅ Biome check passed!"
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🔗 Step 3: Dependency Direction Check
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: lint-deps
+      image: node:22.21.1-alpine
+      script: |
+        #!/bin/sh
+        set -e
+        cd $(workspaces.source.path)/source/frontend_web
+        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+        echo "🔗 Running dependency direction check..."
+        pnpm lint:deps
+        echo "✅ Dependency check passed!"

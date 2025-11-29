@@ -1,11 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getAllUsers as getAllUsersApi } from "@/features/shared/api/generated/functions";
 import { UserTestIds } from "@/features/user/ids";
 import { getAllUsers } from "@/features/user/queries/getAllUsers";
 import { UserScreen } from "@/features/user/screens/UserScreen";
+import { getAllUsers as getAllUsersApi } from "@/shared/api/generated/functions";
 
-vi.mock("@/features/shared/api/generated/functions", () => ({
+vi.mock("@/shared/api/generated/functions", () => ({
   getAllUsers: vi.fn(),
 }));
 

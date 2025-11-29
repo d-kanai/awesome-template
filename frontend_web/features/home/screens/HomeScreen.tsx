@@ -2,9 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { AUTH_ROUTES } from "@/features/auth/routes";
+import { HeroActionsButtonIds } from "@/features/home/ids";
 import type { UserVoice } from "@/features/home/queries/getUserVoices";
-import { CardGridTestimonials } from "@/features/shared/ui/components/CardGridTestimonials/CardGridTestimonials";
-import { HeroActions } from "@/features/shared/ui/components/HeroActions/HeroActions";
+import { CardGridTestimonials } from "@/shared/ui/components/CardGridTestimonials/CardGridTestimonials";
+import { HeroActions } from "@/shared/ui/components/HeroActions/HeroActions";
 
 interface HomeScreenProps {
   userVoices: UserVoice[];
@@ -21,6 +22,8 @@ function HeroSection({
     <HeroActions
       title="Welcome to Our Platform"
       subtitle="Transform your workflow with our innovative solutions"
+      primaryButtonId={HeroActionsButtonIds.primary}
+      secondaryButtonId={HeroActionsButtonIds.secondary}
       primaryButtonText="Sign Up"
       secondaryButtonText="Contact Us"
       onPrimaryButtonClick={onPrimaryClick}

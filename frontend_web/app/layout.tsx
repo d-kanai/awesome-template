@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono } from "next/font/google";
-import { getNonce } from "@/features/shared/lib/csp";
-import { QueryProvider } from "@/features/shared/providers/QueryProvider";
-import { ThemeProvider } from "@/features/shared/providers/ThemeProvider";
-import { ErrorBoundary } from "@/features/shared/ui/components/ErrorBoundary/ErrorBoundary";
+import { getNonce } from "@/shared/lib/csp";
+import { QueryProvider } from "@/shared/providers/QueryProvider";
+import { ThemeProvider } from "@/shared/providers/ThemeProvider";
+import { ErrorBoundary } from "@/shared/ui/components/ErrorBoundary/ErrorBoundary";
 import "./globals.css";
 
 const inter = Inter({

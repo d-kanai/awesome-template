@@ -1,6 +1,6 @@
 "use client";
 
-import type { UserListItem as User } from "@/features/shared/api/generated/model";
+import type { UserListItem as User } from "@/shared/api/generated/model";
 import { UserTestIds } from "../ids";
 
 function UserAvatar({ email }: { email: string }) {

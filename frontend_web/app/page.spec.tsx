@@ -1,20 +1,20 @@
 import { redirect } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AUTH_ROUTES } from "@/features/auth/routes";
-import { me } from "@/features/shared/api/generated/functions";
-import { CookieManager } from "@/features/shared/lib/cookieManager";
 import { USER_ROUTES } from "@/features/user/routes";
+import { me } from "@/shared/api/generated/functions";
+import { CookieManager } from "@/shared/lib/cookieManager";
 import RootPage from "./page";
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn(),
 }));
 
-vi.mock("@/features/shared/api/generated/functions", () => ({
+vi.mock("@/shared/api/generated/functions", () => ({
   me: vi.fn(),
 }));
 
-vi.mock("@/features/shared/lib/cookieManager", () => ({
+vi.mock("@/shared/lib/cookieManager", () => ({
   CookieManager: {
     getAccessToken: vi.fn(),
   },

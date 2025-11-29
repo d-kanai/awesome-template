@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { env } from "./features/shared/lib/env";
+import { env } from "./shared/lib/env";
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: env.ANALYZE === "true",

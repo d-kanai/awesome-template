@@ -1,11 +1,11 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { AUTH_ROUTES } from "@/features/auth/routes";
-import { CookieManager } from "@/features/shared/lib/cookieManager";
-import { generateShortId } from "@/features/shared/lib/dateTime";
-import { HeaderManager } from "@/features/shared/lib/headerManager";
-import { proxyLog } from "@/features/shared/lib/logger";
-import { SHARED_ROUTES } from "@/features/shared/lib/routes";
+import { CookieManager } from "@/shared/lib/cookieManager";
+import { generateShortId } from "@/shared/lib/dateTime";
+import { HeaderManager } from "@/shared/lib/headerManager";
+import { proxyLog } from "@/shared/lib/logger";
+import { SHARED_ROUTES } from "@/shared/lib/routes";
 
 // CSP (Content Security Policy) 設定 - Level 3 with nonce
 const isDev = process.env.NODE_ENV === "development";

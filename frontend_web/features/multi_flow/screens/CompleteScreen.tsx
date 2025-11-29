@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Button } from "@/features/shared/ui/atoms/Button/Button";
+import { Button } from "@/shared/ui/atoms/Button/Button";
 import { CompleteScreenButtonIds } from "../ids";
 import { MULTI_FLOW_ROUTES } from "../routes";
 import { useFlowStore } from "../stores/useFlowStore";

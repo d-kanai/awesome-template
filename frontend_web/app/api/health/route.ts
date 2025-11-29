@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getJSTTimestamp } from "@/features/shared/lib/dateTime";
-import { createLoggerAsync, LogType } from "@/features/shared/lib/logger";
+import { getJSTTimestamp } from "@/shared/lib/dateTime";
+import { createLoggerAsync, LogType } from "@/shared/lib/logger";
 
 export async function GET() {
   const timestamp = getJSTTimestamp();

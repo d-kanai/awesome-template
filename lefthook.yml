@@ -68,6 +68,11 @@ pre-commit:
       exclude: "scripts/**/*"
       run: pnpm biome check {staged_files}
 
+    web-lint-deps:
+      root: "frontend_web"
+      glob: "{*,**/*}.{ts,tsx}"
+      run: pnpm lint:deps
+
     web-typecheck:
       root: "frontend_web"
       glob: "{*,**/*}.{ts,tsx,js,jsx}"

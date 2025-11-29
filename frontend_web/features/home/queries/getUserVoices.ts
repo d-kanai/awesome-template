@@ -1,6 +1,6 @@
 import { cache } from "react";
-import { getUserVoices as getUserVoicesAPI } from "@/features/shared/api/generated/functions";
-import type { UserVoice } from "@/features/shared/api/generated/model";
+import { getUserVoices as getUserVoicesAPI } from "@/shared/api/generated/functions";
+import type { UserVoice } from "@/shared/api/generated/model";
 
 export type { UserVoice };
 

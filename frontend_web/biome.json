@@ -64,7 +64,7 @@
   "overrides": [
     {
       "includes": [
-        "**/features/shared/lib/logger.ts",
+        "**/shared/lib/logger.ts",
         "**/e2e/**/*",
         "**/*.spec.ts",
         "**/*.spec.tsx",
@@ -90,7 +90,7 @@
       }
     },
     {
-      "includes": ["**/features/shared/lib/cookieManager.ts"],
+      "includes": ["**/shared/lib/cookieManager.ts"],
       "linter": {
         "rules": {
           "correctness": {
@@ -110,7 +110,7 @@
       }
     },
     {
-      "includes": ["**/features/shared/lib/env.ts"],
+      "includes": ["**/shared/lib/env.ts"],
       "linter": {
         "rules": {
           "suspicious": {
@@ -135,6 +135,19 @@
         "rules": {
           "a11y": {
             "useSemanticElements": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["scripts/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
+          },
+          "suspicious": {
+            "noConsole": "off"
           }
         }
       }

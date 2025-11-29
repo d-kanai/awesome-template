@@ -1,10 +1,10 @@
 "use server";
 
 import { type SigninFormData, signinFormSchema } from "@/features/auth/schemas";
-import { signin as signinApi } from "@/features/shared/api/generated/functions";
-import { CookieManager } from "@/features/shared/lib/cookieManager";
-import { formatZodFieldErrors } from "@/features/shared/lib/zodErrorFormatter";
 import { USER_ROUTES } from "@/features/user/routes";
+import { signin as signinApi } from "@/shared/api/generated/functions";
+import { CookieManager } from "@/shared/lib/cookieManager";
+import { formatZodFieldErrors } from "@/shared/lib/zodErrorFormatter";
 
 export type SigninActionResponse = {
   error?: string;

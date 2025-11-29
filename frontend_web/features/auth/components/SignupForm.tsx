@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { AUTH_ROUTES } from "@/features/auth/routes";
-import { Button } from "@/features/shared/ui/atoms/Button/Button";
-import { InputField } from "@/features/shared/ui/atoms/InputField/InputField";
+import { Button } from "@/shared/ui/atoms/Button/Button";
+import { InputField } from "@/shared/ui/atoms/InputField/InputField";
 import { useSignupForm } from "../hooks/useSignupForm";
 import { SignupButtonIds, SignupTestIds } from "../ids";
 

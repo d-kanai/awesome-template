@@ -1,8 +1,8 @@
 "use server";
 
 import { cache } from "react";
-import { me } from "@/features/shared/api/generated/functions";
-import { CookieManager } from "@/features/shared/lib/cookieManager";
+import { me } from "@/shared/api/generated/functions";
+import { CookieManager } from "@/shared/lib/cookieManager";
 
 export type Session = {
   user: {

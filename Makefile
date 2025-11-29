@@ -5,7 +5,7 @@ ROOT_DIR := $(CURDIR)
         install \
         backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
-        web-install web-dev web-build web-lint web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run \
+        web-install web-dev web-build web-lint web-lint-deps web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run web-show-routes \
         unleash-up unleash-down unleash-open \
         tekton-setup tekton-teardown tekton-dashboard tekton-web-build tekton-web-lint tekton-web-ut tekton-web-e2e-mock tekton-web-ci tekton-logs \
         openapi-client lefthook-install
@@ -62,6 +62,8 @@ help:
 	@echo "  make web-ut               # Run web unit tests (Vitest)"
 	@echo "  make web-ut-coverage      # Run web unit tests with coverage"
 	@echo "  make web-e2e              # Run web E2E tests (Playwright + Cucumber)"
+	@echo "  make web-lint-deps        # Check dependency direction (shared → features)"
+	@echo "  make web-show-routes      # Show page transition tree"
 	@echo "  make web-docker-build     # Build web Docker image"
 	@echo "  make web-docker-run       # Run web Docker container"
 	@echo ""
@@ -286,6 +288,12 @@ web-ut-coverage:
 web-e2e:
 	cd frontend_web && pnpm test:e2e
 
+web-lint-deps:
+	cd frontend_web && pnpm lint:deps
+
+web-show-routes:
+	cd frontend_web && pnpm show:routes
+
 web-docker-build:
 	cd frontend_web && pnpm docker:build
 
@@ -301,7 +309,7 @@ openapi-client: backend-openapi native-generate-api
 # Tekton
 ###############################################################
 tekton-setup:
-	./infra/tekton/setup-local.sh
+	./infra/ci/setup-local.sh
 
 tekton-teardown:
 	kind delete cluster --name tekton-local
@@ -314,29 +322,29 @@ tekton-dashboard:
 	open http://localhost:9097
 
 tekton-web-build:
-	kubectl create -f infra/tekton/taskruns/web-build.yaml
+	kubectl create -f infra/ci/taskruns/web-build.yaml
 	@echo ""
 	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
 
 tekton-web-lint:
-	kubectl create -f infra/tekton/taskruns/web-lint.yaml
+	kubectl create -f infra/ci/taskruns/web-lint.yaml
 	@echo ""
 	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
 
 tekton-web-ut:
-	kubectl create -f infra/tekton/taskruns/web-ut.yaml
+	kubectl create -f infra/ci/taskruns/web-ut.yaml
 	@echo ""
 	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
 
 tekton-web-e2e-mock:
-	kubectl create -f infra/tekton/taskruns/web-e2e-mock.yaml
+	kubectl create -f infra/ci/taskruns/web-e2e-mock.yaml
 	@echo ""
 	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
 
 tekton-web-ci:
-	kubectl apply -f infra/tekton/tasks/
-	kubectl apply -f infra/tekton/pipelines/web-ci.yaml
-	kubectl create -f infra/tekton/pipelineruns/web-ci.yaml
+	kubectl apply -f infra/ci/tasks/
+	kubectl apply -f infra/ci/pipelines/web-ci.yaml
+	kubectl create -f infra/ci/pipelineruns/web-ci.yaml
 	@echo ""
 	@echo "PipelineRun created. Run 'make tekton-logs' to see the output."
 

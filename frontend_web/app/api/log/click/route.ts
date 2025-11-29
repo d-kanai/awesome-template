@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { createLogger, LogType } from "@/features/shared/lib/logger";
+import { createLogger, LogType } from "@/shared/lib/logger";
 
 /**
  * Click event logging endpoint

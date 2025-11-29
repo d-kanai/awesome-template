@@ -6,7 +6,7 @@ import { getUserVoices } from "@/features/home/queries/getUserVoices";
 import { HomeScreen } from "@/features/home/screens/HomeScreen";
 
 // 本番API関数をモック（Screen Testは本実装に対してテスト）
-vi.mock("@/features/shared/api/generated/functions", () => ({
+vi.mock("@/shared/api/generated/functions", () => ({
   getUserVoices: vi.fn(),
 }));
 
@@ -16,7 +16,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 const { getUserVoices: getUserVoicesAPI } = await import(
-  "@/features/shared/api/generated/functions"
+  "@/shared/api/generated/functions"
 );
 
 describe("HomeScreen - TestC", () => {

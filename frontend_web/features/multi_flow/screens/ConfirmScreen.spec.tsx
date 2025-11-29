@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ConfirmScreen } from "@/features/multi_flow/screens/ConfirmScreen";
 import { useFlowStore } from "@/features/multi_flow/stores/useFlowStore";
-import { createLoggerAsync } from "@/features/shared/lib/logger";
+import { createLoggerAsync } from "@/shared/lib/logger";
 
 // Next.js router をモック
 vi.mock("next/navigation", () => ({
@@ -12,7 +12,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 // Logger をモック
-vi.mock("@/features/shared/lib/logger", () => ({
+vi.mock("@/shared/lib/logger", () => ({
   createLoggerAsync: vi.fn(),
 }));
 

@@ -1,6 +1,6 @@
 "use client";
 
-import type { UserListItem } from "@/features/shared/api/generated/model";
+import type { UserListItem } from "@/shared/api/generated/model";
 import { UserList } from "../components/UserList";
 import { UserTestIds } from "../ids";
 

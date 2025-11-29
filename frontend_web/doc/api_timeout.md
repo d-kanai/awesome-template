@@ -67,7 +67,7 @@ export async function signinAction(data: SigninFormData) {
 ### 2. タイムアウトエラーの判定
 
 ```typescript
-import { TimeoutError } from "@/features/shared/lib/timeout";
+import { TimeoutError } from "@/shared/lib/timeout";
 
 try {
   const response = await someApi();
@@ -111,7 +111,7 @@ export async function uploadLargeFile(file: File) {
 API以外の処理にもタイムアウトを設定できます:
 
 ```typescript
-import { withTimeout } from "@/features/shared/lib/timeout";
+import { withTimeout } from "@/shared/lib/timeout";
 
 // 例: IndexedDBからの読み込みにタイムアウトを設定
 async function loadFromIndexedDB() {
@@ -211,7 +211,7 @@ const response = await slowApi(data, { timeout: 90000 });
 
 ```typescript
 // 将来的な実装例
-import { withRetry } from "@/features/shared/lib/retry";
+import { withRetry } from "@/shared/lib/retry";
 
 const response = await withRetry(
   () => unreliableApi(),

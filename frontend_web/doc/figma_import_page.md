@@ -285,7 +285,7 @@ Page Levelコンポーネントは、バックエンド実装前でもAPI連携�
 
 4. **Figma Rawのimportパス修正**
    - MCPで生成された相対パス（`./Header`）を絶対パスに修正
-   - `@/features/shared/ui/components/Header` に変更
+   - `@/shared/ui/components/Header` に変更
 
 #### Step 1: 本番openapi.jsonにAPI定義を追加
 
@@ -388,7 +388,7 @@ api_mock_mode/
 **ファイル:** `api_mock_mode/api/user-voices.ts`（URLと同じ名前）
 
 ```typescript
-import type { UserVoice } from "@/features/shared/api/generated/model";
+import type { UserVoice } from "@/shared/api/generated/model";
 
 export const mockUserVoices: UserVoice[] = [
   {
@@ -451,8 +451,8 @@ export async function mockFetcher<TData, TVariables = unknown>(
 
 ```typescript
 // features/home/queries/getTestimonials.ts
-import { getTestimonials as getTestimonialsAPI } from "@/features/shared/api/generated/functions";
-import type { Testimonial } from "@/features/shared/api/generated/model";
+import { getTestimonials as getTestimonialsAPI } from "@/shared/api/generated/functions";
+import type { Testimonial } from "@/shared/api/generated/model";
 import { cache } from "react";
 
 export type { Testimonial };
@@ -472,7 +472,7 @@ export const getTestimonials = cache(async (): Promise<Testimonial[]> => {
 
 **重要:**
 - `cache()`でラップしてReact Server Componentsでのリクエスト重複排除
-- 必ず本番関数（`@/features/shared/api/generated/functions`）をimport
+- 必ず本番関数（`@/shared/api/generated/functions`）をimport
 - 環境変数で自動的にモック/実APIが切り替わる
 
 #### Step 5: Screen Test作成
@@ -488,12 +488,12 @@ import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // 本番API関数をモック（Screen Testは本実装に対してテスト）
-vi.mock("@/features/shared/api/generated/functions", () => ({
+vi.mock("@/shared/api/generated/functions", () => ({
   getTestimonials: vi.fn(),
 }));
 
 const { getTestimonials: getTestimonialsAPI } = await import(
-  "@/features/shared/api/generated/functions"
+  "@/shared/api/generated/functions"
 );
 
 describe("HomeScreen - TestC", () => {
@@ -532,7 +532,7 @@ describe("HomeScreen - TestC", () => {
 ```
 
 **重要:**
-- 必ず本番関数をモック（`@/features/shared/api/generated/functions`）
+- 必ず本番関数をモック（`@/shared/api/generated/functions`）
 - Screen Testは本実装に対してテスト（モックモード関数ではない）
 - `vi.mock()`を使用（MSWは使わない）
 
@@ -561,7 +561,7 @@ pnpm dev:mock
 ┌─────────────────────────────────────────────────────┐
 │ Query/Action                                        │
 │   import { getTestimonials } from                   │
-│     "@/features/shared/api/generated/functions"     │
+│     "@/shared/api/generated/functions"     │
 └────────────────┬────────────────────────────────────┘
                  │
                  ▼
@@ -652,7 +652,7 @@ pnpm dev:mock
 ### エラー1: typecheck時に型が見つからない
 
 ```
-error TS2305: Module '"@/features/shared/api/generated/model"' has no exported member 'UserVoice'.
+error TS2305: Module '"@/shared/api/generated/model"' has no exported member 'UserVoice'.
 ```
 
 **原因:**
@@ -675,7 +675,7 @@ error TS2307: Cannot find module './Header' or its corresponding type declaratio
 - MCPで生成されたimportパスが相対パスになっている
 
 **解決策:**
-- 相対パス `./Header` を絶対パス `@/features/shared/ui/components/Header` に変更
+- 相対パス `./Header` を絶対パス `@/shared/ui/components/Header` に変更
 
 ### エラー3: fetch failed（実行時エラー）
 

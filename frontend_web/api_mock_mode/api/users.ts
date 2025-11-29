@@ -2,7 +2,7 @@
  * Mock data for Users API
  */
 
-import type { UserListItem } from "@/features/shared/api/generated/model";
+import type { UserListItem } from "@/shared/api/generated/model";
 
 export const mockUsers: UserListItem[] = [
   {
