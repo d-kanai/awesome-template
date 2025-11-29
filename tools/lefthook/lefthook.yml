@@ -1,23 +1,74 @@
+# Lefthook - Git Hooks Manager
+# https://github.com/evilmartians/lefthook
+#
+# Setup: pnpm install (prepare script で自動インストール)
+# Manual: npx lefthook install
+
 pre-commit:
-  parallel: false
+  parallel: true
   commands:
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # Security
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    gitleaks:
+      run: gitleaks protect --staged --verbose
+      fail_text: "シークレットが検出されました。コミット前に削除してください。"
+
+    semgrep:
+      root: "frontend_web"
+      glob: "{*,**/*}.{ts,tsx,js,jsx}"
+      run: semgrep scan --config auto --severity WARNING {staged_files}
+      fail_text: "セキュリティ問題が検出されました。修正してください。"
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # Backend (Java)
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     backend-format:
       glob: "backend/src/**/*.java"
       stage_fixed: true
       run: ./tools/lefthook/backend_format.sh {staged_files}
+
     backend-lint:
       glob: "backend/src/**/*.java"
       run: ./tools/lefthook/backend_lint.sh {staged_files}
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # Native (React Native)
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     native-format:
-      glob: "frontend_native/**/*.{ts,tsx,js,jsx,json}"
+      glob: "frontend_native/{*,**/*}.{ts,tsx,js,jsx,json}"
       stage_fixed: true
       run: ./tools/lefthook/frontend_format.sh {staged_files}
+
     native-lint:
-      glob: "frontend_native/**/*.{ts,tsx,js,jsx,json}"
+      glob: "frontend_native/{*,**/*}.{ts,tsx,js,jsx,json}"
       run: ./tools/lefthook/frontend_lint.sh {staged_files}
+
     native-typecheck:
-      glob: "frontend_native/**/*.{ts,tsx,js,jsx,json}"
+      glob: "frontend_native/{*,**/*}.{ts,tsx,js,jsx,json}"
       run: ./tools/lefthook/frontend_typecheck.sh {staged_files}
+
     native-remove-deadcode:
-      glob: "frontend_native/**/*.{ts,tsx,js,jsx,json}"
+      glob: "frontend_native/{*,**/*}.{ts,tsx,js,jsx,json}"
       run: ./tools/lefthook/frontend_remove_deadcode.sh {staged_files}
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # Web (Next.js)
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    web-format:
+      root: "frontend_web"
+      glob: "{*,**/*}.{ts,tsx,js,jsx,json,css}"
+      exclude: "scripts/**/*"
+      stage_fixed: true
+      run: pnpm biome check --write {staged_files}
+
+    web-lint:
+      root: "frontend_web"
+      glob: "{*,**/*}.{ts,tsx,js,jsx,json,css}"
+      exclude: "scripts/**/*"
+      run: pnpm biome check {staged_files}
+
+    web-typecheck:
+      root: "frontend_web"
+      glob: "{*,**/*}.{ts,tsx,js,jsx}"
+      run: pnpm typecheck
