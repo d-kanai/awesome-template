@@ -84,7 +84,7 @@
    - ⚠️ schema名は英語で定義（日本語はNG）
 6. **Orval生成**: `pnpm generate:api` 実行
    - ⚠️ 生成後、`model/index.ts`と`functions.ts`で型・関数が生成されたか確認
-7. **モックデータ追加**: `api_mock_mode/data.ts` + `api_mock_mode/fetcher.ts`
+7. **モックデータ追加**: `api_mock_mode/api/[api-name].ts`（URLと同じ命名）+ `api_mock_mode/fetcher.ts`
 8. **Query/Action実装**: データ取得・変更ロジック作成
 9. **test-ids定義**: `features/[feature]/test-ids.ts` 作成
 10. **Screen実装**: RSCパターンでScreen component作成（`next/image` 使用）
@@ -371,12 +371,26 @@ export const getTestimonials = async (options?: RequestInit): Promise<getTestimo
 
 #### Step 3: モックデータ追加
 
-**ファイル:** `api_mock_mode/data.ts`
+**ディレクトリ構造:**
+```
+api_mock_mode/
+├── api/                    # APIごとにファイル分割（URLと同じ命名）
+│   ├── auth-signin.ts      # /auth/signin
+│   ├── auth-signup.ts      # /auth/signup
+│   ├── auth-me.ts          # /auth/me
+│   ├── users.ts            # /users
+│   └── user-voices.ts      # /user-voices
+├── shared.ts               # 共通データ（mockUser, mockAccessToken等）
+├── index.ts                # re-export
+└── fetcher.ts              # mock fetcher
+```
+
+**ファイル:** `api_mock_mode/api/user-voices.ts`（URLと同じ名前）
 
 ```typescript
-import type { Testimonial } from "@/features/shared/api/generated/model";
+import type { UserVoice } from "@/features/shared/api/generated/model";
 
-export const mockTestimonials: Testimonial[] = [
+export const mockUserVoices: UserVoice[] = [
   {
     quote: "This product has completely transformed how we work.",
     title: "Sarah Johnson",
@@ -387,16 +401,27 @@ export const mockTestimonials: Testimonial[] = [
 ];
 ```
 
+**ファイル:** `api_mock_mode/index.ts`（re-export）
+
+```typescript
+export { mockSigninResponse } from "./api/auth-signin";
+export { mockSignupResponse } from "./api/auth-signup";
+export { mockMeResponse } from "./api/auth-me";
+export { mockUsers } from "./api/users";
+export { mockUserVoices } from "./api/user-voices";
+export { mockUser, mockAccessToken } from "./shared";
+```
+
 **ファイル:** `api_mock_mode/fetcher.ts`
 
 ```typescript
-import { mockTestimonials } from "./data";
+import { mockUserVoices } from "./index";
 
 function getMockResponse(path: string, method: string): unknown {
-  // GET /testimonials
-  if (path === "/testimonials" && method === "GET") {
+  // GET /user-voices
+  if (path === "/user-voices" && method === "GET") {
     return {
-      data: { testimonials: mockTestimonials },
+      data: { userVoices: mockUserVoices },
       status: 200,
     };
   }
@@ -416,6 +441,7 @@ export async function mockFetcher<TData, TVariables = unknown>(
 
 **重要:**
 - `api_mock_mode/`は**永続的に保持**（API実装後も使用）
+- **1 API = 1 ファイル**（URLと同じ命名: `/auth/signin` → `auth-signin.ts`）
 - 開発時に`NEXT_PUBLIC_API_MOCK_MODE=enabled`で全APIをモック化可能
 - バックエンドサーバー起動不要で高速開発が可能
 
@@ -596,7 +622,7 @@ pnpm dev:mock
                    ▼
 ┌─────────────────────────────────────────────────────────┐
 │ 4. モックデータ追加                                        │
-│    api_mock_mode/data.ts                                 │
+│    api_mock_mode/api/[api-name].ts（URLと同じ命名）       │
 │    api_mock_mode/fetcher.ts                              │
 └──────────────────┬──────────────────────────────────────┘
                    │
@@ -683,7 +709,8 @@ Error: fetch failed
 - [ ] **schema名は英語で定義**
 - [ ] `pnpm generate:api`でOrval生成を実行
 - [ ] **生成された型・関数が`model/index.ts`と`functions.ts`に存在するか確認**
-- [ ] `api_mock_mode/data.ts`にモックデータを追加
+- [ ] `api_mock_mode/api/[api-name].ts`にモックデータを追加（URLと同じ命名: `/auth/signin` → `auth-signin.ts`）
+- [ ] `api_mock_mode/index.ts`にre-exportを追加
 - [ ] `api_mock_mode/fetcher.ts`にモックレスポンスを追加
 - [ ] `queries/`または`actions/`にラッパー関数を作成（本番functions.tsをimport）
 - [ ] Screen component実装（RSCパターン）

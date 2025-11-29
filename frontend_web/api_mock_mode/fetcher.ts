@@ -7,7 +7,7 @@ import {
   mockTestimonials,
   mockUsers,
   mockUserVoices,
-} from "./data";
+} from "./index";
 
 /**
  * Get mock response for a given path
