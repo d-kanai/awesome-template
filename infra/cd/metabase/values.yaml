@@ -1,0 +1,36 @@
+# Metabase Helm Chart Values
+# Chart: https://github.com/pmint93/helm-charts/tree/master/charts/metabase
+
+replicaCount: 1
+
+image:
+  repository: metabase/metabase
+  tag: v0.50.0
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3000
+
+# Database configuration (use external PostgreSQL)
+database:
+  type: postgres
+  host: postgres
+  port: 5432
+  dbname: metabase
+  username: metabase
+  # password is set via existingSecret
+  existingSecret: metabase-db-credentials
+  existingSecretPasswordKey: password
+
+resources:
+  requests:
+    memory: "1Gi"
+    cpu: "500m"
+  limits:
+    memory: "2Gi"
+    cpu: "1000m"
+
+# Persistence for H2 (if not using external DB)
+persistence:
+  enabled: false

@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: unleash
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    # Official Unleash Helm Chart
+    - repoURL: https://docs.getunleash.io/helm-charts
+      chart: unleash
+      targetRevision: 5.0.0
+      helm:
+        valueFiles:
+          - $values/infra/cd/unleash/values.yaml
+    # Values from this repo
+    - repoURL: https://github.com/d-kanai/awesome-template.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: awesome-template
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

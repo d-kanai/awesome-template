@@ -1,0 +1,30 @@
+# Web Frontend Configuration
+replicaCount: 2
+
+image:
+  repository: IMAGE_REGISTRY/awesome-template/web
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+# Environment variables
+env:
+  NEXT_PUBLIC_API_BASE_URL: "http://api:8080"
+  NEXT_PUBLIC_API_MOCK_MODE: "false"
+  NEXT_PUBLIC_API_TIMEOUT_MS: "30000"
+
+# Health check paths
+healthCheck:
+  path: /api/health
+  port: 3000
