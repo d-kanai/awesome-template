@@ -5,11 +5,6 @@ import { getAllUsers as getAllUsersApi } from "@/features/shared/api/generated/f
 import type { UserListItem } from "@/features/shared/api/generated/model";
 
 export const getAllUsers = cache(async (): Promise<UserListItem[]> => {
-  try {
-    const response = await getAllUsersApi();
-    return response.data?.users || [];
-  } catch {
-    // Note: Error logging is handled in fetcher layer
-    return [];
-  }
+  const response = await getAllUsersApi();
+  return response.data?.users || [];
 });

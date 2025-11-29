@@ -42,20 +42,28 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
   - **Server ActionおよびQueryでのエラーログ出力は不要**
     - APIエラーは既にfetcher層で自動的にログ記録される（requestId, userId, sessionId, stack trace含む）
     - Server ActionおよびQueryのcatchブロックではログを出さず、エラー処理のみを行うこと
-  - **Query関数には必ずtry-catchを付けること**
-    - APIエラー時は空配列 or デフォルト値を返し、画面が正常に表示されるようにすること
+  - **Query関数ではエラーを伝播させること（握りつぶし禁止）**
+    - エラー時はErrorBoundary/error.tsxで適切なエラー画面を表示する
+    - 空配列を返すと「データがない」と誤認されるためNG
     - 例:
       ```typescript
+      // ✅ 正解: エラーは伝播 → ErrorBoundary が処理
+      export const getItems = cache(async () => {
+        const res = await getItemsAPI();
+        return res.data.items || [];
+      });
+
+      // ❌ 間違い: エラー握りつぶし
       export const getItems = cache(async () => {
         try {
           const res = await getItemsAPI();
           return res.data.items || [];
         } catch {
-          // Note: Error logging is handled in fetcher layer
-          return [];
+          return []; // ユーザーにはエラーが伝わらない
         }
       });
       ```
+    - **例外**: オプショナルなデータ（表示されなくても問題ない補助情報）のみgraceful degradation可
   - **Zustand Store内のAPI呼び出しはfetcher経由にすること**
     - native fetch禁止（タイムアウト処理、エラーログが効かないため）
 

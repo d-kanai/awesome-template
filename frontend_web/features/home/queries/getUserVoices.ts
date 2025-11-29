@@ -12,11 +12,6 @@ export type { UserVoice };
  * Note: バックエンド未実装。NEXT_PUBLIC_API_MOCK_MODE=enabled でモックデータを使用
  */
 export const getUserVoices = cache(async (): Promise<UserVoice[]> => {
-  try {
-    const response = await getUserVoicesAPI();
-    return response.data.userVoices || [];
-  } catch {
-    // Note: Error logging is handled in fetcher layer
-    return [];
-  }
+  const response = await getUserVoicesAPI();
+  return response.data.userVoices || [];
 });
