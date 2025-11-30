@@ -123,9 +123,74 @@ services:
             }
           }'
 
+        # DB ID取得 (ClickHouse Logs)
+        DB_ID=$$(curl -s "$$METABASE_URL/api/database" \
+          -H "X-Metabase-Session: $$SESSION" | sed -n 's/.*"id":\([0-9]*\),"name":"ClickHouse Logs".*/\1/p')
+
+        if [ -z "$$DB_ID" ]; then
+          DB_ID=2
+        fi
+
+        echo "📊 ダッシュボード作成中..."
+
+        # DAU Question作成
+        QUESTION_RESPONSE=$$(curl -s -X POST "$$METABASE_URL/api/card" \
+          -H "Content-Type: application/json" \
+          -H "X-Metabase-Session: $$SESSION" \
+          -d '{
+            "name": "DAU (Daily Active Users)",
+            "display": "line",
+            "dataset_query": {
+              "type": "native",
+              "native": {
+                "query": "SELECT toDate(time) AS date, uniqExact(userId) AS dau FROM logs.app_logs WHERE length(userId) > 0 AND time >= today() - 30 GROUP BY date ORDER BY date",
+                "template-tags": {}
+              },
+              "database": '"$$DB_ID"'
+            },
+            "visualization_settings": {
+              "graph.dimensions": ["date"],
+              "graph.metrics": ["dau"],
+              "graph.x_axis.title_text": "日付",
+              "graph.y_axis.title_text": "ユニークユーザー数"
+            }
+          }')
+
+        QUESTION_ID=$$(echo "$$QUESTION_RESPONSE" | sed -n 's/.*"id":\([0-9]*\).*/\1/p')
+
+        # Dashboard作成
+        DASHBOARD_RESPONSE=$$(curl -s -X POST "$$METABASE_URL/api/dashboard" \
+          -H "Content-Type: application/json" \
+          -H "X-Metabase-Session: $$SESSION" \
+          -d '{
+            "name": "📈 ユーザー分析",
+            "description": "DAUなどのユーザー行動分析ダッシュボード"
+          }')
+
+        DASHBOARD_ID=$$(echo "$$DASHBOARD_RESPONSE" | sed -n 's/.*"id":\([0-9]*\).*/\1/p')
+
+        # カードをダッシュボードに追加
+        if [ -n "$$QUESTION_ID" ] && [ -n "$$DASHBOARD_ID" ]; then
+          curl -s -X PUT "$$METABASE_URL/api/dashboard/$$DASHBOARD_ID" \
+            -H "Content-Type: application/json" \
+            -H "X-Metabase-Session: $$SESSION" \
+            -d '{
+              "dashcards": [{
+                "id": -1,
+                "card_id": '"$$QUESTION_ID"',
+                "row": 0,
+                "col": 0,
+                "size_x": 18,
+                "size_y": 8
+              }]
+            }' > /dev/null
+          echo "✅ DAUダッシュボード作成完了 (ID: $$DASHBOARD_ID)"
+        fi
+
         echo ""
         echo "✅ セットアップ完了!"
         echo "📊 Metabase: http://localhost:3001"
+        echo "📈 ダッシュボード: http://localhost:3001/dashboard/$$DASHBOARD_ID"
         echo "👤 Email: $$ADMIN_EMAIL"
         echo "🔑 Password: $$ADMIN_PASSWORD"
 
