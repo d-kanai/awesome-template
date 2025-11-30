@@ -20,8 +20,8 @@
         "playwright.config.ts",
         "cucumber.js",
         "e2e/steps/*.ts",
-        "features/shared/api/generated/**",
-        "features/shared/figma_generated/**"
+        "shared/api/generated/**",
+        "shared/figma_generated/**"
       ],
       "ignoreDependencies": [
         "@tanstack/react-query-devtools",

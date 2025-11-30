@@ -57,6 +57,7 @@ const _serverEnv =
 const _clientEnv = clientSchema.safeParse(processEnv);
 
 // バリデーションエラー時の処理
+// Note: loggerはenvに依存するため、起動時エラーはconsole.errorを使用
 if (_serverEnv && !_serverEnv.success) {
   console.error("❌ Server environment validation errors:");
   console.error(_serverEnv.error.format());

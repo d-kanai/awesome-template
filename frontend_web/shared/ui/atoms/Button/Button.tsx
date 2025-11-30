@@ -1,6 +1,6 @@
 "use client";
 
-import React, { forwardRef } from "react";
+import React, { forwardRef, useCallback, useState } from "react";
 import { sendClickEvent } from "@/shared/lib/clickTracker";
 import { getNow } from "@/shared/lib/dateTime";
 import { cn } from "@/shared/lib/utils";
@@ -19,6 +19,8 @@ export interface ButtonProps
   children?: React.ReactNode;
   /** Enable/disable click tracking (default: true) */
   trackClick?: boolean;
+  /** Prevent double-click by disabling button during async onClick (default: true) */
+  preventDoubleClick?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -32,24 +34,54 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       disabled,
       trackClick = true,
+      preventDoubleClick = true,
       onClick,
       id,
       ...props
     },
     ref,
   ) => {
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      // Send click event if enabled and not disabled
-      if (trackClick && !disabled) {
-        sendClickEvent({
-          id,
-          label: typeof children === "string" ? children : undefined,
-          pathname: window.location.pathname,
-          timestamp: getNow().toISOString(),
-        });
-      }
-      onClick?.(e);
-    };
+    const [isProcessing, setIsProcessing] = useState(false);
+
+    const handleClick = useCallback(
+      async (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (isProcessing) return;
+
+        // Send click event if enabled and not disabled
+        if (trackClick && !disabled) {
+          sendClickEvent({
+            id,
+            label: typeof children === "string" ? children : undefined,
+            pathname: window.location.pathname,
+            timestamp: getNow().toISOString(),
+          });
+        }
+
+        if (!onClick) return;
+
+        if (preventDoubleClick) {
+          setIsProcessing(true);
+          try {
+            await onClick(e);
+          } finally {
+            setIsProcessing(false);
+          }
+        } else {
+          onClick(e);
+        }
+      },
+      [
+        isProcessing,
+        trackClick,
+        disabled,
+        id,
+        children,
+        onClick,
+        preventDoubleClick,
+      ],
+    );
+
+    const isDisabled = disabled || isProcessing;
     const baseStyles = cn(
       // Base styles - using semantic tokens
       "inline-flex items-center justify-center",
@@ -94,8 +126,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         id={id}
         className={baseStyles}
-        disabled={disabled}
+        disabled={isDisabled}
         onClick={handleClick}
+        aria-busy={isProcessing}
         {...props}
       >
         {leftIcon && <span className="flex-shrink-0">{leftIcon}</span>}
