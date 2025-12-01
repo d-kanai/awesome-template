@@ -2,7 +2,7 @@
 
 # Application
 run:
-	./gradlew bootRun
+	@set -a && source .env && set +a && ./gradlew bootRun
 
 run-test:
 	./gradlew bootRunTest
