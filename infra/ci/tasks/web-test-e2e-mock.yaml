@@ -40,6 +40,8 @@ spec:
           value: "true"
         - name: NEXT_PUBLIC_API_TIMEOUT_MS
           value: "10000"
+        - name: NEXT_PUBLIC_API_SLOW_THRESHOLD_MS
+          value: "3000"
         - name: ANALYZE
           value: "false"
       script: |
@@ -67,6 +69,8 @@ spec:
           value: "true"
         - name: NEXT_PUBLIC_API_TIMEOUT_MS
           value: "10000"
+        - name: NEXT_PUBLIC_API_SLOW_THRESHOLD_MS
+          value: "3000"
         - name: ANALYZE
           value: "false"
         # HAR recording for DAST

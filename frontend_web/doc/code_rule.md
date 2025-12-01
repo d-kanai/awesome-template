@@ -33,9 +33,21 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
   - 例：ルーティング定数は各機能モジュールごとに分割する（AUTH_ROUTES、USER_ROUTES）。複数モジュールのルートを1つのファイルにまとめない
 - **日時取得には必ず`getNow()`を使用すること**
 - **prodにログを残す場合は`console.log`は禁止。ログは必ず`logger`経由で行うこと**
-- **環境変数は`process.env`を直接参照せず、必ず`features/shared/lib/env.ts`経由で取得すること**
+- **環境変数は`process.env`を直接参照せず、必ず`shared/lib/env.ts`経由で取得すること**
   - 型安全性とバリデーションが保証される
   - 全ての環境変数は必須（デフォルト値なし）。設定漏れがあると起動時にエラーになる
+  - **新しい環境変数を追加する場合、以下のファイル全てに追記すること**:
+    1. `shared/lib/env.ts` - Zodスキーマ定義（必須）
+    2. `.env.example` - テンプレート
+    3. `.env.local` - 開発環境
+    4. `.env.test` - E2Eテスト（実API）
+    5. `.env.test.mock` - E2Eテスト（Mock）
+    6. `Dockerfile` - ARG/ENV定義（NEXT_PUBLIC_*のみ）
+    7. `docker-compose.yml` - build args/environment
+    8. `../infra/ci/tasks/web-build.yaml` - Kanikoビルド引数
+    9. `../infra/ci/tasks/web-test-e2e-mock.yaml` - E2Eテスト用env
+    10. `../infra/ci/secrets/local.yaml` - ローカルK8s Secret
+    11. `../infra/ci/secrets/prod.yaml` - 本番Secret形式コメント
 - **エラーハンドリングとログ出力**
   - エラーをcatchした場合、必ずログ出力するか、呼び出し元にエラーを伝播すること
   - 意図的にエラーを握りつぶす場合（例: Client-side環境での正常動作、フォールバック処理）は、必ずコメントで理由を明記すること

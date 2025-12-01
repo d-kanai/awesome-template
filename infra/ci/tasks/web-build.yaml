@@ -44,6 +44,7 @@ spec:
         - --build-arg=NEXT_PUBLIC_API_BASE_URL=$(NEXT_PUBLIC_API_BASE_URL)
         - --build-arg=NEXT_PUBLIC_API_MOCK_MODE=$(NEXT_PUBLIC_API_MOCK_MODE)
         - --build-arg=NEXT_PUBLIC_API_TIMEOUT_MS=$(NEXT_PUBLIC_API_TIMEOUT_MS)
+        - --build-arg=NEXT_PUBLIC_API_SLOW_THRESHOLD_MS=$(NEXT_PUBLIC_API_SLOW_THRESHOLD_MS)
         - --build-arg=ANALYZE=$(ANALYZE)
         # ⚡ レイヤーキャッシュ
         - --cache=true
