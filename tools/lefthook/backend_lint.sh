@@ -11,6 +11,10 @@ for path in "$@"; do
   if [[ "$path" == backend/* ]]; then
     trimmed=${path#backend/}
     full_path="backend/$trimmed"
+    # Skip jOOQ generated files
+    if [[ "$trimmed" == src/main/java/com/example/demo/shared/jooq/* ]]; then
+      continue
+    fi
     if [ -f "$full_path" ]; then
       case "$trimmed" in
         src/main/java/*)
