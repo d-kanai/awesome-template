@@ -97,16 +97,10 @@ backend/
 │   │   ├── java/com/example/demo/
 │   │   │   ├── DemoApplication.java
 │   │   │   ├── features/
-│   │   │   │   ├── auth/
 │   │   │   │   ├── user/
-│   │   │   │   └── test/
 │   │   │   └── shared/
-│   │   │       ├── jwt/
-│   │   │       ├── security/
 │   │   │       └── jooq/          # jOOQ生成コード（Git管理）
 │   │   └── resources/
-│   │       ├── application.yml
-│   │       ├── application-test.yml
 │   │       └── db/migration/
 │   └── test/
 │       └── java/com/example/demo/
@@ -125,7 +119,6 @@ backend/
 - **生成**: `./gradlew generateOpenApiDocs`
 - **出力先**: `openapi/openapi.json`
 - **UIアクセス**: `http://localhost:8080/swagger-ui.html`
-- **クライアント生成**: フロントエンドで Orval により自動生成
 
 ## テスト戦略
 
