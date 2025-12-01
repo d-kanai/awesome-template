@@ -2,7 +2,7 @@ package com.example.demo.features.auth.internal.presentation.rest;
 
 import com.example.demo.features.auth.internal.application.command.SigninCommand;
 import com.example.demo.features.user.internal.domain.model.User;
-import com.example.demo.shared.jwt.JwtCookieProperties;
+import com.example.demo.shared.config.AppProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,12 +30,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class SigninRestApi {
 
   private final SigninCommand signinCommand;
-  private final JwtCookieProperties jwtCookieProperties;
+  private final AppProperties appProperties;
 
-  public SigninRestApi(
-      final SigninCommand signinCommand, final JwtCookieProperties jwtCookieProperties) {
+  public SigninRestApi(final SigninCommand signinCommand, final AppProperties appProperties) {
     this.signinCommand = signinCommand;
-    this.jwtCookieProperties = jwtCookieProperties;
+    this.appProperties = appProperties;
   }
 
   @Operation(summary = "サインイン", description = "メールアドレスとパスワードでサインインします。")
@@ -68,15 +67,15 @@ public class SigninRestApi {
   }
 
   private void setAuthCookie(final HttpServletResponse response, final String token) {
-    final String sameSite =
-        jwtCookieProperties.getSameSite() != null ? jwtCookieProperties.getSameSite() : "Lax";
+    final var cookieConfig = appProperties.getJwt().getCookie();
+    final String sameSite = cookieConfig.getSameSite() != null ? cookieConfig.getSameSite() : "Lax";
 
     final ResponseCookie cookie =
-        ResponseCookie.from(jwtCookieProperties.getName(), token)
-            .httpOnly(jwtCookieProperties.isHttpOnly())
-            .secure(jwtCookieProperties.isSecure())
+        ResponseCookie.from(cookieConfig.getName(), token)
+            .httpOnly(cookieConfig.isHttpOnly())
+            .secure(cookieConfig.isSecure())
             .sameSite(sameSite)
-            .maxAge(jwtCookieProperties.getMaxAgeSeconds())
+            .maxAge(cookieConfig.getMaxAgeSeconds())
             .path("/")
             .build();
 

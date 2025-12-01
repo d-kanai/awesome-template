@@ -21,22 +21,26 @@ management:
   endpoints:
     web:
       exposure:
-        # Show more endpoints in test environment for debugging
         include: health,info
   endpoint:
     health:
       show-details: when-authorized
       show-components: when-authorized
 
-jwt:
-  secret: test-secret-key-that-is-at-least-256-bits-long-for-hs256
-  expiration-hours: 720  # 30 days
-  cookie:
-    name: accessToken
-    httpOnly: true
-    secure: false  # HTTP for test environment
-    sameSite: Lax
-    maxAgeSeconds: 2592000  # 30 days (in seconds)
+app:
+  env: TEST
+  jwt:
+    secret: test-secret-key-that-is-at-least-256-bits-long-for-hs256
+    expiration-hours: 720  # 30 days
+    cookie:
+      name: accessToken
+      http-only: true
+      secure: false
+      same-site: Lax
+      max-age-seconds: 2592000  # 30 days
+  cors:
+    allowed-origins:
+      - http://localhost:3000
 
 logging:
   level:

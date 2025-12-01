@@ -1,5 +1,6 @@
 package com.example.demo.shared.jwt;
 
+import com.example.demo.shared.config.AppProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -9,7 +10,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import javax.crypto.SecretKey;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,11 +18,10 @@ public class JwtTokenProvider {
   private final SecretKey secretKey;
   private final long expirationHours;
 
-  public JwtTokenProvider(
-      @Value("${jwt.secret:my-secret-key-that-is-at-least-256-bits-long-for-hs256}") String secret,
-      @Value("${jwt.expiration-hours:24}") long expirationHours) {
-    this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-    this.expirationHours = expirationHours;
+  public JwtTokenProvider(final AppProperties appProperties) {
+    this.secretKey =
+        Keys.hmacShaKeyFor(appProperties.getJwt().getSecret().getBytes(StandardCharsets.UTF_8));
+    this.expirationHours = appProperties.getJwt().getExpirationHours();
   }
 
   public String generateToken(final String userId, final String email) {

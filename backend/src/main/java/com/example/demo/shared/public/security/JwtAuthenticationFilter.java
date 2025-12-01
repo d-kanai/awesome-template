@@ -1,6 +1,6 @@
 package com.example.demo.shared.security;
 
-import com.example.demo.shared.jwt.JwtCookieProperties;
+import com.example.demo.shared.config.AppProperties;
 import com.example.demo.shared.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,12 +23,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtTokenProvider jwtTokenProvider;
-  private final JwtCookieProperties jwtCookieProperties;
+  private final AppProperties appProperties;
 
   public JwtAuthenticationFilter(
-      final JwtTokenProvider jwtTokenProvider, final JwtCookieProperties jwtCookieProperties) {
+      final JwtTokenProvider jwtTokenProvider, final AppProperties appProperties) {
     this.jwtTokenProvider = jwtTokenProvider;
-    this.jwtCookieProperties = jwtCookieProperties;
+    this.appProperties = appProperties;
   }
 
   @Override
@@ -89,8 +89,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       return null;
     }
 
+    final String cookieName = appProperties.getJwt().getCookie().getName();
     return Arrays.stream(cookies)
-        .filter(cookie -> jwtCookieProperties.getName().equals(cookie.getName()))
+        .filter(cookie -> cookieName.equals(cookie.getName()))
         .findFirst()
         .map(Cookie::getValue)
         .orElse(null);

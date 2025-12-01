@@ -2,7 +2,7 @@ package com.example.demo.features.test.internal.presentation.rest;
 
 import com.example.demo.features.test.internal.application.command.ResetDatabaseCommand;
 import com.example.demo.features.test.internal.application.command.SetupDataCommand;
-import com.example.demo.shared.jwt.JwtCookieProperties;
+import com.example.demo.shared.config.AppProperties;
 import com.example.demo.shared.jwt.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -37,17 +37,17 @@ public class SupportE2ETestRestApi {
   private final ResetDatabaseCommand resetDatabaseCommand;
   private final SetupDataCommand setupDataCommand;
   private final JwtTokenProvider jwtTokenProvider;
-  private final JwtCookieProperties jwtCookieProperties;
+  private final AppProperties appProperties;
 
   public SupportE2ETestRestApi(
       final ResetDatabaseCommand resetDatabaseCommand,
       final SetupDataCommand setupDataCommand,
       final JwtTokenProvider jwtTokenProvider,
-      final JwtCookieProperties jwtCookieProperties) {
+      final AppProperties appProperties) {
     this.resetDatabaseCommand = resetDatabaseCommand;
     this.setupDataCommand = setupDataCommand;
     this.jwtTokenProvider = jwtTokenProvider;
-    this.jwtCookieProperties = jwtCookieProperties;
+    this.appProperties = appProperties;
   }
 
   @Operation(summary = "DBをリセット", description = "アプリケーションが管理するテーブルからデータをすべて削除します。")
@@ -98,15 +98,15 @@ public class SupportE2ETestRestApi {
    * @param token JWT access token
    */
   private void setTestAuthCookie(final HttpServletResponse response, final String token) {
-    final String sameSite =
-        jwtCookieProperties.getSameSite() != null ? jwtCookieProperties.getSameSite() : "Lax";
+    final var cookieConfig = appProperties.getJwt().getCookie();
+    final String sameSite = cookieConfig.getSameSite() != null ? cookieConfig.getSameSite() : "Lax";
 
     final ResponseCookie cookie =
-        ResponseCookie.from(jwtCookieProperties.getName(), token)
-            .httpOnly(jwtCookieProperties.isHttpOnly())
-            .secure(jwtCookieProperties.isSecure())
+        ResponseCookie.from(cookieConfig.getName(), token)
+            .httpOnly(cookieConfig.isHttpOnly())
+            .secure(cookieConfig.isSecure())
             .sameSite(sameSite)
-            .maxAge(jwtCookieProperties.getMaxAgeSeconds())
+            .maxAge(cookieConfig.getMaxAgeSeconds())
             .path("/")
             .build();
 

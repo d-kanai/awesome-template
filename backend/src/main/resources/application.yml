@@ -28,13 +28,18 @@ management:
       show-details: always
       show-components: always
 
-jwt:
-  secret: ${JWT_SECRET:my-secret-key-that-is-at-least-256-bits-long-for-hs256}
-  expiration-hours: 720  # 30 days
-  cookie:
-    name: accessToken
-    httpOnly: true
-    secure: ${JWT_COOKIE_SECURE:false}  # true for production (HTTPS), false for development (HTTP)
-    sameSite: Lax
-    maxAgeSeconds: 2592000  # 30 days (in seconds)
-
+app:
+  env: ${ENV:DEVELOPMENT}
+  jwt:
+    secret: ${JWT_SECRET:my-secret-key-that-is-at-least-256-bits-long-for-hs256}
+    expiration-hours: 720  # 30 days
+    cookie:
+      name: accessToken
+      http-only: true
+      secure: ${JWT_COOKIE_SECURE:false}
+      same-site: Lax
+      max-age-seconds: 2592000  # 30 days
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:3001
