@@ -3,6 +3,10 @@
 ## common
 
 - 基本全ての変数にfinalがついていること
+- メソッド30行以内
+- ローカル変数・パラメータは基本final宣言
+- 認知・循環複雑度15以内
+- deep nest 2以内
 
 ## code
 
@@ -33,6 +37,7 @@
 - CRUD名（Create, Update, Delete）は避ける
 
 ## test
+- カバレッジ90%以上
 - testメソッド名は日本語でテストの意図が明確な名前にすること
 - given when thenのコメントを挿入してフェーズを見やすくすること
 - 1 API = 1 テストファイルのため、メソッド名にAPI名のプレフィックスは不要
@@ -42,20 +47,3 @@
   - `aUser().save()` - デフォルト値で保存
   - `aUser().email("x@example.com").save()` - 値を上書きして保存
   - ビルダーは `@Autowired` でDIし、static import `aUser()` で使用
-
-## Done の定義
-
-### コード品質
-- メソッド30行以内
-- ローカル変数・パラメータは基本final宣言
-- 認知・循環複雑度15以内
-- deep nest 2以内
-
-### アーキテクチャルール
-- Application層のcommand/queryは1クラス1publicメソッド
-- Presentation層は1クラス1API
-- モジュール依存関係ルールが守られている（ModularityTestで検証）
-
-### テスト
-- TestA, Bが作成されている
-- カバレッジ90%以上
