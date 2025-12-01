@@ -23,6 +23,8 @@ export const LogType = {
   PROXY: "proxy",
   API_REQUEST: "api_request",
   API_REQUEST_MOCK: "api_request_mock",
+  API_TIMEOUT: "api_timeout",
+  API_ERROR: "api_error",
   CLICK_EVENT: "click_event",
   INFO: "info",
 } as const;
@@ -295,19 +297,50 @@ export async function slowRequestLog(options: {
 }
 
 /**
+ * Log API timeout error
+ */
+export async function apiTimeoutLog(options: {
+  method: string;
+  path: string;
+  timeoutMs: number;
+  duration: number;
+  requestId?: string;
+  error: Error;
+}): Promise<void> {
+  const logger = await createLoggerAsync(options.requestId);
+  logger.error({
+    type: LogType.API_TIMEOUT,
+    err: options.error,
+    method: options.method,
+    path: options.path,
+    timeoutMs: options.timeoutMs,
+    duration: `${options.duration}ms`,
+  });
+}
+
+/**
+ * Log API error
+ */
+export async function apiErrorLog(options: {
+  method: string;
+  path: string;
+  status: number;
+  duration: number;
+  requestId?: string;
+  error: Error;
+}): Promise<void> {
+  const logger = await createLoggerAsync(options.requestId);
+  logger.error({
+    type: LogType.API_ERROR,
+    err: options.error,
+    method: options.method,
+    path: options.path,
+    status: options.status,
+    duration: `${options.duration}ms`,
+  });
+}
+
+/**
  * Export base Pino logger for direct use
- *
- * @example
- * // Direct logging without context
- * logger.info({ message: "Application started" });
- *
- * @example
- * // Create custom child logger
- * const dbLogger = logger.child({ component: "database" });
- * dbLogger.debug({ query: "SELECT * FROM users" }, "Executing query");
- *
- * @example
- * // Error logging
- * logger.error({ err: error }, "Failed to process payment");
  */
 export const logger = baseLogger;

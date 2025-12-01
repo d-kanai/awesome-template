@@ -1,7 +1,12 @@
 import { CookieManager } from "@/shared/lib/cookieManager";
 import { env } from "@/shared/lib/env";
 import { HeaderManager } from "@/shared/lib/headerManager";
-import { apiLog, slowRequestLog } from "@/shared/lib/logger";
+import {
+  apiErrorLog,
+  apiLog,
+  apiTimeoutLog,
+  slowRequestLog,
+} from "@/shared/lib/logger";
 
 export type FetcherOptions<TVariables> = RequestInit & {
   data?: TVariables;
@@ -256,20 +261,14 @@ async function handleTimeoutError(
   // @ts-expect-error - timeoutMsを追加
   timeoutError.timeoutMs = error.timeoutMs;
 
-  // Log timeout error
-  const { createLoggerAsync } = await import("@/shared/lib/logger");
-  const logger = await createLoggerAsync(requestId);
-  logger.error(
-    {
-      err: timeoutError,
-      type: "api_timeout",
-      method,
-      path,
-      timeoutMs: error.timeoutMs,
-      duration: `${duration}ms`,
-    },
-    "API request timed out",
-  );
+  await apiTimeoutLog({
+    method,
+    path,
+    timeoutMs: error.timeoutMs,
+    duration,
+    requestId,
+    error: timeoutError,
+  });
 
   throw timeoutError;
 }
@@ -290,20 +289,14 @@ async function handleHttpError(
   // @ts-expect-error - responseを追加
   error.response = response;
 
-  // Log API error with full context
-  const { createLoggerAsync } = await import("@/shared/lib/logger");
-  const logger = await createLoggerAsync(requestId);
-  logger.error(
-    {
-      err: error,
-      type: "api_error",
-      method,
-      path,
-      status: response.status,
-      duration: `${duration}ms`,
-    },
-    "API request failed",
-  );
+  await apiErrorLog({
+    method,
+    path,
+    status: response.status,
+    duration,
+    requestId,
+    error,
+  });
 
   throw error;
 }
