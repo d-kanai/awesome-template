@@ -66,7 +66,8 @@ package com.example.demo.features.auth;
 ```
 features/xxx/
 ├── package-info.java      # モジュール設定
-├── XxxApi.java           # 公開API（他モジュールから参照可能）
+├── public/               # 公開API（他モジュールから参照可能）
+│   └── XxxApi.java
 └── internal/             # 内部実装（他モジュールからアクセス不可）
     ├── application/
     │   ├── command/      # 更新系ユースケース
@@ -102,6 +103,9 @@ backend/
 │   │   │   │   └── user/
 │   │   │   │       └── db/migration/  # モジュールごとのマイグレーション
 │   │   │   └── shared/
+│   │   │       ├── public/            # 公開コンポーネント
+│   │   │       ├── internal/          # 内部実装（将来用）
+│   │   │       ├── db/migration/      # マイグレーション（将来用）
 │   │   │       └── jooq/              # jOOQ生成コード（Git管理）
 │   │   └── resources/
 │   └── test/
