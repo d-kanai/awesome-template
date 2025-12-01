@@ -7,7 +7,6 @@ ROOT_DIR := $(CURDIR)
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
         webview-install webview-start webview-lint webview-typecheck webview-ios webview-android \
         web-install web-dev web-build web-lint web-lint-deps web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run web-show-routes \
-        unleash-up unleash-down unleash-open \
         tekton-setup tekton-teardown tekton-dashboard tekton-web-build tekton-web-lint tekton-web-ut tekton-web-e2e-mock tekton-web-ci tekton-logs \
         openapi-client lefthook-install
 
@@ -32,11 +31,6 @@ help:
 	@echo "  make backend-down         # Stop backend Docker services"
 	@echo "  make backend-lint         # Run Checkstyle on main and test sources"
 	@echo "  make backend-format       # Format Java sources with Spotless"
-	@echo ""
-	@echo "Unleash:"
-	@echo "  make unleash-up           # Start Unleash server and database"
-	@echo "  make unleash-down         # Stop Unleash server and database"
-	@echo "  make unleash-open         # Open Unleash UI (http://localhost:4242)"
 	@echo ""
 	@echo "Native:"
 	@echo "  make native-install       # Install native dependencies (pnpm install)"
@@ -178,20 +172,6 @@ backend-lint:
 
 backend-format:
 	cd backend && ./gradlew spotlessApply
-
-###############################################################
-# Unleash
-###############################################################
-unleash-up:
-	cd backend && docker-compose up -d unleash-postgres unleash
-	@echo "Unleash server starting... Please wait for health check to complete."
-	@echo "Access Unleash UI at http://localhost:4242 (default login: admin/unleash4all)"
-
-unleash-down:
-	cd backend && docker-compose stop unleash unleash-postgres
-
-unleash-open:
-	open http://localhost:4242
 
 ###############################################################
 # Native
