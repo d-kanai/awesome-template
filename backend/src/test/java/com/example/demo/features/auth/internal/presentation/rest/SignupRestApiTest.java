@@ -30,7 +30,7 @@ class SignupRestApiTest {
   }
 
   @Test
-  void サインアップ時_ユーザーを作成しCreatedレスポンスを返す() throws Exception {
+  void ユーザーを作成しCreatedレスポンスを返す() throws Exception {
     // given input
     final var request = new SignupRestApi.Input("john.doe@example.com", "SecurePassword123");
 

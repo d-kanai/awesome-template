@@ -1,5 +1,6 @@
 package com.example.demo.features.auth.internal.presentation.rest;
 
+import static com.example.demo.testsupport.databuilder.UserTestBuilder.aUser;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -8,6 +9,7 @@ import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.shared.jwt.JwtTokenProvider;
 import com.example.demo.testsupport.ApiTestClient;
 import com.example.demo.testsupport.ApiTestResponse;
+import com.example.demo.testsupport.databuilder.UserTestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +28,18 @@ class FindMeRestApiTest {
 
   @Autowired private ApiTestClient apiTestClient;
 
+  @Autowired private UserTestBuilder userTestBuilder;
+
   @BeforeEach
   void setUp() {
     userRepository.findAll().forEach(user -> userRepository.deleteById(user.getId()));
   }
 
   @Test
-  void 認証済みユーザー情報取得時_正しいトークンでユーザー情報を返す() throws Exception {
+  void 正しいトークンでユーザー情報を返す() throws Exception {
     // given db
     final String email = "john.doe@example.com";
-    final String password = "SecurePassword123";
-    final User user = User.signup(email, password);
-    userRepository.save(user);
+    final User user = aUser().email(email).save();
 
     // given token
     final String token = jwtTokenProvider.generateToken(user.getId().getValue().toString(), email);
@@ -53,7 +55,7 @@ class FindMeRestApiTest {
   }
 
   @Test
-  void 認証済みユーザー情報取得時_トークンなしでUnauthorizedを返す() throws Exception {
+  void トークンなしでUnauthorizedを返す() throws Exception {
     // when
     final ApiTestResponse response = apiTestClient.get("/auth/me");
 

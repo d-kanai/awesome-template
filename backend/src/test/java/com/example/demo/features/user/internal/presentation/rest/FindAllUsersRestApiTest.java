@@ -1,5 +1,6 @@
 package com.example.demo.features.user.internal.presentation.rest;
 
+import static com.example.demo.testsupport.databuilder.UserTestBuilder.aUser;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -8,6 +9,7 @@ import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.shared.jwt.JwtTokenProvider;
 import com.example.demo.testsupport.ApiTestClient;
 import com.example.demo.testsupport.ApiTestResponse;
+import com.example.demo.testsupport.databuilder.UserTestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +28,18 @@ class FindAllUsersRestApiTest {
 
   @Autowired private ApiTestClient apiTestClient;
 
+  @Autowired private UserTestBuilder userTestBuilder;
+
   @BeforeEach
   void setUp() {
     userRepository.findAll().forEach(user -> userRepository.deleteById(user.getId()));
   }
 
   @Test
-  void ユーザー一覧取得時_認証済みで全ユーザーを返す() throws Exception {
+  void 認証済みで全ユーザーを返す() throws Exception {
     // given db
-    final User user1 = User.signup("user1@example.com", "Password123");
-    final User user2 = User.signup("user2@example.com", "Password456");
-    userRepository.save(user1);
-    userRepository.save(user2);
+    final User user1 = aUser().email("user1@example.com").save();
+    aUser().email("user2@example.com").save();
 
     // given token
     final String token =
@@ -56,12 +58,11 @@ class FindAllUsersRestApiTest {
   }
 
   @Test
-  void ユーザー一覧取得時_ユーザーが0件の場合空配列を返す() throws Exception {
+  void ユーザーが0件の場合空配列を返す() throws Exception {
     // given db - empty
 
     // given token (create temporary user for auth, then delete)
-    final User tempUser = User.signup("temp@example.com", "Password123");
-    userRepository.save(tempUser);
+    final User tempUser = aUser().save();
     final String token =
         jwtTokenProvider.generateToken(tempUser.getId().getValue().toString(), tempUser.getEmail());
     userRepository.deleteById(tempUser.getId());
@@ -77,7 +78,7 @@ class FindAllUsersRestApiTest {
   }
 
   @Test
-  void ユーザー一覧取得時_未認証でUnauthorizedを返す() throws Exception {
+  void 未認証でUnauthorizedを返す() throws Exception {
     // when
     final ApiTestResponse response = apiTestClient.get("/users");
 

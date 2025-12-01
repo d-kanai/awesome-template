@@ -1,12 +1,12 @@
 package com.example.demo.features.test.internal.presentation.rest;
 
+import static com.example.demo.testsupport.databuilder.UserTestBuilder.aUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
-import java.util.UUID;
+import com.example.demo.testsupport.databuilder.UserTestBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,10 +23,11 @@ class SupportE2ETestRestApiTest {
 
   @Autowired private UserRepository userRepository;
 
+  @Autowired private UserTestBuilder userTestBuilder;
+
   @Test
-  void リセット時_全テーブルからデータを削除する() throws Exception {
-    final String email = "john.doe+" + UUID.randomUUID() + "@example.com";
-    userRepository.save(User.signup(email, "John Doe"));
+  void 全テーブルからデータを削除する() throws Exception {
+    aUser().save();
     assertThat(userRepository.findAll()).isNotEmpty();
 
     mockMvc.perform(post("/e2e/reset_data")).andExpect(status().isNoContent());

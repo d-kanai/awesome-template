@@ -1,5 +1,6 @@
 package com.example.demo.features.auth.internal.presentation.rest;
 
+import static com.example.demo.testsupport.databuilder.UserTestBuilder.aUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -8,6 +9,7 @@ import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.testsupport.ApiTestClient;
 import com.example.demo.testsupport.ApiTestResponse;
+import com.example.demo.testsupport.databuilder.UserTestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +26,22 @@ class SigninRestApiTest {
 
   @Autowired private ApiTestClient apiTestClient;
 
+  @Autowired private UserTestBuilder userTestBuilder;
+
   @BeforeEach
   void setUp() {
     userRepository.findAll().forEach(user -> userRepository.deleteById(user.getId()));
   }
 
   @Test
-  void サインイン時_正しい認証情報でOKレスポンスを返す() throws Exception {
+  void 正しい認証情報でOKレスポンスを返す() throws Exception {
     // given input
     final String email = "john.doe@example.com";
     final String password = "SecurePassword123";
+    final var request = new SigninRestApi.Input(email, password);
 
     // given db
-    final User user = User.signup(email, password);
-    userRepository.save(user);
-
-    final var request = new SigninRestApi.Input(email, password);
+    final User user = aUser().email(email).password(password).save();
 
     // when
     final ApiTestResponse response = apiTestClient.post("/auth/signin", request);
@@ -53,17 +55,15 @@ class SigninRestApiTest {
   }
 
   @Test
-  void サインイン時_誤ったパスワードでBadRequestを返す() throws Exception {
+  void 誤ったパスワードでBadRequestを返す() throws Exception {
     // given input
     final String email = "john.doe@example.com";
     final String correctPassword = "SecurePassword123";
     final String wrongPassword = "WrongPassword456";
+    final var request = new SigninRestApi.Input(email, wrongPassword);
 
     // given db
-    final User user = User.signup(email, correctPassword);
-    userRepository.save(user);
-
-    final var request = new SigninRestApi.Input(email, wrongPassword);
+    aUser().email(email).password(correctPassword).save();
 
     // when
     final ApiTestResponse response = apiTestClient.post("/auth/signin", request);
@@ -73,7 +73,7 @@ class SigninRestApiTest {
   }
 
   @Test
-  void サインイン時_存在しないメールアドレスでBadRequestを返す() throws Exception {
+  void 存在しないメールアドレスでBadRequestを返す() throws Exception {
     // given input
     final var request = new SigninRestApi.Input("nonexistent@example.com", "SomePassword123");
 
