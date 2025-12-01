@@ -1,0 +1,37 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🗑️ Web Dead Code Detection Task
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 Knip を使用して未使用コード・依存関係を検出
+# 📍 web-install Task の後に実行
+#
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: web-quality-deadcode
+spec:
+  params:
+    - name: pnpm-version
+      type: string
+      default: "10.10.0"
+      description: "📦 pnpm バージョン"
+
+  # 🗂️ ソースコードを受け取る workspace
+  workspaces:
+    - name: source
+      description: "クローン済みソースコード"
+
+  steps:
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🗑️ Step 1: Dead Code Detection (Knip)
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: knip
+      image: node:22.21.1-alpine
+      script: |
+        #!/bin/sh
+        set -e
+        cd $(workspaces.source.path)/source/frontend_web
+        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+        echo "🗑️ Running Knip dead code detection..."
+        pnpm knip
+        echo "✅ No unused code found!"
