@@ -8,7 +8,7 @@
 "use client";
 
 import React, { forwardRef } from "react";
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/shared/lib/classNames";
 import { TestimonialCard } from "../TestimonialCard/TestimonialCard";
 import { TextContentHeading } from "../TextContentHeading/TextContentHeading";
 

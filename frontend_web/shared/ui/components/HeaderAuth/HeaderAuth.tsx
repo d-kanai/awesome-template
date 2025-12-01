@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { forwardRef } from "react";
 import { HeaderAuthButtonIds } from "@/shared/ids";
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/shared/lib/classNames";
 import { Avatar } from "../../atoms/Avatar/Avatar";
 import { Button } from "../../atoms/Button/Button";
 import { ChevronDown } from "../../atoms/ChevronDown/ChevronDown";

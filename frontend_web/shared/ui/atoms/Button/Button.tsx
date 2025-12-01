@@ -1,9 +1,9 @@
 "use client";
 
 import React, { forwardRef, useCallback, useState } from "react";
+import { cn } from "@/shared/lib/classNames";
 import { sendClickEvent } from "@/shared/lib/clickTracker";
 import { getNow } from "@/shared/lib/dateTime";
-import { cn } from "@/shared/lib/utils";
 
 export type ButtonVariant = "primary" | "neutral" | "subtle";
 export type ButtonSize = "small" | "medium" | "large";

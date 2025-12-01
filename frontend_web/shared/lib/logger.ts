@@ -1,9 +1,20 @@
 import type { NextRequest } from "next/server";
-import type { Logger } from "pino";
+import pino, { type Logger } from "pino";
 import { CookieManager } from "@/shared/lib/cookieManager";
 import { generateShortId } from "@/shared/lib/dateTime";
+import { env, isDev } from "@/shared/lib/env";
 import { HeaderManager } from "@/shared/lib/headerManager";
-import { logger as baseLogger } from "@/shared/lib/pinoLogger";
+
+/**
+ * Base Pino logger instance
+ */
+const baseLogger = pino({
+  level: env.LOG_LEVEL || (isDev ? "debug" : "info"),
+  formatters: {
+    level: (label: string) => ({ level: label }),
+  },
+  browser: { asObject: true },
+});
 
 /**
  * Log event types

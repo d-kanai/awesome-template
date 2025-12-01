@@ -1,4 +1,5 @@
 export const HOME_ROUTES = {
+  ROOT: "/",
   HOME: "/home",
 } as const;
 

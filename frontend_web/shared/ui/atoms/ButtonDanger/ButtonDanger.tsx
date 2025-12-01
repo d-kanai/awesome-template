@@ -8,9 +8,9 @@
 "use client";
 
 import React, { forwardRef } from "react";
+import { cn } from "@/shared/lib/classNames";
 import { sendClickEvent } from "@/shared/lib/clickTracker";
 import { getNow } from "@/shared/lib/dateTime";
-import { cn } from "@/shared/lib/utils";
 
 export type ButtonDangerVariant = "primary" | "subtle";
 export type ButtonDangerSize = "small" | "medium";

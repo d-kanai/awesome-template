@@ -1,9 +1,9 @@
 import { setWorldConstructor, World } from "@cucumber/cucumber";
 import type { Browser, BrowserContext, Page } from "@playwright/test";
+import { HOME_ROUTES } from "../../features/home/routes";
 import { USER_ROUTES } from "../../features/user/routes";
 import { CookieManager } from "../../shared/lib/cookieManager";
 import { env } from "../../shared/lib/env";
-import { SHARED_ROUTES } from "../../shared/lib/routes";
 
 const API_BASE_URL = env.NEXT_PUBLIC_API_BASE_URL;
 const IS_MOCK_MODE = env.NEXT_PUBLIC_API_MOCK_MODE;
@@ -29,7 +29,7 @@ export class CustomWorld extends World {
         },
       ]);
 
-      await this.page.goto(SHARED_ROUTES.HOME);
+      await this.page.goto(HOME_ROUTES.ROOT);
       await this.page.waitForLoadState("networkidle");
       await this.page.goto(USER_ROUTES.USER_LIST);
       return;
@@ -65,7 +65,7 @@ export class CustomWorld extends World {
       },
     ]);
 
-    await this.page.goto(SHARED_ROUTES.HOME);
+    await this.page.goto(HOME_ROUTES.ROOT);
     await this.page.waitForLoadState("networkidle");
     await this.page.goto(USER_ROUTES.USER_LIST);
   }

@@ -2,7 +2,7 @@
 
 import React, { forwardRef } from "react";
 import { SharedTestIds } from "@/shared/ids";
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/shared/lib/classNames";
 
 export type InputFieldState = "default" | "error" | "disabled";
 

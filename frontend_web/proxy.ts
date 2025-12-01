@@ -1,12 +1,12 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { AUTH_ROUTES } from "@/features/auth/routes";
+import { HOME_ROUTES } from "@/features/home/routes";
 import { CookieManager } from "@/shared/lib/cookieManager";
 import { generateShortId } from "@/shared/lib/dateTime";
 import { isDev } from "@/shared/lib/env";
 import { HeaderManager } from "@/shared/lib/headerManager";
 import { proxyLog } from "@/shared/lib/logger";
-import { SHARED_ROUTES } from "@/shared/lib/routes";
 
 /**
  * Generate a cryptographically secure nonce for CSP
@@ -36,8 +36,8 @@ function buildCspHeader(nonce: string): string {
 }
 
 const PUBLIC_PATHS = [
-  SHARED_ROUTES.HOME,
-  "/home", // HomePage demo
+  HOME_ROUTES.ROOT,
+  HOME_ROUTES.HOME,
   AUTH_ROUTES.SIGNIN,
   AUTH_ROUTES.SIGNUP,
   "/api/health", // Health check endpoint

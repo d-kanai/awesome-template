@@ -9,7 +9,7 @@
 "use client";
 
 import React, { forwardRef } from "react";
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/shared/lib/classNames";
 
 export type TextContentHeadingAlign = "Start" | "Center";
 

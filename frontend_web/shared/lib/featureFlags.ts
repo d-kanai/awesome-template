@@ -1,17 +1,6 @@
 import { CookieManager } from "@/shared/lib/cookieManager";
 import { isDev, isStaging } from "@/shared/lib/env";
 
-/**
- * Feature Flag 一覧
- * 新しいフラグを追加する場合はここにキーを追加し、
- * 対応する isXxxEnabled 関数を実装すること
- */
-export const FeatureFlag = {
-  SHOW_VERSION_INFO: "showVersionInfo",
-} as const;
-
-export type FeatureFlagKey = (typeof FeatureFlag)[keyof typeof FeatureFlag];
-
 interface UserContext {
   userId?: string;
 }
@@ -34,19 +23,17 @@ async function getUserContext(): Promise<UserContext> {
 }
 
 function isShowVersionInfoEnabled(ctx: UserContext): boolean {
-  if (isDev || isStaging) return false;
-  if (ctx.userId === "1") return false;
+  if (isDev || isStaging) return true;
+  if (ctx.userId === "1") return true;
   return false;
 }
 
-export async function getFeatureFlags(): Promise<
-  Record<FeatureFlagKey, boolean>
-> {
+export async function getFeatureFlags() {
   const ctx = await getUserContext();
 
   return {
-    [FeatureFlag.SHOW_VERSION_INFO]: isShowVersionInfoEnabled(ctx),
-  };
+    showVersionInfo: isShowVersionInfoEnabled(ctx),
+  } as const;
 }
 
 export type FeatureFlags = Awaited<ReturnType<typeof getFeatureFlags>>;
