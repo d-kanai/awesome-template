@@ -7,6 +7,7 @@
       "entry": [
         "app/**/*.{ts,tsx}",
         "features/**/*.{ts,tsx}",
+        "shared/**/*.{ts,tsx}",
         "e2e/**/*.{js,ts}"
       ],
       "project": ["**/*.{ts,tsx,js,jsx}"],
