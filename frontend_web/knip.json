@@ -1,6 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "include": ["files", "dependencies", "unlisted", "exports"],
+  "ignoreExportsUsedInFile": true,
   "workspaces": {
     ".": {
       "entry": [
@@ -21,12 +22,12 @@
         "cucumber.js",
         "e2e/steps/*.ts",
         "shared/api/generated/**",
-        "shared/figma_generated/**"
+        "shared/figma_generated/**",
+        "**/*.stories.tsx",
+        "**/*.figma.tsx",
+        "**/*.figma-raw.tsx"
       ],
       "ignoreDependencies": [
-        "@tanstack/react-query-devtools",
-        "@vitest/coverage-v8",
-        "jsdom",
         "openapi-types",
         "ts-node",
         "pino-pretty",

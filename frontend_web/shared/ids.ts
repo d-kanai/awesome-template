@@ -1,10 +1,6 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Button IDs (for click event logging)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-export const ThemeToggleButtonIds = {
-  toggle: "shared-theme-toggle-button",
-} as const;
-
 export const HeaderAuthButtonIds = {
   signIn: "shared-header-auth-signin-button",
   register: "shared-header-auth-register-button",
