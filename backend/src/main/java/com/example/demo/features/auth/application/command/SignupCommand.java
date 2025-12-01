@@ -1,6 +1,5 @@
 package com.example.demo.features.auth.application.command;
 
-import com.example.demo.features.auth.presentation.input.SignupInput;
 import com.example.demo.features.user.domain.model.User;
 import com.example.demo.features.user.domain.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -9,17 +8,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class SignupCommand {
+
   private final UserRepository userRepository;
 
   public SignupCommand(final UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
-  public User execute(final SignupInput input) {
-    if (userRepository.existsByEmail(input.getEmail())) {
-      throw new IllegalArgumentException("Email already exists: " + input.getEmail());
+  public Output execute(final Input input) {
+    if (userRepository.existsByEmail(input.email())) {
+      throw new IllegalArgumentException("Email already exists: " + input.email());
     }
-    final User user = User.signup(input.getEmail(), input.getPassword());
-    return userRepository.save(user);
+    final User user = User.signup(input.email(), input.password());
+    final User savedUser = userRepository.save(user);
+    return new Output(savedUser);
   }
+
+  public record Input(String email, String password) {}
+
+  public record Output(User user) {}
 }

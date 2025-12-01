@@ -1,9 +1,5 @@
 package com.example.demo.shared;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,6 +27,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 @Component
 public class AccessLogFilter extends OncePerRequestFilter {
@@ -53,7 +53,9 @@ public class AccessLogFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
+    int contentLength = request.getContentLength();
+    ContentCachingRequestWrapper wrappedRequest =
+        new ContentCachingRequestWrapper(request, contentLength > 0 ? contentLength : 1024);
     long startedAt = System.currentTimeMillis();
 
     try {
@@ -87,7 +89,7 @@ public class AccessLogFilter extends OncePerRequestFilter {
 
     try {
       log.info(objectMapper.writeValueAsString(logPayload));
-    } catch (JsonProcessingException exception) {
+    } catch (JacksonException exception) {
       log.warn("Failed to serialize access log entry as JSON", exception);
       log.info(logPayload.toString());
     }
@@ -145,7 +147,7 @@ public class AccessLogFilter extends OncePerRequestFilter {
       JsonNode root = objectMapper.readTree(bodyString);
       maskSensitiveJson(root);
       return objectMapper.convertValue(root, Object.class);
-    } catch (JsonProcessingException exception) {
+    } catch (JacksonException exception) {
       log.warn("Failed to parse JSON body in access log", exception);
       return truncate(bodyString);
     }
@@ -158,8 +160,8 @@ public class AccessLogFilter extends OncePerRequestFilter {
     if (node.isObject()) {
       ObjectNode objectNode = (ObjectNode) node;
       objectNode
-          .fields()
-          .forEachRemaining(
+          .properties()
+          .forEach(
               entry -> {
                 if (entry.getValue().isValueNode() && isSensitiveKey(entry.getKey())) {
                   objectNode.put(entry.getKey(), "****");

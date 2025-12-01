@@ -1,10 +1,9 @@
-package com.example.demo.features.auth.presentation.controller;
+package com.example.demo.features.auth.presentation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.demo.features.auth.presentation.input.SigninInput;
 import com.example.demo.features.user.domain.model.User;
 import com.example.demo.features.user.domain.repository.UserRepository;
 import com.example.demo.testsupport.ApiTestClient;
@@ -12,8 +11,8 @@ import com.example.demo.testsupport.ApiTestResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
@@ -40,7 +39,7 @@ class SigninControllerIntegrationTest {
     final User user = User.signup(email, password);
     userRepository.save(user);
 
-    final SigninInput request = new SigninInput(email, password);
+    final var request = new SigninController.Input(email, password);
 
     // when
     final ApiTestResponse response = apiTestClient.post("/auth/signin", request);
@@ -64,7 +63,7 @@ class SigninControllerIntegrationTest {
     final User user = User.signup(email, correctPassword);
     userRepository.save(user);
 
-    final SigninInput request = new SigninInput(email, wrongPassword);
+    final var request = new SigninController.Input(email, wrongPassword);
 
     // when
     final ApiTestResponse response = apiTestClient.post("/auth/signin", request);
@@ -76,7 +75,7 @@ class SigninControllerIntegrationTest {
   @Test
   void サインイン時_存在しないメールアドレスでBadRequestを返す() throws Exception {
     // given input
-    final SigninInput request = new SigninInput("nonexistent@example.com", "SomePassword123");
+    final var request = new SigninController.Input("nonexistent@example.com", "SomePassword123");
 
     // given db
     assertThat(userRepository.findAll()).isEmpty();

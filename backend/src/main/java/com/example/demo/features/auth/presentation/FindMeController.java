@@ -1,6 +1,5 @@
-package com.example.demo.features.auth.presentation.controller;
+package com.example.demo.features.auth.presentation;
 
-import com.example.demo.features.auth.presentation.output.MeOutput;
 import com.example.demo.shared.jwt.JwtClaims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -8,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -29,19 +29,23 @@ public class FindMeController {
         content =
             @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = @Schema(implementation = MeOutput.class))),
+                schema = @Schema(implementation = Output.class))),
     @ApiResponse(responseCode = "401", description = "認証されていません。", content = @Content)
   })
   @GetMapping(value = "/me")
-  public ResponseEntity<MeOutput> execute() {
-    // Get authenticated user claims from SecurityContext
-    // Security filter ensures authentication, so no null check needed
+  public ResponseEntity<Output> execute() {
     final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-    // Principal is JwtClaims (type-safe!)
     final JwtClaims claims = (JwtClaims) authentication.getPrincipal();
+    return ResponseEntity.ok(Output.from(claims));
+  }
 
-    // Return user info directly from JWT claims (no DB query needed)
-    return ResponseEntity.ok(MeOutput.from(claims));
+  @Schema(name = "MeResponse", description = "認証済みユーザーの情報を表します")
+  public record Output(
+      @Schema(description = "ユーザーの一意な識別子", type = "string", format = "uuid") UUID id,
+      @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com") String email) {
+
+    public static Output from(final JwtClaims claims) {
+      return new Output(UUID.fromString(claims.userId()), claims.email());
+    }
   }
 }

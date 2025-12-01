@@ -22,12 +22,11 @@ management:
   endpoints:
     web:
       exposure:
-        # Only expose health endpoint in production
         include: health
   endpoint:
     health:
-      show-details: never
-      show-components: never
+      show-details: always
+      show-components: always
 
 jwt:
   secret: ${JWT_SECRET:my-secret-key-that-is-at-least-256-bits-long-for-hs256}

@@ -15,7 +15,9 @@ public class FindAllUsersQuery {
     this.userRepository = userRepository;
   }
 
-  public List<User> execute() {
-    return userRepository.findAll();
+  public Output execute() {
+    return new Output(userRepository.findAll());
   }
+
+  public record Output(List<User> users) {}
 }

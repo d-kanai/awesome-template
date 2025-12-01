@@ -7,15 +7,10 @@ package com.example.demo.infrastructure.jooq.tables;
 import com.example.demo.infrastructure.jooq.Public;
 import com.example.demo.infrastructure.jooq.tables.records.PgpArmorHeadersRecord;
 
-import java.util.function.Function;
-
+import org.jooq.Condition;
 import org.jooq.Field;
-import org.jooq.Function2;
 import org.jooq.Name;
-import org.jooq.Records;
-import org.jooq.Row2;
 import org.jooq.Schema;
-import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -62,7 +57,11 @@ public class PgpArmorHeaders extends TableImpl<PgpArmorHeadersRecord> {
     }
 
     private PgpArmorHeaders(Name alias, Table<PgpArmorHeadersRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.function());
+        this(alias, aliased, parameters, null);
+    }
+
+    private PgpArmorHeaders(Name alias, Table<PgpArmorHeadersRecord> aliased, Field<?>[] parameters, Condition where) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.function(), where);
     }
 
     /**
@@ -130,15 +129,6 @@ public class PgpArmorHeaders extends TableImpl<PgpArmorHeadersRecord> {
         return new PgpArmorHeaders(name.getQualifiedName(), null, parameters);
     }
 
-    // -------------------------------------------------------------------------
-    // Row2 type methods
-    // -------------------------------------------------------------------------
-
-    @Override
-    public Row2<String, String> fieldsRow() {
-        return (Row2) super.fieldsRow();
-    }
-
     /**
      * Call this table-valued function
      */
@@ -163,20 +153,5 @@ public class PgpArmorHeaders extends TableImpl<PgpArmorHeadersRecord> {
         });
 
         return aliased() ? result.as(getUnqualifiedName()) : result;
-    }
-
-    /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
-     */
-    public <U> SelectField<U> mapping(Function2<? super String, ? super String, ? extends U> from) {
-        return convertFrom(Records.mapping(from));
-    }
-
-    /**
-     * Convenience mapping calling {@link SelectField#convertFrom(Class,
-     * Function)}.
-     */
-    public <U> SelectField<U> mapping(Class<U> toType, Function2<? super String, ? super String, ? extends U> from) {
-        return convertFrom(toType, Records.mapping(from));
     }
 }

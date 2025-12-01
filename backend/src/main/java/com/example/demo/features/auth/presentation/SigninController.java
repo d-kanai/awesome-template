@@ -1,8 +1,7 @@
-package com.example.demo.features.auth.presentation.controller;
+package com.example.demo.features.auth.presentation;
 
 import com.example.demo.features.auth.application.command.SigninCommand;
-import com.example.demo.features.auth.presentation.input.SigninInput;
-import com.example.demo.features.auth.presentation.output.SigninOutput;
+import com.example.demo.features.user.domain.model.User;
 import com.example.demo.shared.jwt.JwtCookieProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +11,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
@@ -43,34 +46,27 @@ public class SigninController {
         content =
             @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = @Schema(implementation = SigninOutput.class))),
+                schema = @Schema(implementation = Output.class))),
     @ApiResponse(
         responseCode = "400",
         description = "メールアドレスまたはパスワードが正しくありません。",
         content = @Content)
   })
   @PostMapping(value = "/signin", consumes = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<SigninOutput> execute(
-      @Valid @RequestBody final SigninInput input, final HttpServletResponse response) {
+  public ResponseEntity<Output> execute(
+      @Valid @RequestBody final Input input, final HttpServletResponse response) {
     try {
-      final SigninOutput output = signinCommand.execute(input);
+      final SigninCommand.Output result =
+          signinCommand.execute(new SigninCommand.Input(input.email(), input.password()));
 
-      // Set httpOnly Cookie for web clients (frontend_web)
-      // Keep accessToken in response body for backward compatibility (frontend_native)
-      setAuthCookie(response, output.getAccessToken());
+      setAuthCookie(response, result.accessToken());
 
-      return ResponseEntity.ok(output);
+      return ResponseEntity.ok(Output.from(result));
     } catch (final IllegalArgumentException e) {
       return ResponseEntity.badRequest().build();
     }
   }
 
-  /**
-   * 認証トークンをhttpOnly Cookieとして設定する.
-   *
-   * @param response HttpServletResponse
-   * @param token JWT access token
-   */
   private void setAuthCookie(final HttpServletResponse response, final String token) {
     final String sameSite =
         jwtCookieProperties.getSameSite() != null ? jwtCookieProperties.getSameSite() : "Lax";
@@ -85,5 +81,37 @@ public class SigninController {
             .build();
 
     response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+  }
+
+  @Schema(name = "SigninRequest", description = "ユーザーがサインインするためのリクエストペイロードです")
+  public record Input(
+      @NotBlank(message = "メールアドレスは必須です")
+          @Email(message = "有効なメールアドレスを入力してください")
+          @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com")
+          String email,
+      @NotBlank(message = "パスワードは必須です")
+          @Schema(description = "ユーザーのパスワード", example = "SecurePassword123")
+          String password) {}
+
+  @Schema(name = "SigninResponse", description = "サインインしたユーザーを表します")
+  public record Output(
+      @Schema(description = "ユーザーの一意な識別子", type = "string", format = "uuid") UUID id,
+      @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com") String email,
+      @Schema(description = "JWT認証トークン", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+          String accessToken,
+      @Schema(description = "ユーザーの作成日時", type = "string", format = "date-time")
+          LocalDateTime createdAt,
+      @Schema(description = "ユーザーの最終更新日時", type = "string", format = "date-time")
+          LocalDateTime updatedAt) {
+
+    public static Output from(final SigninCommand.Output result) {
+      final User user = result.user();
+      return new Output(
+          user.getId().getValue(),
+          user.getEmail(),
+          result.accessToken(),
+          user.getCreatedAt(),
+          user.getUpdatedAt());
+    }
   }
 }
