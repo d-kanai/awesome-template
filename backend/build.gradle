@@ -268,18 +268,18 @@ tasks.register('bootRunTest', org.springframework.boot.gradle.tasks.run.BootRun)
 
 tasks.register('createMigration') {
     group = 'flyway'
-    description = 'Create a new migration file with timestamp. Usage: ./gradlew createMigration -Pmodule=user -Pdesc=create_xxx'
+    description = 'Create a new migration file with timestamp. Usage: ./gradlew createMigration -Pmodule=user -PmigrationName=create_xxx'
 
     doLast {
         if (!project.hasProperty('module')) {
             throw new GradleException("Missing required property: -Pmodule=<module_name> (e.g., user, auth, shared)")
         }
-        if (!project.hasProperty('desc')) {
-            throw new GradleException("Missing required property: -Pdesc=<migration_description> (e.g., create_users_table)")
+        if (!project.hasProperty('migrationName')) {
+            throw new GradleException("Missing required property: -PmigrationName=<migration_name> (e.g., create_users_table)")
         }
 
         def moduleName = project.property('module')
-        def migrationName = project.property('desc')
+        def migrationName = project.property('migrationName')
         def timestamp = new Date().format('yyyyMMddHHmmss')
         def fileName = "V${timestamp}__${migrationName}.sql"
 

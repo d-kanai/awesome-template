@@ -34,9 +34,9 @@ migrate-clean:
 jooq:
 	./gradlew generateJooq
 
-# Usage: make create-migration module=user desc=create_xxx
+# Usage: make create-migration module=user name=create_xxx
 create-migration:
-	./gradlew createMigration -Pmodule=$(module) -Pdesc=$(desc)
+	./gradlew createMigration -Pmodule=$(module) -PmigrationName=$(name)
 
 # Documentation
 openapi:
