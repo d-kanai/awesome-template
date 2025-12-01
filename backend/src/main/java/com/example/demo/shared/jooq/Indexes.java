@@ -3,28 +3,26 @@
  */
 package com.example.demo.shared.jooq;
 
+
 import com.example.demo.shared.jooq.tables.FlywaySchemaHistory;
 import com.example.demo.shared.jooq.tables.Users;
+
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.DSL;
 import org.jooq.impl.Internal;
 
-/** A class modelling indexes of tables in public. */
-@SuppressWarnings({"all", "unchecked", "rawtypes", "this-escape"})
+
+/**
+ * A class modelling indexes of tables in public.
+ */
+@SuppressWarnings({ "all", "unchecked", "rawtypes", "this-escape" })
 public class Indexes {
 
-  // -------------------------------------------------------------------------
-  // INDEX definitions
-  // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // INDEX definitions
+    // -------------------------------------------------------------------------
 
-  public static final Index FLYWAY_SCHEMA_HISTORY_S_IDX =
-      Internal.createIndex(
-          DSL.name("flyway_schema_history_s_idx"),
-          FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY,
-          new OrderField[] {FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.SUCCESS},
-          false);
-  public static final Index IDX_USERS_EMAIL =
-      Internal.createIndex(
-          DSL.name("idx_users_email"), Users.USERS, new OrderField[] {Users.USERS.EMAIL}, false);
+    public static final Index FLYWAY_SCHEMA_HISTORY_S_IDX = Internal.createIndex(DSL.name("flyway_schema_history_s_idx"), FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, new OrderField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.SUCCESS }, false);
+    public static final Index IDX_USERS_EMAIL = Internal.createIndex(DSL.name("idx_users_email"), Users.USERS, new OrderField[] { Users.USERS.EMAIL }, false);
 }
