@@ -26,7 +26,11 @@
 - HTTP レスポンス形式への変換は Presentation 層で行う
 
 ### domain層
-- (TODO)
+- フィールドは全てfinal（イミュータブル）
+- setterは使用禁止
+- updateXxx ではなく、ビジネス上の振る舞いの言葉を使う（例: `changePassword`, `activate`, `cancel`）
+- コンストラクタはprivate、static factoryメソッドで生成
+  - 完全コンストラクタパターン（全フィールドを引数に取る）
 
 ### infrastructure層
 - (TODO)
