@@ -27,8 +27,6 @@
 
 ### コード品質
 - **リンター**: Checkstyle (Google Java Style準拠)
-  - メソッド30行以内
-  - ローカル変数・パラメータは基本final宣言
 - **フォーマッター**: Spotless (Google Java Format)
 
 ## アーキテクチャ
