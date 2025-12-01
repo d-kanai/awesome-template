@@ -4,8 +4,6 @@ import com.example.demo.shared.jwt.JwtCookieProperties;
 import com.example.demo.shared.jwt.JwtTokenProvider;
 import com.example.demo.test.internal.application.command.ResetDatabaseCommand;
 import com.example.demo.test.internal.application.command.SetupDataCommand;
-import com.example.demo.user.internal.domain.valueobject.UserEmail;
-import com.example.demo.user.internal.domain.valueobject.UserId;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -81,9 +79,7 @@ public class SupportE2ETestRestApi {
       final HttpServletResponse response) {
     logger.info("Test token generation requested (setCookie={})", setCookie);
     // E2E テスト用の固定ユーザー情報でトークンを生成
-    final UserId userId = UserId.fromString(E2E_TEST_USER_ID);
-    final UserEmail userEmail = UserEmail.of(E2E_TEST_EMAIL);
-    final String token = jwtTokenProvider.generateToken(userId, userEmail);
+    final String token = jwtTokenProvider.generateToken(E2E_TEST_USER_ID, E2E_TEST_EMAIL);
 
     // オプションでhttpOnly Cookieとして設定
     if (setCookie) {

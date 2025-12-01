@@ -8,7 +8,6 @@ import com.example.demo.testsupport.ApiTestClient;
 import com.example.demo.testsupport.ApiTestResponse;
 import com.example.demo.user.internal.domain.model.User;
 import com.example.demo.user.internal.domain.repository.UserRepository;
-import com.example.demo.user.internal.domain.valueobject.UserEmail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ class FindAllUsersRestApiTest {
 
     // given token
     final String token =
-        jwtTokenProvider.generateToken(user1.getId(), UserEmail.of(user1.getEmail()));
+        jwtTokenProvider.generateToken(user1.getId().getValue().toString(), user1.getEmail());
 
     // when
     final ApiTestResponse response = apiTestClient.getWithAuth("/users", token);
@@ -64,7 +63,7 @@ class FindAllUsersRestApiTest {
     final User tempUser = User.signup("temp@example.com", "Password123");
     userRepository.save(tempUser);
     final String token =
-        jwtTokenProvider.generateToken(tempUser.getId(), UserEmail.of(tempUser.getEmail()));
+        jwtTokenProvider.generateToken(tempUser.getId().getValue().toString(), tempUser.getEmail());
     userRepository.deleteById(tempUser.getId());
 
     // when

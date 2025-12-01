@@ -8,7 +8,6 @@ import com.example.demo.testsupport.ApiTestClient;
 import com.example.demo.testsupport.ApiTestResponse;
 import com.example.demo.user.internal.domain.model.User;
 import com.example.demo.user.internal.domain.repository.UserRepository;
-import com.example.demo.user.internal.domain.valueobject.UserEmail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,7 @@ class FindMeRestApiTest {
     userRepository.save(user);
 
     // given token
-    final String token = jwtTokenProvider.generateToken(user.getId(), UserEmail.of(email));
+    final String token = jwtTokenProvider.generateToken(user.getId().getValue().toString(), email);
 
     // when
     final ApiTestResponse response = apiTestClient.getWithAuth("/auth/me", token);

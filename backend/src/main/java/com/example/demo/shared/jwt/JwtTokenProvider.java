@@ -1,7 +1,5 @@
 package com.example.demo.shared.jwt;
 
-import com.example.demo.user.internal.domain.valueobject.UserEmail;
-import com.example.demo.user.internal.domain.valueobject.UserId;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -27,13 +25,11 @@ public class JwtTokenProvider {
     this.expirationHours = expirationHours;
   }
 
-  public String generateToken(final UserId userId, final UserEmail email) {
+  public String generateToken(final String userId, final String email) {
     final Instant now = Instant.now();
     final Instant expiration = now.plus(expirationHours, ChronoUnit.HOURS);
 
-    final JwtClaims claims =
-        new JwtClaims(
-            userId.getValue().toString(), email.getValue(), Date.from(now), Date.from(expiration));
+    final JwtClaims claims = new JwtClaims(userId, email, Date.from(now), Date.from(expiration));
 
     return generateToken(claims);
   }

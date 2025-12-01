@@ -3,7 +3,6 @@ package com.example.demo.auth.internal.application.command;
 import com.example.demo.shared.jwt.JwtTokenProvider;
 import com.example.demo.user.internal.domain.model.User;
 import com.example.demo.user.internal.domain.repository.UserRepository;
-import com.example.demo.user.internal.domain.valueobject.UserEmail;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +30,7 @@ public class SigninCommand {
     }
 
     final String token =
-        jwtTokenProvider.generateToken(user.getId(), UserEmail.of(user.getEmail()));
+        jwtTokenProvider.generateToken(user.getId().getValue().toString(), user.getEmail());
 
     return new Output(user, token);
   }
