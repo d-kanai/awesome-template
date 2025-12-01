@@ -18,10 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "ユーザー", description = "ユーザーを管理するための操作です")
 @RestController
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-public class UserController {
+public class FindAllUsersController {
+
   private final FindAllUsersQuery findAllUsersQuery;
 
-  public UserController(final FindAllUsersQuery findAllUsersQuery) {
+  public FindAllUsersController(final FindAllUsersQuery findAllUsersQuery) {
     this.findAllUsersQuery = findAllUsersQuery;
   }
 
@@ -38,7 +39,7 @@ public class UserController {
                     schema = @Schema(implementation = FindAllUsersOutput.class)))
       })
   @GetMapping
-  public ResponseEntity<FindAllUsersOutput> getAllUsers() {
+  public ResponseEntity<FindAllUsersOutput> execute() {
     final List<User> users = findAllUsersQuery.execute();
     return ResponseEntity.ok(FindAllUsersOutput.from(users));
   }

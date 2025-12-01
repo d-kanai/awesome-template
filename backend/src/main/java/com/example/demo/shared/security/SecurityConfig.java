@@ -44,7 +44,7 @@ public class SecurityConfig {
             authorize ->
                 authorize
                     // Public endpoints
-                    .requestMatchers("/auth/**")
+                    .requestMatchers("/auth/signup", "/auth/signin")
                     .permitAll()
                     .requestMatchers("/actuator/health/**")
                     .permitAll()
@@ -55,8 +55,6 @@ public class SecurityConfig {
                     .requestMatchers("/swagger-ui/**")
                     .permitAll()
                     .requestMatchers("/swagger-ui.html")
-                    .permitAll()
-                    .requestMatchers("/featureflags/**")
                     .permitAll()
                     // All other endpoints require authentication
                     .anyRequest()

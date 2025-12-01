@@ -30,4 +30,10 @@ public class ApiTestClient {
   public ApiTestResponse get(final String url) throws Exception {
     return new ApiTestResponse(mockMvc.perform(MockMvcRequestBuilders.get(url)), objectMapper);
   }
+
+  public ApiTestResponse getWithAuth(final String url, final String token) throws Exception {
+    return new ApiTestResponse(
+        mockMvc.perform(MockMvcRequestBuilders.get(url).header("Authorization", "Bearer " + token)),
+        objectMapper);
+  }
 }
