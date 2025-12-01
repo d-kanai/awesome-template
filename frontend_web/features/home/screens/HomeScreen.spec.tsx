@@ -60,7 +60,12 @@ describe("HomeScreen - TestC", () => {
 
       // When: データ取得 → 画面レンダリング
       const userVoices = await getUserVoices();
-      render(<HomeScreen userVoices={userVoices} />);
+      render(
+        <HomeScreen
+          userVoices={userVoices}
+          featureFlagShowVersionInfo={false}
+        />,
+      );
 
       // Then: モックデータが表示される
       expect(screen.getByText("This is amazing!")).toBeInTheDocument();
@@ -79,7 +84,12 @@ describe("HomeScreen - TestC", () => {
 
       // When: データ取得 → 画面レンダリング
       const userVoices = await getUserVoices();
-      render(<HomeScreen userVoices={userVoices} />);
+      render(
+        <HomeScreen
+          userVoices={userVoices}
+          featureFlagShowVersionInfo={false}
+        />,
+      );
 
       // Then: Hero Sectionが表示
       expect(screen.getByText("Welcome to Our Platform")).toBeInTheDocument();
@@ -101,7 +111,12 @@ describe("HomeScreen - TestC", () => {
 
       // When: データ取得 → 画面レンダリング → Primaryボタンクリック
       const userVoices = await getUserVoices();
-      render(<HomeScreen userVoices={userVoices} />);
+      render(
+        <HomeScreen
+          userVoices={userVoices}
+          featureFlagShowVersionInfo={false}
+        />,
+      );
       const primaryButton = screen.getByRole("button", { name: /Sign Up/i });
       await user.click(primaryButton);
 
@@ -122,7 +137,12 @@ describe("HomeScreen - TestC", () => {
 
       // When: データ取得 → 画面レンダリング → Secondaryボタンクリック
       const userVoices = await getUserVoices();
-      render(<HomeScreen userVoices={userVoices} />);
+      render(
+        <HomeScreen
+          userVoices={userVoices}
+          featureFlagShowVersionInfo={false}
+        />,
+      );
       const secondaryButton = screen.getByRole("button", {
         name: /Contact Us/i,
       });
@@ -153,7 +173,12 @@ describe("HomeScreen - TestC", () => {
 
       // When: データ取得 → 画面レンダリング
       const userVoices = await getUserVoices();
-      render(<HomeScreen userVoices={userVoices} />);
+      render(
+        <HomeScreen
+          userVoices={userVoices}
+          featureFlagShowVersionInfo={false}
+        />,
+      );
 
       // Then: User Voices Sectionが表示
       expect(screen.getByText("What Our Users Say")).toBeInTheDocument();
@@ -174,11 +199,64 @@ describe("HomeScreen - TestC", () => {
 
       // When: データ取得 → 画面レンダリング
       const userVoices = await getUserVoices();
-      render(<HomeScreen userVoices={userVoices} />);
+      render(
+        <HomeScreen
+          userVoices={userVoices}
+          featureFlagShowVersionInfo={false}
+        />,
+      );
 
       // Then: エラーにならず、基本構造が表示される
       expect(screen.getByText("Welcome to Our Platform")).toBeInTheDocument();
       expect(screen.getByText("What Our Users Say")).toBeInTheDocument();
+    });
+  });
+
+  describe("Feature Flag", () => {
+    it("showVersionInfo=trueの場合、バージョン情報が表示される", async () => {
+      // Given: API レスポンスモック
+      const mockResponse = {
+        data: { userVoices: [] },
+        status: 200,
+      };
+      vi.mocked(getUserVoicesAPI).mockResolvedValue(mockResponse);
+
+      // When: showVersionInfo=trueでレンダリング
+      const userVoices = await getUserVoices();
+      render(
+        <HomeScreen
+          userVoices={userVoices}
+          featureFlagShowVersionInfo={true}
+        />,
+      );
+
+      // Then: バージョン情報が表示される
+      expect(
+        screen.getByText("Version: 1.0.0 (Feature Flag enabled)"),
+      ).toBeInTheDocument();
+    });
+
+    it("showVersionInfo=falseの場合、バージョン情報が表示されない", async () => {
+      // Given: API レスポンスモック
+      const mockResponse = {
+        data: { userVoices: [] },
+        status: 200,
+      };
+      vi.mocked(getUserVoicesAPI).mockResolvedValue(mockResponse);
+
+      // When: showVersionInfo=falseでレンダリング
+      const userVoices = await getUserVoices();
+      render(
+        <HomeScreen
+          userVoices={userVoices}
+          featureFlagShowVersionInfo={false}
+        />,
+      );
+
+      // Then: バージョン情報が表示されない
+      expect(
+        screen.queryByText("Version: 1.0.0 (Feature Flag enabled)"),
+      ).not.toBeInTheDocument();
     });
   });
 });

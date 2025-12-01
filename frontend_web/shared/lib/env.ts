@@ -8,6 +8,9 @@ const serverSchema = z.object({
   // Node.js環境（Next.jsが自動設定）
   NODE_ENV: z.enum(["development", "production", "test"]),
 
+  // アプリ環境（NODE_ENVと別に管理、stagingではNODE_ENV=productionになるため）
+  ENV: z.enum(["development", "staging", "production", "test"]),
+
   // Bundle Analyzer有効化フラグ（必須: "true" | "false"）
   ANALYZE: z.enum(["true", "false"]),
 
@@ -48,6 +51,7 @@ const clientSchema = z.object({
  */
 const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
+  ENV: process.env.ENV,
   ANALYZE: process.env.ANALYZE,
   LOG_LEVEL: process.env.LOG_LEVEL,
   NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -96,16 +100,21 @@ export const env = {
 } as z.infer<typeof serverSchema> & z.infer<typeof clientSchema>;
 
 /**
- * 開発環境かどうかを判定
+ * 開発環境かどうかを判定（ENV基準）
  */
-export const isDev = env.NODE_ENV === "development";
+export const isDev = env.ENV === "development";
 
 /**
- * 本番環境かどうかを判定
+ * ステージング環境かどうかを判定（ENV基準）
  */
-export const isProd = env.NODE_ENV === "production";
+export const isStaging = env.ENV === "staging";
 
 /**
- * テスト環境かどうかを判定
+ * 本番環境かどうかを判定（ENV基準）
  */
-export const isTest = env.NODE_ENV === "test";
+export const isProd = env.ENV === "production";
+
+/**
+ * テスト環境かどうかを判定（ENV基準）
+ */
+export const isTest = env.ENV === "test";

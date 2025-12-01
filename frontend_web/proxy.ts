@@ -3,12 +3,10 @@ import { NextResponse } from "next/server";
 import { AUTH_ROUTES } from "@/features/auth/routes";
 import { CookieManager } from "@/shared/lib/cookieManager";
 import { generateShortId } from "@/shared/lib/dateTime";
+import { isDev } from "@/shared/lib/env";
 import { HeaderManager } from "@/shared/lib/headerManager";
 import { proxyLog } from "@/shared/lib/logger";
 import { SHARED_ROUTES } from "@/shared/lib/routes";
-
-// CSP (Content Security Policy) 設定 - Level 3 with nonce
-const isDev = process.env.NODE_ENV === "development";
 
 /**
  * Generate a cryptographically secure nonce for CSP

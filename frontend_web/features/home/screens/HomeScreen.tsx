@@ -9,6 +9,7 @@ import { HeroActions } from "@/shared/ui/components/HeroActions/HeroActions";
 
 interface HomeScreenProps {
   userVoices: UserVoice[];
+  featureFlagShowVersionInfo: boolean; // サーバーサイドから渡されるフラグ
 }
 
 function HeroSection({
@@ -53,7 +54,10 @@ function UserVoicesSection({ userVoices }: { userVoices: UserVoice[] }) {
   );
 }
 
-export function HomeScreen({ userVoices }: HomeScreenProps) {
+export function HomeScreen({
+  userVoices,
+  featureFlagShowVersionInfo,
+}: HomeScreenProps) {
   const router = useRouter();
 
   const handlePrimaryClick = () => {
@@ -72,6 +76,13 @@ export function HomeScreen({ userVoices }: HomeScreenProps) {
       />
       <PlaceholderSection />
       <UserVoicesSection userVoices={userVoices} />
+
+      {/* Feature Flag サンプル: サーバーサイドで評価済み */}
+      {featureFlagShowVersionInfo && (
+        <div className="p-4 text-center text-sm text-muted-foreground">
+          Version: 1.0.0 (Feature Flag enabled)
+        </div>
+      )}
     </>
   );
 }

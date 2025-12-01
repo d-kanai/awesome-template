@@ -41,6 +41,7 @@ spec:
         # 🎯 プッシュ先
         - --destination=$(params.image-name):$(params.image-tag)
         # 🔧 ビルド引数 (NEXT_PUBLIC_* は JS に埋め込まれる)
+        - --build-arg=ENV=$(ENV)
         - --build-arg=NEXT_PUBLIC_API_BASE_URL=$(NEXT_PUBLIC_API_BASE_URL)
         - --build-arg=NEXT_PUBLIC_API_MOCK_MODE=$(NEXT_PUBLIC_API_MOCK_MODE)
         - --build-arg=NEXT_PUBLIC_API_TIMEOUT_MS=$(NEXT_PUBLIC_API_TIMEOUT_MS)

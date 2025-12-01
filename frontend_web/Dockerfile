@@ -27,6 +27,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build arguments (値は --build-arg で渡す、Secret で一元管理)
+ARG ENV
 ARG NEXT_PUBLIC_API_BASE_URL
 ARG NEXT_PUBLIC_API_MOCK_MODE
 ARG NEXT_PUBLIC_API_TIMEOUT_MS
@@ -36,6 +37,7 @@ ARG ANALYZE
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1 \
     NODE_ENV=production \
+    ENV=${ENV} \
     NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL} \
     NEXT_PUBLIC_API_MOCK_MODE=${NEXT_PUBLIC_API_MOCK_MODE} \
     NEXT_PUBLIC_API_TIMEOUT_MS=${NEXT_PUBLIC_API_TIMEOUT_MS} \

@@ -34,6 +34,8 @@ spec:
     - name: build-app
       image: node:22.21.1-bookworm
       env:
+        - name: ENV
+          value: "test"
         - name: NEXT_PUBLIC_API_BASE_URL
           value: "http://localhost:8080"
         - name: NEXT_PUBLIC_API_MOCK_MODE
@@ -63,6 +65,8 @@ spec:
           value: "true"
         - name: BASE_URL
           value: "http://localhost:3000"
+        - name: ENV
+          value: "test"
         - name: NEXT_PUBLIC_API_BASE_URL
           value: "http://localhost:8080"
         - name: NEXT_PUBLIC_API_MOCK_MODE
