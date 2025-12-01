@@ -6,7 +6,7 @@ spring:
     password:
   flyway:
     enabled: true
-    locations: classpath:db/migration
+    locations: classpath:migration
     placeholders:
       create_pgcrypto_extension: ''
       users_id_uuid_clause: ''

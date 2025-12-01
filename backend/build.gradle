@@ -34,6 +34,18 @@ java {
     }
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                'src/main/java/com/example/demo/features/user/db',
+                'src/main/java/com/example/demo/features/auth/db',
+                'src/main/java/com/example/demo/shared/db'
+            ]
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -108,7 +120,12 @@ flyway {
     password = 'demo123'
     schemas = ['public']
     baselineOnMigrate = true
-    locations = ['filesystem:src/main/resources/db/migration']
+    cleanDisabled = false
+    locations = [
+        'filesystem:src/main/java/com/example/demo/features/user/db/migration',
+        'filesystem:src/main/java/com/example/demo/features/auth/db/migration',
+        'filesystem:src/main/java/com/example/demo/shared/db/migration'
+    ]
     placeholders = [
         create_pgcrypto_extension: 'CREATE EXTENSION IF NOT EXISTS "pgcrypto";',
         users_id_uuid_clause: ' DEFAULT gen_random_uuid()'

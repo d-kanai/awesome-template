@@ -99,21 +99,30 @@ backend/
 │   │   ├── java/com/example/demo/
 │   │   │   ├── DemoApplication.java
 │   │   │   ├── features/
-│   │   │   │   ├── user/
+│   │   │   │   └── user/
+│   │   │   │       └── db/migration/  # モジュールごとのマイグレーション
 │   │   │   └── shared/
-│   │   │       └── jooq/          # jOOQ生成コード（Git管理）
+│   │   │       └── jooq/              # jOOQ生成コード（Git管理）
 │   │   └── resources/
-│   │       └── db/migration/
 │   └── test/
 │       └── java/com/example/demo/
 │           ├── ModularityTest.java
 │           ├── testsupport/
-│           │   └── databuilder/   # テストデータビルダー
+│           │   └── databuilder/
 │           └── features/
 ├── build.gradle
 ├── doc/
 │   └── code_rule.md
 └── README.md
+```
+
+### DBマイグレーション
+
+各モジュールが自身のテーブルを管理。マイグレーションファイルはタイムスタンプ形式で命名。
+
+```
+features/user/db/migration/V20241128000000__create_users_table.sql
+features/auth/db/migration/V20241202120000__create_sessions_table.sql
 ```
 
 ## OpenAPI
