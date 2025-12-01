@@ -1,7 +1,7 @@
 package com.example.demo.shared.jwt;
 
-import com.example.demo.features.user.domain.valueobject.UserEmail;
-import com.example.demo.features.user.domain.valueobject.UserId;
+import com.example.demo.user.internal.domain.valueobject.UserEmail;
+import com.example.demo.user.internal.domain.valueobject.UserId;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
