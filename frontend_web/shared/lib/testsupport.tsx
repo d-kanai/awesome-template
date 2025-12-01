@@ -5,7 +5,7 @@ import { type RenderOptions, render } from "@testing-library/react";
  * テスト用のQueryClientを作成
  * リトライや再フェッチを無効化して、テストの動作を予測可能にする
  */
-export function createQueryClient() {
+function createQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {

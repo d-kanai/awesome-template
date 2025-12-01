@@ -26,7 +26,10 @@
       "ignoreDependencies": [
         "@tanstack/react-query-devtools",
         "@vitest/coverage-v8",
-        "jsdom"
+        "jsdom",
+        "openapi-types",
+        "ts-node",
+        "pino-pretty"
       ]
     }
   }

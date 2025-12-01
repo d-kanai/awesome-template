@@ -113,8 +113,3 @@ export const isStaging = env.ENV === "staging";
  * 本番環境かどうかを判定（ENV基準）
  */
 export const isProd = env.ENV === "production";
-
-/**
- * テスト環境かどうかを判定（ENV基準）
- */
-export const isTest = env.ENV === "test";

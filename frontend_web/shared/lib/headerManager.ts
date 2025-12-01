@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 
-export const HEADER_KEYS = {
+const HEADER_KEYS = {
   REQUEST_ID: "x-request-id",
   USER_AGENT: "user-agent",
   FORWARDED_FOR: "x-forwarded-for",

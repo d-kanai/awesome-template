@@ -90,12 +90,8 @@ function maskObject(data: Record<string, unknown>): Record<string, unknown> {
 
 /**
  * Mask sensitive fields in an object for logging
- *
- * @example
- * maskSensitive({ email: "user@example.com", password: "secret" })
- * // { email: "***MASKED***", password: "***MASKED***" }
  */
-export function maskSensitive(data: unknown): unknown {
+function maskSensitive(data: unknown): unknown {
   if (data === null || data === undefined) {
     return data;
   }
@@ -339,8 +335,3 @@ export async function apiErrorLog(options: {
     duration: `${options.duration}ms`,
   });
 }
-
-/**
- * Export base Pino logger for direct use
- */
-export const logger = baseLogger;
