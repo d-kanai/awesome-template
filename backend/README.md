@@ -1,5 +1,7 @@
 # Backend
 
+コーディング規約は [doc/code_rule.md](doc/code_rule.md) を参照。
+
 ## 技術スタック
 
 ### コア技術
@@ -72,7 +74,7 @@ features/xxx/
     │   ├── valueobject/  # 値オブジェクト
     │   └── repository/   # リポジトリインターフェース
     ├── infrastructure/
-    │   └── persistence/  # リポジトリ実装
+    │   └── repository/   # リポジトリ実装
     └── presentation/
         ├── rest/         # REST API
         └── job/          # バッチ処理

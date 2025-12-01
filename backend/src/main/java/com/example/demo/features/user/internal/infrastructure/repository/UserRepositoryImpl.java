@@ -1,4 +1,4 @@
-package com.example.demo.features.user.internal.infrastructure.persistence;
+package com.example.demo.features.user.internal.infrastructure.repository;
 
 import static com.example.demo.shared.jooq.tables.Users.USERS;
 
