@@ -265,3 +265,38 @@ tasks.register('bootRunTest', org.springframework.boot.gradle.tasks.run.BootRun)
     classpath = sourceSets.main.runtimeClasspath
     environment('SPRING_PROFILES_ACTIVE', 'test')
 }
+
+tasks.register('createMigration') {
+    group = 'flyway'
+    description = 'Create a new migration file with timestamp. Usage: ./gradlew createMigration -Pmodule=user -Pdesc=create_xxx'
+
+    doLast {
+        if (!project.hasProperty('module')) {
+            throw new GradleException("Missing required property: -Pmodule=<module_name> (e.g., user, auth, shared)")
+        }
+        if (!project.hasProperty('desc')) {
+            throw new GradleException("Missing required property: -Pdesc=<migration_description> (e.g., create_users_table)")
+        }
+
+        def moduleName = project.property('module')
+        def migrationName = project.property('desc')
+        def timestamp = new Date().format('yyyyMMddHHmmss')
+        def fileName = "V${timestamp}__${migrationName}.sql"
+
+        def migrationDir
+        if (moduleName == 'shared') {
+            migrationDir = file("src/main/java/com/example/demo/shared/db/migration")
+        } else {
+            migrationDir = file("src/main/java/com/example/demo/features/${moduleName}/db/migration")
+        }
+
+        if (!migrationDir.exists()) {
+            throw new GradleException("Migration directory not found: ${migrationDir}")
+        }
+
+        def migrationFile = new File(migrationDir, fileName)
+        migrationFile.text = "-- ${migrationName}\n"
+
+        println "Created: ${migrationFile.path}"
+    }
+}
