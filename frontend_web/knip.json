@@ -29,7 +29,8 @@
         "jsdom",
         "openapi-types",
         "ts-node",
-        "pino-pretty"
+        "pino-pretty",
+        "@executeautomation/playwright-mcp-server"
       ]
     }
   }
