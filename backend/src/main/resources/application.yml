@@ -2,9 +2,9 @@ spring:
   application:
     name: demo
   datasource:
-    url: jdbc:postgresql://localhost:5432/demodb
-    username: demo
-    password: demo123
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   flyway:
     enabled: true
@@ -15,7 +15,7 @@ spring:
       users_id_uuid_clause: ' DEFAULT gen_random_uuid()'
 
 server:
-  port: 8080
+  port: ${PORT:8080}
   address: 0.0.0.0
 
 management:
@@ -29,17 +29,15 @@ management:
       show-components: always
 
 app:
-  env: ${ENV:DEVELOPMENT}
+  env: ${ENV}
   jwt:
-    secret: ${JWT_SECRET:my-secret-key-that-is-at-least-256-bits-long-for-hs256}
-    expiration-hours: 720  # 30 days
+    secret: ${JWT_SECRET}
+    expiration-hours: ${JWT_EXPIRATION_HOURS:720}
     cookie:
       name: accessToken
       http-only: true
-      secure: ${JWT_COOKIE_SECURE:false}
+      secure: ${JWT_COOKIE_SECURE}
       same-site: Lax
-      max-age-seconds: 2592000  # 30 days
+      max-age-seconds: 2592000
   cors:
-    allowed-origins:
-      - http://localhost:3000
-      - http://localhost:3001
+    allowed-origins: ${CORS_ALLOWED_ORIGINS}

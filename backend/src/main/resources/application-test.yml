@@ -31,16 +31,15 @@ app:
   env: TEST
   jwt:
     secret: test-secret-key-that-is-at-least-256-bits-long-for-hs256
-    expiration-hours: 720  # 30 days
+    expiration-hours: 720
     cookie:
       name: accessToken
       http-only: true
       secure: false
       same-site: Lax
-      max-age-seconds: 2592000  # 30 days
+      max-age-seconds: 2592000
   cors:
-    allowed-origins:
-      - http://localhost:3000
+    allowed-origins: http://localhost:3000
 
 logging:
   level:
