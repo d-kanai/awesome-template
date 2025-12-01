@@ -8,6 +8,11 @@
 - 認知・循環複雑度15以内
 - deep nest 2以内
 
+### 命名規則
+- 取得系: Find〜 (例: FindMe, FindAllUsers, FindUserById)
+- 更新/作成/削除系: ビジネス上の振る舞い名を使う（例: Signup, Signin, PublishArticle, CancelOrder）
+- CRUD名（Create, Update, Delete）は避ける
+
 ## code
 
 ### presentation層
@@ -30,15 +35,10 @@
 - setterは使用禁止
 - updateXxx ではなく、ビジネス上の振る舞いの言葉を使う（例: `changePassword`, `activate`, `cancel`）
 - コンストラクタはprivate、static factoryメソッドで生成
-  - 完全コンストラクタパターン（全フィールドを引数に取る）
+- 完全コンストラクタパターン（コンストラクタ内でバリデーションを行い、不正なインスタンスを生成させない）
 
 ### infrastructure層
 - (TODO)
-
-### 命名規則
-- 取得系: Find〜 (例: FindMe, FindAllUsers, FindUserById)
-- 更新/作成/削除系: ビジネス上の振る舞い名を使う（例: Signup, Signin, PublishArticle, CancelOrder）
-- CRUD名（Create, Update, Delete）は避ける
 
 ## test
 - カバレッジ90%以上
