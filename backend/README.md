@@ -37,6 +37,8 @@
 
 Spring Modulithを使用してモジュール境界を強制。各モジュールは独立したドメインを表現。
 
+> **Note**: 将来に備えて `public/` と `internal/` を分離しているが、現時点では `internal` 同士のアクセスを許容している（`ApplicationModule.Type.OPEN`）。システムが大きくなったら `internal` の公開をやめて整理する。
+
 ```
 com.example.demo/
 ├── features/           # 機能モジュール群
