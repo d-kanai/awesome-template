@@ -36,11 +36,11 @@ const clientSchema = z.object({
     .optional()
     .transform((val) => (val ? Number.parseInt(val, 10) : 30000)),
 
-  // Slow Request閾値（オプション: ミリ秒、デフォルト3000ms = 3秒）
+  // Slow Request閾値（必須: ミリ秒）
+  // この閾値を超えたリクエストはwarnレベルでログ出力される
   NEXT_PUBLIC_API_SLOW_THRESHOLD_MS: z
     .string()
-    .optional()
-    .transform((val) => (val ? Number.parseInt(val, 10) : 3000)),
+    .transform((val) => Number.parseInt(val, 10)),
 });
 
 /**
