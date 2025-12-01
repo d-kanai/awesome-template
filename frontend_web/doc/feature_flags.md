@@ -48,12 +48,6 @@ export default async function Page() {
    }
    ```
 
-## 📋 現在のフラグ一覧
-
-| フラグ名 | 説明 | dev/staging | prod |
-|---------|------|-------------|------|
-| `showVersionInfo` | バージョン情報表示 | ✅ ON | userId=1のみ |
-
 ## 💡 判定条件の例
 
 ```typescript
@@ -64,6 +58,45 @@ if (isStaging) return true;
 // ユーザーベース
 if (ctx.userId === "1") return true;
 
-// 割合ベース (将来)
-if (hashUserId(ctx.userId) % 100 < 10) return true; // 10%
+// 割合ベース（A/Bテスト）
+// userIdを数値化して剰余で判定（同じユーザーは常に同じ結果）
+const userIdNum = parseInt(ctx.userId || "0", 10);
+if (userIdNum % 100 < 10) return true; // 10%ロールアウト
+```
+
+## 🧪 A/Bテストの実装例
+
+```typescript
+// 50%のユーザーに新UIを表示
+function isNewUIEnabled(ctx: UserContext): boolean {
+  if (isDev || isStaging) return true;
+  if (!ctx.userId) return false;
+
+  const userIdNum = parseInt(ctx.userId, 10);
+  return userIdNum % 2 === 0; // 偶数ユーザーに表示
+}
+
+// 段階的ロールアウト（10% → 50% → 100%）
+function isGradualRolloutEnabled(ctx: UserContext): boolean {
+  if (isDev || isStaging) return true;
+  if (!ctx.userId) return false;
+
+  const userIdNum = parseInt(ctx.userId, 10);
+  const rolloutPercent = 10; // ここを変更: 10 → 50 → 100
+  return userIdNum % 100 < rolloutPercent;
+}
+```
+
+### コンポーネントでの使用
+
+```typescript
+export default async function Page() {
+  const flags = await getFeatureFlags();
+
+  return (
+    <div>
+      {flags.newUI ? <NewCheckoutFlow /> : <OldCheckoutFlow />}
+    </div>
+  );
+}
 ```
