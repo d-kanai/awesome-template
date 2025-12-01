@@ -19,7 +19,13 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
   - 例：Cookie定数とCookie操作を同じCookieManagerクラスに持つ。定数だけを集めたファイルには持たせない
   - 例：ルーティング定数は各機能モジュールごとに分割する（AUTH_ROUTES、USER_ROUTES）。複数モジュールのルートを1つのファイルにまとめない
 - **日時取得には必ず`getNow()`を使用すること**
-- **prodにログを残す場合は`console.log`は禁止。ログは必ず`logger`経由で行うこと**
+- **prodにログを残す場合は`console.log`は禁止。ログは必ず`shared/lib/logger.ts`の関数を使うこと**
+  - `apiLog`: API呼び出し成功時
+  - `apiErrorLog`: APIエラー時
+  - `apiTimeoutLog`: タイムアウト時
+  - `slowRequestLog`: 遅いリクエスト警告
+  - `proxyLog`: middleware/proxy用
+  - `logger.info/warn/error`: その他の汎用ログ
 - **環境変数は`process.env`を直接参照せず、必ず`shared/lib/env.ts`経由で取得すること**
   - 型安全性とバリデーションが保証される
   - 全ての環境変数は必須（デフォルト値なし）。設定漏れがあると起動時にエラーになる
