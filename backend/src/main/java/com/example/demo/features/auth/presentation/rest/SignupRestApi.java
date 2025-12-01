@@ -1,4 +1,4 @@
-package com.example.demo.features.auth.presentation;
+package com.example.demo.features.auth.presentation.rest;
 
 import com.example.demo.features.auth.application.command.SignupCommand;
 import com.example.demo.features.user.domain.model.User;
@@ -24,11 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "認証", description = "ユーザー認証・登録に関連する操作です")
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
-public class SignupController {
+public class SignupRestApi {
 
   private final SignupCommand signupCommand;
 
-  public SignupController(final SignupCommand signupCommand) {
+  public SignupRestApi(final SignupCommand signupCommand) {
     this.signupCommand = signupCommand;
   }
 

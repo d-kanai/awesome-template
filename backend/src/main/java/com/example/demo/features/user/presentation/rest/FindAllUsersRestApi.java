@@ -1,4 +1,4 @@
-package com.example.demo.features.user.presentation;
+package com.example.demo.features.user.presentation.rest;
 
 import com.example.demo.features.user.application.query.FindAllUsersQuery;
 import com.example.demo.features.user.domain.model.User;
@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "ユーザー", description = "ユーザーを管理するための操作です")
 @RestController
 @RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-public class FindAllUsersController {
+public class FindAllUsersRestApi {
 
   private final FindAllUsersQuery findAllUsersQuery;
 
-  public FindAllUsersController(final FindAllUsersQuery findAllUsersQuery) {
+  public FindAllUsersRestApi(final FindAllUsersQuery findAllUsersQuery) {
     this.findAllUsersQuery = findAllUsersQuery;
   }
 

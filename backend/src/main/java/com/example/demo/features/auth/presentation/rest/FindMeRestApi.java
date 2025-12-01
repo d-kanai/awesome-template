@@ -1,4 +1,4 @@
-package com.example.demo.features.auth.presentation;
+package com.example.demo.features.auth.presentation.rest;
 
 import com.example.demo.shared.jwt.JwtClaims;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "認証", description = "ユーザー認証・登録に関連する操作です")
 @RestController
 @RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
-public class FindMeController {
+public class FindMeRestApi {
 
   @Operation(summary = "認証済みユーザー情報取得", description = "現在認証されているユーザーの情報を取得します。")
   @ApiResponses({

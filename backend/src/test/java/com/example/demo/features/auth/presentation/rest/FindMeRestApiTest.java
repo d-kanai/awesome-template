@@ -1,4 +1,4 @@
-package com.example.demo.features.auth.presentation;
+package com.example.demo.features.auth.presentation.rest;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class FindMeControllerIntegrationTest {
+class FindMeRestApiTest {
 
   @Autowired private UserRepository userRepository;
 

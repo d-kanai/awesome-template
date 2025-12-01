@@ -1,14 +1,13 @@
-package com.example.demo.features.test.presentation.controller;
+package com.example.demo.features.test.presentation.rest;
 
 import com.example.demo.features.test.application.command.ResetDatabaseCommand;
 import com.example.demo.features.test.application.command.SetupDataCommand;
-import com.example.demo.features.test.presentation.dto.SetupDataRequest;
-import com.example.demo.features.test.presentation.dto.TestTokenResponse;
 import com.example.demo.features.user.domain.valueobject.UserEmail;
 import com.example.demo.features.user.domain.valueobject.UserId;
 import com.example.demo.shared.jwt.JwtCookieProperties;
 import com.example.demo.shared.jwt.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -27,9 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Profile("test")
 @RestController
 @RequestMapping("/e2e")
-public class SupportE2ETestController {
+public class SupportE2ETestRestApi {
 
-  private static final Logger logger = LoggerFactory.getLogger(SupportE2ETestController.class);
+  private static final Logger logger = LoggerFactory.getLogger(SupportE2ETestRestApi.class);
 
   /** E2Eテスト用の固定ユーザーID (SetupDataCommandで作成されるユーザーと一致). */
   private static final String E2E_TEST_USER_ID = "00000000-0000-0000-0000-000000000000";
@@ -42,7 +41,7 @@ public class SupportE2ETestController {
   private final JwtTokenProvider jwtTokenProvider;
   private final JwtCookieProperties jwtCookieProperties;
 
-  public SupportE2ETestController(
+  public SupportE2ETestRestApi(
       final ResetDatabaseCommand resetDatabaseCommand,
       final SetupDataCommand setupDataCommand,
       final JwtTokenProvider jwtTokenProvider,
@@ -64,10 +63,10 @@ public class SupportE2ETestController {
 
   @Operation(summary = "テストデータをセットアップ", description = "指定されたテーブルにテストデータを1レコード作成します。")
   @PostMapping("/create_data")
-  public ResponseEntity<Void> createData(@RequestBody final SetupDataRequest request) {
-    logger.info("Test data setup requested for table: {}", request.table());
-    setupDataCommand.execute(request.table());
-    logger.info("Test data setup completed for table: {}", request.table());
+  public ResponseEntity<Void> createData(@RequestBody final SetupDataInput input) {
+    logger.info("Test data setup requested for table: {}", input.table());
+    setupDataCommand.execute(input.table());
+    logger.info("Test data setup completed for table: {}", input.table());
     return ResponseEntity.noContent().build();
   }
 
@@ -77,7 +76,7 @@ public class SupportE2ETestController {
           "E2Eテストでauth guardをバイパスするためのダミートークンを生成します。"
               + "setCookie=trueの場合、httpOnly Cookieとしても設定します。")
   @PostMapping("/dummy_token")
-  public ResponseEntity<TestTokenResponse> generateDummyToken(
+  public ResponseEntity<TestTokenOutput> generateDummyToken(
       @RequestParam(required = false, defaultValue = "false") final boolean setCookie,
       final HttpServletResponse response) {
     logger.info("Test token generation requested (setCookie={})", setCookie);
@@ -93,7 +92,7 @@ public class SupportE2ETestController {
     }
 
     logger.info("Test token generated successfully");
-    return ResponseEntity.ok(new TestTokenResponse(token));
+    return ResponseEntity.ok(new TestTokenOutput(token));
   }
 
   /**
@@ -117,4 +116,13 @@ public class SupportE2ETestController {
 
     response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
   }
+
+  @Schema(name = "SetupDataRequest", description = "テストデータセットアップのリクエストです")
+  public record SetupDataInput(
+      @Schema(description = "セットアップ対象のテーブル名", example = "users") String table) {}
+
+  @Schema(name = "TestTokenResponse", description = "E2Eテスト用トークンのレスポンスです")
+  public record TestTokenOutput(
+      @Schema(description = "JWT認証トークン", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+          String token) {}
 }

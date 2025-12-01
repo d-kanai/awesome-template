@@ -1,4 +1,4 @@
-package com.example.demo.features.auth.presentation;
+package com.example.demo.features.auth.presentation.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -18,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class SigninControllerIntegrationTest {
+class SigninRestApiTest {
 
   @Autowired private UserRepository userRepository;
 
@@ -39,7 +39,7 @@ class SigninControllerIntegrationTest {
     final User user = User.signup(email, password);
     userRepository.save(user);
 
-    final var request = new SigninController.Input(email, password);
+    final var request = new SigninRestApi.Input(email, password);
 
     // when
     final ApiTestResponse response = apiTestClient.post("/auth/signin", request);
@@ -63,7 +63,7 @@ class SigninControllerIntegrationTest {
     final User user = User.signup(email, correctPassword);
     userRepository.save(user);
 
-    final var request = new SigninController.Input(email, wrongPassword);
+    final var request = new SigninRestApi.Input(email, wrongPassword);
 
     // when
     final ApiTestResponse response = apiTestClient.post("/auth/signin", request);
@@ -75,7 +75,7 @@ class SigninControllerIntegrationTest {
   @Test
   void サインイン時_存在しないメールアドレスでBadRequestを返す() throws Exception {
     // given input
-    final var request = new SigninController.Input("nonexistent@example.com", "SomePassword123");
+    final var request = new SigninRestApi.Input("nonexistent@example.com", "SomePassword123");
 
     // given db
     assertThat(userRepository.findAll()).isEmpty();

@@ -1,4 +1,4 @@
-package com.example.demo.features.test.presentation.controller;
+package com.example.demo.features.test.presentation.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class SupportE2ETestControllerIntegrationTest {
+class SupportE2ETestRestApiTest {
 
   @Autowired private MockMvc mockMvc;
 

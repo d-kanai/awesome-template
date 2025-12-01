@@ -1,4 +1,4 @@
-package com.example.demo.features.auth.presentation;
+package com.example.demo.features.auth.presentation.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -18,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class SignupControllerIntegrationTest {
+class SignupRestApiTest {
 
   @Autowired private UserRepository userRepository;
 
@@ -32,7 +32,7 @@ class SignupControllerIntegrationTest {
   @Test
   void サインアップ時_ユーザーを作成しCreatedレスポンスを返す() throws Exception {
     // given input
-    final var request = new SignupController.Input("john.doe@example.com", "SecurePassword123");
+    final var request = new SignupRestApi.Input("john.doe@example.com", "SecurePassword123");
 
     // given db
     assertThat(userRepository.findAll()).isEmpty();
