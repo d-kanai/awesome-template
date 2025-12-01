@@ -1,7 +1,7 @@
 import { CookieManager } from "@/shared/lib/cookieManager";
 import { env } from "@/shared/lib/env";
 import { HeaderManager } from "@/shared/lib/headerManager";
-import { apiLog } from "@/shared/lib/logger";
+import { apiLog, slowRequestLog } from "@/shared/lib/logger";
 
 export type FetcherOptions<TVariables> = RequestInit & {
   data?: TVariables;
@@ -401,6 +401,19 @@ export async function fetcher<TData, TVariables = unknown>(
     requestId: context.requestId,
     body: data,
   });
+
+  // Slow requestの検出とログ
+  const slowThreshold = env.NEXT_PUBLIC_API_SLOW_THRESHOLD_MS;
+  if (duration >= slowThreshold) {
+    await slowRequestLog({
+      method,
+      path,
+      status: response.status,
+      duration,
+      requestId: context.requestId,
+      threshold: slowThreshold,
+    });
+  }
 
   // HTTPエラーレスポンスのハンドリング
   if (!response.ok) {

@@ -255,6 +255,35 @@ export async function apiLog(options: {
 }
 
 /**
+ * Log slow API request warning
+ *
+ * @param options - Slow request logging options
+ *
+ * @example
+ * slowRequestLog({ method: "GET", path: "/users", status: 200, duration: 3500, threshold: 3000 });
+ */
+export async function slowRequestLog(options: {
+  method: string;
+  path: string;
+  status: number;
+  duration: number;
+  requestId?: string;
+  threshold: number;
+}): Promise<void> {
+  const logger = await createLoggerAsync(options.requestId);
+  logger.warn({
+    type: LogType.API_REQUEST,
+    isSlow: true,
+    method: options.method,
+    path: options.path,
+    status: options.status,
+    duration: `${options.duration}ms`,
+    threshold: `${options.threshold}ms`,
+    msg: `Slow request: ${options.method} ${options.path} took ${options.duration}ms (threshold: ${options.threshold}ms)`,
+  });
+}
+
+/**
  * Export base Pino logger for direct use
  *
  * @example

@@ -35,6 +35,12 @@ const clientSchema = z.object({
     .string()
     .optional()
     .transform((val) => (val ? Number.parseInt(val, 10) : 30000)),
+
+  // Slow Request閾値（オプション: ミリ秒、デフォルト3000ms = 3秒）
+  NEXT_PUBLIC_API_SLOW_THRESHOLD_MS: z
+    .string()
+    .optional()
+    .transform((val) => (val ? Number.parseInt(val, 10) : 3000)),
 });
 
 /**
@@ -47,6 +53,8 @@ const processEnv = {
   NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
   NEXT_PUBLIC_API_MOCK_MODE: process.env.NEXT_PUBLIC_API_MOCK_MODE,
   NEXT_PUBLIC_API_TIMEOUT_MS: process.env.NEXT_PUBLIC_API_TIMEOUT_MS,
+  NEXT_PUBLIC_API_SLOW_THRESHOLD_MS:
+    process.env.NEXT_PUBLIC_API_SLOW_THRESHOLD_MS,
 };
 
 // サーバー環境変数のバリデーション（サーバー側でのみ実行）
