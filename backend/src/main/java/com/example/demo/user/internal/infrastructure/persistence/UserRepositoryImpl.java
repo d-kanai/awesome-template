@@ -1,8 +1,8 @@
 package com.example.demo.user.internal.infrastructure.persistence;
 
-import static com.example.demo.infrastructure.jooq.tables.Users.USERS;
+import static com.example.demo.shared.jooq.tables.Users.USERS;
 
-import com.example.demo.infrastructure.jooq.tables.records.UsersRecord;
+import com.example.demo.shared.jooq.tables.records.UsersRecord;
 import com.example.demo.user.internal.domain.model.User;
 import com.example.demo.user.internal.domain.repository.UserRepository;
 import com.example.demo.user.internal.domain.valueobject.UserId;

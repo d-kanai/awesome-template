@@ -1,6 +1,6 @@
 package com.example.demo.test.internal.application.command;
 
-import static com.example.demo.infrastructure.jooq.tables.Users.USERS;
+import static com.example.demo.shared.jooq.tables.Users.USERS;
 
 import java.util.UUID;
 import org.jooq.DSLContext;

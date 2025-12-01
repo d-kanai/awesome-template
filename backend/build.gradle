@@ -93,8 +93,8 @@ jooq {
                         daos = false
                     }
                     target {
-                        packageName = 'com.example.demo.infrastructure.jooq'
-                        directory = 'src/main/generated-java'
+                        packageName = 'com.example.demo.shared.jooq'
+                        directory = layout.buildDirectory.dir('generated-jooq').get().asFile.absolutePath
                     }
                 }
             }
@@ -115,14 +115,8 @@ flyway {
     ]
 }
 
-sourceSets {
-    main {
-        java {
-            // jOOQ の生成物は Git 管理下に置き、Docker ビルド時に再生成せずに利用する
-            srcDirs += 'src/main/generated-java'
-        }
-    }
-}
+// jOOQ の生成物は src/main/java/com/example/demo/shared/jooq に配置され、
+// Git 管理下に置き、Docker ビルド時に再生成せずに利用する
 
 tasks.named('compileJava') {
     dependsOn tasks.named('generateJooq')
@@ -130,6 +124,16 @@ tasks.named('compileJava') {
 
 tasks.named('generateJooq') {
     dependsOn tasks.named('flywayMigrate')
+
+    doLast {
+        // build/generated-jooq から src/main/java にコピー
+        copy {
+            from layout.buildDirectory.dir('generated-jooq')
+            into 'src/main/java'
+        }
+        // 重複クラスを避けるため build/generated-jooq を削除
+        delete layout.buildDirectory.dir('generated-jooq')
+    }
 }
 
 tasks.named('test') {
@@ -142,7 +146,7 @@ tasks.named('test') {
     }
     jacoco {
         excludes = [
-            'com/example/demo/infrastructure/jooq/**',
+            'com/example/demo/shared/jooq/**',
             'com/example/demo/DemoApplication*'
         ]
     }
@@ -177,8 +181,7 @@ checkstyle {
 
 tasks.withType(Checkstyle).configureEach {
     exclude('**/build/generated-src/**')
-    exclude('**/src/main/generated-java/**')
-    exclude('**/com/example/demo/infrastructure/jooq/**')
+    exclude('**/com/example/demo/shared/jooq/**')
 }
 
 tasks.named('checkstyleMain').configure {
@@ -206,7 +209,7 @@ spotless {
             target spotlessFilesOverride
         } else {
             target 'src/**/*.java'
-            targetExclude 'src/main/generated-java/**'
+            targetExclude 'src/main/java/com/example/demo/shared/jooq/**'
         }
         googleJavaFormat('1.17.0')
         removeUnusedImports()
@@ -227,7 +230,7 @@ tasks.named('jacocoTestReport') {
     classDirectories.setFrom(
         files(classDirectories.files.collect { dir ->
             fileTree(dir: dir, exclude: [
-                'com/example/demo/infrastructure/jooq/**',
+                'com/example/demo/shared/jooq/**',
                 'com/example/demo/DemoApplication*'
             ])
         })
