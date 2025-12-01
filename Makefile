@@ -5,6 +5,7 @@ ROOT_DIR := $(CURDIR)
         install \
         backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
+        webview-install webview-start webview-lint webview-typecheck webview-ios webview-android \
         web-install web-dev web-build web-lint web-lint-deps web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run web-show-routes \
         unleash-up unleash-down unleash-open \
         tekton-setup tekton-teardown tekton-dashboard tekton-web-build tekton-web-lint tekton-web-ut tekton-web-e2e-mock tekton-web-ci tekton-logs \
@@ -51,6 +52,14 @@ help:
 	@echo "  make native-ut            # Install dependencies and run Expo unit tests"
 	@echo "  make native-remove-deadcode # Detect and report unused code with knip"
 	@echo "  make native-reset         # Full reset: clean all caches, reinstall, and rebuild"
+	@echo ""
+	@echo "WebView (Native):"
+	@echo "  make webview-install      # Install webview dependencies (pnpm install)"
+	@echo "  make webview-start        # Start Expo dev server"
+	@echo "  make webview-lint         # Run Biome lint"
+	@echo "  make webview-typecheck    # Run TypeScript type checking"
+	@echo "  make webview-ios          # Start iOS simulator"
+	@echo "  make webview-android      # Start Android emulator"
 	@echo ""
 	@echo "Web:"
 	@echo "  make web-install          # Install web dependencies (pnpm install)"
@@ -257,6 +266,27 @@ native-reset:
 	cd frontend_native && pnpm exec expo run:ios --device "iPhone 16"
 	@echo ""
 	@echo "✅ Native reset complete! You can now run 'make native-start' or 'make native-ios'"
+
+###############################################################
+# WebView (Native)
+###############################################################
+webview-install:
+	cd frontend_native_webview && pnpm install
+
+webview-start:
+	cd frontend_native_webview && pnpm start
+
+webview-lint:
+	cd frontend_native_webview && pnpm lint
+
+webview-typecheck:
+	cd frontend_native_webview && pnpm typecheck
+
+webview-ios:
+	cd frontend_native_webview && pnpm ios
+
+webview-android:
+	cd frontend_native_webview && pnpm android
 
 ###############################################################
 # Web

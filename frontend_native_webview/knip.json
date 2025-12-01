@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "include": ["files", "dependencies", "unlisted", "exports"],
+  "ignoreExportsUsedInFile": true,
+  "workspaces": {
+    ".": {
+      "entry": ["app/**/*.{ts,tsx}", "shared/**/*.{ts,tsx}"],
+      "project": ["**/*.{ts,tsx,js,jsx}"],
+      "ignore": [
+        "coverage/**",
+        "**/*.config.{js,ts,cjs,mjs}",
+        "babel.config.js",
+        "plugins/**"
+      ]
+    }
+  }
+}
