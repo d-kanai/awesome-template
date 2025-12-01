@@ -16,8 +16,6 @@ class ModularityTest {
     // - internal パッケージへの外部アクセス禁止
     // - 循環依存の検出
     // - モジュール境界の検証
-    System.out.println("=== Detected Modules ===");
-    modules.forEach(module -> System.out.println("  - " + module.getName()));
     modules.verify();
   }
 
