@@ -10,13 +10,13 @@
 ## Backend
 
 ### Language & Runtime
-- Java 21
+- Java 25
 
 ### Build Tool
-- Gradle 8.5
+- Gradle 8.14
 
 ### Framework
-- Spring Boot 3.2.0
+- Spring Boot 4.0.0
 
 ### Database
 - PostgreSQL 16
@@ -31,8 +31,11 @@
 - JUnit5
 
 ### Code Quality
-- Checkstyle (lint)
-- Spotless (Code Formatter)
+- Checkstyle (コードスタイル)
+- PMD (dead code検知)
+- SpotBugs (バグ・セキュリティ検知)
+- Error Prone + NullAway (null安全性)
+- Spotless (自動フォーマット)
 
 ### Feature Management
 - Unleash (Feature flags)

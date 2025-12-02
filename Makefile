@@ -3,7 +3,7 @@ ROOT_DIR := $(CURDIR)
 
 .PHONY: help \
         install \
-        backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint \
+        backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint backend-check \
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
         webview-install webview-start webview-lint webview-typecheck webview-ios webview-android \
         web-install web-dev web-build web-lint web-lint-deps web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run web-show-routes \
@@ -29,7 +29,8 @@ help:
 	@echo "  make backend-clean        # Clean backend build artifacts"
 	@echo "  make backend-up           # Start backend Docker services"
 	@echo "  make backend-down         # Stop backend Docker services"
-	@echo "  make backend-lint         # Run Checkstyle on main and test sources"
+	@echo "  make backend-lint         # Run all static analysis (Checkstyle, PMD, SpotBugs)"
+	@echo "  make backend-check        # Run all checks (lint + NullAway + tests)"
 	@echo "  make backend-format       # Format Java sources with Spotless"
 	@echo ""
 	@echo "Native:"
@@ -168,7 +169,10 @@ backend-down:
 	cd backend && docker-compose down
 
 backend-lint:
-	cd backend && ./gradlew checkstyleMain checkstyleTest
+	cd backend && ./gradlew checkstyleMain checkstyleTest pmdMain pmdTest spotbugsMain spotbugsTest
+
+backend-check:
+	cd backend && ./gradlew check
 
 backend-format:
 	cd backend && ./gradlew spotlessApply
