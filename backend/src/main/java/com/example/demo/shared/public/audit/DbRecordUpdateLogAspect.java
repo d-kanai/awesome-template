@@ -27,6 +27,9 @@ public class DbRecordUpdateLogAspect {
     this.appLoggerProvider = appLoggerProvider;
   }
 
+  /** 変更内容. */
+  public record Change(String oldValue, String newValue) {}
+
   /**
    * {@link DbRecordUpdateLog} アノテーションが付与されたメソッドをインターセプトし、監査ログを出力する.
    *
@@ -116,7 +119,4 @@ public class DbRecordUpdateLogAspect {
     }
     return value;
   }
-
-  /** 変更内容. */
-  public record Change(String oldValue, String newValue) {}
 }
