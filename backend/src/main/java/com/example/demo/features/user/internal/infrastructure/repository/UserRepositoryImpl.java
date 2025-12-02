@@ -19,12 +19,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-  private static final Map<User.Field, BiConsumer<User, UsersRecord>> FIELD_SETTERS;
+  private static final Map<User.UpdatableField, BiConsumer<User, UsersRecord>> FIELD_SETTERS;
 
   static {
-    final var setters = new EnumMap<User.Field, BiConsumer<User, UsersRecord>>(User.Field.class);
-    setters.put(User.Field.EMAIL, (u, r) -> r.setEmail(u.getEmail()));
-    setters.put(User.Field.PASSWORD, (u, r) -> r.setPassword(u.getPassword()));
+    final var setters =
+        new EnumMap<User.UpdatableField, BiConsumer<User, UsersRecord>>(User.UpdatableField.class);
+    setters.put(User.UpdatableField.EMAIL, (u, r) -> r.setEmail(u.getEmail()));
+    setters.put(User.UpdatableField.PASSWORD, (u, r) -> r.setPassword(u.getPassword()));
     FIELD_SETTERS = Map.copyOf(setters);
   }
 

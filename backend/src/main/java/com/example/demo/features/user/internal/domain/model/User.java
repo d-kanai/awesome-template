@@ -7,9 +7,9 @@ import com.example.demo.shared.domain.DomainModel;
 import com.example.demo.shared.time.AppClock;
 import java.time.LocalDateTime;
 
-public class User extends DomainModel<User.Field> {
+public class User extends DomainModel<User.UpdatableField> {
 
-  public enum Field {
+  public enum UpdatableField {
     EMAIL,
     PASSWORD
   }
@@ -53,7 +53,7 @@ public class User extends DomainModel<User.Field> {
     final String oldEmail = this.email.getValue();
     this.email = UserEmail.of(newEmail);
     this.updatedAt = AppClock.nowLocalDateTime();
-    markChanged(Field.EMAIL, oldEmail);
+    markChanged(UpdatableField.EMAIL, oldEmail);
   }
 
   public UserId getId() {
