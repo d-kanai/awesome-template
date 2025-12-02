@@ -17,5 +17,5 @@ public interface DomainEvent {
   OffsetDateTime occurredAt();
 
   /** イベントタイプ（トピック名解決に使用）. */
-  String eventType();
+  EventType eventType();
 }

@@ -4,10 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.features.user.internal.domain.event.UserEventType;
+import com.example.demo.features.user.internal.domain.event.UserSignedUpEvent;
 import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.testsupport.ApiTestClient;
 import com.example.demo.testsupport.ApiTestResponse;
+import com.example.demo.testsupport.TestEventPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +27,12 @@ class SignupRestApiTest {
 
   @Autowired private ApiTestClient apiTestClient;
 
+  @Autowired private TestEventPublisher testEventPublisher;
+
   @BeforeEach
   void setUp() {
     userRepository.findAll().forEach(user -> userRepository.deleteById(user.getId()));
+    testEventPublisher.clear();
   }
 
   @Test
@@ -47,10 +53,23 @@ class SignupRestApiTest {
         .andExpect(jsonPath("$.email").value(request.email()));
 
     // then db
-    assertThat(userRepository.findByEmail(request.email()))
-        .isPresent()
-        .get()
+    final User savedUser =
+        userRepository
+            .findByEmail(request.email())
+            .orElseThrow(() -> new AssertionError("User not found"));
+    assertThat(savedUser)
         .extracting(User::getEmail, User::getPassword)
         .containsExactly(request.email(), request.password());
+
+    // then event
+    final var events = testEventPublisher.getEventsOfType(UserSignedUpEvent.class);
+    assertThat(events).hasSize(1);
+    assertThat(events.getFirst())
+        .satisfies(
+            event -> {
+              assertThat(event.userId()).isEqualTo(savedUser.getId().getValue());
+              assertThat(event.email()).isEqualTo(request.email());
+              assertThat(event.eventType()).isEqualTo(UserEventType.USER_SIGNED_UP);
+            });
   }
 }

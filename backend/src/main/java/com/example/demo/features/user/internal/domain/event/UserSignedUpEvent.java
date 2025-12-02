@@ -15,8 +15,6 @@ import java.util.UUID;
 public record UserSignedUpEvent(EventMetadata metadata, UUID userId, String email)
     implements DomainEvent {
 
-  public static final String EVENT_TYPE = "user.signed_up";
-
   /**
    * イベントを生成する.
    *
@@ -40,7 +38,7 @@ public record UserSignedUpEvent(EventMetadata metadata, UUID userId, String emai
   }
 
   @Override
-  public String eventType() {
-    return EVENT_TYPE;
+  public UserEventType eventType() {
+    return UserEventType.USER_SIGNED_UP;
   }
 }

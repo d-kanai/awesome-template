@@ -2,6 +2,7 @@ package com.example.demo.shared.kafka.producer;
 
 import com.example.demo.shared.event.DomainEvent;
 import com.example.demo.shared.event.EventPublisher;
+import com.example.demo.shared.event.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,6 +27,7 @@ public class KafkaEventPublisher implements EventPublisher {
   @Override
   public void publish(final DomainEvent event) {
     final String topic = resolveTopicFromEventType(event.eventType());
+    final String eventTypeValue = event.eventType().getValue();
     kafkaTemplate
         .send(topic, event.eventId().toString(), event)
         .whenComplete(
@@ -34,7 +36,7 @@ public class KafkaEventPublisher implements EventPublisher {
                 log.error(
                     "Event publish failed: eventId={}, eventType={}, topic={}, error={}",
                     event.eventId(),
-                    event.eventType(),
+                    eventTypeValue,
                     topic,
                     ex.getMessage(),
                     ex);
@@ -42,7 +44,7 @@ public class KafkaEventPublisher implements EventPublisher {
                 log.info(
                     "Event published: eventId={}, eventType={}, topic={}, partition={}, offset={}",
                     event.eventId(),
-                    event.eventType(),
+                    eventTypeValue,
                     topic,
                     result.getRecordMetadata().partition(),
                     result.getRecordMetadata().offset());
@@ -50,9 +52,9 @@ public class KafkaEventPublisher implements EventPublisher {
             });
   }
 
-  private String resolveTopicFromEventType(final String eventType) {
-    // "user.signed_up" -> "user" -> user-events topic
-    final String prefix = eventType.split("\\.")[0];
+  private String resolveTopicFromEventType(final EventType eventType) {
+    final String value = eventType.getValue();
+    final String prefix = value.substring(0, value.indexOf('.'));
     if ("user".equals(prefix)) {
       return USER_EVENTS_TOPIC;
     }
