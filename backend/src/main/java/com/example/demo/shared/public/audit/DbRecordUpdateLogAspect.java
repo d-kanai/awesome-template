@@ -43,12 +43,34 @@ public class DbRecordUpdateLogAspect {
 
     final DomainModel model = (DomainModel) args[0];
     if (!model.hasChanges()) {
+      logDbUpdateSkipped(model);
       return joinPoint.proceed();
     }
 
     final Object result = joinPoint.proceed();
     logDbUpdate(model);
     return result;
+  }
+
+  private void logDbUpdateSkipped(final DomainModel model) {
+    final AppLogger appLogger = appLoggerProvider.getIfAvailable();
+    if (appLogger == null) {
+      return;
+    }
+
+    final String entityType = model.getClass().getSimpleName();
+    final String id = getIdValue(model);
+    appLogger.logDbUpdateSkipped(model.getClass(), entityType, id);
+  }
+
+  private String getIdValue(final DomainModel model) {
+    try {
+      final var method = model.getClass().getMethod("getId");
+      final Object value = method.invoke(model);
+      return value != null ? value.toString() : "[null]";
+    } catch (final ReflectiveOperationException e) {
+      return "[unknown]";
+    }
   }
 
   private void logDbUpdate(final DomainModel model) {

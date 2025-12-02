@@ -9,23 +9,17 @@ import com.example.demo.shared.audit.DbRecordUpdateLog;
 import com.example.demo.shared.exception.InfraLayerException;
 import com.example.demo.shared.infrastructure.RepositoryBase;
 import com.example.demo.shared.jooq.tables.records.UsersRecord;
-import com.example.demo.shared.logging.AppLogger;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserRepositoryImpl extends RepositoryBase<User, UsersRecord>
     implements UserRepository {
 
-  private final ObjectProvider<AppLogger> appLoggerProvider;
-
-  public UserRepositoryImpl(
-      final DSLContext dsl, final ObjectProvider<AppLogger> appLoggerProvider) {
+  public UserRepositoryImpl(final DSLContext dsl) {
     super(dsl);
-    this.appLoggerProvider = appLoggerProvider;
   }
 
   @Override
@@ -76,10 +70,6 @@ public class UserRepositoryImpl extends RepositoryBase<User, UsersRecord>
   @Override
   public void update(final User user) {
     if (!user.hasChanges()) {
-      final AppLogger appLogger = appLoggerProvider.getIfAvailable();
-      if (appLogger != null) {
-        appLogger.logDbUpdateSkipped(User.class, "User", user.getId().getValue().toString());
-      }
       return;
     }
 
