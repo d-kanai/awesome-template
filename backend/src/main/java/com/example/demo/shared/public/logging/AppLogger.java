@@ -127,6 +127,46 @@ public class AppLogger {
     return appProperties.getEnv().name();
   }
 
+  /** Jobの開始ログを出力. */
+  public void logJobStart(final Class<?> clazz, final String jobName, final Object args) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.info(
+        "Job started",
+        kv("log_type", "job_start"),
+        kv("env", appProperties.getEnv().name()),
+        kv("timestamp", now()),
+        kv("job_name", jobName),
+        kv("args", args));
+  }
+
+  /** Jobの完了ログを出力. */
+  public void logJobComplete(final Class<?> clazz, final String jobName, final long durationMs) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.info(
+        "Job completed",
+        kv("log_type", "job_complete"),
+        kv("env", appProperties.getEnv().name()),
+        kv("timestamp", now()),
+        kv("job_name", jobName),
+        kv("duration_ms", durationMs));
+  }
+
+  /** Jobのエラーログを出力. */
+  public void logJobError(
+      final Class<?> clazz, final String jobName, final Exception ex, final long durationMs) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.error(
+        "Job failed",
+        kv("log_type", "job_error"),
+        kv("env", appProperties.getEnv().name()),
+        kv("timestamp", now()),
+        kv("job_name", jobName),
+        kv("duration_ms", durationMs),
+        kv("error_type", ex.getClass().getName()),
+        kv("error_message", ex.getMessage()),
+        kv("stacktrace", getStackTraceAsString(ex)));
+  }
+
   private String getStackTraceAsString(final Exception ex) {
     final StringWriter sw = new StringWriter();
     ex.printStackTrace(new PrintWriter(sw));

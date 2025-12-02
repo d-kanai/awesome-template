@@ -26,11 +26,43 @@
 ### presentation層
 - 構成
   - `presentation/rest`: REST API（XxxRestApi）
-  - `presentation/job`: バッチ処理・スケジュールタスク（XxxJob）
-- REST APIは1クラス1API1publicメソッド
+  - `presentation/job`: バッチジョブ（XxxJob）
+
+#### REST API
+- 1クラス1API1publicメソッド
   - クラス名 = ユースケース名 + RestApi（例: SignupRestApi, SigninRestApi, FindMeRestApi）
   - CRUDを1つのクラスにまとめない
   - Output.from() メソッドは Command/Query の Output を引数に取ること
+
+#### Job
+- 実行方法: `--spring.main.web-application-type=none --job=jobName --dryRun=true --arg1=value1`
+- 構成
+  - `presentation/job/XxxJob.java`: 各Job実装
+- Job実装ルール
+  - `@Component("jobName")` でBean名を指定（CLI引数の `--job=jobName` で指定）
+  - `Job<T extends Job.Args>` を implements
+  - 内部に `record Args(@NotNull Boolean dryRun, ...) implements Job.Args {}` を定義
+  - `dryRun` は全Jobで必須（`@NotNull Boolean`）
+  - Job固有の引数は `@NotNull` 等でバリデーション（未指定なら起動時エラー）
+
+```java
+@Component("userStatsSummary")
+public class UserStatsSummaryJob implements Job<UserStatsSummaryJob.Args> {
+
+  private final UserRepository userRepository;
+
+  public UserStatsSummaryJob(final UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
+
+  public record Args(@NotNull Boolean dryRun, @NotNull String targetDate) implements Job.Args {}
+
+  @Override
+  public void execute(final Args args) {
+    // Job処理
+  }
+}
+```
 
 ### application層
 - command, queryは1クラス1publicメソッド

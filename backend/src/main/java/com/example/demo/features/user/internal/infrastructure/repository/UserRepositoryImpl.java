@@ -35,6 +35,11 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
+  public long count() {
+    return dsl.fetchCount(USERS);
+  }
+
+  @Override
   public List<User> findAll() {
     return dsl.selectFrom(USERS).fetch(this::mapToUser);
   }
