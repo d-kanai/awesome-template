@@ -3,7 +3,7 @@ ROOT_DIR := $(CURDIR)
 
 .PHONY: help \
         install \
-        backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint backend-check \
+        backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint backend-check backend-migrate backend-migrate-clean backend-jooq backend-create-migration \
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
         webview-install webview-start webview-lint webview-typecheck webview-ios webview-android \
         web-install web-dev web-build web-lint web-lint-deps web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run web-show-routes \
@@ -32,6 +32,10 @@ help:
 	@echo "  make backend-lint         # Run all static analysis (Checkstyle, PMD, SpotBugs)"
 	@echo "  make backend-check        # Run all checks (lint + NullAway + tests)"
 	@echo "  make backend-format       # Format Java sources with Spotless"
+	@echo "  make backend-migrate      # Run Flyway migrations"
+	@echo "  make backend-migrate-clean # Clean Flyway migrations (WARNING: destructive)"
+	@echo "  make backend-jooq         # Generate jOOQ sources"
+	@echo "  make backend-create-migration module=xxx name=yyy # Create new migration file"
 	@echo ""
 	@echo "Native:"
 	@echo "  make native-install       # Install native dependencies (pnpm install)"
@@ -115,7 +119,7 @@ backend-db-refresh:
 	cd backend && ./gradlew flywayMigrate generateJooq
 
 backend-run:
-	cd backend && ./gradlew bootRun
+	@set -a && source backend/.env 2>/dev/null || true && set +a && cd backend && ./gradlew bootRun
 
 backend-start:
 	mkdir -p logs
@@ -176,6 +180,19 @@ backend-check:
 
 backend-format:
 	cd backend && ./gradlew spotlessApply
+
+backend-migrate:
+	cd backend && ./gradlew flywayMigrate
+
+backend-migrate-clean:
+	cd backend && ./gradlew flywayClean
+
+backend-jooq:
+	cd backend && ./gradlew generateJooq
+
+# Usage: make backend-create-migration module=user name=create_xxx
+backend-create-migration:
+	cd backend && ./gradlew createMigration -Pmodule=$(module) -PmigrationName=$(name)
 
 ###############################################################
 # Native

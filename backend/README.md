@@ -6,7 +6,7 @@
 
 ### コア技術
 - **言語・ランタイム**: Java 25
-- **ビルドツール**: Gradle 8.x
+- **ビルドツール**: Gradle 8
 - **フレームワーク**: Spring Boot 4.0
   - Spring Web
   - Spring Security
