@@ -7,6 +7,12 @@
 - ローカル変数・パラメータは基本final宣言
 - 認知・循環複雑度15以内
 - deep nest 2以内
+- 宣言順序（Checkstyle DeclarationOrderで強制）
+  1. static fields
+  2. instance fields
+  3. constructors
+  4. public methods
+  5. private methods
 - 同時リクエスト・スレッド使い回しで問題になる可能性があるコードは検知してユーザに質問すること
   - 非finalなstatic変数（複数スレッドで共有される）
   - Singleton Beanのmutableフィールド（全リクエストで共有される）

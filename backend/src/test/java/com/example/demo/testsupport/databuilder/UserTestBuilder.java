@@ -12,12 +12,12 @@ public class UserTestBuilder {
   private String email = "test@example.com";
   private String password = "Password123";
 
+  private UserTestBuilder() {}
+
   @Autowired
   public void setUserRepository(final UserRepository userRepository) {
     UserTestBuilder.userRepository = userRepository;
   }
-
-  private UserTestBuilder() {}
 
   public static UserTestBuilder aUser() {
     return new UserTestBuilder();

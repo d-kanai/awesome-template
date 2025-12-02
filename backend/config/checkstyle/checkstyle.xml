@@ -251,5 +251,8 @@
       <property name="max" value="30"/>
       <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
     </module>
+
+    <!-- Declaration Order: static fields, instance fields, constructors, methods -->
+    <module name="DeclarationOrder"/>
   </module>
 </module>
