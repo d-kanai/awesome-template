@@ -14,7 +14,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
 /**
- * Repository.update() の監査ログを出力するAspect.
+ * {@link LogDbUpdate} アノテーションが付与されたメソッドの監査ログを出力するAspect.
  *
  * <p>DomainModelのdirty tracking情報を使用して、変更されたフィールドのold/new値をログに出力する。
  */
@@ -29,13 +29,13 @@ public class DbRecordUpdateLog {
   }
 
   /**
-   * Repository.update()メソッドをインターセプトし、監査ログを出力する.
+   * {@link LogDbUpdate} アノテーションが付与されたメソッドをインターセプトし、監査ログを出力する.
    *
    * @param joinPoint 実行ポイント
    * @return メソッドの戻り値
    * @throws Throwable 例外
    */
-  @Around("execution(* com.example.demo..repository.*Repository.update(..))")
+  @Around("@annotation(LogDbUpdate)")
   public Object auditUpdate(final ProceedingJoinPoint joinPoint) throws Throwable {
     final Object[] args = joinPoint.getArgs();
     if (args.length == 0 || !(args[0] instanceof DomainModel<?>)) {
