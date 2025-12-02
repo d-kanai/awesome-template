@@ -29,7 +29,7 @@ spec:
     # 🐳 Docker Build & Push (Kaniko)
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: build-and-push
-      image: gcr.io/kaniko-project/executor:latest
+      image: gcr.io/kaniko-project/executor:v1.23.2
       # 🔐 環境変数は Secret から注入
       envFrom:
         - secretRef:
