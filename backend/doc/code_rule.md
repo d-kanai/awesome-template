@@ -57,29 +57,6 @@
   - Consumerはイベント受信とログ出力のみ、ビジネスロジックはCommandに委譲
   - 命名: `{イベント名}{機能名}Consumer`（例: `UserSignedUpNotificationConsumer`）
 
-```java
-@Component
-@ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = false)
-public class UserSignedUpNotificationConsumer {
-
-  private static final Logger log = LoggerFactory.getLogger(UserSignedUpNotificationConsumer.class);
-  private final SendWelcomeEmailCommand sendWelcomeEmailCommand;
-
-  public UserSignedUpNotificationConsumer(final SendWelcomeEmailCommand sendWelcomeEmailCommand) {
-    this.sendWelcomeEmailCommand = sendWelcomeEmailCommand;
-  }
-
-  @KafkaListener(
-      topics = "demo.user.events",
-      groupId = "${spring.application.name}-notification",
-      containerFactory = "kafkaListenerContainerFactory")
-  public void consume(final UserSignedUpEvent event) {
-    log.info("Received UserSignedUpEvent: eventId={}, userId={}", event.eventId(), event.userId());
-    sendWelcomeEmailCommand.execute(new SendWelcomeEmailCommand.Input(event.userId(), event.email()));
-  }
-}
-```
-
 #### Job
 - 実行方法: `--spring.main.web-application-type=none --job=jobName --dryRun=true --arg1=value1`
 - 構成
@@ -90,25 +67,6 @@ public class UserSignedUpNotificationConsumer {
   - 内部に `record Args(@NotNull Boolean dryRun, ...) implements Job.Args {}` を定義
   - `dryRun` は全Jobで必須（`@NotNull Boolean`）
   - Job固有の引数は `@NotNull` 等でバリデーション（未指定なら起動時エラー）
-
-```java
-@Component("userStatsSummary")
-public class UserStatsSummaryJob implements Job<UserStatsSummaryJob.Args> {
-
-  private final UserRepository userRepository;
-
-  public UserStatsSummaryJob(final UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
-
-  public record Args(@NotNull Boolean dryRun, @NotNull String targetDate) implements Job.Args {}
-
-  @Override
-  public void execute(final Args args) {
-    // Job処理
-  }
-}
-```
 
 ### application層
 - command, queryは1クラス1publicメソッド
@@ -133,7 +91,6 @@ public class UserStatsSummaryJob implements Job<UserStatsSummaryJob.Args> {
 - DomainModelを継承してSnapshot Patternによるdirty tracking機能を使う
   - `reconstruct()`で`captureSnapshot()`を呼び、ロード時点の状態を保存
   - 状態変更メソッドではフィールドを直接変更するだけでOK（自動で差分検出）
-  - `hasChanges()`, `getChangedFields()`, `getOriginalValues()` でdiff情報を取得可能
 
 #### DomainEvent
 - 配置: `features/{feature}/internal/domain/event/XxxEvent.java`

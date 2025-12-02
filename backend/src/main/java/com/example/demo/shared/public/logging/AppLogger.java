@@ -187,6 +187,19 @@ public class AppLogger {
     return (value != null && !value.isBlank()) ? value : null;
   }
 
+  /** DB更新スキップ警告ログを出力. */
+  public void logDbUpdateSkipped(final Class<?> clazz, final String entity, final String id) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.warn(
+        "DB update skipped: no changes detected",
+        kv("log_type", "db_update_skipped"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", now()),
+        kv("entity", entity),
+        kv("id", id));
+  }
+
   /** DB更新ログを出力. */
   public void logDbUpdate(final Class<?> clazz, final DbUpdateLog log) {
     final Logger logger = LoggerFactory.getLogger(clazz);
