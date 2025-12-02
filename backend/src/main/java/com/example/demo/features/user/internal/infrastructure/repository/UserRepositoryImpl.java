@@ -8,10 +8,8 @@ import com.example.demo.features.user.internal.domain.valueobject.UserId;
 import com.example.demo.shared.exception.InfraLayerException;
 import com.example.demo.shared.infrastructure.RepositoryBase;
 import com.example.demo.shared.jooq.tables.records.UsersRecord;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
@@ -20,15 +18,7 @@ public class UserRepositoryImpl extends RepositoryBase<User, UsersRecord, User.U
     implements UserRepository {
 
   public UserRepositoryImpl(final DSLContext dsl) {
-    super(dsl, createFieldSetters());
-  }
-
-  private static EnumMap<User.UpdatableField, BiConsumer<User, UsersRecord>> createFieldSetters() {
-    final var setters =
-        new EnumMap<User.UpdatableField, BiConsumer<User, UsersRecord>>(User.UpdatableField.class);
-    setters.put(User.UpdatableField.EMAIL, (u, r) -> r.setEmail(u.getEmail()));
-    setters.put(User.UpdatableField.PASSWORD, (u, r) -> r.setPassword(u.getPassword()));
-    return setters;
+    super(dsl, buildFieldSetters(User.UpdatableField.class, User.class, UsersRecord.class));
   }
 
   @Override
