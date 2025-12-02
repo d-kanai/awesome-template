@@ -58,9 +58,15 @@ public class AccessLogFilter extends OncePerRequestFilter {
         new ContentCachingRequestWrapper(request, contentLength > 0 ? contentLength : 1024);
     final long startedAt = System.currentTimeMillis();
 
+    // RequestContextを初期化
+    appLogger.initContext(request);
+
     try {
       filterChain.doFilter(wrappedRequest, response);
     } finally {
+      // user_idはSecurityContext設定後に取得できる
+      extractUserId().ifPresent(appLogger::setUserId);
+
       final long durationMs = System.currentTimeMillis() - startedAt;
       logAccess(wrappedRequest, response, startedAt, durationMs);
     }
@@ -74,8 +80,6 @@ public class AccessLogFilter extends OncePerRequestFilter {
     final var accessLog =
         new AccessLog(
             formatTimestamp(startedAt),
-            appLogger.resolveTraceId(request),
-            appLogger.env(),
             request.getMethod(),
             request.getRequestURI(),
             blankToNull(request.getQueryString()),
@@ -83,7 +87,6 @@ public class AccessLogFilter extends OncePerRequestFilter {
             durationMs,
             request.getRemoteAddr(),
             Optional.ofNullable(request.getHeader("User-Agent")).orElse("-"),
-            extractUserId().orElse(null),
             extractHeaders(request),
             extractRequestBody(request));
 

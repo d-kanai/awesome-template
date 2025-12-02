@@ -10,39 +10,27 @@ import java.time.format.DateTimeFormatter;
 /**
  * アプリケーション全体で使用する時刻取得ユーティリティ.
  *
- * <p>テスト時は {@link #setClock(Clock)} で固定時刻を設定可能。
+ * <p>テスト時は MockedStatic で時刻を固定可能。
  */
 public final class AppClock {
 
-  private static Clock clock = Clock.systemDefaultZone();
+  private static final Clock CLOCK = Clock.systemDefaultZone();
 
-  private AppClock() {
-    // utility class
-  }
-
-  /** テスト用: Clockを設定. */
-  public static void setClock(final Clock clock) {
-    AppClock.clock = clock;
-  }
-
-  /** テスト用: Clockをリセット. */
-  public static void resetClock() {
-    AppClock.clock = Clock.systemDefaultZone();
-  }
+  private AppClock() {}
 
   /** 現在時刻をInstantで取得. */
   public static Instant nowInstant() {
-    return Instant.now(clock);
+    return Instant.now(CLOCK);
   }
 
   /** 現在時刻をLocalDateTimeで取得. */
   public static LocalDateTime nowLocalDateTime() {
-    return LocalDateTime.now(clock);
+    return LocalDateTime.now(CLOCK);
   }
 
   /** 現在時刻をOffsetDateTimeで取得. */
   public static OffsetDateTime nowOffsetDateTime() {
-    return OffsetDateTime.now(clock);
+    return OffsetDateTime.now(CLOCK);
   }
 
   /** 現在時刻をISO形式の文字列で取得. */
@@ -52,12 +40,12 @@ public final class AppClock {
 
   /** 指定されたエポックミリ秒をISO形式の文字列で変換. */
   public static String toIsoString(final long epochMillis) {
-    return OffsetDateTime.ofInstant(Instant.ofEpochMilli(epochMillis), clock.getZone())
+    return OffsetDateTime.ofInstant(Instant.ofEpochMilli(epochMillis), CLOCK.getZone())
         .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
   }
 
   /** 使用しているClockのZoneIdを取得. */
   public static ZoneId getZone() {
-    return clock.getZone();
+    return CLOCK.getZone();
   }
 }

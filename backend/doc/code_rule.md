@@ -7,6 +7,10 @@
 - ローカル変数・パラメータは基本final宣言
 - 認知・循環複雑度15以内
 - deep nest 2以内
+- 同時リクエスト・スレッド使い回しで問題になる可能性があるコードは検知してユーザに質問すること
+  - 非finalなstatic変数（複数スレッドで共有される）
+  - Singleton Beanのmutableフィールド（全リクエストで共有される）
+  - ThreadLocalのクリア忘れ（スレッド再利用時に前の値が残る）
 
 ### 命名規則
 - 取得系: Find〜 (例: FindMe, FindAllUsers, FindUserById)
@@ -42,8 +46,6 @@
 
 ### sharedモジュール
 - `shared/public/` 配下のクラスは全featureモジュールから参照可能
-- 現在時刻の取得は必ず `AppClock` を使用すること（`Instant.now()`, `LocalDateTime.now()` 等の直接呼び出し禁止）
-- ログ出力は必ず `AppLogger` を経由すること（`LoggerFactory.getLogger()` の直接使用禁止）
 
 ## test
 - カバレッジ90%以上
@@ -56,3 +58,16 @@
   - `aUser().save()` - デフォルト値で保存
   - `aUser().email("x@example.com").save()` - 値を上書きして保存
   - ビルダーは `@Autowired` でDIし、static import `aUser()` で使用
+- Api in-out Test
+  - Query
+    - Given: 関連データ0reset, TestBuilderでデータ準備
+    - When: call api
+    - Then: 画面にAPIデータが表示されていること
+  - Command
+    - Given: -
+    - When: page render
+    - Then:
+      - Server ActionからbackendへのCommand APIにformのパラメータが渡り呼び出されていること
+        - ※ エラーハンドリングを柔軟にするためにServer Side Navigation(redirect)しないルールなので、結果としてServerActionも統合したテストが動作する
+      - Client Side URL遷移が起きていること
+      - Toastなど、ユーザへのFBが起きていること

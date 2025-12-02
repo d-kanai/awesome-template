@@ -1,9 +1,9 @@
 package com.example.demo.shared.logging;
 
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
 import com.example.demo.shared.config.AppProperties;
 import com.example.demo.shared.time.AppClock;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -12,69 +12,101 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
 
-/**
- * アプリケーション全体で使用するログユーティリティ.
- *
- * <p>環境に応じてJSON形式でログを出力する。 STAGING/PRODUCTIONではcompact JSON、DEVELOPMENT/TESTではpretty print JSONを使用。
- */
 @Component
 public class AppLogger {
 
   private static final String TRACE_ID_HEADER = "X-Trace-Id";
 
   private final AppProperties appProperties;
-  private final tools.jackson.databind.ObjectWriter compactWriter;
-  private final tools.jackson.databind.ObjectWriter prettyWriter;
+  private final RequestContext requestContext;
 
-  public AppLogger(final ObjectMapper objectMapper, final AppProperties appProperties) {
+  public AppLogger(final AppProperties appProperties, final RequestContext requestContext) {
     this.appProperties = appProperties;
-    this.compactWriter = objectMapper.writer();
-    this.prettyWriter = objectMapper.writerWithDefaultPrettyPrinter();
+    this.requestContext = requestContext;
+  }
+
+  /** リクエストコンテキストを初期化. */
+  public void initContext(final HttpServletRequest request) {
+    requestContext.setTraceId(resolveTraceId(request));
+    requestContext.setEnv(appProperties.getEnv().name());
+  }
+
+  /** ユーザーIDを設定. */
+  public void setUserId(final String userId) {
+    requestContext.setUserId(userId);
   }
 
   /** アクセスログを出力. */
   public void logAccess(final Class<?> clazz, final AccessLog log) {
-    logJson(clazz, LogLevel.INFO, log);
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.info(
+        "Access log",
+        kv("log_type", "access"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("user_id", requestContext.getUserId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", log.timestamp()),
+        kv("method", log.method()),
+        kv("path", log.path()),
+        kv("query", log.query()),
+        kv("status", log.status()),
+        kv("latency_ms", log.latencyMs()),
+        kv("remote_addr", log.remoteAddr()),
+        kv("user_agent", log.userAgent()),
+        kv("request_headers", log.requestHeaders()),
+        kv("request_body", log.requestBody()));
   }
 
   /** 認証エラー(401)ログを出力. */
   public void logUnauthorized(
       final Class<?> clazz, final HttpServletRequest request, final String errorMessage) {
-    final var log =
-        new UnauthorizedLog(
-            now(),
-            resolveTraceId(request),
-            appProperties.getEnv().name(),
-            request.getMethod(),
-            request.getRequestURI(),
-            blankToNull(request.getQueryString()),
-            401,
-            request.getRemoteAddr(),
-            Optional.ofNullable(request.getHeader("User-Agent")).orElse("-"),
-            errorMessage);
-    logJson(clazz, LogLevel.WARN, log);
+    final Logger logger = LoggerFactory.getLogger(clazz);
+
+    // コンテキストが未設定の場合は設定する
+    if (requestContext.getTraceId() == null) {
+      initContext(request);
+    }
+
+    logger.warn(
+        "Unauthorized access",
+        kv("log_type", "unauthorized"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", now()),
+        kv("method", request.getMethod()),
+        kv("path", request.getRequestURI()),
+        kv("query", blankToNull(request.getQueryString())),
+        kv("status", 401),
+        kv("remote_addr", request.getRemoteAddr()),
+        kv("user_agent", Optional.ofNullable(request.getHeader("User-Agent")).orElse("-")),
+        kv("error", errorMessage));
   }
 
   /** サーバーエラー(500)ログを出力. */
   public void logServerError(
       final Class<?> clazz, final HttpServletRequest request, final Exception ex) {
-    final var log =
-        new ServerErrorLog(
-            now(),
-            resolveTraceId(request),
-            appProperties.getEnv().name(),
-            request.getMethod(),
-            request.getRequestURI(),
-            blankToNull(request.getQueryString()),
-            500,
-            request.getRemoteAddr(),
-            ex.getClass().getName(),
-            ex.getMessage(),
-            getStackTraceAsString(ex));
-    logJson(clazz, LogLevel.ERROR, log);
+    final Logger logger = LoggerFactory.getLogger(clazz);
+
+    // コンテキストが未設定の場合は設定する
+    if (requestContext.getTraceId() == null) {
+      initContext(request);
+    }
+
+    logger.error(
+        "Server error",
+        kv("log_type", "server_error"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", now()),
+        kv("method", request.getMethod()),
+        kv("path", request.getRequestURI()),
+        kv("query", blankToNull(request.getQueryString())),
+        kv("status", 500),
+        kv("remote_addr", request.getRemoteAddr()),
+        kv("error_type", ex.getClass().getName()),
+        kv("error_message", ex.getMessage()),
+        kv("stacktrace", getStackTraceAsString(ex)));
   }
 
   /** リクエストからtrace_idを取得または生成. */
@@ -94,28 +126,6 @@ public class AppLogger {
     return appProperties.getEnv().name();
   }
 
-  private void logJson(final Class<?> clazz, final LogLevel level, final Object payload) {
-    final Logger logger = LoggerFactory.getLogger(clazz);
-    try {
-      final var writer = appProperties.shouldUseJsonLog() ? compactWriter : prettyWriter;
-      final String json = writer.writeValueAsString(payload);
-      switch (level) {
-        case INFO -> logger.info(json);
-        case WARN -> logger.warn(json);
-        case ERROR -> logger.error(json);
-        default -> logger.info(json);
-      }
-    } catch (final JacksonException e) {
-      logger.warn("Failed to serialize log entry as JSON");
-      switch (level) {
-        case INFO -> logger.info(payload.toString());
-        case WARN -> logger.warn(payload.toString());
-        case ERROR -> logger.error(payload.toString());
-        default -> logger.info(payload.toString());
-      }
-    }
-  }
-
   private String getStackTraceAsString(final Exception ex) {
     final StringWriter sw = new StringWriter();
     ex.printStackTrace(new PrintWriter(sw));
@@ -126,55 +136,16 @@ public class AppLogger {
     return (value != null && !value.isBlank()) ? value : null;
   }
 
-  private enum LogLevel {
-    INFO,
-    WARN,
-    ERROR
-  }
-
   /** アクセスログ. */
-  @JsonInclude(JsonInclude.Include.NON_NULL)
   public record AccessLog(
       String timestamp,
-      @JsonProperty("trace_id") String traceId,
-      String env,
       String method,
       String path,
       String query,
       int status,
-      @JsonProperty("latency_ms") long latencyMs,
-      @JsonProperty("remote_addr") String remoteAddr,
-      @JsonProperty("user_agent") String userAgent,
-      @JsonProperty("user_id") String userId,
-      @JsonProperty("request_headers") Object requestHeaders,
-      @JsonProperty("request_body") Object requestBody) {}
-
-  /** 認証エラーログ. */
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  public record UnauthorizedLog(
-      String timestamp,
-      @JsonProperty("trace_id") String traceId,
-      String env,
-      String method,
-      String path,
-      String query,
-      int status,
-      @JsonProperty("remote_addr") String remoteAddr,
-      @JsonProperty("user_agent") String userAgent,
-      String error) {}
-
-  /** サーバーエラーログ. */
-  @JsonInclude(JsonInclude.Include.NON_NULL)
-  public record ServerErrorLog(
-      String timestamp,
-      @JsonProperty("trace_id") String traceId,
-      String env,
-      String method,
-      String path,
-      String query,
-      int status,
-      @JsonProperty("remote_addr") String remoteAddr,
-      @JsonProperty("error_type") String errorType,
-      @JsonProperty("error_message") String errorMessage,
-      String stacktrace) {}
+      long latencyMs,
+      String remoteAddr,
+      String userAgent,
+      Object requestHeaders,
+      Object requestBody) {}
 }
