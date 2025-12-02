@@ -3,6 +3,10 @@ package com.example.demo.shared.audit;
 import com.example.demo.shared.domain.DomainModel;
 import com.example.demo.shared.logging.AppLogger;
 import com.example.demo.shared.logging.AppLogger.DbUpdateLog;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -14,13 +18,24 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
 /**
- * {@link LogDbUpdate} アノテーションが付与されたメソッドの監査ログを出力するAspect.
+ * {@link Log} アノテーションが付与されたメソッドの監査ログを出力するAspect.
  *
  * <p>DomainModelのdirty tracking情報を使用して、変更されたフィールドのold/new値をログに出力する。
  */
 @Aspect
 @Component
 public class DbRecordUpdateLog {
+
+  /**
+   * メソッドにDB更新ログを出力することを示すアノテーション.
+   *
+   * <p>このアノテーションが付与されたメソッドはAOPでインターセプトされ、 DomainModelの変更内容がログに出力される。
+   *
+   * <p>使用例: {@code @DbRecordUpdateLog.Log}
+   */
+  @Target(ElementType.METHOD)
+  @Retention(RetentionPolicy.RUNTIME)
+  public @interface Log {}
 
   private final ObjectProvider<AppLogger> appLoggerProvider;
 
@@ -29,13 +44,13 @@ public class DbRecordUpdateLog {
   }
 
   /**
-   * {@link LogDbUpdate} アノテーションが付与されたメソッドをインターセプトし、監査ログを出力する.
+   * {@link Log} アノテーションが付与されたメソッドをインターセプトし、監査ログを出力する.
    *
    * @param joinPoint 実行ポイント
    * @return メソッドの戻り値
    * @throws Throwable 例外
    */
-  @Around("@annotation(LogDbUpdate)")
+  @Around("@annotation(com.example.demo.shared.audit.DbRecordUpdateLog.Log)")
   public Object auditUpdate(final ProceedingJoinPoint joinPoint) throws Throwable {
     final Object[] args = joinPoint.getArgs();
     if (args.length == 0 || !(args[0] instanceof DomainModel<?>)) {
