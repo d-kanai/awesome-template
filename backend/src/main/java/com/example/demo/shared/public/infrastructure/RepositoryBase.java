@@ -30,7 +30,7 @@ public abstract class RepositoryBase<
   }
 
   /** 変更されたフィールドの値をレコードに適用する. */
-  protected void applyFieldSetters(final M model, final R record) {
+  protected void setUpdateFields(final M model, final R record) {
     model.getChangedFields().stream()
         .filter(fieldSetters::containsKey)
         .forEach(field -> Objects.requireNonNull(fieldSetters.get(field)).accept(model, record));
