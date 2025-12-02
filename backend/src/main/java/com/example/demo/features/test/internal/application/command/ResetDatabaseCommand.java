@@ -32,50 +32,59 @@ public class ResetDatabaseCommand {
     logger.info("Starting database reset");
     dsl.transaction(
         configuration -> {
-          final DSLContext transactionalDsl = DSL.using(configuration);
-          final List<Table<?>> targetTables =
-              transactionalDsl.meta().getTables().stream()
-                  .filter(this::isApplicationTable)
-                  .toList();
-
-          if (targetTables.isEmpty()) {
+          final DSLContext ctx = DSL.using(configuration);
+          final List<Table<?>> tables = findTargetTables(ctx);
+          if (tables.isEmpty()) {
             logger.info("No tables to reset");
             return;
           }
-
-          logger.info(
-              "Resetting {} tables: {}",
-              targetTables.size(),
-              targetTables.stream().map(Table::getName).collect(Collectors.joining(", ")));
-
-          final SQLDialect dialect = configuration.dialect();
-          switch (dialect.family()) {
-            case POSTGRES:
-              final String tableList =
-                  targetTables.stream()
-                      .map(transactionalDsl::render)
-                      .collect(Collectors.joining(", "));
-              transactionalDsl.execute("TRUNCATE TABLE " + tableList + " RESTART IDENTITY CASCADE");
-              logger.info("Executed TRUNCATE for PostgreSQL");
-              break;
-            case H2:
-              transactionalDsl.execute("SET REFERENTIAL_INTEGRITY FALSE");
-              try {
-                for (final Table<?> table : targetTables) {
-                  transactionalDsl.execute("TRUNCATE TABLE " + transactionalDsl.render(table));
-                }
-                logger.info("Executed TRUNCATE for H2");
-              } finally {
-                transactionalDsl.execute("SET REFERENTIAL_INTEGRITY TRUE");
-              }
-              break;
-            default:
-              targetTables.forEach(table -> transactionalDsl.deleteFrom(table).execute());
-              logger.info("Executed DELETE for default dialect");
-              break;
-          }
+          logTargetTables(tables);
+          truncateTables(ctx, tables, configuration.dialect());
         });
     logger.info("Database reset completed");
+  }
+
+  private List<Table<?>> findTargetTables(final DSLContext ctx) {
+    return ctx.meta().getTables().stream().filter(this::isApplicationTable).toList();
+  }
+
+  private void logTargetTables(final List<Table<?>> tables) {
+    logger.info(
+        "Resetting {} tables: {}",
+        tables.size(),
+        tables.stream().map(Table::getName).collect(Collectors.joining(", ")));
+  }
+
+  private void truncateTables(
+      final DSLContext ctx, final List<Table<?>> tables, final SQLDialect dialect) {
+    switch (dialect.family()) {
+      case POSTGRES -> truncatePostgres(ctx, tables);
+      case H2 -> truncateH2(ctx, tables);
+      default -> deleteAll(ctx, tables);
+    }
+  }
+
+  private void truncatePostgres(final DSLContext ctx, final List<Table<?>> tables) {
+    final String tableList = tables.stream().map(ctx::render).collect(Collectors.joining(", "));
+    ctx.execute("TRUNCATE TABLE " + tableList + " RESTART IDENTITY CASCADE");
+    logger.info("Executed TRUNCATE for PostgreSQL");
+  }
+
+  private void truncateH2(final DSLContext ctx, final List<Table<?>> tables) {
+    ctx.execute("SET REFERENTIAL_INTEGRITY FALSE");
+    try {
+      for (final Table<?> table : tables) {
+        ctx.execute("TRUNCATE TABLE " + ctx.render(table));
+      }
+      logger.info("Executed TRUNCATE for H2");
+    } finally {
+      ctx.execute("SET REFERENTIAL_INTEGRITY TRUE");
+    }
+  }
+
+  private void deleteAll(final DSLContext ctx, final List<Table<?>> tables) {
+    tables.forEach(table -> ctx.deleteFrom(table).execute());
+    logger.info("Executed DELETE for default dialect");
   }
 
   private boolean isApplicationTable(final Table<?> table) {
