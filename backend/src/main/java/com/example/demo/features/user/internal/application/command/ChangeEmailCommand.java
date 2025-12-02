@@ -29,8 +29,8 @@ public class ChangeEmailCommand {
     }
 
     final User updated = user.changeEmail(input.email());
-    final User saved = userRepository.update(updated);
-    return new Output(saved);
+    userRepository.update(updated);
+    return new Output(updated);
   }
 
   public record Input(String userId, String email) {}

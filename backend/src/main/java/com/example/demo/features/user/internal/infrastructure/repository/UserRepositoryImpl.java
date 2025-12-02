@@ -74,9 +74,9 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public User update(final User user) {
+  public void update(final User user) {
     if (!user.hasChanges()) {
-      return user;
+      return;
     }
 
     final var record = dsl.newRecord(USERS);
@@ -86,9 +86,12 @@ public class UserRepositoryImpl implements UserRepository {
         .filter(FIELD_SETTERS::containsKey)
         .forEach(field -> FIELD_SETTERS.get(field).accept(user, record));
 
-    dsl.update(USERS).set(record).where(USERS.ID.eq(user.getId().getValue())).execute();
+    final int affected =
+        dsl.update(USERS).set(record).where(USERS.ID.eq(user.getId().getValue())).execute();
 
-    return findById(user.getId()).orElseThrow();
+    if (affected == 0) {
+      throw new IllegalStateException("User not found: " + user.getId().getValue());
+    }
   }
 
   @Override
