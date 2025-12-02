@@ -2,6 +2,7 @@ package com.example.demo.shared.domain;
 
 import java.util.EnumSet;
 import java.util.Set;
+import org.jspecify.annotations.Nullable;
 
 /**
  * ドメインモデルの基底クラス.
@@ -12,36 +13,34 @@ import java.util.Set;
  */
 public abstract class DomainModel<T extends Enum<T>> {
 
-  private final Set<T> changedFields;
+  @Nullable private EnumSet<T> changedFields;
 
   protected DomainModel() {
-    this.changedFields = Set.of();
+    this.changedFields = null;
   }
 
-  protected DomainModel(final Set<T> changedFields) {
-    this.changedFields = changedFields.isEmpty() ? Set.of() : EnumSet.copyOf(changedFields);
-  }
-
-  /** 変更フィールドを追加した新しいSetを返す. */
-  protected Set<T> addChangedField(final T field) {
-    final EnumSet<T> newChangedFields =
-        changedFields.isEmpty() ? EnumSet.of(field) : EnumSet.copyOf(this.changedFields);
-    newChangedFields.add(field);
-    return newChangedFields;
+  /** フィールドを変更済みとしてマークする. */
+  @SuppressWarnings("unchecked")
+  protected void markChanged(final T field) {
+    if (changedFields == null) {
+      changedFields = EnumSet.of(field);
+    } else {
+      changedFields.add(field);
+    }
   }
 
   /** 変更があるかどうか. */
   public boolean hasChanges() {
-    return !changedFields.isEmpty();
+    return changedFields != null && !changedFields.isEmpty();
   }
 
   /** 指定フィールドが変更されているか. */
   public boolean isChanged(final T field) {
-    return changedFields.contains(field);
+    return changedFields != null && changedFields.contains(field);
   }
 
   /** 変更されたフィールドのSetを返す. */
   public Set<T> getChangedFields() {
-    return changedFields;
+    return changedFields != null ? changedFields : Set.of();
   }
 }

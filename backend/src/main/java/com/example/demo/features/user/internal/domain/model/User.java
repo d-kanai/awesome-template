@@ -5,7 +5,6 @@ import com.example.demo.features.user.internal.domain.valueobject.UserId;
 import com.example.demo.shared.domain.DomainModel;
 import com.example.demo.shared.time.AppClock;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 public class User extends DomainModel<User.Field> {
 
@@ -15,19 +14,17 @@ public class User extends DomainModel<User.Field> {
   }
 
   private final UserId id;
-  private final UserEmail email;
-  private final String password;
+  private UserEmail email;
+  private String password;
   private final LocalDateTime createdAt;
-  private final LocalDateTime updatedAt;
+  private LocalDateTime updatedAt;
 
   private User(
       final UserId id,
       final UserEmail email,
       final String password,
       final LocalDateTime createdAt,
-      final LocalDateTime updatedAt,
-      final Set<Field> changedFields) {
-    super(changedFields);
+      final LocalDateTime updatedAt) {
     this.id = id;
     this.email = email;
     this.password = password;
@@ -37,7 +34,7 @@ public class User extends DomainModel<User.Field> {
 
   public static User signup(final String email, final String password) {
     final LocalDateTime now = AppClock.nowLocalDateTime();
-    return new User(UserId.generate(), UserEmail.of(email), password, now, now, Set.of());
+    return new User(UserId.generate(), UserEmail.of(email), password, now, now);
   }
 
   public static User reconstruct(
@@ -46,17 +43,13 @@ public class User extends DomainModel<User.Field> {
       final String password,
       final LocalDateTime createdAt,
       final LocalDateTime updatedAt) {
-    return new User(id, UserEmail.of(email), password, createdAt, updatedAt, Set.of());
+    return new User(id, UserEmail.of(email), password, createdAt, updatedAt);
   }
 
-  public User changeEmail(final String newEmail) {
-    return new User(
-        this.id,
-        UserEmail.of(newEmail),
-        this.password,
-        this.createdAt,
-        AppClock.nowLocalDateTime(),
-        addChangedField(Field.EMAIL));
+  public void changeEmail(final String newEmail) {
+    this.email = UserEmail.of(newEmail);
+    this.updatedAt = AppClock.nowLocalDateTime();
+    markChanged(Field.EMAIL);
   }
 
   public UserId getId() {

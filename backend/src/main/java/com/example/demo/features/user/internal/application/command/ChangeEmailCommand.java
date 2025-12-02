@@ -29,9 +29,9 @@ public class ChangeEmailCommand {
       throw new ApplicationLayerException("Email already exists");
     }
 
-    final User updated = user.changeEmail(input.email());
-    userRepository.update(updated);
-    return new Output(updated);
+    user.changeEmail(input.email());
+    userRepository.update(user);
+    return new Output(user);
   }
 
   public record Input(String userId, String email) {}
