@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -27,8 +28,6 @@ import org.springframework.stereotype.Component;
 public class JobRunner implements ApplicationRunner {
 
   private static final Logger log = LoggerFactory.getLogger(JobRunner.class);
-  private static final Set<String> RESERVED_OPTIONS =
-      Set.of("job", "spring.main.web-application-type");
 
   private final Map<String, Job<?>> jobs;
   private final AppLogger appLogger;
@@ -51,6 +50,7 @@ public class JobRunner implements ApplicationRunner {
     if (jobNames == null || jobNames.isEmpty()) {
       log.error("Job name is required. Usage: --job=<jobName>");
       System.exit(1);
+      return;
     }
 
     final String jobName = jobNames.get(0);
@@ -59,6 +59,7 @@ public class JobRunner implements ApplicationRunner {
     if (job == null) {
       log.error("Job not found: {}. Available jobs: {}", jobName, jobs.keySet());
       System.exit(1);
+      return;
     }
 
     runJob(job, jobName, args);
@@ -133,7 +134,7 @@ public class JobRunner implements ApplicationRunner {
     }
   }
 
-  private Object parseValue(final String value, final Class<?> type) {
+  private @Nullable Object parseValue(final @Nullable String value, final Class<?> type) {
     if (value == null) {
       return getDefaultValue(type);
     }
@@ -155,7 +156,7 @@ public class JobRunner implements ApplicationRunner {
     throw new IllegalArgumentException("Unsupported type: " + type.getName());
   }
 
-  private Object getDefaultValue(final Class<?> type) {
+  private @Nullable Object getDefaultValue(final Class<?> type) {
     if (type == boolean.class) {
       return false;
     } else if (type == int.class) {
@@ -166,7 +167,7 @@ public class JobRunner implements ApplicationRunner {
     return null;
   }
 
-  private String getOptionValue(final ApplicationArguments args, final String name) {
+  private @Nullable String getOptionValue(final ApplicationArguments args, final String name) {
     final List<String> values = args.getOptionValues(name);
     return (values != null && !values.isEmpty()) ? values.get(0) : null;
   }
