@@ -48,3 +48,4 @@ logging:
     root: WARN
     org.flywaydb.core: WARN
     com.example.demo: INFO
+    org.jooq.tools.LoggerListener: DEBUG

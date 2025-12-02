@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
  *
  * <p>このアノテーションが付与されたメソッドはAOPでインターセプトされ、 DomainModelの変更内容がログに出力される。
  *
- * @see DbRecordUpdateAspect
+ * @see DbRecordUpdateLogAspect
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DbRecordUpdate {}
+public @interface DbRecordUpdateLog {}

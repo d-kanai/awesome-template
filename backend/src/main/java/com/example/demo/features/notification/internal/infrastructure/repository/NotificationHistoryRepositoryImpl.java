@@ -11,17 +11,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class NotificationHistoryRepositoryImpl
-    extends RepositoryBase<
-        NotificationHistory, NotificationHistoriesRecord, NotificationHistory.UpdatableField>
+    extends RepositoryBase<NotificationHistory, NotificationHistoriesRecord>
     implements NotificationHistoryRepository {
 
   public NotificationHistoryRepositoryImpl(final DSLContext dsl) {
-    super(
-        dsl,
-        buildFieldSetters(
-            NotificationHistory.UpdatableField.class,
-            NotificationHistory.class,
-            NotificationHistoriesRecord.class));
+    super(dsl);
   }
 
   @Override

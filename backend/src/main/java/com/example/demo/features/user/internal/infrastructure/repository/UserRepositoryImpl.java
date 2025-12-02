@@ -5,7 +5,7 @@ import static com.example.demo.shared.jooq.tables.Users.USERS;
 import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.features.user.internal.domain.valueobject.UserId;
-import com.example.demo.shared.audit.DbRecordUpdate;
+import com.example.demo.shared.audit.DbRecordUpdateLog;
 import com.example.demo.shared.exception.InfraLayerException;
 import com.example.demo.shared.infrastructure.RepositoryBase;
 import com.example.demo.shared.jooq.tables.records.UsersRecord;
@@ -15,11 +15,11 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class UserRepositoryImpl extends RepositoryBase<User, UsersRecord, User.UpdatableField>
+public class UserRepositoryImpl extends RepositoryBase<User, UsersRecord>
     implements UserRepository {
 
   public UserRepositoryImpl(final DSLContext dsl) {
-    super(dsl, buildFieldSetters(User.UpdatableField.class, User.class, UsersRecord.class));
+    super(dsl);
   }
 
   @Override
@@ -66,7 +66,7 @@ public class UserRepositoryImpl extends RepositoryBase<User, UsersRecord, User.U
     }
   }
 
-  @DbRecordUpdate
+  @DbRecordUpdateLog
   @Override
   public void update(final User user) {
     if (!user.hasChanges()) {

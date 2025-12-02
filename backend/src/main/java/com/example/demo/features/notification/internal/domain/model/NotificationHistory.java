@@ -6,9 +6,7 @@ import com.example.demo.shared.time.AppClock;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class NotificationHistory extends DomainModel<NotificationHistory.UpdatableField> {
-
-  public enum UpdatableField {}
+public class NotificationHistory extends DomainModel {
 
   private final NotificationHistoryId id;
   private final UUID userId;

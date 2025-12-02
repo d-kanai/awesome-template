@@ -4,7 +4,6 @@ import com.example.demo.shared.domain.DomainModel;
 import com.example.demo.shared.logging.AppLogger;
 import com.example.demo.shared.logging.AppLogger.DbUpdateLog;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,35 +13,35 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
 /**
- * {@link DbRecordUpdate} アノテーションが付与されたメソッドの監査ログを出力するAspect.
+ * {@link DbRecordUpdateLog} アノテーションが付与されたメソッドの監査ログを出力するAspect.
  *
  * <p>DomainModelのdirty tracking情報を使用して、変更されたフィールドのold/new値をログに出力する。
  */
 @Aspect
 @Component
-public class DbRecordUpdateAspect {
+public class DbRecordUpdateLogAspect {
 
   private final ObjectProvider<AppLogger> appLoggerProvider;
 
-  public DbRecordUpdateAspect(final ObjectProvider<AppLogger> appLoggerProvider) {
+  public DbRecordUpdateLogAspect(final ObjectProvider<AppLogger> appLoggerProvider) {
     this.appLoggerProvider = appLoggerProvider;
   }
 
   /**
-   * {@link DbRecordUpdate} アノテーションが付与されたメソッドをインターセプトし、監査ログを出力する.
+   * {@link DbRecordUpdateLog} アノテーションが付与されたメソッドをインターセプトし、監査ログを出力する.
    *
    * @param joinPoint 実行ポイント
    * @return メソッドの戻り値
    * @throws Throwable 例外
    */
-  @Around("@annotation(DbRecordUpdate)")
+  @Around("@annotation(DbRecordUpdateLog)")
   public Object auditUpdate(final ProceedingJoinPoint joinPoint) throws Throwable {
     final Object[] args = joinPoint.getArgs();
-    if (args.length == 0 || !(args[0] instanceof DomainModel<?>)) {
+    if (args.length == 0 || !(args[0] instanceof DomainModel)) {
       return joinPoint.proceed();
     }
 
-    final DomainModel<?> model = (DomainModel<?>) args[0];
+    final DomainModel model = (DomainModel) args[0];
     if (!model.hasChanges()) {
       return joinPoint.proceed();
     }
@@ -52,28 +51,27 @@ public class DbRecordUpdateAspect {
     return result;
   }
 
-  private void logDbUpdate(final DomainModel<?> model) {
+  private void logDbUpdate(final DomainModel model) {
     final AppLogger appLogger = appLoggerProvider.getIfAvailable();
     if (appLogger == null) {
       return;
     }
 
-    final Set<?> changedFields = model.getChangedFields();
-    final Map<?, String> originalValues = model.getOriginalValues();
+    final Set<String> changedFields = model.getChangedFields();
+    final Map<String, String> originalValues = model.getOriginalValues();
     final String entityType = model.getClass().getSimpleName();
     final Map<String, Change> changes = new LinkedHashMap<>();
 
-    for (final var field : changedFields) {
-      final String fieldName = field.toString();
+    for (final String field : changedFields) {
       final String oldValue = originalValues.getOrDefault(field, "[not tracked]");
-      final String newValue = getNewValue(model, fieldName);
-      changes.put(fieldName, new Change(mask(fieldName, oldValue), mask(fieldName, newValue)));
+      final String newValue = getNewValue(model, field);
+      changes.put(field, new Change(mask(field, oldValue), mask(field, newValue)));
     }
 
     appLogger.logDbUpdate(model.getClass(), new DbUpdateLog(entityType, changes));
   }
 
-  private String getNewValue(final DomainModel<?> model, final String fieldName) {
+  private String getNewValue(final DomainModel model, final String fieldName) {
     try {
       final var method = model.getClass().getMethod("get" + capitalize(fieldName));
       final Object value = method.invoke(model);
@@ -87,7 +85,7 @@ public class DbRecordUpdateAspect {
     if (str == null || str.isEmpty()) {
       return str;
     }
-    return str.substring(0, 1).toUpperCase(Locale.ROOT) + str.substring(1).toLowerCase(Locale.ROOT);
+    return Character.toUpperCase(str.charAt(0)) + str.substring(1);
   }
 
   private String mask(final String fieldName, final String value) {
