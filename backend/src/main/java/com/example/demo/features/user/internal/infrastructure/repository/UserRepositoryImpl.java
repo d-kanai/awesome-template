@@ -72,8 +72,6 @@ public class UserRepositoryImpl extends RepositoryBase<User, UsersRecord, User.U
     }
 
     final var record = dsl.newRecord(USERS);
-    record.setUpdatedAt(user.getUpdatedAt());
-
     setUpdateFields(user, record);
 
     final int affected =

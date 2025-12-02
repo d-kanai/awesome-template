@@ -11,7 +11,8 @@ public class User extends DomainModel<User.UpdatableField> {
 
   public enum UpdatableField {
     EMAIL,
-    PASSWORD
+    PASSWORD,
+    UPDATED_AT
   }
 
   private final UserId id;
@@ -54,6 +55,7 @@ public class User extends DomainModel<User.UpdatableField> {
     this.email = UserEmail.of(newEmail);
     this.updatedAt = AppClock.nowLocalDateTime();
     markChanged(UpdatableField.EMAIL, oldEmail);
+    markChanged(UpdatableField.UPDATED_AT);
   }
 
   public UserId getId() {
