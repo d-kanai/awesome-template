@@ -1,5 +1,7 @@
 package com.example.demo.features.user.internal.presentation.rest;
 
+import static com.example.demo.shared.api.ApiVersion.V1;
+
 import com.example.demo.features.user.internal.application.command.ChangeEmailCommand;
 import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.shared.security.AuthContext;
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "ユーザー", description = "ユーザー管理に関連する操作です")
 @RestController
-@RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = V1 + "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ChangeEmailRestApi {
 
   private final ChangeEmailCommand changeEmailCommand;

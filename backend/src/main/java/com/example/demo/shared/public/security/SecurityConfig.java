@@ -48,7 +48,7 @@ public class SecurityConfig {
             authorize ->
                 authorize
                     // Public endpoints
-                    .requestMatchers("/auth/signup", "/auth/signin")
+                    .requestMatchers("/v1/auth/signup", "/v1/auth/signin")
                     .permitAll()
                     .requestMatchers("/actuator/health/**")
                     .permitAll()

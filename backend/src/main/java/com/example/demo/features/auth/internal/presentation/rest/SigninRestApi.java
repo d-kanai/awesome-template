@@ -1,5 +1,7 @@
 package com.example.demo.features.auth.internal.presentation.rest;
 
+import static com.example.demo.shared.api.ApiVersion.V1;
+
 import com.example.demo.features.auth.internal.application.command.SigninCommand;
 import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.shared.config.AppProperties;
@@ -26,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "認証", description = "ユーザー認証・登録に関連する操作です")
 @RestController
-@RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = V1 + "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SigninRestApi {
 
   private final SigninCommand signinCommand;

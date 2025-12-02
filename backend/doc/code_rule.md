@@ -2,11 +2,12 @@
 
 ## common
 
-- 基本全ての変数にfinalがついていること
-- メソッド30行以内
-- ローカル変数・パラメータは基本final宣言
-- 認知・循環複雑度15以内
-- deep nest 2以内
+- 基本コード質
+  - 基本全ての変数にfinalがついていること
+  - メソッド30行以内
+  - ローカル変数・パラメータは基本final宣言
+  - 認知・循環複雑度15以内
+  - deep nest 2以内
 - 同時リクエスト・スレッド使い回しで問題になる可能性があるコードは検知してユーザに質問すること
   - 非finalなstatic変数（複数スレッドで共有される）
   - Singleton Beanのmutableフィールド（全リクエストで共有される）
@@ -28,25 +29,8 @@
 
 ### 冪等性（Kafka Consumer / Job 等）
 - **INSERT**: Insert-firstパターン（`onDuplicateKeyIgnore()`）
-  - 先にINSERTし、重複時は無視（UNIQUE制約で保護）
-  - 戻り値で成功/重複を判定し、後続処理を制御
-  ```java
-  final boolean inserted = dsl.insertInto(TABLE)
-      .set(...)
-      .onDuplicateKeyIgnore()
-      .execute() > 0;
-  if (!inserted) return; // 既に処理済み
-  // 後続処理
-  ```
 - **UPDATE**: `SELECT FOR UPDATE`（悲観ロック）
-  - 対象行をロックしてから更新（他トランザクションをブロック）
-  ```java
-  final var record = dsl.selectFrom(TABLE)
-      .where(TABLE.ID.eq(id))
-      .forUpdate()
-      .fetchOne();
-  // UPDATE処理
-  ```
+- 特にConsumer, Jobは同時リクエストがされる前提で作ること
 
 ## code
 

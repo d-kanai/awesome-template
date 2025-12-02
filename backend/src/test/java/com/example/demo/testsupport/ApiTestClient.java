@@ -1,5 +1,6 @@
 package com.example.demo.testsupport;
 
+import com.example.demo.shared.api.ApiVersion;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,23 +19,28 @@ public class ApiTestClient {
     this.objectMapper = objectMapper;
   }
 
+  private String versioned(final String url) {
+    return ApiVersion.V1 + url;
+  }
+
   public ApiTestResponse post(final String url, final Object body) throws Exception {
     return new ApiTestResponse(
         mockMvc.perform(
-            MockMvcRequestBuilders.post(url)
+            MockMvcRequestBuilders.post(versioned(url))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(body))),
         objectMapper);
   }
 
   public ApiTestResponse get(final String url) throws Exception {
-    return new ApiTestResponse(mockMvc.perform(MockMvcRequestBuilders.get(url)), objectMapper);
+    return new ApiTestResponse(
+        mockMvc.perform(MockMvcRequestBuilders.get(versioned(url))), objectMapper);
   }
 
   public ApiTestResponse put(final String url, final Object body) throws Exception {
     return new ApiTestResponse(
         mockMvc.perform(
-            MockMvcRequestBuilders.put(url)
+            MockMvcRequestBuilders.put(versioned(url))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(body))),
         objectMapper);
@@ -42,7 +48,8 @@ public class ApiTestClient {
 
   public ApiTestResponse getWithAuth(final String url, final String token) throws Exception {
     return new ApiTestResponse(
-        mockMvc.perform(MockMvcRequestBuilders.get(url).header("Authorization", "Bearer " + token)),
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(versioned(url)).header("Authorization", "Bearer " + token)),
         objectMapper);
   }
 
@@ -50,7 +57,7 @@ public class ApiTestClient {
       throws Exception {
     return new ApiTestResponse(
         mockMvc.perform(
-            MockMvcRequestBuilders.put(url)
+            MockMvcRequestBuilders.put(versioned(url))
                 .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(body))),

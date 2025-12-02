@@ -1,5 +1,7 @@
 package com.example.demo.features.user.internal.presentation.rest;
 
+import static com.example.demo.shared.api.ApiVersion.V1;
+
 import com.example.demo.features.user.internal.application.query.FindAllUsersQuery;
 import com.example.demo.features.user.internal.domain.model.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "ユーザー", description = "ユーザーを管理するための操作です")
 @RestController
-@RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = V1 + "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class FindAllUsersRestApi {
 
   private final FindAllUsersQuery findAllUsersQuery;
