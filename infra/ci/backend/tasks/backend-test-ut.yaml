@@ -29,7 +29,7 @@ spec:
     # 🧪 Step 1: Run Tests with Coverage
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: gradle-test
-      image: eclipse-temurin:21-alpine
+      image: eclipse-temurin:21
       workingDir: $(workspaces.source.path)/source/backend
       env:
         - name: GRADLE_USER_HOME

@@ -21,7 +21,7 @@ spec:
     # 🔍 Step 1: Checkstyle
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: checkstyle
-      image: eclipse-temurin:21-alpine
+      image: eclipse-temurin:21
       workingDir: $(workspaces.source.path)/source/backend
       env:
         - name: GRADLE_USER_HOME
@@ -37,7 +37,7 @@ spec:
     # 🔍 Step 2: PMD
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: pmd
-      image: eclipse-temurin:21-alpine
+      image: eclipse-temurin:21
       workingDir: $(workspaces.source.path)/source/backend
       env:
         - name: GRADLE_USER_HOME
@@ -53,7 +53,7 @@ spec:
     # 🐛 Step 3: SpotBugs
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: spotbugs
-      image: eclipse-temurin:21-alpine
+      image: eclipse-temurin:21
       workingDir: $(workspaces.source.path)/source/backend
       env:
         - name: GRADLE_USER_HOME

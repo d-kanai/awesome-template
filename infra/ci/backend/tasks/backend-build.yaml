@@ -30,7 +30,7 @@ spec:
     # 📦 Step 1: Gradle bootJar
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: gradle-bootjar
-      image: eclipse-temurin:21-alpine
+      image: eclipse-temurin:21
       workingDir: $(workspaces.source.path)/source/backend
       env:
         - name: GRADLE_USER_HOME
