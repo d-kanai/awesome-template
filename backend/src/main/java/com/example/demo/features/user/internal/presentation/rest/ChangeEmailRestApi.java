@@ -2,6 +2,7 @@ package com.example.demo.features.user.internal.presentation.rest;
 
 import com.example.demo.features.user.internal.application.command.ChangeEmailCommand;
 import com.example.demo.features.user.internal.domain.model.User;
+import com.example.demo.shared.exception.ApplicationLayerException;
 import com.example.demo.shared.jwt.JwtClaims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -44,8 +45,13 @@ public class ChangeEmailRestApi {
   })
   @PutMapping(value = "/changeEmail", consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Output> execute(@Valid @RequestBody final Input input) {
-    final JwtClaims claims =
-        (JwtClaims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    final var authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null) {
+      throw new ApplicationLayerException("Authentication required");
+    }
+    if (!(authentication.getPrincipal() instanceof JwtClaims claims)) {
+      throw new ApplicationLayerException("Invalid authentication principal");
+    }
 
     final ChangeEmailCommand.Output result =
         changeEmailCommand.execute(new ChangeEmailCommand.Input(claims.userId(), input.email()));

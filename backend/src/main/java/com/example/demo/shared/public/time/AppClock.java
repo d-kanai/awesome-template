@@ -14,7 +14,8 @@ import java.time.format.DateTimeFormatter;
  */
 public final class AppClock {
 
-  private static final Clock CLOCK = Clock.systemDefaultZone();
+  private static final ZoneId ZONE = ZoneId.of("Asia/Tokyo");
+  private static final Clock CLOCK = Clock.system(ZONE);
 
   private AppClock() {}
 

@@ -1,5 +1,6 @@
 package com.example.demo.shared.logging;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -7,11 +8,11 @@ import org.springframework.web.context.annotation.RequestScope;
 @RequestScope
 public class RequestContext {
 
-  private String traceId;
-  private String userId;
-  private String env;
+  @Nullable private String traceId;
+  @Nullable private String userId;
+  @Nullable private String env;
 
-  public String getTraceId() {
+  public @Nullable String getTraceId() {
     return traceId;
   }
 
@@ -19,7 +20,7 @@ public class RequestContext {
     this.traceId = traceId;
   }
 
-  public String getUserId() {
+  public @Nullable String getUserId() {
     return userId;
   }
 
@@ -27,7 +28,7 @@ public class RequestContext {
     this.userId = userId;
   }
 
-  public String getEnv() {
+  public @Nullable String getEnv() {
     return env;
   }
 

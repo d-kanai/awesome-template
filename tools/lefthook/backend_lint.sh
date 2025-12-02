@@ -50,15 +50,19 @@ props=()
 tasks=()
 
 if [ "${#main_files[@]}" -gt 0 ]; then
-  tasks+=(checkstyleMain)
+  # compileJava runs Error Prone + NullAway
+  tasks+=(compileJava checkstyleMain pmdMain spotbugsMain)
   main_joined=$(join_with_pathsep "${main_files[@]}")
   props+=(-PcheckstyleMainFiles="$main_joined")
+  props+=(-PpmdMainFiles="$main_joined")
 fi
 
 if [ "${#test_files[@]}" -gt 0 ]; then
-  tasks+=(checkstyleTest)
+  # compileTestJava runs Error Prone + NullAway for tests
+  tasks+=(compileTestJava checkstyleTest pmdTest spotbugsTest)
   test_joined=$(join_with_pathsep "${test_files[@]}")
   props+=(-PcheckstyleTestFiles="$test_joined")
+  props+=(-PpmdTestFiles="$test_joined")
 fi
 
 cd backend

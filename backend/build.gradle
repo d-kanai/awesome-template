@@ -15,7 +15,10 @@ plugins {
     id 'jacoco'
     id 'org.springdoc.openapi-gradle-plugin' version '1.8.0'
     id 'checkstyle'
+    id 'pmd'
+    id 'com.github.spotbugs' version '6.4.6'
     id 'com.diffplug.spotless' version '6.22.0'
+    id 'net.ltgt.errorprone' version '4.1.0'
 }
 
 openApi {
@@ -80,6 +83,13 @@ dependencies {
 
     // Structured JSON logging
     implementation 'net.logstash.logback:logstash-logback-encoder:8.0'
+
+    // Null safety annotations
+    implementation 'org.jspecify:jspecify:1.0.0'
+
+    // Error Prone + NullAway
+    errorprone 'com.google.errorprone:error_prone_core:2.36.0'
+    errorprone 'com.uber.nullaway:nullaway:0.12.3'
 
     jooqGenerator 'org.postgresql:postgresql'
 
@@ -148,6 +158,18 @@ tasks.named('compileJava') {
     dependsOn tasks.named('generateJooq')
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.errorprone {
+        disableWarningsInGeneratedCode = true
+        excludedPaths = '.*/build/.*|.*/shared/jooq/.*'
+        option('NullAway:AnnotatedPackages', 'com.example.demo')
+        option('NullAway:ExcludedFieldAnnotations', 'org.springframework.beans.factory.annotation.Autowired,org.springframework.beans.factory.annotation.Value,org.springframework.boot.context.properties.bind.DefaultValue')
+        option('NullAway:TreatGeneratedAsUnannotated', 'true')
+        // Disable UnicodeInCode - project allows Japanese test method names
+        disable('UnicodeInCode')
+    }
+}
+
 tasks.named('generateJooq') {
     dependsOn tasks.named('flywayMigrate')
 
@@ -201,6 +223,8 @@ def readFileProperty = { String propertyName ->
 
 def checkstyleMainFilesOverride = readFileProperty('checkstyleMainFiles')
 def checkstyleTestFilesOverride = readFileProperty('checkstyleTestFiles')
+def pmdMainFilesOverride = readFileProperty('pmdMainFiles')
+def pmdTestFilesOverride = readFileProperty('pmdTestFiles')
 def spotlessFilesOverride = readFileProperty('spotlessFiles')
 
 checkstyle {
@@ -230,6 +254,48 @@ tasks.named('checkstyleTest').configure {
 tasks.named('check') {
     dependsOn tasks.named('checkstyleMain')
     dependsOn tasks.named('checkstyleTest')
+    dependsOn tasks.named('pmdMain')
+    dependsOn tasks.named('pmdTest')
+    dependsOn tasks.named('spotbugsMain')
+    dependsOn tasks.named('spotbugsTest')
+}
+
+pmd {
+    toolVersion = '7.16.0'
+    consoleOutput = true
+    ruleSetFiles = files("${rootDir}/config/pmd/pmd-ruleset.xml")
+}
+
+tasks.withType(Pmd).configureEach {
+    exclude('**/build/generated-src/**')
+    exclude('**/com/example/demo/shared/jooq/**')
+}
+
+tasks.named('pmdMain').configure {
+    if (!pmdMainFilesOverride.isEmpty()) {
+        source = files(pmdMainFilesOverride)
+        include('**/*.java')
+    }
+}
+
+tasks.named('pmdTest').configure {
+    if (!pmdTestFilesOverride.isEmpty()) {
+        source = files(pmdTestFilesOverride)
+        include('**/*.java')
+    }
+}
+
+spotbugs {
+    toolVersion = '4.9.8'
+    excludeFilter = file("${rootDir}/config/spotbugs/spotbugs-exclude.xml")
+    extraArgs = ['-auxclasspathFromInput']
+}
+
+tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
+    reports {
+        html.required = true
+        xml.required = false
+    }
 }
 
 spotless {

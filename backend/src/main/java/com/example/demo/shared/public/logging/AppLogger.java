@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -132,7 +133,7 @@ public class AppLogger {
     return sw.toString();
   }
 
-  private String blankToNull(final String value) {
+  private @Nullable String blankToNull(final @Nullable String value) {
     return (value != null && !value.isBlank()) ? value : null;
   }
 
@@ -141,11 +142,11 @@ public class AppLogger {
       String timestamp,
       String method,
       String path,
-      String query,
+      @Nullable String query,
       int status,
       long latencyMs,
       String remoteAddr,
       String userAgent,
       Object requestHeaders,
-      Object requestBody) {}
+      @Nullable Object requestBody) {}
 }

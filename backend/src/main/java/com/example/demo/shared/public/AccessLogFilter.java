@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -96,7 +97,7 @@ public class AccessLogFilter extends OncePerRequestFilter {
   private Map<String, Object> extractHeaders(final HttpServletRequest request) {
     final Enumeration<String> headerNames = request.getHeaderNames();
     if (headerNames == null) {
-      return Collections.emptyMap();
+      return Map.of();
     }
 
     final Map<String, Object> headers = new LinkedHashMap<>();
@@ -113,10 +114,10 @@ public class AccessLogFilter extends OncePerRequestFilter {
         headers.put(headerName, sanitizedValues);
       }
     }
-    return headers;
+    return Map.copyOf(headers);
   }
 
-  private Object extractRequestBody(final ContentCachingRequestWrapper request) {
+  private @Nullable Object extractRequestBody(final ContentCachingRequestWrapper request) {
     final byte[] content = request.getContentAsByteArray();
     if (content == null || content.length == 0) {
       return null;
@@ -222,7 +223,7 @@ public class AccessLogFilter extends OncePerRequestFilter {
     return contentType != null && contentType.toLowerCase(Locale.ROOT).contains("application/json");
   }
 
-  private String blankToNull(final String value) {
+  private @Nullable String blankToNull(final @Nullable String value) {
     return (value != null && !value.isBlank()) ? value : null;
   }
 }

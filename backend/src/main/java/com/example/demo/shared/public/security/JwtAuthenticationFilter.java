@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -52,6 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       final var claims = jwtTokenProvider.getClaimsFromToken(token);
 
       // Create authentication object with JwtClaims as principal
+      @SuppressWarnings("NullAway") // Spring Security accepts null for credentials and authorities
       final UsernamePasswordAuthenticationToken authentication =
           new UsernamePasswordAuthenticationToken(claims, null, null);
       authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -69,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
    * @param request HttpServletRequest
    * @return JWT token or null if not found
    */
-  private String extractTokenFromHeader(final HttpServletRequest request) {
+  private @Nullable String extractTokenFromHeader(final HttpServletRequest request) {
     final String authHeader = request.getHeader("Authorization");
     if (authHeader != null && authHeader.startsWith("Bearer ")) {
       return authHeader.substring(7);
@@ -83,7 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
    * @param request HttpServletRequest
    * @return JWT token or null if not found
    */
-  private String extractTokenFromCookie(final HttpServletRequest request) {
+  private @Nullable String extractTokenFromCookie(final HttpServletRequest request) {
     final Cookie[] cookies = request.getCookies();
     if (cookies == null) {
       return null;

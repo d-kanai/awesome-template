@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+  <!-- Exclude jOOQ generated code -->
+  <Match>
+    <Package name="~com\.example\.demo\.shared\.jooq.*"/>
+  </Match>
+
+  <!-- Exclude test support classes -->
+  <Match>
+    <Package name="~com\.example\.demo\.testsupport.*"/>
+  </Match>
+
+  <!-- Exclude E2E test APIs -->
+  <Match>
+    <Package name="~com\.example\.demo\.features\.test.*"/>
+  </Match>
+
+  <!-- Exclude EI_EXPOSE_REP: Spring DI injects singletons, not a security concern -->
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP"/>
+  </Match>
+  <Match>
+    <Bug pattern="EI_EXPOSE_REP2"/>
+  </Match>
+
+  <!-- Exclude CT_CONSTRUCTOR_THROW: ValueObject validation is intentional -->
+  <Match>
+    <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+  </Match>
+</FindBugsFilter>

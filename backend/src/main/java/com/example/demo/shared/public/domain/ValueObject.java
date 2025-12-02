@@ -11,10 +11,9 @@ public abstract class ValueObject<T> implements Serializable {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof ValueObject<?> that)) {
       return false;
     }
-    final ValueObject<?> that = (ValueObject<?>) o;
     return value().equals(that.value());
   }
 

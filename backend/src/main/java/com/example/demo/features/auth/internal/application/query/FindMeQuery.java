@@ -1,5 +1,6 @@
 package com.example.demo.features.auth.internal.application.query;
 
+import com.example.demo.shared.exception.ApplicationLayerException;
 import com.example.demo.shared.jwt.JwtClaims;
 import java.util.UUID;
 import org.springframework.security.core.Authentication;
@@ -13,7 +14,12 @@ public class FindMeQuery {
 
   public Output execute() {
     final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    final JwtClaims claims = (JwtClaims) authentication.getPrincipal();
+    if (authentication == null) {
+      throw new ApplicationLayerException("Authentication required");
+    }
+    if (!(authentication.getPrincipal() instanceof JwtClaims claims)) {
+      throw new ApplicationLayerException("Invalid authentication principal");
+    }
     return new Output(UUID.fromString(claims.userId()), claims.email());
   }
 

@@ -7,6 +7,7 @@ import com.example.demo.shared.logging.AppLogger;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,13 +26,13 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(ApplicationLayerException.class)
   public ResponseEntity<Map<String, Object>> handleApplicationLayerException(
       final ApplicationLayerException ex, final HttpServletRequest request) {
-    return badRequest(ex.getMessage());
+    return badRequest(Objects.requireNonNullElse(ex.getMessage(), "Bad Request"));
   }
 
   @ExceptionHandler(DomainLayerException.class)
   public ResponseEntity<Map<String, Object>> handleDomainLayerException(
       final DomainLayerException ex, final HttpServletRequest request) {
-    return badRequest(ex.getMessage());
+    return badRequest(Objects.requireNonNullElse(ex.getMessage(), "Bad Request"));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

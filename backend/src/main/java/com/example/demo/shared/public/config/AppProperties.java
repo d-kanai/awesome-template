@@ -80,7 +80,7 @@ public class AppProperties {
   public static class Jwt {
 
     @NotBlank(message = "JWT secret is required")
-    private String secret;
+    private String secret = "";
 
     @Positive private int expirationHours = 720;
 

@@ -7,12 +7,6 @@
 - ローカル変数・パラメータは基本final宣言
 - 認知・循環複雑度15以内
 - deep nest 2以内
-- 宣言順序（Checkstyle DeclarationOrderで強制）
-  1. static fields
-  2. instance fields
-  3. constructors
-  4. public methods
-  5. private methods
 - 同時リクエスト・スレッド使い回しで問題になる可能性があるコードは検知してユーザに質問すること
   - 非finalなstatic変数（複数スレッドで共有される）
   - Singleton Beanのmutableフィールド（全リクエストで共有される）
@@ -90,6 +84,7 @@
 ## test
 - カバレッジ90%以上
 - testメソッド名は日本語でテストの意図が明確な名前にすること
+- testメソッド名は日本語を体言止めを使う
 - given when thenのコメントを挿入してフェーズを見やすくすること
 - 1 API = 1 テストファイルのため、メソッド名にAPI名のプレフィックスは不要
   - ○ `正しい認証情報でOKレスポンスを返す`

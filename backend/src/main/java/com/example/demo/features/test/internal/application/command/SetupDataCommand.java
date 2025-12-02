@@ -3,6 +3,7 @@ package com.example.demo.features.test.internal.application.command;
 import static com.example.demo.shared.jooq.tables.Users.USERS;
 
 import com.example.demo.shared.exception.ApplicationLayerException;
+import java.util.Locale;
 import java.util.UUID;
 import org.jooq.DSLContext;
 import org.springframework.context.annotation.Profile;
@@ -31,7 +32,7 @@ public class SetupDataCommand {
   public Output execute(final Input input) {
     final String tableName = input.tableName();
 
-    switch (tableName.toLowerCase()) {
+    switch (tableName.toLowerCase(Locale.ROOT)) {
       case "user":
       case "users":
         setupUserData();

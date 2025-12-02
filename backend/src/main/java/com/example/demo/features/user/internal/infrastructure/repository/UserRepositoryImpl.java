@@ -7,11 +7,10 @@ import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.features.user.internal.domain.valueobject.UserId;
 import com.example.demo.shared.exception.InfraLayerException;
 import com.example.demo.shared.jooq.tables.records.UsersRecord;
-import com.example.demo.shared.time.AppClock;
-import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import org.jooq.DSLContext;
@@ -57,20 +56,19 @@ public class UserRepositoryImpl implements UserRepository {
 
   @Override
   public User insert(final User user) {
-    final LocalDateTime now = AppClock.nowLocalDateTime();
-    final LocalDateTime createdAt = user.getCreatedAt() != null ? user.getCreatedAt() : now;
-    final LocalDateTime updatedAt = user.getUpdatedAt() != null ? user.getUpdatedAt() : createdAt;
-
     final UsersRecord record =
         dsl.insertInto(USERS)
             .set(USERS.ID, user.getId().getValue())
             .set(USERS.EMAIL, user.getEmail())
             .set(USERS.PASSWORD, user.getPassword())
-            .set(USERS.CREATED_AT, createdAt)
-            .set(USERS.UPDATED_AT, updatedAt)
+            .set(USERS.CREATED_AT, user.getCreatedAt())
+            .set(USERS.UPDATED_AT, user.getUpdatedAt())
             .returning()
             .fetchOne();
 
+    if (record == null) {
+      throw new InfraLayerException("Failed to insert user: " + user.getId().getValue());
+    }
     return mapToUser(record);
   }
 
@@ -85,7 +83,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     user.getChangedFields().stream()
         .filter(FIELD_SETTERS::containsKey)
-        .forEach(field -> FIELD_SETTERS.get(field).accept(user, record));
+        .forEach(field -> Objects.requireNonNull(FIELD_SETTERS.get(field)).accept(user, record));
 
     final int affected =
         dsl.update(USERS).set(record).where(USERS.ID.eq(user.getId().getValue())).execute();

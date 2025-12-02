@@ -4,6 +4,7 @@ import com.example.demo.shared.logging.AppLogger;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
       final AuthenticationException authException)
       throws IOException {
     appLogger.logUnauthorized(
-        JwtAuthenticationEntryPoint.class, request, authException.getMessage());
+        JwtAuthenticationEntryPoint.class,
+        request,
+        Objects.requireNonNullElse(authException.getMessage(), "Unauthorized"));
     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
   }
 }
