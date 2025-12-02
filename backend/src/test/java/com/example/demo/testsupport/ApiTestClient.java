@@ -31,9 +31,29 @@ public class ApiTestClient {
     return new ApiTestResponse(mockMvc.perform(MockMvcRequestBuilders.get(url)), objectMapper);
   }
 
+  public ApiTestResponse put(final String url, final Object body) throws Exception {
+    return new ApiTestResponse(
+        mockMvc.perform(
+            MockMvcRequestBuilders.put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(body))),
+        objectMapper);
+  }
+
   public ApiTestResponse getWithAuth(final String url, final String token) throws Exception {
     return new ApiTestResponse(
         mockMvc.perform(MockMvcRequestBuilders.get(url).header("Authorization", "Bearer " + token)),
+        objectMapper);
+  }
+
+  public ApiTestResponse putWithAuth(final String url, final Object body, final String token)
+      throws Exception {
+    return new ApiTestResponse(
+        mockMvc.perform(
+            MockMvcRequestBuilders.put(url)
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(body))),
         objectMapper);
   }
 }

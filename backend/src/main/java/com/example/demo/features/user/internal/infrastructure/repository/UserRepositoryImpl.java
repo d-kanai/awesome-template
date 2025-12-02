@@ -8,13 +8,25 @@ import com.example.demo.features.user.internal.domain.valueobject.UserId;
 import com.example.demo.shared.jooq.tables.records.UsersRecord;
 import com.example.demo.shared.time.AppClock;
 import java.time.LocalDateTime;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
+
+  private static final Map<User.Field, BiConsumer<User, UsersRecord>> FIELD_SETTERS;
+
+  static {
+    final var setters = new EnumMap<User.Field, BiConsumer<User, UsersRecord>>(User.Field.class);
+    setters.put(User.Field.EMAIL, (u, r) -> r.setEmail(u.getEmail()));
+    setters.put(User.Field.PASSWORD, (u, r) -> r.setPassword(u.getPassword()));
+    FIELD_SETTERS = Map.copyOf(setters);
+  }
 
   private final DSLContext dsl;
 
@@ -59,6 +71,24 @@ public class UserRepositoryImpl implements UserRepository {
             .fetchOne();
 
     return mapToUser(record);
+  }
+
+  @Override
+  public User update(final User user) {
+    if (!user.hasChanges()) {
+      return user;
+    }
+
+    final var record = dsl.newRecord(USERS);
+    record.setUpdatedAt(user.getUpdatedAt());
+
+    user.getChangedFields().stream()
+        .filter(FIELD_SETTERS::containsKey)
+        .forEach(field -> FIELD_SETTERS.get(field).accept(user, record));
+
+    dsl.update(USERS).set(record).where(USERS.ID.eq(user.getId().getValue())).execute();
+
+    return findById(user.getId()).orElseThrow();
   }
 
   @Override
