@@ -37,20 +37,24 @@
 - Command/Query は必ず Output record クラスを持つこと
 - Output の field に Domain Model を含めてよい（プリミティブへの変換は不要）
 - HTTP レスポンス形式への変換は Presentation 層で行う
+- 意味がわかる単位でprivateメソッドに切り出す
+  - 例: `ensureEmailNotOwnedByAnother(email, user)` - 重複メールチェック
+  - メソッド名で意図が伝わるようにする（コメント不要になるレベル）
 - トランザクション管理
   - Query: `@Transactional(readOnly = true)` を付ける（DB最適化、一貫性保証）
   - Command: DB書き込みあり → `@Transactional`、読み取りのみ → `@Transactional(readOnly = true)`
   - 例: SigninCommand は認証処理だがDB書き込みなし → `readOnly = true`
 
 ### domain層
-- フィールドは全てfinal（イミュータブル）
-- setterは使用禁止
+- Entity: mutableでOK（状態変更メソッドでフィールドを直接変更）
+- ValueObject: immutable（フィールドは全てfinal）
+- setterは使用禁止（状態変更はビジネス上の振る舞いメソッド経由）
 - updateXxx ではなく、ビジネス上の振る舞いの言葉を使う（例: `changePassword`, `activate`, `cancel`）
 - コンストラクタはprivate、static factoryメソッドで生成
 - 完全コンストラクタパターン（コンストラクタ内でバリデーションを行い、不正なインスタンスを生成させない）
 - DomainModelを継承してdirty tracking機能を使う
   - 各エンティティにFieldのenumを定義（例: `User.Field { EMAIL, PASSWORD }`）
-  - 状態変更メソッドで `addChangedField(Field.XXX)` を呼ぶ
+  - 状態変更メソッドで `markChanged(Field.XXX)` を呼ぶ
 
 ### infrastructure層
 - Repository命名規則
