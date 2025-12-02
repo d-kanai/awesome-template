@@ -25,16 +25,10 @@ AIができる限り漏れずに遵守するために、箇条書きでシンプ
   - 全ての環境変数は必須（デフォルト値なし）。設定漏れがあると起動時にエラーになる
   - **新しい環境変数を追加する場合、以下のファイル全てに追記すること**:
     1. `shared/lib/env.ts` - Zodスキーマ定義（必須）
-    2. `.env.example` - テンプレート
-    3. `.env.local` - 開発環境
-    4. `.env.test` - E2Eテスト（実API）
-    5. `.env.test.mock` - E2Eテスト（Mock）
-    6. `Dockerfile` - ARG/ENV定義（NEXT_PUBLIC_*のみ）
-    7. `docker-compose.yml` - build args/environment
-    8. `../infra/ci/tasks/web-build.yaml` - Kanikoビルド引数
-    9. `../infra/ci/tasks/web-test-e2e-mock.yaml` - E2Eテスト用env
-    10. `../infra/ci/secrets/local.yaml` - ローカルK8s Secret
-    11. `../infra/ci/secrets/prod.yaml` - 本番Secret形式コメント
+    2. `.env系`
+    3. `Dockerfile` - ARG/ENV定義（NEXT_PUBLIC_*のみ）
+    4. `docker-compose.yml` - build args/environment
+    5. `../infra/ci/系`
 - **エラーハンドリングとログ出力**
   - エラーをcatchした場合、必ずログ出力するか、呼び出し元にエラーを伝播すること
   - 意図的にエラーを握りつぶす場合（例: Client-side環境での正常動作、フォールバック処理）は、必ずコメントで理由を明記すること

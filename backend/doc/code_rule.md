@@ -11,6 +11,10 @@
   - 非finalなstatic変数（複数スレッドで共有される）
   - Singleton Beanのmutableフィールド（全リクエストで共有される）
   - ThreadLocalのクリア忘れ（スレッド再利用時に前の値が残る）
+- 論理的凝集でなく、機能的凝集を優先すること（カプセル化）
+  - 技術的分類（「定数である」「ユーティリティである」）でなく、ビジネス機能・ドメイン・責務（「Cookie管理」「認証」）で分類する
+  - 例：Cookie定数とCookie操作を同じCookieManagerクラスに持つ。定数だけを集めたファイルには持たせない
+  - 例：table定義をfeatureごとにもつ
 
 ### 命名規則
 - 取得系: Find〜 (例: FindMe, FindAllUsers, FindUserById)
@@ -60,14 +64,10 @@
   - ビルダーは `@Autowired` でDIし、static import `aUser()` で使用
 - Api in-out Test
   - Query
-    - Given: 関連データ0reset, TestBuilderでデータ準備
+    - Given: 関連データ 0reset, TestBuilderでデータ準備
     - When: call api
-    - Then: 画面にAPIデータが表示されていること
+    - Then: assert all response
   - Command
-    - Given: -
-    - When: page render
-    - Then:
-      - Server ActionからbackendへのCommand APIにformのパラメータが渡り呼び出されていること
-        - ※ エラーハンドリングを柔軟にするためにServer Side Navigation(redirect)しないルールなので、結果としてServerActionも統合したテストが動作する
-      - Client Side URL遷移が起きていること
-      - Toastなど、ユーザへのFBが起きていること
+    - Given: 関連データ 0reset, TestBuilderでデータ準備
+    - When: call api
+    - Then: assert response & db change
