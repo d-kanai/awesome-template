@@ -9,8 +9,6 @@ import org.jooq.SQLDialect;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Component;
 @Profile("test")
 public class ResetDatabaseCommand {
 
-  private static final Logger logger = LoggerFactory.getLogger(ResetDatabaseCommand.class);
   private static final Set<String> TARGET_SCHEMAS = Set.of("public");
   private static final Set<String> EXCLUDED_TABLES = Set.of("flyway_schema_history");
 
@@ -29,30 +26,19 @@ public class ResetDatabaseCommand {
   }
 
   public void execute() {
-    logger.info("Starting database reset");
     dsl.transaction(
         configuration -> {
           final DSLContext ctx = DSL.using(configuration);
           final List<Table<?>> tables = findTargetTables(ctx);
           if (tables.isEmpty()) {
-            logger.info("No tables to reset");
             return;
           }
-          logTargetTables(tables);
           truncateTables(ctx, tables, configuration.dialect());
         });
-    logger.info("Database reset completed");
   }
 
   private List<Table<?>> findTargetTables(final DSLContext ctx) {
     return ctx.meta().getTables().stream().filter(this::isApplicationTable).toList();
-  }
-
-  private void logTargetTables(final List<Table<?>> tables) {
-    logger.info(
-        "Resetting {} tables: {}",
-        tables.size(),
-        tables.stream().map(Table::getName).collect(Collectors.joining(", ")));
   }
 
   private void truncateTables(
@@ -67,7 +53,6 @@ public class ResetDatabaseCommand {
   private void truncatePostgres(final DSLContext ctx, final List<Table<?>> tables) {
     final String tableList = tables.stream().map(ctx::render).collect(Collectors.joining(", "));
     ctx.execute("TRUNCATE TABLE " + tableList + " RESTART IDENTITY CASCADE");
-    logger.info("Executed TRUNCATE for PostgreSQL");
   }
 
   private void truncateH2(final DSLContext ctx, final List<Table<?>> tables) {
@@ -76,7 +61,6 @@ public class ResetDatabaseCommand {
       for (final Table<?> table : tables) {
         ctx.execute("TRUNCATE TABLE " + ctx.render(table));
       }
-      logger.info("Executed TRUNCATE for H2");
     } finally {
       ctx.execute("SET REFERENTIAL_INTEGRITY TRUE");
     }
@@ -84,7 +68,6 @@ public class ResetDatabaseCommand {
 
   private void deleteAll(final DSLContext ctx, final List<Table<?>> tables) {
     tables.forEach(table -> ctx.deleteFrom(table).execute());
-    logger.info("Executed DELETE for default dialect");
   }
 
   private boolean isApplicationTable(final Table<?> table) {

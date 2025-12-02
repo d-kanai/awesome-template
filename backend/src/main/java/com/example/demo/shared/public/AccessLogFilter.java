@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -38,7 +36,6 @@ import tools.jackson.databind.node.ObjectNode;
 @Component
 public class AccessLogFilter extends OncePerRequestFilter {
 
-  private static final Logger log = LoggerFactory.getLogger(AccessLogFilter.class);
   private static final Set<String> SENSITIVE_KEYS = Set.of("password", "authorization");
   private static final int MAX_BODY_CHAR_LENGTH = 4096;
 
@@ -145,8 +142,8 @@ public class AccessLogFilter extends OncePerRequestFilter {
       final JsonNode root = objectMapper.readTree(bodyString);
       maskSensitiveJson(root);
       return objectMapper.convertValue(root, Object.class);
-    } catch (final JacksonException exception) {
-      log.warn("Failed to parse JSON body in access log", exception);
+    } catch (final JacksonException ignored) {
+      // JSON parse失敗時は生の文字列をログに含める
       return truncate(bodyString);
     }
   }

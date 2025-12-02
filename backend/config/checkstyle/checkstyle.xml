@@ -77,7 +77,7 @@
     </module>
     <module name="RightCurly">
       <property name="id" value="RightCurlyAlone"/>
-      <property name="option" value="alone"/>
+      <property name="option" value="alone_or_singleline"/>
       <property name="tokens"
                value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, STATIC_INIT,
                     INSTANCE_INIT"/>
@@ -240,9 +240,7 @@
       <property name="allowMissingReturnTag" value="true"/>
       <property name="allowedAnnotations" value="Override, Test"/>
     </module>
-    <module name="SingleLineJavadoc">
-      <property name="ignoreInlineTags" value="false"/>
-    </module>
+    <!-- Disabled SingleLineJavadoc: conflicts with spotless (google-java-format) -->
     <module name="EmptyCatchBlock">
       <property name="exceptionVariableName" value="expected"/>
     </module>
