@@ -1,0 +1,69 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🔒 Backend Security SAST Task
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 静的解析セキュリティスキャン
+#    - Semgrep: コード脆弱性検出 (Java)
+#    - Gitleaks: シークレット漏洩検出
+#    - Trivy: 依存パッケージ脆弱性検出
+# 📍 backend-install Task の後に実行
+#
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: backend-security-sast
+spec:
+  description: "Semgrep + Gitleaks + Trivy - 統合セキュリティスキャン"
+
+  workspaces:
+    - name: source
+      description: "クローン済みソースコード"
+
+  steps:
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🔍 Step 1: Semgrep - 静的解析 (Java)
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: semgrep-scan
+      image: semgrep/semgrep:latest
+      workingDir: $(workspaces.source.path)/source/backend
+      script: |
+        #!/bin/sh
+        echo "🔍 Running Semgrep static analysis (Java)..."
+        semgrep scan --config auto --severity WARNING --error --verbose .
+        echo "✅ Semgrep scan passed!"
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🔐 Step 2: Gitleaks - シークレット検出
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: gitleaks-detect
+      image: zricethezav/gitleaks:latest
+      workingDir: $(workspaces.source.path)/source
+      script: |
+        #!/bin/sh
+        echo "🔐 Running Gitleaks secret detection..."
+        gitleaks detect --source . --verbose --exit-code 1
+        echo "✅ Gitleaks scan passed!"
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 📦 Step 3: Trivy - 依存パッケージ脆弱性
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: trivy-fs-scan
+      image: aquasec/trivy:latest
+      workingDir: $(workspaces.source.path)/source/backend
+      script: |
+        #!/bin/sh
+        echo "📦 Running Trivy filesystem scan..."
+        trivy fs --severity HIGH,CRITICAL --exit-code 1 .
+        echo "✅ Trivy scan passed!"
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🛡️ Step 4: Trivy - 設定ファイルスキャン
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: trivy-config-scan
+      image: aquasec/trivy:latest
+      workingDir: $(workspaces.source.path)/source
+      script: |
+        #!/bin/sh
+        echo "🛡️ Running Trivy config scan..."
+        trivy config --severity HIGH,CRITICAL --exit-code 1 --skip-dirs .gradle .
+        echo "✅ Trivy config scan passed!"

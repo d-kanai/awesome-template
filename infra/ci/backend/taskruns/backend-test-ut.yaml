@@ -1,0 +1,25 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🧪 Backend Test Unit TaskRun
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 backend-test-ut Task を個別実行
+#
+# 使い方:
+#   kubectl create -f infra/ci/backend/taskruns/backend-test-ut.yaml
+#
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  generateName: backend-test-ut-run-
+spec:
+  taskRef:
+    name: backend-test-ut
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi

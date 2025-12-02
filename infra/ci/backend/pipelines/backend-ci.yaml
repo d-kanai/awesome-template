@@ -1,0 +1,148 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🚀 Backend CI Pipeline
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 Spring Boot アプリの CI パイプライン
+#
+# 🔄 実行フロー:
+#                    ┌─── quality ───────┐
+#   clone ─── install ├─── test-ut ───────┼── build ── image-scan
+#                    └─── security-sast ─┘
+#
+# 使い方:
+#   kubectl apply -f infra/ci/shared/tasks/
+#   kubectl apply -f infra/ci/backend/tasks/
+#   kubectl apply -f infra/ci/backend/pipelines/backend-ci.yaml
+#   kubectl create -f infra/ci/backend/pipelineruns/backend-ci.yaml
+#
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: backend-ci
+spec:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📝 パラメータ
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  params:
+    - name: repo-url
+      type: string
+      default: https://github.com/d-kanai/awesome-template.git
+      description: "📂 Git リポジトリ URL"
+    - name: branch
+      type: string
+      default: main
+      description: "🌿 ブランチ名"
+    - name: image-name
+      type: string
+      default: kind-registry:5000/awesome-template/backend
+      description: "🐳 Docker イメージ名 (レジストリ含む)"
+    - name: image-tag
+      type: string
+      default: latest
+      description: "🏷️ イメージタグ"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🗂️ 共有 Workspace
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  workspaces:
+    - name: shared-workspace
+      description: "Task 間で共有するワークスペース"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🔧 Tasks
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  tasks:
+    # ─────────────────────────────────────────────
+    # Stage 1: Clone
+    # ─────────────────────────────────────────────
+    - name: clone
+      taskRef:
+        name: git-clone
+      params:
+        - name: repo-url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.branch)
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+
+    # ─────────────────────────────────────────────
+    # Stage 2: Install (Compile)
+    # ─────────────────────────────────────────────
+    - name: install
+      taskRef:
+        name: backend-install
+      runAfter:
+        - clone
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # ─────────────────────────────────────────────
+    # Stage 3: Parallel Checks
+    # ─────────────────────────────────────────────
+
+    # 📋 Quality: checkstyle + pmd + spotbugs
+    - name: quality
+      taskRef:
+        name: backend-quality
+      runAfter:
+        - install
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # 🧪 Test: Unit Test (JUnit + JaCoCo + coverage 90%)
+    - name: test-ut
+      taskRef:
+        name: backend-test-ut
+      runAfter:
+        - install
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # 🔒 Security: SAST (Semgrep + Gitleaks + Trivy)
+    - name: security-sast
+      taskRef:
+        name: backend-security-sast
+      runAfter:
+        - install
+      onError: continue
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # ─────────────────────────────────────────────
+    # Stage 4: Build (after all checks pass)
+    # ─────────────────────────────────────────────
+    - name: build
+      taskRef:
+        name: backend-build
+      runAfter:
+        - quality
+        - test-ut
+        - security-sast
+      params:
+        - name: image-name
+          value: $(params.image-name)
+        - name: image-tag
+          value: $(params.image-tag)
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+
+    # ─────────────────────────────────────────────
+    # Stage 5: Image Scan (after build)
+    # ─────────────────────────────────────────────
+    - name: security-image-scan
+      taskRef:
+        name: backend-security-image-scan
+      runAfter:
+        - build
+      params:
+        - name: image-name
+          value: $(params.image-name)
+        - name: image-tag
+          value: $(params.image-tag)

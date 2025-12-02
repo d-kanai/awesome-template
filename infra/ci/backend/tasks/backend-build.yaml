@@ -1,0 +1,58 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🐳 Backend Build Task
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 Spring Boot アプリを Gradle でビルド、Kaniko で Docker イメージ作成
+# 📍 全 checks が完了した後に実行
+#
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: backend-build
+spec:
+  description: "Gradle bootJar + Kaniko - Docker イメージビルド"
+
+  params:
+    - name: image-name
+      type: string
+      description: "🐳 Docker イメージ名 (レジストリ含む)"
+    - name: image-tag
+      type: string
+      default: latest
+      description: "🏷️ イメージタグ"
+
+  workspaces:
+    - name: source
+      description: "クローン済みソースコード"
+
+  steps:
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 📦 Step 1: Gradle bootJar
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: gradle-bootjar
+      image: eclipse-temurin:21-alpine
+      workingDir: $(workspaces.source.path)/source/backend
+      script: |
+        #!/bin/sh
+        set -e
+        echo "📦 Building Spring Boot JAR..."
+        ./gradlew bootJar --no-daemon
+        echo "✅ JAR build completed!"
+        ls -la build/libs/
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🐳 Step 2: Kaniko - Docker Build & Push
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: kaniko-build
+      image: gcr.io/kaniko-project/executor:latest
+      args:
+        - --dockerfile=$(workspaces.source.path)/source/backend/Dockerfile
+        - --context=$(workspaces.source.path)/source/backend
+        - --destination=$(params.image-name):$(params.image-tag)
+        - --cache=true
+        - --cache-repo=$(params.image-name)-cache
+        - --use-new-run
+        - --compressed-caching=false
+        - --snapshot-mode=redo
+        # ローカルレジストリ用 (HTTP許可) - 本番では削除すること
+        - --insecure

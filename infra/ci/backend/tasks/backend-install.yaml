@@ -1,37 +1,31 @@
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 🗑️ Web Dead Code Detection Task
+# 📦 Backend Install Task
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #
-# 📦 Knip を使用して未使用コード・依存関係を検出
-# 📍 web-install Task の後に実行
+# 📦 Gradle で依存関係をダウンロード + コンパイル
+# 📍 git-clone Task の後に実行
 #
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
-  name: web-quality-deadcode
+  name: backend-install
 spec:
-  params:
-    - name: pnpm-version
-      type: string
-      default: "10.10.0"
-      description: "📦 pnpm バージョン"
+  description: "Gradle - 依存関係ダウンロード + コンパイル"
 
-  # 🗂️ ソースコードを受け取る workspace
   workspaces:
     - name: source
       description: "クローン済みソースコード"
 
   steps:
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    # 🗑️ Step 1: Dead Code Detection (Knip)
+    # 📦 Step 1: Gradle Compile
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    - name: knip
-      image: node:22.21.1-alpine
+    - name: gradle-compile
+      image: eclipse-temurin:21-alpine
+      workingDir: $(workspaces.source.path)/source/backend
       script: |
         #!/bin/sh
         set -e
-        cd $(workspaces.source.path)/source/frontend_web
-        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
-        echo "🗑️ Running Knip dead code detection..."
-        pnpm knip
-        echo "✅ No unused code found!"
+        echo "📦 Downloading dependencies and compiling..."
+        ./gradlew compileJava compileTestJava --no-daemon
+        echo "✅ Compile completed!"

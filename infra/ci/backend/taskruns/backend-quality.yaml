@@ -1,0 +1,25 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🔍 Backend Quality TaskRun
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 backend-quality Task を個別実行
+#
+# 使い方:
+#   kubectl create -f infra/ci/backend/taskruns/backend-quality.yaml
+#
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  generateName: backend-quality-run-
+spec:
+  taskRef:
+    name: backend-quality
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi

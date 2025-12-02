@@ -1,0 +1,58 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🚀 Backend CI PipelineRun
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 backend-ci Pipeline を実行
+#
+# 使い方:
+#   # デフォルト値で実行
+#   kubectl create -f infra/ci/backend/pipelineruns/backend-ci.yaml
+#
+#   # ブランチ指定で実行
+#   kubectl create -f - <<EOF
+#   apiVersion: tekton.dev/v1
+#   kind: PipelineRun
+#   metadata:
+#     generateName: backend-ci-run-
+#   spec:
+#     pipelineRef:
+#       name: backend-ci
+#     params:
+#       - name: branch
+#         value: feature/my-branch
+#     workspaces:
+#       - name: shared-workspace
+#         volumeClaimTemplate:
+#           spec:
+#             accessModes: [ReadWriteOnce]
+#             resources:
+#               requests:
+#                 storage: 1Gi
+#   EOF
+#
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: backend-ci-run-
+spec:
+  pipelineRef:
+    name: backend-ci
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📝 パラメータ値 (デフォルト値を使用)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Pipeline 側の default 値が使われる
+  # 必要に応じてここで上書き可能
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🗂️ Workspace バインディング
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi

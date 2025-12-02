@@ -1,0 +1,25 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🔒 Backend Security SAST TaskRun
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 backend-security-sast Task を個別実行
+#
+# 使い方:
+#   kubectl create -f infra/ci/backend/taskruns/backend-security-sast.yaml
+#
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  generateName: backend-security-sast-run-
+spec:
+  taskRef:
+    name: backend-security-sast
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi

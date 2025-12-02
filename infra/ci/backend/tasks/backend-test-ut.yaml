@@ -1,0 +1,93 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🧪 Backend Unit Test Task
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 JUnit + JaCoCo カバレッジ (90%しきい値)
+# 📍 backend-install Task の後に実行
+# 📊 Results: coverage をダッシュボードに表示
+#
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: backend-test-ut
+spec:
+  description: "JUnit + JaCoCo - ユニットテスト + カバレッジ"
+
+  workspaces:
+    - name: source
+      description: "クローン済みソースコード"
+
+  # 📊 結果 (Dashboard に表示)
+  results:
+    - name: test-result
+      description: "テスト結果 (passed/total)"
+    - name: coverage
+      description: "カバレッジ (%)"
+
+  steps:
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🧪 Step 1: Run Tests with Coverage
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: gradle-test
+      image: eclipse-temurin:21-alpine
+      workingDir: $(workspaces.source.path)/source/backend
+      script: |
+        #!/bin/sh
+        set -e
+        echo "🧪 Running unit tests with coverage..."
+        ./gradlew test jacocoTestReport --no-daemon
+
+        # JaCoCo XML からカバレッジ抽出
+        REPORT="build/reports/jacoco/test/jacocoTestReport.xml"
+        if [ -f "$REPORT" ]; then
+          # Line coverage を抽出 (INSTRUCTION が一番正確)
+          MISSED=$(grep -o 'type="INSTRUCTION" missed="[0-9]*"' "$REPORT" | head -1 | grep -o '[0-9]*' || echo "0")
+          COVERED=$(grep -o 'type="INSTRUCTION" covered="[0-9]*"' "$REPORT" | head -1 | grep -o '[0-9]*' || echo "0")
+
+          if [ "$COVERED" != "0" ] || [ "$MISSED" != "0" ]; then
+            TOTAL=$((MISSED + COVERED))
+            COVERAGE_PCT=$((COVERED * 100 / TOTAL))
+          else
+            COVERAGE_PCT=0
+          fi
+
+          COVERAGE_DETAIL="Instructions: ${COVERAGE_PCT}%"
+        else
+          COVERAGE_PCT=0
+          COVERAGE_DETAIL="N/A"
+        fi
+
+        # テスト結果をパース
+        TEST_REPORT="build/test-results/test"
+        if [ -d "$TEST_REPORT" ]; then
+          TOTAL_TESTS=$(find "$TEST_REPORT" -name "*.xml" -exec grep -h 'tests=' {} \; | grep -o 'tests="[0-9]*"' | grep -o '[0-9]*' | awk '{s+=$1} END {print s}')
+          FAILED_TESTS=$(find "$TEST_REPORT" -name "*.xml" -exec grep -h 'failures=' {} \; | grep -o 'failures="[0-9]*"' | grep -o '[0-9]*' | awk '{s+=$1} END {print s}')
+          PASSED_TESTS=$((TOTAL_TESTS - FAILED_TESTS))
+        else
+          TOTAL_TESTS=0
+          PASSED_TESTS=0
+        fi
+
+        # Tekton Results に書き出し
+        echo -n "${PASSED_TESTS}/${TOTAL_TESTS}" > $(results.test-result.path)
+        echo -n "${COVERAGE_DETAIL}" > $(results.coverage.path)
+
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "📊 Tests: ${PASSED_TESTS}/${TOTAL_TESTS}"
+        echo "📊 Coverage: ${COVERAGE_DETAIL}"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+        # カバレッジしきい値チェック (90%以上)
+        if [ "$COVERAGE_PCT" -lt 90 ]; then
+          echo ""
+          echo "╔════════════════════════════════════════════════════════════╗"
+          echo "║  ❌ COVERAGE FAILED                                        ║"
+          echo "║                                                            ║"
+          echo "║  Instructions: ${COVERAGE_PCT}% < 90% (threshold)          ║"
+          echo "║                                                            ║"
+          echo "║  Please add more tests to increase coverage.               ║"
+          echo "╚════════════════════════════════════════════════════════════╝"
+          exit 1
+        fi
+        echo "✅ Coverage check passed: ${COVERAGE_PCT}% >= 90%"

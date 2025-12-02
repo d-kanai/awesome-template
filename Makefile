@@ -7,7 +7,7 @@ ROOT_DIR := $(CURDIR)
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
         webview-install webview-start webview-lint webview-typecheck webview-ios webview-android \
         web-install web-dev web-build web-lint web-lint-deps web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run web-show-routes \
-        tekton-setup tekton-teardown tekton-dashboard tekton-web-build tekton-web-lint tekton-web-ut tekton-web-e2e-mock tekton-web-ci tekton-logs \
+        tekton-setup tekton-teardown tekton-dashboard tekton-web-ci tekton-backend-ci tekton-logs \
         openapi-client lefthook-install
 
 help:
@@ -82,11 +82,8 @@ help:
 	@echo "  make tekton-setup         # Setup kind cluster with Tekton + Dashboard"
 	@echo "  make tekton-teardown      # Delete kind cluster"
 	@echo "  make tekton-dashboard     # Open Tekton Dashboard in browser"
-	@echo "  make tekton-web-build     # Run Next.js build task"
-	@echo "  make tekton-web-lint      # Run typecheck + Biome lint task"
-	@echo "  make tekton-web-ut        # Run unit tests (vitest)"
-	@echo "  make tekton-web-e2e-mock  # Run E2E tests (Cucumber + Playwright, Mock Mode)"
-	@echo "  make tekton-web-ci        # Run full CI pipeline (lint || ut || e2e-mock → build)"
+	@echo "  make tekton-web-ci        # Run Web CI pipeline (quality || ut || e2e-mock || security → build)"
+	@echo "  make tekton-backend-ci    # Run Backend CI pipeline (quality || ut || security → build)"
 	@echo "  make tekton-logs          # Show latest TaskRun logs"
 	@echo ""
 	@echo "Setup:"
@@ -352,30 +349,19 @@ tekton-dashboard:
 	sleep 2
 	open http://localhost:9097
 
-tekton-web-build:
-	kubectl create -f infra/ci/taskruns/web-build.yaml
-	@echo ""
-	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
-
-tekton-web-lint:
-	kubectl create -f infra/ci/taskruns/web-lint.yaml
-	@echo ""
-	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
-
-tekton-web-ut:
-	kubectl create -f infra/ci/taskruns/web-ut.yaml
-	@echo ""
-	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
-
-tekton-web-e2e-mock:
-	kubectl create -f infra/ci/taskruns/web-e2e-mock.yaml
-	@echo ""
-	@echo "TaskRun created. Run 'make tekton-logs' to see the output."
-
 tekton-web-ci:
-	kubectl apply -f infra/ci/tasks/
-	kubectl apply -f infra/ci/pipelines/web-ci.yaml
-	kubectl create -f infra/ci/pipelineruns/web-ci.yaml
+	kubectl apply -f infra/ci/shared/tasks/
+	kubectl apply -f infra/ci/web/tasks/
+	kubectl apply -f infra/ci/web/pipelines/web-ci.yaml
+	kubectl create -f infra/ci/web/pipelineruns/web-ci.yaml
+	@echo ""
+	@echo "PipelineRun created. Run 'make tekton-logs' to see the output."
+
+tekton-backend-ci:
+	kubectl apply -f infra/ci/shared/tasks/
+	kubectl apply -f infra/ci/backend/tasks/
+	kubectl apply -f infra/ci/backend/pipelines/backend-ci.yaml
+	kubectl create -f infra/ci/backend/pipelineruns/backend-ci.yaml
 	@echo ""
 	@echo "PipelineRun created. Run 'make tekton-logs' to see the output."
 

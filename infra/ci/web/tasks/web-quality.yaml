@@ -1,0 +1,78 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🔍 Web Quality Task
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# 📦 TypeScript型チェック + Biome + 依存方向チェック + デッドコード検出
+# 📍 web-install Task の後に実行
+#
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: web-quality
+spec:
+  params:
+    - name: pnpm-version
+      type: string
+      default: "10.10.0"
+      description: "📦 pnpm バージョン"
+
+  workspaces:
+    - name: source
+      description: "クローン済みソースコード"
+
+  steps:
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🔎 Step 1: TypeScript Type Check
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: typecheck
+      image: node:22.21.1-alpine
+      script: |
+        #!/bin/sh
+        set -e
+        cd $(workspaces.source.path)/source/frontend_web
+        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+        echo "🔎 Running TypeScript type check..."
+        pnpm typecheck
+        echo "✅ Type check passed!"
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🧹 Step 2: Biome Lint Check
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: biome-check
+      image: node:22.21.1-alpine
+      script: |
+        #!/bin/sh
+        set -e
+        cd $(workspaces.source.path)/source/frontend_web
+        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+        echo "🧹 Running Biome lint check..."
+        pnpm biome check
+        echo "✅ Biome check passed!"
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🔗 Step 3: Dependency Direction Check
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: lint-deps
+      image: node:22.21.1-alpine
+      script: |
+        #!/bin/sh
+        set -e
+        cd $(workspaces.source.path)/source/frontend_web
+        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+        echo "🔗 Running dependency direction check..."
+        pnpm lint:deps
+        echo "✅ Dependency check passed!"
+
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # 🗑️ Step 4: Dead Code Detection (Knip)
+    # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    - name: knip
+      image: node:22.21.1-alpine
+      script: |
+        #!/bin/sh
+        set -e
+        cd $(workspaces.source.path)/source/frontend_web
+        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
+        echo "🗑️ Running Knip dead code detection..."
+        pnpm knip
+        echo "✅ No unused code found!"

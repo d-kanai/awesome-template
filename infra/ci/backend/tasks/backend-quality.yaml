@@ -1,65 +1,57 @@
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# 🔍 Web Lint Task
+# 🔍 Backend Quality Task
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 #
-# 📦 TypeScript 型チェック + Biome リント を実行
-# 📍 web-install Task の後に実行
+# 📦 Checkstyle + PMD + SpotBugs を実行
+# 📍 backend-install Task の後に実行
 #
 apiVersion: tekton.dev/v1
 kind: Task
 metadata:
-  name: web-quality-lint
+  name: backend-quality
 spec:
-  params:
-    - name: pnpm-version
-      type: string
-      default: "10.10.0"
-      description: "📦 pnpm バージョン"
+  description: "Checkstyle + PMD + SpotBugs - 静的解析"
 
-  # 🗂️ ソースコードを受け取る workspace
   workspaces:
     - name: source
       description: "クローン済みソースコード"
 
   steps:
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    # 🔎 Step 1: TypeScript Type Check
+    # 🔍 Step 1: Checkstyle
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    - name: typecheck
-      image: node:22.21.1-alpine
+    - name: checkstyle
+      image: eclipse-temurin:21-alpine
+      workingDir: $(workspaces.source.path)/source/backend
       script: |
         #!/bin/sh
         set -e
-        cd $(workspaces.source.path)/source/frontend_web
-        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
-        echo "🔎 Running TypeScript type check..."
-        pnpm typecheck
-        echo "✅ Type check passed!"
+        echo "🔍 Running Checkstyle..."
+        ./gradlew checkstyleMain checkstyleTest --no-daemon
+        echo "✅ Checkstyle passed!"
 
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    # 🧹 Step 2: Biome Lint Check
+    # 🔍 Step 2: PMD
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    - name: biome-check
-      image: node:22.21.1-alpine
+    - name: pmd
+      image: eclipse-temurin:21-alpine
+      workingDir: $(workspaces.source.path)/source/backend
       script: |
         #!/bin/sh
         set -e
-        cd $(workspaces.source.path)/source/frontend_web
-        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
-        echo "🧹 Running Biome lint check..."
-        pnpm biome check
-        echo "✅ Biome check passed!"
+        echo "🔍 Running PMD..."
+        ./gradlew pmdMain pmdTest --no-daemon
+        echo "✅ PMD passed!"
 
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    # 🔗 Step 3: Dependency Direction Check
+    # 🐛 Step 3: SpotBugs
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    - name: lint-deps
-      image: node:22.21.1-alpine
+    - name: spotbugs
+      image: eclipse-temurin:21-alpine
+      workingDir: $(workspaces.source.path)/source/backend
       script: |
         #!/bin/sh
         set -e
-        cd $(workspaces.source.path)/source/frontend_web
-        corepack enable && corepack prepare pnpm@$(params.pnpm-version) --activate
-        echo "🔗 Running dependency direction check..."
-        pnpm lint:deps
-        echo "✅ Dependency check passed!"
+        echo "🐛 Running SpotBugs..."
+        ./gradlew spotbugsMain spotbugsTest --no-daemon
+        echo "✅ SpotBugs passed!"
