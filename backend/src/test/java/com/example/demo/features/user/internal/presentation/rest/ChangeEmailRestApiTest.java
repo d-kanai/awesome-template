@@ -59,7 +59,7 @@ class ChangeEmailRestApiTest {
         .andExpect(jsonPath("$.email").value("new@example.com"));
 
     // then db
-    final User updated = userRepository.findById(user.getId()).orElseThrow();
+    final User updated = userRepository.findById(user.getId());
     assertThat(updated.getEmail()).isEqualTo("new@example.com");
   }
 
@@ -96,7 +96,7 @@ class ChangeEmailRestApiTest {
     response.andExpect(status().isBadRequest());
 
     // then db (unchanged)
-    final User unchanged = userRepository.findById(user1.getId()).orElseThrow();
+    final User unchanged = userRepository.findById(user1.getId());
     assertThat(unchanged.getEmail()).isEqualTo("user1@example.com");
   }
 

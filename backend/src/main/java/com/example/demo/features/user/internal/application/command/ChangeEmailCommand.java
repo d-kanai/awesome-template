@@ -19,10 +19,7 @@ public class ChangeEmailCommand {
   }
 
   public Output execute(final Input input) {
-    final User user =
-        userRepository
-            .findById(UserId.fromString(input.userId()))
-            .orElseThrow(() -> new ApplicationLayerException("User not found"));
+    final User user = userRepository.findById(UserId.fromString(input.userId()));
 
     final Optional<User> existing = userRepository.findByEmail(input.email());
     if (existing.isPresent() && !existing.get().getId().equals(user.getId())) {

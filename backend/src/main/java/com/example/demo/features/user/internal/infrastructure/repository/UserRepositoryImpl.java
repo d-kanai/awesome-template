@@ -40,8 +40,11 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Optional<User> findById(final UserId id) {
-    return dsl.selectFrom(USERS).where(USERS.ID.eq(id.getValue())).fetchOptional(this::mapToUser);
+  public User findById(final UserId id) {
+    return dsl.selectFrom(USERS)
+        .where(USERS.ID.eq(id.getValue()))
+        .fetchOptional(this::mapToUser)
+        .orElseThrow(() -> new InfraLayerException("User not found: " + id.getValue()));
   }
 
   @Override
