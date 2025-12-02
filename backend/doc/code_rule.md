@@ -42,13 +42,8 @@
 
 ### sharedモジュール
 - `shared/public/` 配下のクラスは全featureモジュールから参照可能
-- 公開パッケージ:
-  - `config`: アプリケーション設定（AppProperties）
-  - `security`: セキュリティ設定（SecurityConfig, JwtAuthenticationFilter等）
-  - `jwt`: JWT関連（JwtTokenProvider, JwtClaims）
-  - `time`: 時刻ユーティリティ（AppClock） - 現在時刻取得は必ずこのクラスを使用
-  - `logging`: ログユーティリティ（AppLogger）
-- `shared/internal/` 配下のクラスは外部から参照禁止
+- 現在時刻の取得は必ず `AppClock` を使用すること（`Instant.now()`, `LocalDateTime.now()` 等の直接呼び出し禁止）
+- ログ出力は必ず `AppLogger` を経由すること（`LoggerFactory.getLogger()` の直接使用禁止）
 
 ## test
 - カバレッジ90%以上
