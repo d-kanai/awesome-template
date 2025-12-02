@@ -192,6 +192,8 @@ tasks.named('generateJooq') {
 
 tasks.named('test') {
     useJUnitPlatform()
+    // テストは並列実行しない（DB共有による競合を防ぐ）
+    maxParallelForks = 1
     testLogging {
         events "passed", "failed", "skipped"
         showExceptions = true

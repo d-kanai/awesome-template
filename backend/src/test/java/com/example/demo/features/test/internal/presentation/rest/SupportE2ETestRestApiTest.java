@@ -5,8 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.features.test.internal.application.command.ResetDatabaseCommand;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.testsupport.databuilder.UserTestBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +25,16 @@ class SupportE2ETestRestApiTest {
 
   @Autowired private UserRepository userRepository;
 
-  @Autowired private UserTestBuilder userTestBuilder;
+  @SuppressWarnings("unused")
+  @Autowired
+  private UserTestBuilder userTestBuilder;
+
+  @Autowired private ResetDatabaseCommand resetDatabaseCommand;
+
+  @BeforeEach
+  void setUp() {
+    resetDatabaseCommand.execute();
+  }
 
   @Test
   void 全テーブルからデータを削除する() throws Exception {
