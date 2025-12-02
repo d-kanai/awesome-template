@@ -5,7 +5,7 @@ import static com.example.demo.shared.jooq.tables.Users.USERS;
 import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.features.user.internal.domain.valueobject.UserId;
-import com.example.demo.shared.audit.DbRecordUpdateLog;
+import com.example.demo.shared.audit.DbRecordUpdate;
 import com.example.demo.shared.exception.InfraLayerException;
 import com.example.demo.shared.infrastructure.RepositoryBase;
 import com.example.demo.shared.jooq.tables.records.UsersRecord;
@@ -66,7 +66,7 @@ public class UserRepositoryImpl extends RepositoryBase<User, UsersRecord, User.U
     }
   }
 
-  @DbRecordUpdateLog.Log
+  @DbRecordUpdate
   @Override
   public void update(final User user) {
     if (!user.hasChanges()) {
