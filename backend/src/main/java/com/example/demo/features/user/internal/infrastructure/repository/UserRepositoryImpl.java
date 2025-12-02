@@ -55,7 +55,7 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public User save(final User user) {
+  public User insert(final User user) {
     final LocalDateTime now = AppClock.nowLocalDateTime();
     final LocalDateTime createdAt = user.getCreatedAt() != null ? user.getCreatedAt() : now;
     final LocalDateTime updatedAt = user.getUpdatedAt() != null ? user.getUpdatedAt() : createdAt;

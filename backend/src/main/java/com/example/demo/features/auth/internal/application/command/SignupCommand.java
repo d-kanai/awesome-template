@@ -20,7 +20,7 @@ public class SignupCommand {
       throw new IllegalArgumentException("Email already exists: " + input.email());
     }
     final User user = User.signup(input.email(), input.password());
-    final User savedUser = userRepository.save(user);
+    final User savedUser = userRepository.insert(user);
     return new Output(savedUser);
   }
 

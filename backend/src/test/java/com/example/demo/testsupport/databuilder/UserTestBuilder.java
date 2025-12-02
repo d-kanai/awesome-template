@@ -38,6 +38,6 @@ public class UserTestBuilder {
   }
 
   public User save() {
-    return userRepository.save(build());
+    return userRepository.insert(build());
   }
 }
