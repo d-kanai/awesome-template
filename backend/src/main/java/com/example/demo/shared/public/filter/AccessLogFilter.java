@@ -1,4 +1,4 @@
-package com.example.demo.shared;
+package com.example.demo.shared.filter;
 
 import com.example.demo.shared.jwt.JwtClaims;
 import com.example.demo.shared.logging.AppLogger;

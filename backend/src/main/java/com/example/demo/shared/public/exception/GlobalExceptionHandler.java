@@ -1,8 +1,5 @@
-package com.example.demo.shared;
+package com.example.demo.shared.exception;
 
-import com.example.demo.shared.exception.ApplicationLayerException;
-import com.example.demo.shared.exception.DomainLayerException;
-import com.example.demo.shared.exception.InfraLayerException;
 import com.example.demo.shared.logging.AppLogger;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;

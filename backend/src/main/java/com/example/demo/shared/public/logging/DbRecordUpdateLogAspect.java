@@ -1,7 +1,6 @@
-package com.example.demo.shared.audit;
+package com.example.demo.shared.logging;
 
 import com.example.demo.shared.domain.DomainModel;
-import com.example.demo.shared.logging.AppLogger;
 import com.example.demo.shared.logging.AppLogger.DbUpdateLog;
 import java.util.LinkedHashMap;
 import java.util.Map;

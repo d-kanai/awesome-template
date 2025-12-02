@@ -1,4 +1,4 @@
-package com.example.demo.shared.audit;
+package com.example.demo.shared.logging;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
