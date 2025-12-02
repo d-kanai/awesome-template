@@ -6,33 +6,29 @@ import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.features.user.internal.domain.valueobject.UserId;
 import com.example.demo.shared.exception.InfraLayerException;
+import com.example.demo.shared.infrastructure.RepositoryBase;
 import com.example.demo.shared.jooq.tables.records.UsersRecord;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class UserRepositoryImpl implements UserRepository {
+public class UserRepositoryImpl extends RepositoryBase<User, UsersRecord, User.UpdatableField>
+    implements UserRepository {
 
-  private static final Map<User.UpdatableField, BiConsumer<User, UsersRecord>> FIELD_SETTERS;
+  public UserRepositoryImpl(final DSLContext dsl) {
+    super(dsl, createFieldSetters());
+  }
 
-  static {
+  private static EnumMap<User.UpdatableField, BiConsumer<User, UsersRecord>> createFieldSetters() {
     final var setters =
         new EnumMap<User.UpdatableField, BiConsumer<User, UsersRecord>>(User.UpdatableField.class);
     setters.put(User.UpdatableField.EMAIL, (u, r) -> r.setEmail(u.getEmail()));
     setters.put(User.UpdatableField.PASSWORD, (u, r) -> r.setPassword(u.getPassword()));
-    FIELD_SETTERS = Map.copyOf(setters);
-  }
-
-  private final DSLContext dsl;
-
-  public UserRepositoryImpl(final DSLContext dsl) {
-    this.dsl = dsl;
+    return setters;
   }
 
   @Override
@@ -88,9 +84,7 @@ public class UserRepositoryImpl implements UserRepository {
     final var record = dsl.newRecord(USERS);
     record.setUpdatedAt(user.getUpdatedAt());
 
-    user.getChangedFields().stream()
-        .filter(FIELD_SETTERS::containsKey)
-        .forEach(field -> Objects.requireNonNull(FIELD_SETTERS.get(field)).accept(user, record));
+    applyFieldSetters(user, record);
 
     final int affected =
         dsl.update(USERS).set(record).where(USERS.ID.eq(user.getId().getValue())).execute();
