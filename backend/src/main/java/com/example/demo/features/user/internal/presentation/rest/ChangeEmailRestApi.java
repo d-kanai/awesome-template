@@ -47,13 +47,9 @@ public class ChangeEmailRestApi {
     final JwtClaims claims =
         (JwtClaims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    try {
-      final ChangeEmailCommand.Output result =
-          changeEmailCommand.execute(new ChangeEmailCommand.Input(claims.userId(), input.email()));
-      return ResponseEntity.ok(Output.from(result));
-    } catch (final IllegalArgumentException e) {
-      return ResponseEntity.badRequest().build();
-    }
+    final ChangeEmailCommand.Output result =
+        changeEmailCommand.execute(new ChangeEmailCommand.Input(claims.userId(), input.email()));
+    return ResponseEntity.ok(Output.from(result));
   }
 
   @Schema(name = "ChangeEmailRequest", description = "メールアドレス変更リクエスト")

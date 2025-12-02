@@ -2,6 +2,7 @@ package com.example.demo.features.auth.internal.application.command;
 
 import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
+import com.example.demo.shared.exception.ApplicationLayerException;
 import com.example.demo.shared.jwt.JwtTokenProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +24,10 @@ public class SigninCommand {
     final User user =
         userRepository
             .findByEmail(input.email())
-            .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+            .orElseThrow(() -> new ApplicationLayerException("Invalid email or password"));
 
     if (!user.getPassword().equals(input.password())) {
-      throw new IllegalArgumentException("Invalid email or password");
+      throw new ApplicationLayerException("Invalid email or password");
     }
 
     final String token =

@@ -45,13 +45,9 @@ public class SignupRestApi {
   })
   @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Output> execute(@Valid @RequestBody final Input input) {
-    try {
-      final SignupCommand.Output result =
-          signupCommand.execute(new SignupCommand.Input(input.email(), input.password()));
-      return ResponseEntity.status(HttpStatus.CREATED).body(Output.from(result));
-    } catch (final IllegalArgumentException e) {
-      return ResponseEntity.badRequest().build();
-    }
+    final SignupCommand.Output result =
+        signupCommand.execute(new SignupCommand.Input(input.email(), input.password()));
+    return ResponseEntity.status(HttpStatus.CREATED).body(Output.from(result));
   }
 
   @Schema(name = "SignupRequest", description = "新しいユーザーを登録するためのリクエストペイロードです")

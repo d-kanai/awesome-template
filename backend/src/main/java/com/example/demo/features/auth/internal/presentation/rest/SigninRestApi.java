@@ -54,16 +54,12 @@ public class SigninRestApi {
   @PostMapping(value = "/signin", consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Output> execute(
       @Valid @RequestBody final Input input, final HttpServletResponse response) {
-    try {
-      final SigninCommand.Output result =
-          signinCommand.execute(new SigninCommand.Input(input.email(), input.password()));
+    final SigninCommand.Output result =
+        signinCommand.execute(new SigninCommand.Input(input.email(), input.password()));
 
-      setAuthCookie(response, result.accessToken());
+    setAuthCookie(response, result.accessToken());
 
-      return ResponseEntity.ok(Output.from(result));
-    } catch (final IllegalArgumentException e) {
-      return ResponseEntity.badRequest().build();
-    }
+    return ResponseEntity.ok(Output.from(result));
   }
 
   private void setAuthCookie(final HttpServletResponse response, final String token) {

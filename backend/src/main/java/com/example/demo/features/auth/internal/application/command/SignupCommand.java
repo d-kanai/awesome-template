@@ -2,6 +2,7 @@ package com.example.demo.features.auth.internal.application.command;
 
 import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
+import com.example.demo.shared.exception.ApplicationLayerException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,7 @@ public class SignupCommand {
 
   public Output execute(final Input input) {
     if (userRepository.existsByEmail(input.email())) {
-      throw new IllegalArgumentException("Email already exists: " + input.email());
+      throw new ApplicationLayerException("Email already exists: " + input.email());
     }
     final User user = User.signup(input.email(), input.password());
     final User savedUser = userRepository.insert(user);

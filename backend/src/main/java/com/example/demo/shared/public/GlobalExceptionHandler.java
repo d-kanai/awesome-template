@@ -1,5 +1,7 @@
 package com.example.demo.shared;
 
+import com.example.demo.shared.exception.ApplicationLayerException;
+import com.example.demo.shared.exception.DomainLayerException;
 import com.example.demo.shared.logging.AppLogger;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
@@ -20,14 +22,30 @@ public class GlobalExceptionHandler {
     this.appLogger = appLogger;
   }
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, Object>> handleValidationException(
-      final MethodArgumentNotValidException ex, final HttpServletRequest request) {
+  @ExceptionHandler(ApplicationLayerException.class)
+  public ResponseEntity<Map<String, Object>> handleApplicationLayerException(
+      final ApplicationLayerException ex, final HttpServletRequest request) {
+    return badRequest(ex.getMessage());
+  }
+
+  @ExceptionHandler(DomainLayerException.class)
+  public ResponseEntity<Map<String, Object>> handleDomainLayerException(
+      final DomainLayerException ex, final HttpServletRequest request) {
+    return badRequest(ex.getMessage());
+  }
+
+  private ResponseEntity<Map<String, Object>> badRequest(final String message) {
     final Map<String, Object> body = new LinkedHashMap<>();
-    body.put("error", "Bad Request");
+    body.put("error", message);
     body.put("status", 400);
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<Map<String, Object>> handleValidationException(
+      final MethodArgumentNotValidException ex, final HttpServletRequest request) {
+    return badRequest("Bad Request");
   }
 
   @ExceptionHandler(Exception.class)
