@@ -50,11 +50,6 @@ public class ResetDatabaseCommand {
     }
   }
 
-  private void truncatePostgres(final DSLContext ctx, final List<Table<?>> tables) {
-    final String tableList = tables.stream().map(ctx::render).collect(Collectors.joining(", "));
-    ctx.execute("TRUNCATE TABLE " + tableList + " RESTART IDENTITY CASCADE");
-  }
-
   private void truncateH2(final DSLContext ctx, final List<Table<?>> tables) {
     ctx.execute("SET REFERENTIAL_INTEGRITY FALSE");
     try {
@@ -64,6 +59,11 @@ public class ResetDatabaseCommand {
     } finally {
       ctx.execute("SET REFERENTIAL_INTEGRITY TRUE");
     }
+  }
+
+  private void truncatePostgres(final DSLContext ctx, final List<Table<?>> tables) {
+    final String tableList = tables.stream().map(ctx::render).collect(Collectors.joining(", "));
+    ctx.execute("TRUNCATE TABLE " + tableList + " RESTART IDENTITY CASCADE");
   }
 
   private void deleteAll(final DSLContext ctx, final List<Table<?>> tables) {

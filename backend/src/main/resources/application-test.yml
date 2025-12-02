@@ -29,6 +29,8 @@ management:
 
 app:
   env: TEST
+  kafka:
+    enabled: false
   jwt:
     secret: test-secret-key-that-is-at-least-256-bits-long-for-hs256
     expiration-hours: 720

@@ -5,6 +5,7 @@ package com.example.demo.shared.jooq;
 
 
 import com.example.demo.shared.jooq.tables.FlywaySchemaHistory;
+import com.example.demo.shared.jooq.tables.NotificationHistories;
 import com.example.demo.shared.jooq.tables.PgpArmorHeaders;
 import com.example.demo.shared.jooq.tables.Users;
 import com.example.demo.shared.jooq.tables.records.PgpArmorHeadersRecord;
@@ -24,6 +25,11 @@ public class Tables {
      * The table <code>public.flyway_schema_history</code>.
      */
     public static final FlywaySchemaHistory FLYWAY_SCHEMA_HISTORY = FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY;
+
+    /**
+     * The table <code>public.notification_histories</code>.
+     */
+    public static final NotificationHistories NOTIFICATION_HISTORIES = NotificationHistories.NOTIFICATION_HISTORIES;
 
     /**
      * The table <code>public.pgp_armor_headers</code>.

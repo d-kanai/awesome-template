@@ -26,6 +26,28 @@
 - すべての環境変数は `.env` ファイルで一元管理する
 - 環境変数は基本的に必須とし、未設定の場合は起動時エラーとする
 
+### 冪等性（Kafka Consumer / Job 等）
+- **INSERT**: Insert-firstパターン（`onDuplicateKeyIgnore()`）
+  - 先にINSERTし、重複時は無視（UNIQUE制約で保護）
+  - 戻り値で成功/重複を判定し、後続処理を制御
+  ```java
+  final boolean inserted = dsl.insertInto(TABLE)
+      .set(...)
+      .onDuplicateKeyIgnore()
+      .execute() > 0;
+  if (!inserted) return; // 既に処理済み
+  // 後続処理
+  ```
+- **UPDATE**: `SELECT FOR UPDATE`（悲観ロック）
+  - 対象行をロックしてから更新（他トランザクションをブロック）
+  ```java
+  final var record = dsl.selectFrom(TABLE)
+      .where(TABLE.ID.eq(id))
+      .forUpdate()
+      .fetchOne();
+  // UPDATE処理
+  ```
+
 ## code
 
 ### presentation層
@@ -189,8 +211,9 @@ public class UserStatsSummaryJob implements Job<UserStatsSummaryJob.Args> {
     - Given: 関連データ 0reset, TestBuilderでデータ準備
     - When: call api
     - Then: assert response & db change & event publish
-- Consumer Test
-  - Springコンテキスト不要、直接newしてテスト
-  - Given: イベントを作成
-  - When: `consumer.consume(event)`
-  - Then: Commandが正しく実行されたことを検証
+- Consumer Test（Commandテスト）
+  - API Testと同様、presentationからのテストで、モック禁止・Springコンテキストで本物のRepository使用
+  - `@SpringBootTest` + `@AutoConfigureMockMvc` + `@ActiveProfiles("test")`
+  - Given: 関連データ 0reset（`dsl.deleteFrom(TABLE).execute()`）、TestBuilderでデータ準備
+  - When: `consumber exec`
+  - Then: assert response & db change
