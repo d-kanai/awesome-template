@@ -15,6 +15,8 @@ spec:
   workspaces:
     - name: source
       description: "クローン済みソースコード"
+    - name: gradle-cache
+      description: "Gradle キャッシュ"
 
   steps:
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -23,6 +25,9 @@ spec:
     - name: checkstyle
       image: eclipse-temurin:21-alpine
       workingDir: $(workspaces.source.path)/source/backend
+      env:
+        - name: GRADLE_USER_HOME
+          value: $(workspaces.gradle-cache.path)
       script: |
         #!/bin/sh
         set -e
@@ -36,6 +41,9 @@ spec:
     - name: pmd
       image: eclipse-temurin:21-alpine
       workingDir: $(workspaces.source.path)/source/backend
+      env:
+        - name: GRADLE_USER_HOME
+          value: $(workspaces.gradle-cache.path)
       script: |
         #!/bin/sh
         set -e
@@ -49,6 +57,9 @@ spec:
     - name: spotbugs
       image: eclipse-temurin:21-alpine
       workingDir: $(workspaces.source.path)/source/backend
+      env:
+        - name: GRADLE_USER_HOME
+          value: $(workspaces.gradle-cache.path)
       script: |
         #!/bin/sh
         set -e

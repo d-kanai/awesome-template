@@ -56,3 +56,11 @@ spec:
           resources:
             requests:
               storage: 1Gi
+    - name: gradle-cache
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 2Gi

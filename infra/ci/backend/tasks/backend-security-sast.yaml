@@ -24,7 +24,7 @@ spec:
     # 🔍 Step 1: Semgrep - 静的解析 (Java)
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: semgrep-scan
-      image: semgrep/semgrep:latest
+      image: semgrep/semgrep:1.99.0
       workingDir: $(workspaces.source.path)/source/backend
       script: |
         #!/bin/sh
@@ -36,7 +36,7 @@ spec:
     # 🔐 Step 2: Gitleaks - シークレット検出
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: gitleaks-detect
-      image: zricethezav/gitleaks:latest
+      image: zricethezav/gitleaks:v8.21.2
       workingDir: $(workspaces.source.path)/source
       script: |
         #!/bin/sh
@@ -48,7 +48,7 @@ spec:
     # 📦 Step 3: Trivy - 依存パッケージ脆弱性
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: trivy-fs-scan
-      image: aquasec/trivy:latest
+      image: aquasec/trivy:0.58.0
       workingDir: $(workspaces.source.path)/source/backend
       script: |
         #!/bin/sh
@@ -60,7 +60,7 @@ spec:
     # 🛡️ Step 4: Trivy - 設定ファイルスキャン
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     - name: trivy-config-scan
-      image: aquasec/trivy:latest
+      image: aquasec/trivy:0.58.0
       workingDir: $(workspaces.source.path)/source
       script: |
         #!/bin/sh

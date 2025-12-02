@@ -16,6 +16,8 @@ spec:
   workspaces:
     - name: source
       description: "クローン済みソースコード"
+    - name: gradle-cache
+      description: "Gradle キャッシュ"
 
   # 📊 結果 (Dashboard に表示)
   results:
@@ -31,6 +33,9 @@ spec:
     - name: gradle-test
       image: eclipse-temurin:21-alpine
       workingDir: $(workspaces.source.path)/source/backend
+      env:
+        - name: GRADLE_USER_HOME
+          value: $(workspaces.gradle-cache.path)
       script: |
         #!/bin/sh
         set -e
