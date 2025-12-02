@@ -27,7 +27,7 @@
 #             accessModes: [ReadWriteOnce]
 #             resources:
 #               requests:
-#                 storage: 1Gi
+#                 storage: 2Gi
 #   EOF
 #
 apiVersion: tekton.dev/v1
@@ -49,14 +49,6 @@ spec:
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   workspaces:
     - name: shared-workspace
-      volumeClaimTemplate:
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 1Gi
-    - name: gradle-cache
       volumeClaimTemplate:
         spec:
           accessModes:

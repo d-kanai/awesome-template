@@ -15,8 +15,6 @@ spec:
   workspaces:
     - name: source
       description: "クローン済みソースコード"
-    - name: gradle-cache
-      description: "Gradle キャッシュ"
 
   steps:
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -27,7 +25,7 @@ spec:
       workingDir: $(workspaces.source.path)/source/backend
       env:
         - name: GRADLE_USER_HOME
-          value: $(workspaces.gradle-cache.path)
+          value: $(workspaces.source.path)/gradle-cache
       script: |
         #!/bin/sh
         set -e
@@ -43,7 +41,7 @@ spec:
       workingDir: $(workspaces.source.path)/source/backend
       env:
         - name: GRADLE_USER_HOME
-          value: $(workspaces.gradle-cache.path)
+          value: $(workspaces.source.path)/gradle-cache
       script: |
         #!/bin/sh
         set -e
@@ -59,7 +57,7 @@ spec:
       workingDir: $(workspaces.source.path)/source/backend
       env:
         - name: GRADLE_USER_HOME
-          value: $(workspaces.gradle-cache.path)
+          value: $(workspaces.source.path)/gradle-cache
       script: |
         #!/bin/sh
         set -e

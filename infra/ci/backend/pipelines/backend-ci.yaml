@@ -46,9 +46,7 @@ spec:
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   workspaces:
     - name: shared-workspace
-      description: "Task 間で共有するワークスペース"
-    - name: gradle-cache
-      description: "Gradle キャッシュ (Task 間で共有)"
+      description: "Task 間で共有するワークスペース (ソース + Gradle キャッシュ)"
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # 🔧 Tasks
@@ -80,8 +78,6 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-        - name: gradle-cache
-          workspace: gradle-cache
 
     # ─────────────────────────────────────────────
     # Stage 3: Parallel Checks
@@ -96,8 +92,6 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-        - name: gradle-cache
-          workspace: gradle-cache
 
     # 🧪 Test: Unit Test (JUnit + JaCoCo + coverage 90%)
     - name: test-ut
@@ -108,8 +102,6 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-        - name: gradle-cache
-          workspace: gradle-cache
 
     # 🔒 Security: SAST (Semgrep + Gitleaks + Trivy)
     - name: security-sast
@@ -140,8 +132,6 @@ spec:
       workspaces:
         - name: source
           workspace: shared-workspace
-        - name: gradle-cache
-          workspace: gradle-cache
 
     # ─────────────────────────────────────────────
     # Stage 5: Image Scan (after build)
