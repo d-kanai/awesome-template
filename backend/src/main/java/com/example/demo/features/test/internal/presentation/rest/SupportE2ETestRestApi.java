@@ -113,6 +113,13 @@ public class SupportE2ETestRestApi {
     response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
   }
 
+  @Operation(summary = "500エラーを発生", description = "500エラーログのテスト用。意図的に例外を発生させます。")
+  @PostMapping("/trigger_error")
+  public ResponseEntity<Void> triggerError() {
+    logger.info("Intentional error triggered for testing");
+    throw new RuntimeException("Intentional test error for 500 logging verification");
+  }
+
   @Schema(name = "SetupDataRequest", description = "テストデータセットアップのリクエストです")
   public record SetupDataInput(
       @Schema(description = "セットアップ対象のテーブル名", example = "users") String table) {}

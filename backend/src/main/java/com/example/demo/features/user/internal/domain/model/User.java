@@ -2,6 +2,7 @@ package com.example.demo.features.user.internal.domain.model;
 
 import com.example.demo.features.user.internal.domain.valueobject.UserEmail;
 import com.example.demo.features.user.internal.domain.valueobject.UserId;
+import com.example.demo.shared.time.AppClock;
 import java.time.LocalDateTime;
 
 public class User {
@@ -25,7 +26,7 @@ public class User {
   }
 
   public static User signup(final String email, final String password) {
-    final LocalDateTime now = LocalDateTime.now();
+    final LocalDateTime now = AppClock.nowLocalDateTime();
     return new User(UserId.generate(), UserEmail.of(email), password, now, now);
   }
 
@@ -40,7 +41,7 @@ public class User {
 
   public User updateProfile(final String newEmail, final String newPassword) {
     return new User(
-        this.id, UserEmail.of(newEmail), newPassword, this.createdAt, LocalDateTime.now());
+        this.id, UserEmail.of(newEmail), newPassword, this.createdAt, AppClock.nowLocalDateTime());
   }
 
   public UserId getId() {

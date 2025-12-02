@@ -6,6 +6,7 @@ import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.features.user.internal.domain.valueobject.UserId;
 import com.example.demo.shared.jooq.tables.records.UsersRecord;
+import com.example.demo.shared.time.AppClock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -43,8 +44,8 @@ public class UserRepositoryImpl implements UserRepository {
 
   @Override
   public User save(final User user) {
-    final LocalDateTime createdAt =
-        user.getCreatedAt() != null ? user.getCreatedAt() : LocalDateTime.now();
+    final LocalDateTime now = AppClock.nowLocalDateTime();
+    final LocalDateTime createdAt = user.getCreatedAt() != null ? user.getCreatedAt() : now;
     final LocalDateTime updatedAt = user.getUpdatedAt() != null ? user.getUpdatedAt() : createdAt;
 
     final UsersRecord record =

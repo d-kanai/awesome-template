@@ -63,6 +63,11 @@ public class AppProperties {
     return env == Env.TEST;
   }
 
+  /** ログをJSON形式で出力すべきか（STAGING/PRODUCTION）. */
+  public boolean shouldUseJsonLog() {
+    return env == Env.STAGING || env == Env.PRODUCTION;
+  }
+
   /** 環境種別. */
   public enum Env {
     DEVELOPMENT,

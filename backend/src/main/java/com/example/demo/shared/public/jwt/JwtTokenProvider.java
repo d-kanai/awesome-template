@@ -1,6 +1,7 @@
 package com.example.demo.shared.jwt;
 
 import com.example.demo.shared.config.AppProperties;
+import com.example.demo.shared.time.AppClock;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -25,7 +26,7 @@ public class JwtTokenProvider {
   }
 
   public String generateToken(final String userId, final String email) {
-    final Instant now = Instant.now();
+    final Instant now = AppClock.nowInstant();
     final Instant expiration = now.plus(expirationHours, ChronoUnit.HOURS);
 
     final JwtClaims claims = new JwtClaims(userId, email, Date.from(now), Date.from(expiration));

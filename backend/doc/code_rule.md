@@ -40,6 +40,16 @@
 ### infrastructure層
 - (TODO)
 
+### sharedモジュール
+- `shared/public/` 配下のクラスは全featureモジュールから参照可能
+- 公開パッケージ:
+  - `config`: アプリケーション設定（AppProperties）
+  - `security`: セキュリティ設定（SecurityConfig, JwtAuthenticationFilter等）
+  - `jwt`: JWT関連（JwtTokenProvider, JwtClaims）
+  - `time`: 時刻ユーティリティ（AppClock） - 現在時刻取得は必ずこのクラスを使用
+  - `logging`: ログユーティリティ（AppLogger）
+- `shared/internal/` 配下のクラスは外部から参照禁止
+
 ## test
 - カバレッジ90%以上
 - testメソッド名は日本語でテストの意図が明確な名前にすること
