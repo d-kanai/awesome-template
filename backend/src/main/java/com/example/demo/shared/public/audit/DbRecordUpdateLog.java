@@ -2,7 +2,8 @@ package com.example.demo.shared.audit;
 
 import com.example.demo.shared.domain.DomainModel;
 import com.example.demo.shared.logging.AppLogger;
-import com.example.demo.shared.logging.AppLogger.AuditLog;
+import com.example.demo.shared.logging.AppLogger.DbUpdateLog;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -19,11 +20,11 @@ import org.springframework.stereotype.Component;
  */
 @Aspect
 @Component
-public class RepositoryAuditAspect {
+public class DbRecordUpdateLog {
 
   private final ObjectProvider<AppLogger> appLoggerProvider;
 
-  public RepositoryAuditAspect(final ObjectProvider<AppLogger> appLoggerProvider) {
+  public DbRecordUpdateLog(final ObjectProvider<AppLogger> appLoggerProvider) {
     this.appLoggerProvider = appLoggerProvider;
   }
 
@@ -47,11 +48,11 @@ public class RepositoryAuditAspect {
     }
 
     final Object result = joinPoint.proceed();
-    logAudit(model);
+    logDbUpdate(model);
     return result;
   }
 
-  private void logAudit(final DomainModel<?> model) {
+  private void logDbUpdate(final DomainModel<?> model) {
     final AppLogger appLogger = appLoggerProvider.getIfAvailable();
     if (appLogger == null) {
       return;
@@ -60,17 +61,16 @@ public class RepositoryAuditAspect {
     final Set<?> changedFields = model.getChangedFields();
     final Map<?, String> originalValues = model.getOriginalValues();
     final String entityType = model.getClass().getSimpleName();
+    final Map<String, Change> changes = new LinkedHashMap<>();
 
     for (final var field : changedFields) {
       final String fieldName = field.toString();
       final String oldValue = originalValues.getOrDefault(field, "[not tracked]");
       final String newValue = getNewValue(model, fieldName);
-
-      appLogger.logAudit(
-          model.getClass(),
-          new AuditLog(
-              entityType, fieldName, mask(fieldName, oldValue), mask(fieldName, newValue)));
+      changes.put(fieldName, new Change(mask(fieldName, oldValue), mask(fieldName, newValue)));
     }
+
+    appLogger.logDbUpdate(model.getClass(), new DbUpdateLog(entityType, changes));
   }
 
   private String getNewValue(final DomainModel<?> model, final String fieldName) {
@@ -96,4 +96,7 @@ public class RepositoryAuditAspect {
     }
     return value;
   }
+
+  /** 変更内容. */
+  public record Change(String oldValue, String newValue) {}
 }

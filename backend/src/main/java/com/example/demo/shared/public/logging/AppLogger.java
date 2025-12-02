@@ -187,24 +187,22 @@ public class AppLogger {
     return (value != null && !value.isBlank()) ? value : null;
   }
 
-  /** 監査ログを出力. */
-  public void logAudit(final Class<?> clazz, final AuditLog log) {
+  /** DB更新ログを出力. */
+  public void logDbUpdate(final Class<?> clazz, final DbUpdateLog log) {
     final Logger logger = LoggerFactory.getLogger(clazz);
     logger.info(
-        "Audit log",
-        kv("log_type", "audit"),
+        "DB update",
+        kv("log_type", "db_update"),
         kv("trace_id", requestContext.getTraceId()),
         kv("user_id", requestContext.getUserId()),
         kv("env", requestContext.getEnv()),
         kv("timestamp", now()),
         kv("entity", log.entity()),
-        kv("field", log.field()),
-        kv("old_value", log.oldValue()),
-        kv("new_value", log.newValue()));
+        kv("changes", log.changes()));
   }
 
-  /** 監査ログ. */
-  public record AuditLog(String entity, String field, String oldValue, String newValue) {}
+  /** DB更新ログ. */
+  public record DbUpdateLog(String entity, Object changes) {}
 
   /** アクセスログ. */
   public record AccessLog(
