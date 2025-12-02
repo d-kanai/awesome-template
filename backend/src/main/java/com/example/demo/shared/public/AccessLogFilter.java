@@ -45,34 +45,36 @@ public class AccessLogFilter extends OncePerRequestFilter {
   private final ObjectMapper objectMapper;
   private final AppLogger appLogger;
 
-  public AccessLogFilter(ObjectMapper objectMapper, AppLogger appLogger) {
+  public AccessLogFilter(final ObjectMapper objectMapper, final AppLogger appLogger) {
     this.objectMapper = objectMapper;
     this.appLogger = appLogger;
   }
 
   @Override
   protected void doFilterInternal(
-      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      final HttpServletRequest request,
+      final HttpServletResponse response,
+      final FilterChain filterChain)
       throws ServletException, IOException {
-    int contentLength = request.getContentLength();
-    ContentCachingRequestWrapper wrappedRequest =
+    final int contentLength = request.getContentLength();
+    final ContentCachingRequestWrapper wrappedRequest =
         new ContentCachingRequestWrapper(request, contentLength > 0 ? contentLength : 1024);
-    long startedAt = System.currentTimeMillis();
+    final long startedAt = System.currentTimeMillis();
 
     try {
       filterChain.doFilter(wrappedRequest, response);
     } finally {
-      long durationMs = System.currentTimeMillis() - startedAt;
+      final long durationMs = System.currentTimeMillis() - startedAt;
       logAccess(wrappedRequest, response, startedAt, durationMs);
     }
   }
 
   private void logAccess(
-      ContentCachingRequestWrapper request,
-      HttpServletResponse response,
-      long startedAt,
-      long durationMs) {
-    var accessLog =
+      final ContentCachingRequestWrapper request,
+      final HttpServletResponse response,
+      final long startedAt,
+      final long durationMs) {
+    final var accessLog =
         new AccessLog(
             formatTimestamp(startedAt),
             appLogger.resolveTraceId(request),
@@ -91,17 +93,17 @@ public class AccessLogFilter extends OncePerRequestFilter {
     appLogger.logAccess(AccessLogFilter.class, accessLog);
   }
 
-  private Map<String, Object> extractHeaders(HttpServletRequest request) {
-    Enumeration<String> headerNames = request.getHeaderNames();
+  private Map<String, Object> extractHeaders(final HttpServletRequest request) {
+    final Enumeration<String> headerNames = request.getHeaderNames();
     if (headerNames == null) {
       return Collections.emptyMap();
     }
 
-    Map<String, Object> headers = new LinkedHashMap<>();
+    final Map<String, Object> headers = new LinkedHashMap<>();
     while (headerNames.hasMoreElements()) {
-      String headerName = headerNames.nextElement();
-      List<String> values = Collections.list(request.getHeaders(headerName));
-      List<String> sanitizedValues =
+      final String headerName = headerNames.nextElement();
+      final List<String> values = Collections.list(request.getHeaders(headerName));
+      final List<String> sanitizedValues =
           values.stream()
               .map(value -> maskIfSensitive(headerName, value))
               .collect(Collectors.toList());
@@ -114,13 +116,13 @@ public class AccessLogFilter extends OncePerRequestFilter {
     return headers;
   }
 
-  private Object extractRequestBody(ContentCachingRequestWrapper request) {
-    byte[] content = request.getContentAsByteArray();
+  private Object extractRequestBody(final ContentCachingRequestWrapper request) {
+    final byte[] content = request.getContentAsByteArray();
     if (content == null || content.length == 0) {
       return null;
     }
 
-    String bodyString = toBodyString(content, request.getCharacterEncoding());
+    final String bodyString = toBodyString(content, request.getCharacterEncoding());
     if (bodyString.isBlank()) {
       return null;
     }
@@ -131,30 +133,30 @@ public class AccessLogFilter extends OncePerRequestFilter {
     return parseBody(bodyString, request.getContentType());
   }
 
-  private Object parseBody(String bodyString, String contentType) {
+  private Object parseBody(final String bodyString, final String contentType) {
     if (isJson(contentType)) {
       return parseJsonBody(bodyString);
     }
     return truncate(bodyString);
   }
 
-  private Object parseJsonBody(String bodyString) {
+  private Object parseJsonBody(final String bodyString) {
     try {
-      JsonNode root = objectMapper.readTree(bodyString);
+      final JsonNode root = objectMapper.readTree(bodyString);
       maskSensitiveJson(root);
       return objectMapper.convertValue(root, Object.class);
-    } catch (JacksonException exception) {
+    } catch (final JacksonException exception) {
       log.warn("Failed to parse JSON body in access log", exception);
       return truncate(bodyString);
     }
   }
 
-  private void maskSensitiveJson(JsonNode node) {
+  private void maskSensitiveJson(final JsonNode node) {
     if (node == null) {
       return;
     }
     if (node.isObject()) {
-      ObjectNode objectNode = (ObjectNode) node;
+      final ObjectNode objectNode = (ObjectNode) node;
       objectNode
           .properties()
           .forEach(
@@ -170,21 +172,21 @@ public class AccessLogFilter extends OncePerRequestFilter {
     }
   }
 
-  private String maskIfSensitive(String key, String value) {
+  private String maskIfSensitive(final String key, final String value) {
     if (isSensitiveKey(key)) {
       return "****";
     }
     return value;
   }
 
-  private boolean isSensitiveKey(String key) {
+  private boolean isSensitiveKey(final String key) {
     return key != null && SENSITIVE_KEYS.contains(key.toLowerCase(Locale.ROOT));
   }
 
   private Optional<String> extractUserId() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication != null && authentication.isAuthenticated()) {
-      Object principal = authentication.getPrincipal();
+      final Object principal = authentication.getPrincipal();
       if (principal instanceof JwtClaims claims) {
         return Optional.ofNullable(claims.userId());
       }
@@ -192,35 +194,35 @@ public class AccessLogFilter extends OncePerRequestFilter {
     return Optional.empty();
   }
 
-  private String formatTimestamp(long startedAt) {
+  private String formatTimestamp(final long startedAt) {
     return OffsetDateTime.ofInstant(Instant.ofEpochMilli(startedAt), ZoneId.systemDefault())
         .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
   }
 
-  private String toBodyString(byte[] content, String characterEncoding) {
+  private String toBodyString(final byte[] content, final String characterEncoding) {
     Charset charset = StandardCharsets.UTF_8;
     if (characterEncoding != null && !characterEncoding.isBlank()) {
       try {
         charset = Charset.forName(characterEncoding);
-      } catch (Exception ignored) {
+      } catch (final Exception ignored) {
         // fall through to UTF-8
       }
     }
     return new String(content, charset);
   }
 
-  private String truncate(String value) {
+  private String truncate(final String value) {
     if (value.length() <= MAX_BODY_CHAR_LENGTH) {
       return value;
     }
     return value.substring(0, MAX_BODY_CHAR_LENGTH) + "...";
   }
 
-  private boolean isJson(String contentType) {
+  private boolean isJson(final String contentType) {
     return contentType != null && contentType.toLowerCase(Locale.ROOT).contains("application/json");
   }
 
-  private String blankToNull(String value) {
+  private String blankToNull(final String value) {
     return (value != null && !value.isBlank()) ? value : null;
   }
 }

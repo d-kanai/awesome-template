@@ -16,10 +16,12 @@ public final class AppClock {
 
   private static Clock clock = Clock.systemDefaultZone();
 
-  private AppClock() {}
+  private AppClock() {
+    // utility class
+  }
 
   /** テスト用: Clockを設定. */
-  public static void setClock(Clock clock) {
+  public static void setClock(final Clock clock) {
     AppClock.clock = clock;
   }
 
@@ -49,7 +51,7 @@ public final class AppClock {
   }
 
   /** 指定されたエポックミリ秒をISO形式の文字列で変換. */
-  public static String toIsoString(long epochMillis) {
+  public static String toIsoString(final long epochMillis) {
     return OffsetDateTime.ofInstant(Instant.ofEpochMilli(epochMillis), clock.getZone())
         .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
   }

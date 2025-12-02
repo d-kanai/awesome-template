@@ -29,20 +29,21 @@ public class AppLogger {
   private final tools.jackson.databind.ObjectWriter compactWriter;
   private final tools.jackson.databind.ObjectWriter prettyWriter;
 
-  public AppLogger(ObjectMapper objectMapper, AppProperties appProperties) {
+  public AppLogger(final ObjectMapper objectMapper, final AppProperties appProperties) {
     this.appProperties = appProperties;
     this.compactWriter = objectMapper.writer();
     this.prettyWriter = objectMapper.writerWithDefaultPrettyPrinter();
   }
 
   /** アクセスログを出力. */
-  public void logAccess(Class<?> clazz, AccessLog log) {
+  public void logAccess(final Class<?> clazz, final AccessLog log) {
     logJson(clazz, LogLevel.INFO, log);
   }
 
   /** 認証エラー(401)ログを出力. */
-  public void logUnauthorized(Class<?> clazz, HttpServletRequest request, String errorMessage) {
-    var log =
+  public void logUnauthorized(
+      final Class<?> clazz, final HttpServletRequest request, final String errorMessage) {
+    final var log =
         new UnauthorizedLog(
             now(),
             resolveTraceId(request),
@@ -58,8 +59,9 @@ public class AppLogger {
   }
 
   /** サーバーエラー(500)ログを出力. */
-  public void logServerError(Class<?> clazz, HttpServletRequest request, Exception ex) {
-    var log =
+  public void logServerError(
+      final Class<?> clazz, final HttpServletRequest request, final Exception ex) {
+    final var log =
         new ServerErrorLog(
             now(),
             resolveTraceId(request),
@@ -76,7 +78,7 @@ public class AppLogger {
   }
 
   /** リクエストからtrace_idを取得または生成. */
-  public String resolveTraceId(HttpServletRequest request) {
+  public String resolveTraceId(final HttpServletRequest request) {
     return Optional.ofNullable(request.getHeader(TRACE_ID_HEADER))
         .filter(value -> !value.isBlank())
         .orElseGet(() -> String.format("%016x", ThreadLocalRandom.current().nextLong()));
@@ -92,33 +94,35 @@ public class AppLogger {
     return appProperties.getEnv().name();
   }
 
-  private void logJson(Class<?> clazz, LogLevel level, Object payload) {
-    Logger logger = LoggerFactory.getLogger(clazz);
+  private void logJson(final Class<?> clazz, final LogLevel level, final Object payload) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
     try {
-      var writer = appProperties.shouldUseJsonLog() ? compactWriter : prettyWriter;
-      String json = writer.writeValueAsString(payload);
+      final var writer = appProperties.shouldUseJsonLog() ? compactWriter : prettyWriter;
+      final String json = writer.writeValueAsString(payload);
       switch (level) {
         case INFO -> logger.info(json);
         case WARN -> logger.warn(json);
         case ERROR -> logger.error(json);
+        default -> logger.info(json);
       }
-    } catch (JacksonException e) {
+    } catch (final JacksonException e) {
       logger.warn("Failed to serialize log entry as JSON");
       switch (level) {
         case INFO -> logger.info(payload.toString());
         case WARN -> logger.warn(payload.toString());
         case ERROR -> logger.error(payload.toString());
+        default -> logger.info(payload.toString());
       }
     }
   }
 
-  private String getStackTraceAsString(Exception ex) {
-    StringWriter sw = new StringWriter();
+  private String getStackTraceAsString(final Exception ex) {
+    final StringWriter sw = new StringWriter();
     ex.printStackTrace(new PrintWriter(sw));
     return sw.toString();
   }
 
-  private String blankToNull(String value) {
+  private String blankToNull(final String value) {
     return (value != null && !value.isBlank()) ? value : null;
   }
 

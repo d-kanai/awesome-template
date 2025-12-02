@@ -15,16 +15,16 @@ public class GlobalExceptionHandler {
 
   private final AppLogger appLogger;
 
-  public GlobalExceptionHandler(AppLogger appLogger) {
+  public GlobalExceptionHandler(final AppLogger appLogger) {
     this.appLogger = appLogger;
   }
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, Object>> handleException(
-      Exception ex, HttpServletRequest request) {
+      final Exception ex, final HttpServletRequest request) {
     appLogger.logServerError(GlobalExceptionHandler.class, request, ex);
 
-    Map<String, Object> body = new LinkedHashMap<>();
+    final Map<String, Object> body = new LinkedHashMap<>();
     body.put("error", "Internal Server Error");
     body.put("status", 500);
 

@@ -14,7 +14,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
   private final AppLogger appLogger;
 
-  public JwtAuthenticationEntryPoint(AppLogger appLogger) {
+  public JwtAuthenticationEntryPoint(final AppLogger appLogger) {
     this.appLogger = appLogger;
   }
 
