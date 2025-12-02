@@ -23,6 +23,8 @@ public class AppProperties {
 
   @Valid @NotNull private Cors cors = new Cors();
 
+  @Valid @NotNull private Kafka kafka = new Kafka();
+
   public Env getEnv() {
     return env;
   }
@@ -45,6 +47,14 @@ public class AppProperties {
 
   public void setCors(final Cors cors) {
     this.cors = cors;
+  }
+
+  public Kafka getKafka() {
+    return kafka;
+  }
+
+  public void setKafka(final Kafka kafka) {
+    this.kafka = kafka;
   }
 
   public boolean isDev() {
@@ -176,6 +186,24 @@ public class AppProperties {
 
     public void setAllowedOrigins(final List<String> allowedOrigins) {
       this.allowedOrigins = allowedOrigins;
+    }
+  }
+
+  /** Kafka設定. */
+  public static class Kafka {
+
+    @NotNull private Boolean enabled = false;
+
+    public Boolean getEnabled() {
+      return enabled;
+    }
+
+    public void setEnabled(final Boolean enabled) {
+      this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+      return Boolean.TRUE.equals(enabled);
     }
   }
 }

@@ -16,7 +16,7 @@ public interface UserRepository {
 
   boolean existsByEmail(final String email);
 
-  User insert(final User user);
+  void insert(final User user);
 
   void update(final User user);
 

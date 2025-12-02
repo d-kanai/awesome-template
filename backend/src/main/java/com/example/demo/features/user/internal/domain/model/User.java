@@ -1,5 +1,6 @@
 package com.example.demo.features.user.internal.domain.model;
 
+import com.example.demo.features.user.internal.domain.event.UserSignedUpEvent;
 import com.example.demo.features.user.internal.domain.valueobject.UserEmail;
 import com.example.demo.features.user.internal.domain.valueobject.UserId;
 import com.example.demo.shared.domain.DomainModel;
@@ -34,7 +35,9 @@ public class User extends DomainModel<User.Field> {
 
   public static User signup(final String email, final String password) {
     final LocalDateTime now = AppClock.nowLocalDateTime();
-    return new User(UserId.generate(), UserEmail.of(email), password, now, now);
+    final User user = new User(UserId.generate(), UserEmail.of(email), password, now, now);
+    user.registerEvent(UserSignedUpEvent.of(user.getId().getValue(), email));
+    return user;
   }
 
   public static User reconstruct(

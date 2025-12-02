@@ -84,6 +84,9 @@ dependencies {
     // Structured JSON logging
     implementation 'net.logstash.logback:logstash-logback-encoder:8.0'
 
+    // Kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
     // Null safety annotations
     implementation 'org.jspecify:jspecify:1.0.0'
 
@@ -99,6 +102,7 @@ dependencies {
     testImplementation 'com.h2database:h2'
     testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
     testImplementation 'org.springframework.modulith:spring-modulith-docs'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
 
 jooq {

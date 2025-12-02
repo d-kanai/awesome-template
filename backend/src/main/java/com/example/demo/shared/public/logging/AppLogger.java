@@ -167,6 +167,16 @@ public class AppLogger {
         kv("stacktrace", getStackTraceAsString(ex)));
   }
 
+  /** Consumerの起動ログを出力. */
+  public void logConsumerStart() {
+    final Logger logger = LoggerFactory.getLogger(AppLogger.class);
+    logger.info(
+        "Consumer started",
+        kv("log_type", "consumer_start"),
+        kv("env", appProperties.getEnv().name()),
+        kv("timestamp", now()));
+  }
+
   private String getStackTraceAsString(final Exception ex) {
     final StringWriter sw = new StringWriter();
     ex.printStackTrace(new PrintWriter(sw));

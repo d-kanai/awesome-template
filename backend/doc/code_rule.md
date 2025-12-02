@@ -21,11 +21,17 @@
 - 更新/作成/削除系: ビジネス上の振る舞い名を使う（例: Signup, Signin, PublishArticle, CancelOrder）
 - CRUD名（Create, Update, Delete）は避ける
 
+### 環境変数
+- 環境変数はデフォルト値を指定しない（例: `${KAFKA_ENABLED}` ○、`${KAFKA_ENABLED:false}` ×）
+- すべての環境変数は `.env` ファイルで一元管理する
+- 環境変数は基本的に必須とし、未設定の場合は起動時エラーとする
+
 ## code
 
 ### presentation層
 - 構成
   - `presentation/rest`: REST API（XxxRestApi）
+  - `presentation/consumer`: Kafkaコンシューマ（XxxConsumer）
   - `presentation/job`: バッチジョブ（XxxJob）
 
 #### REST API
@@ -33,6 +39,40 @@
   - クラス名 = ユースケース名 + RestApi（例: SignupRestApi, SigninRestApi, FindMeRestApi）
   - CRUDを1つのクラスにまとめない
   - Output.from() メソッドは Command/Query の Output を引数に取ること
+
+#### Consumer
+- 実行方法: `--spring.main.web-application-type=none --mode=consumer`
+- 構成
+  - `presentation/consumer/XxxConsumer.java`: 各Consumer実装
+- Consumer実装ルール
+  - `@Component` + `@ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true")` で宣言
+  - `@KafkaListener` でトピックを購読（groupIdはアプリ名+機能名: `${spring.application.name}-notification`）
+  - 1Consumer = 1イベントタイプ（1メソッド）
+  - Consumerはイベント受信とログ出力のみ、ビジネスロジックはCommandに委譲
+  - 命名: `{イベント名}{機能名}Consumer`（例: `UserSignedUpNotificationConsumer`）
+
+```java
+@Component
+@ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = false)
+public class UserSignedUpNotificationConsumer {
+
+  private static final Logger log = LoggerFactory.getLogger(UserSignedUpNotificationConsumer.class);
+  private final SendWelcomeEmailCommand sendWelcomeEmailCommand;
+
+  public UserSignedUpNotificationConsumer(final SendWelcomeEmailCommand sendWelcomeEmailCommand) {
+    this.sendWelcomeEmailCommand = sendWelcomeEmailCommand;
+  }
+
+  @KafkaListener(
+      topics = "demo.user.events",
+      groupId = "${spring.application.name}-notification",
+      containerFactory = "kafkaListenerContainerFactory")
+  public void consume(final UserSignedUpEvent event) {
+    log.info("Received UserSignedUpEvent: eventId={}, userId={}", event.eventId(), event.userId());
+    sendWelcomeEmailCommand.execute(new SendWelcomeEmailCommand.Input(event.userId(), event.email()));
+  }
+}
+```
 
 #### Job
 - 実行方法: `--spring.main.web-application-type=none --job=jobName --dryRun=true --arg1=value1`
@@ -88,13 +128,24 @@ public class UserStatsSummaryJob implements Job<UserStatsSummaryJob.Args> {
   - 各エンティティにFieldのenumを定義（例: `User.Field { EMAIL, PASSWORD }`）
   - 状態変更メソッドで `markChanged(Field.XXX)` を呼ぶ
 
+#### DomainEvent
+- 配置: `features/{feature}/internal/domain/event/XxxEvent.java`
+- `DomainEvent` インターフェースを実装
+- 命名: `{ドメインアクション}Event`（例: `UserSignedUpEvent`, `OrderCancelledEvent`）
+- EVENT_TYPE定数: `{aggregate}.{action}`形式（例: `user.signed_up`, `order.cancelled`）
+- 時刻は`AppClock.nowOffsetDateTime()`を使用（JST）
+
+#### イベント発行パターン
+- Entityの状態変更メソッド内で `registerEvent()` を呼ぶ
+- CommandでDB保存後に `eventPublisher.publishAll(entity.getDomainEvents())` を呼ぶ
+
 ### infrastructure層
 - Repository命名規則
   - 取得: `findByXxx`
   - 挿入: `insert`
   - 更新: `update`
   - 削除: `deleteById`
-- `insert`は挿入後のエンティティを返す
+- `insert`は`void`、影響行数0なら例外をスロー
 - `update`は`void`、影響行数0なら例外をスロー
 - dirty trackingで変更フィールドのみUPDATE
   - `Map<Entity.Field, BiConsumer<Entity, Record>>` でフィールドマッピング

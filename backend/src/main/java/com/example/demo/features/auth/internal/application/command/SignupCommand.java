@@ -2,6 +2,7 @@ package com.example.demo.features.auth.internal.application.command;
 
 import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
+import com.example.demo.shared.event.EventPublisher;
 import com.example.demo.shared.exception.ApplicationLayerException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,9 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class SignupCommand {
 
   private final UserRepository userRepository;
+  private final EventPublisher eventPublisher;
 
-  public SignupCommand(final UserRepository userRepository) {
+  public SignupCommand(final UserRepository userRepository, final EventPublisher eventPublisher) {
     this.userRepository = userRepository;
+    this.eventPublisher = eventPublisher;
   }
 
   public Output execute(final Input input) {
@@ -21,8 +24,9 @@ public class SignupCommand {
       throw new ApplicationLayerException("Email already exists: " + input.email());
     }
     final User user = User.signup(input.email(), input.password());
-    final User savedUser = userRepository.insert(user);
-    return new Output(savedUser);
+    userRepository.insert(user);
+    eventPublisher.publishAll(user.getDomainEvents());
+    return new Output(user);
   }
 
   public record Input(String email, String password) {}

@@ -63,21 +63,19 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public User insert(final User user) {
-    final UsersRecord record =
+  public void insert(final User user) {
+    final int affected =
         dsl.insertInto(USERS)
             .set(USERS.ID, user.getId().getValue())
             .set(USERS.EMAIL, user.getEmail())
             .set(USERS.PASSWORD, user.getPassword())
             .set(USERS.CREATED_AT, user.getCreatedAt())
             .set(USERS.UPDATED_AT, user.getUpdatedAt())
-            .returning()
-            .fetchOne();
+            .execute();
 
-    if (record == null) {
+    if (affected == 0) {
       throw new InfraLayerException("Failed to insert user: " + user.getId().getValue());
     }
-    return mapToUser(record);
   }
 
   @Override
