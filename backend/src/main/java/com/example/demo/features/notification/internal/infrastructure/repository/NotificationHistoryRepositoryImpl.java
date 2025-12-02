@@ -4,16 +4,24 @@ import static com.example.demo.shared.jooq.tables.NotificationHistories.NOTIFICA
 
 import com.example.demo.features.notification.internal.domain.model.NotificationHistory;
 import com.example.demo.features.notification.internal.domain.repository.NotificationHistoryRepository;
+import com.example.demo.shared.infrastructure.RepositoryBase;
+import com.example.demo.shared.jooq.tables.records.NotificationHistoriesRecord;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class NotificationHistoryRepositoryImpl implements NotificationHistoryRepository {
-
-  private final DSLContext dsl;
+public class NotificationHistoryRepositoryImpl
+    extends RepositoryBase<
+        NotificationHistory, NotificationHistoriesRecord, NotificationHistory.UpdatableField>
+    implements NotificationHistoryRepository {
 
   public NotificationHistoryRepositoryImpl(final DSLContext dsl) {
-    this.dsl = dsl;
+    super(
+        dsl,
+        buildFieldSetters(
+            NotificationHistory.UpdatableField.class,
+            NotificationHistory.class,
+            NotificationHistoriesRecord.class));
   }
 
   @Override
