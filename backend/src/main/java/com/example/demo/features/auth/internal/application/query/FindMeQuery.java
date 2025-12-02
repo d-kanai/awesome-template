@@ -1,10 +1,7 @@
 package com.example.demo.features.auth.internal.application.query;
 
-import com.example.demo.shared.exception.ApplicationLayerException;
-import com.example.demo.shared.jwt.JwtClaims;
+import com.example.demo.shared.security.AuthContext;
 import java.util.UUID;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,13 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class FindMeQuery {
 
   public Output execute() {
-    final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null) {
-      throw new ApplicationLayerException("Authentication required");
-    }
-    if (!(authentication.getPrincipal() instanceof JwtClaims claims)) {
-      throw new ApplicationLayerException("Invalid authentication principal");
-    }
+    final var claims = AuthContext.getCurrentClaims();
     return new Output(UUID.fromString(claims.userId()), claims.email());
   }
 
