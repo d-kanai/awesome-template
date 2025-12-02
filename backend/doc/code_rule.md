@@ -130,9 +130,10 @@ public class UserStatsSummaryJob implements Job<UserStatsSummaryJob.Args> {
 - updateXxx ではなく、ビジネス上の振る舞いの言葉を使う（例: `changePassword`, `activate`, `cancel`）
 - コンストラクタはprivate、static factoryメソッドで生成
 - 完全コンストラクタパターン（コンストラクタ内でバリデーションを行い、不正なインスタンスを生成させない）
-- DomainModelを継承してdirty tracking機能を使う
-  - 各エンティティにFieldのenumを定義（例: `User.Field { EMAIL, PASSWORD }`）
-  - 状態変更メソッドで `markChanged(Field.XXX)` を呼ぶ
+- DomainModelを継承してSnapshot Patternによるdirty tracking機能を使う
+  - `reconstruct()`で`captureSnapshot()`を呼び、ロード時点の状態を保存
+  - 状態変更メソッドではフィールドを直接変更するだけでOK（自動で差分検出）
+  - `hasChanges()`, `getChangedFields()`, `getOriginalValues()` でdiff情報を取得可能
 
 #### DomainEvent
 - 配置: `features/{feature}/internal/domain/event/XxxEvent.java`
@@ -154,7 +155,8 @@ public class UserStatsSummaryJob implements Job<UserStatsSummaryJob.Args> {
 - `insert`は`void`、影響行数0なら例外をスロー
 - `update`は`void`、影響行数0なら例外をスロー
 - dirty trackingで変更フィールドのみUPDATE
-  - `Map<Entity.Field, BiConsumer<Entity, Record>>` でフィールドマッピング
+  - `RepositoryBase.setUpdateFields(model, record)` でリフレクションベースの自動マッピング
+  - `@DbRecordUpdateLog` アノテーションでDB更新の監査ログを自動出力
 
 ### sharedモジュール
 - `shared/public/` 配下のクラスは全featureモジュールから参照可能
