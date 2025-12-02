@@ -2,6 +2,7 @@ package com.example.demo.shared;
 
 import com.example.demo.shared.exception.ApplicationLayerException;
 import com.example.demo.shared.exception.DomainLayerException;
+import com.example.demo.shared.exception.InfraLayerException;
 import com.example.demo.shared.logging.AppLogger;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-/** Global exception handler for logging unhandled exceptions. */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -34,29 +34,37 @@ public class GlobalExceptionHandler {
     return badRequest(ex.getMessage());
   }
 
-  private ResponseEntity<Map<String, Object>> badRequest(final String message) {
-    final Map<String, Object> body = new LinkedHashMap<>();
-    body.put("error", message);
-    body.put("status", 400);
-
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
-  }
-
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<Map<String, Object>> handleValidationException(
       final MethodArgumentNotValidException ex, final HttpServletRequest request) {
     return badRequest("Bad Request");
   }
 
+  @ExceptionHandler(InfraLayerException.class)
+  public ResponseEntity<Map<String, Object>> handleInfraLayerException(
+      final InfraLayerException ex, final HttpServletRequest request) {
+    appLogger.logServerError(GlobalExceptionHandler.class, request, ex);
+    return internalServerError();
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, Object>> handleException(
       final Exception ex, final HttpServletRequest request) {
     appLogger.logServerError(GlobalExceptionHandler.class, request, ex);
+    return internalServerError();
+  }
 
+  private ResponseEntity<Map<String, Object>> badRequest(final String message) {
+    final Map<String, Object> body = new LinkedHashMap<>();
+    body.put("error", message);
+    body.put("status", 400);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
+
+  private ResponseEntity<Map<String, Object>> internalServerError() {
     final Map<String, Object> body = new LinkedHashMap<>();
     body.put("error", "Internal Server Error");
     body.put("status", 500);
-
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
   }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.features.user.internal.domain.valueobject;
 
 import com.example.demo.shared.domain.ValueObject;
+import com.example.demo.shared.exception.DomainLayerException;
 import java.util.regex.Pattern;
 
 public class UserEmail extends ValueObject<String> {
@@ -11,10 +12,10 @@ public class UserEmail extends ValueObject<String> {
 
   private UserEmail(final String value) {
     if (value == null || value.isBlank()) {
-      throw new IllegalArgumentException("Email cannot be null or empty");
+      throw new DomainLayerException("Email cannot be null or empty");
     }
     if (!EMAIL_PATTERN.matcher(value).matches()) {
-      throw new IllegalArgumentException("Invalid email format: " + value);
+      throw new DomainLayerException("Invalid email format: " + value);
     }
     this.value = value;
   }

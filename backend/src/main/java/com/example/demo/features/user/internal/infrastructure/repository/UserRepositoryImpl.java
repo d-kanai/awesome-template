@@ -5,6 +5,7 @@ import static com.example.demo.shared.jooq.tables.Users.USERS;
 import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.features.user.internal.domain.valueobject.UserId;
+import com.example.demo.shared.exception.InfraLayerException;
 import com.example.demo.shared.jooq.tables.records.UsersRecord;
 import com.example.demo.shared.time.AppClock;
 import java.time.LocalDateTime;
@@ -90,7 +91,7 @@ public class UserRepositoryImpl implements UserRepository {
         dsl.update(USERS).set(record).where(USERS.ID.eq(user.getId().getValue())).execute();
 
     if (affected == 0) {
-      throw new IllegalStateException("User not found: " + user.getId().getValue());
+      throw new InfraLayerException("User not found: " + user.getId().getValue());
     }
   }
 

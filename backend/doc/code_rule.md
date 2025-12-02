@@ -66,6 +66,21 @@
 ### sharedモジュール
 - `shared/public/` 配下のクラスは全featureモジュールから参照可能
 
+### エラーハンドリング
+- 各層で専用の例外クラスを使用する
+  - Application層: `ApplicationLayerException` → 400
+  - Domain層: `DomainLayerException` → 400
+  - Infrastructure層: `InfraLayerException` → 500
+- `IllegalArgumentException`は使用しない（層が不明確になる）
+- Domain層のValueObjectバリデーションは`DomainLayerException`を使用
+- RestApiでtry-catchしない（GlobalExceptionHandlerに任せる）
+- GlobalExceptionHandlerが全例外を処理
+  - `MethodArgumentNotValidException`（Spring @Valid） → 400
+  - `ApplicationLayerException` → 400（メッセージをレスポンスに含める）
+  - `DomainLayerException` → 400（メッセージをレスポンスに含める）
+  - `InfraLayerException` → 500（ログ出力）
+  - `Exception` → 500（ログ出力）
+
 ## test
 - カバレッジ90%以上
 - testメソッド名は日本語でテストの意図が明確な名前にすること

@@ -2,6 +2,7 @@ package com.example.demo.features.test.internal.application.command;
 
 import static com.example.demo.shared.jooq.tables.Users.USERS;
 
+import com.example.demo.shared.exception.ApplicationLayerException;
 import java.util.UUID;
 import org.jooq.DSLContext;
 import org.springframework.context.annotation.Profile;
@@ -36,7 +37,7 @@ public class SetupDataCommand {
         setupUserData();
         break;
       default:
-        throw new IllegalArgumentException("Unsupported table: " + tableName);
+        throw new ApplicationLayerException("Unsupported table: " + tableName);
     }
 
     return new Output();

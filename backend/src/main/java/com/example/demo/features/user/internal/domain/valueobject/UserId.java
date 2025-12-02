@@ -1,6 +1,7 @@
 package com.example.demo.features.user.internal.domain.valueobject;
 
 import com.example.demo.shared.domain.ValueObject;
+import com.example.demo.shared.exception.DomainLayerException;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.UUID;
 
@@ -9,7 +10,7 @@ public class UserId extends ValueObject<UUID> {
 
   private UserId(final UUID value) {
     if (value == null) {
-      throw new IllegalArgumentException("User id cannot be null");
+      throw new DomainLayerException("User id cannot be null");
     }
     this.value = value;
   }
@@ -24,7 +25,7 @@ public class UserId extends ValueObject<UUID> {
 
   public static UserId fromString(final String value) {
     if (value == null) {
-      throw new IllegalArgumentException("User id cannot be null");
+      throw new DomainLayerException("User id cannot be null");
     }
     return new UserId(UUID.fromString(value));
   }
