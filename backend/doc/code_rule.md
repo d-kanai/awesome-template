@@ -37,6 +37,10 @@
 - Command/Query は必ず Output record クラスを持つこと
 - Output の field に Domain Model を含めてよい（プリミティブへの変換は不要）
 - HTTP レスポンス形式への変換は Presentation 層で行う
+- トランザクション管理
+  - Query: `@Transactional(readOnly = true)` を付ける（DB最適化、一貫性保証）
+  - Command: DB書き込みあり → `@Transactional`、読み取りのみ → `@Transactional(readOnly = true)`
+  - 例: SigninCommand は認証処理だがDB書き込みなし → `readOnly = true`
 
 ### domain層
 - フィールドは全てfinal（イミュータブル）
