@@ -88,6 +88,10 @@ dependencies {
     // Kafka
     implementation 'org.springframework.kafka:spring-kafka'
 
+    // AOP
+    implementation 'org.springframework:spring-aop'
+    implementation 'org.aspectj:aspectjweaver:1.9.24'
+
     // Null safety annotations
     implementation 'org.jspecify:jspecify:1.0.0'
 

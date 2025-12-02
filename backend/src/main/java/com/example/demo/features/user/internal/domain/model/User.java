@@ -50,9 +50,10 @@ public class User extends DomainModel<User.Field> {
   }
 
   public void changeEmail(final String newEmail) {
+    final String oldEmail = this.email.getValue();
     this.email = UserEmail.of(newEmail);
     this.updatedAt = AppClock.nowLocalDateTime();
-    markChanged(Field.EMAIL);
+    markChanged(Field.EMAIL, oldEmail);
   }
 
   public UserId getId() {
