@@ -187,6 +187,25 @@ public class AppLogger {
     return (value != null && !value.isBlank()) ? value : null;
   }
 
+  /** 監査ログを出力. */
+  public void logAudit(final Class<?> clazz, final AuditLog log) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.info(
+        "Audit log",
+        kv("log_type", "audit"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("user_id", requestContext.getUserId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", now()),
+        kv("entity", log.entity()),
+        kv("field", log.field()),
+        kv("old_value", log.oldValue()),
+        kv("new_value", log.newValue()));
+  }
+
+  /** 監査ログ. */
+  public record AuditLog(String entity, String field, String oldValue, String newValue) {}
+
   /** アクセスログ. */
   public record AccessLog(
       String timestamp,

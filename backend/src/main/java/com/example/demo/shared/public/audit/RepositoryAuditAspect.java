@@ -1,16 +1,14 @@
 package com.example.demo.shared.audit;
 
 import com.example.demo.shared.domain.DomainModel;
-import com.example.demo.shared.logging.RequestContext;
+import com.example.demo.shared.logging.AppLogger;
+import com.example.demo.shared.logging.AppLogger.AuditLog;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
@@ -23,12 +21,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class RepositoryAuditAspect {
 
-  private static final Logger log = LoggerFactory.getLogger(RepositoryAuditAspect.class);
+  private final ObjectProvider<AppLogger> appLoggerProvider;
 
-  private final ObjectProvider<RequestContext> requestContextProvider;
-
-  public RepositoryAuditAspect(final ObjectProvider<RequestContext> requestContextProvider) {
-    this.requestContextProvider = requestContextProvider;
+  public RepositoryAuditAspect(final ObjectProvider<AppLogger> appLoggerProvider) {
+    this.appLoggerProvider = appLoggerProvider;
   }
 
   /**
@@ -56,27 +52,24 @@ public class RepositoryAuditAspect {
   }
 
   private void logAudit(final DomainModel<?> model) {
+    final AppLogger appLogger = appLoggerProvider.getIfAvailable();
+    if (appLogger == null) {
+      return;
+    }
+
     final Set<?> changedFields = model.getChangedFields();
     final Map<?, String> originalValues = model.getOriginalValues();
     final String entityType = model.getClass().getSimpleName();
-
-    final @Nullable RequestContext ctx = requestContextProvider.getIfAvailable();
-    final String traceId = ctx != null ? ctx.getTraceId() : null;
-    final String userId = ctx != null ? ctx.getUserId() : null;
 
     for (final var field : changedFields) {
       final String fieldName = field.toString();
       final String oldValue = originalValues.getOrDefault(field, "[not tracked]");
       final String newValue = getNewValue(model, fieldName);
 
-      log.info(
-          "AUDIT: traceId={}, userId={}, entity={}, field={}, old={}, new={}",
-          traceId,
-          userId,
-          entityType,
-          fieldName,
-          mask(fieldName, oldValue),
-          mask(fieldName, newValue));
+      appLogger.logAudit(
+          model.getClass(),
+          new AuditLog(
+              entityType, fieldName, mask(fieldName, oldValue), mask(fieldName, newValue)));
     }
   }
 
