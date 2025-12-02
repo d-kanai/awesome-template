@@ -51,44 +51,17 @@
 - DomainModelを継承してdirty tracking機能を使う
   - 各エンティティにFieldのenumを定義（例: `User.Field { EMAIL, PASSWORD }`）
   - 状態変更メソッドで `addChangedField(Field.XXX)` を呼ぶ
-  ```java
-  public class User extends DomainModel<User.Field> {
-    public enum Field { EMAIL, PASSWORD }
-
-    public User changeEmail(final String newEmail) {
-      return new User(..., addChangedField(Field.EMAIL));
-    }
-  }
-  ```
 
 ### infrastructure層
 - Repository命名規則
-  - 取得: `findById`, `findByEmail`, `findAll`, `existsByEmail`
-  - 挿入: `insert` （`save`は使わない）
+  - 取得: `findByXxx`
+  - 挿入: `insert`
   - 更新: `update`
   - 削除: `deleteById`
 - `insert`は挿入後のエンティティを返す
 - `update`は`void`、影響行数0なら例外をスロー
-  ```java
-  public void update(final User user) {
-    if (!user.hasChanges()) return;
-    // 変更フィールドのみUPDATE
-    final int affected = dsl.update(...).execute();
-    if (affected == 0) {
-      throw new IllegalStateException("User not found");
-    }
-  }
-  ```
 - dirty trackingで変更フィールドのみUPDATE
   - `Map<Entity.Field, BiConsumer<Entity, Record>>` でフィールドマッピング
-  ```java
-  private static final Map<User.Field, BiConsumer<User, UsersRecord>> FIELD_SETTERS;
-  static {
-    var setters = new EnumMap<>(User.Field.class);
-    setters.put(User.Field.EMAIL, (u, r) -> r.setEmail(u.getEmail()));
-    FIELD_SETTERS = Map.copyOf(setters);
-  }
-  ```
 
 ### sharedモジュール
 - `shared/public/` 配下のクラスは全featureモジュールから参照可能
