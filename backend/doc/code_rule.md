@@ -188,4 +188,9 @@ public class UserStatsSummaryJob implements Job<UserStatsSummaryJob.Args> {
   - Command
     - Given: 関連データ 0reset, TestBuilderでデータ準備
     - When: call api
-    - Then: assert response & db change
+    - Then: assert response & db change & event publish
+- Consumer Test
+  - Springコンテキスト不要、直接newしてテスト
+  - Given: イベントを作成
+  - When: `consumer.consume(event)`
+  - Then: Commandが正しく実行されたことを検証
