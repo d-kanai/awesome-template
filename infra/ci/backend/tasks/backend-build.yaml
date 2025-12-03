@@ -39,7 +39,7 @@ spec:
         #!/bin/sh
         set -e
         echo "📦 Building Spring Boot JAR..."
-        ./gradlew bootJar --no-daemon
+        ./gradlew bootJar -x flywayMigrate -x generateJooq --no-daemon
         echo "✅ JAR build completed!"
         ls -la build/libs/
 

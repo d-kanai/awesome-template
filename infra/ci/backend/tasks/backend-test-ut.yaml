@@ -43,9 +43,10 @@ spec:
         # JaCoCo XML からカバレッジ抽出
         REPORT="build/reports/jacoco/test/jacocoTestReport.xml"
         if [ -f "$REPORT" ]; then
-          # Line coverage を抽出 (レポート最後の全体サマリを使用)
-          MISSED=$(grep -o 'type="INSTRUCTION" missed="[0-9]*"' "$REPORT" | tail -1 | grep -o '[0-9]*' || echo "0")
-          COVERED=$(grep -o 'type="INSTRUCTION" covered="[0-9]*"' "$REPORT" | tail -1 | grep -o '[0-9]*' || echo "0")
+          # INSTRUCTION counter を抽出 (レポート最後の全体サマリを使用)
+          INSTRUCTION_COUNTER=$(grep -o 'type="INSTRUCTION" missed="[0-9]*" covered="[0-9]*"' "$REPORT" | tail -1)
+          MISSED=$(echo "$INSTRUCTION_COUNTER" | grep -o 'missed="[0-9]*"' | grep -o '[0-9]*' || echo "0")
+          COVERED=$(echo "$INSTRUCTION_COUNTER" | grep -o 'covered="[0-9]*"' | grep -o '[0-9]*' || echo "0")
 
           if [ "$COVERED" != "0" ] || [ "$MISSED" != "0" ]; then
             TOTAL=$((MISSED + COVERED))
