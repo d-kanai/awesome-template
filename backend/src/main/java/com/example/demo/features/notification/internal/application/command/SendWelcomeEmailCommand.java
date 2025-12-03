@@ -23,7 +23,6 @@ public class SendWelcomeEmailCommand {
 
   @Transactional
   public Output execute(final Input input) {
-    // Insert-first: 先に履歴を挿入し、重複時はスキップ（競合状態を防ぐ）
     final NotificationHistory history =
         NotificationHistory.create(input.userId(), EVENT_TYPE_WELCOME_EMAIL);
     final boolean inserted = notificationHistoryRepository.insertIfNotExists(history);
