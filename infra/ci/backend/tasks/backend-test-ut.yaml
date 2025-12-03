@@ -38,14 +38,14 @@ spec:
         #!/bin/sh
         set -e
         echo "🧪 Running unit tests with coverage..."
-        ./gradlew test jacocoTestReport --no-daemon
+        ./gradlew test jacocoTestReport -x flywayMigrate -x generateJooq --no-daemon
 
         # JaCoCo XML からカバレッジ抽出
         REPORT="build/reports/jacoco/test/jacocoTestReport.xml"
         if [ -f "$REPORT" ]; then
-          # Line coverage を抽出 (INSTRUCTION が一番正確)
-          MISSED=$(grep -o 'type="INSTRUCTION" missed="[0-9]*"' "$REPORT" | head -1 | grep -o '[0-9]*' || echo "0")
-          COVERED=$(grep -o 'type="INSTRUCTION" covered="[0-9]*"' "$REPORT" | head -1 | grep -o '[0-9]*' || echo "0")
+          # Line coverage を抽出 (レポート最後の全体サマリを使用)
+          MISSED=$(grep -o 'type="INSTRUCTION" missed="[0-9]*"' "$REPORT" | tail -1 | grep -o '[0-9]*' || echo "0")
+          COVERED=$(grep -o 'type="INSTRUCTION" covered="[0-9]*"' "$REPORT" | tail -1 | grep -o '[0-9]*' || echo "0")
 
           if [ "$COVERED" != "0" ] || [ "$MISSED" != "0" ]; then
             TOTAL=$((MISSED + COVERED))

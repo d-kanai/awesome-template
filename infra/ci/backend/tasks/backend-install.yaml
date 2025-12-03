@@ -31,5 +31,5 @@ spec:
         set -e
         echo "📦 Downloading dependencies and compiling..."
         mkdir -p $(workspaces.source.path)/gradle-cache
-        ./gradlew compileJava compileTestJava --no-daemon
+        ./gradlew compileJava compileTestJava -x flywayMigrate -x generateJooq --no-daemon
         echo "✅ Compile completed!"

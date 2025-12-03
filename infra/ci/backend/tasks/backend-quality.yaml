@@ -30,7 +30,7 @@ spec:
         #!/bin/sh
         set -e
         echo "🔍 Running Checkstyle..."
-        ./gradlew checkstyleMain checkstyleTest --no-daemon
+        ./gradlew checkstyleMain checkstyleTest -x flywayMigrate -x generateJooq --no-daemon
         echo "✅ Checkstyle passed!"
 
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -46,7 +46,7 @@ spec:
         #!/bin/sh
         set -e
         echo "🔍 Running PMD..."
-        ./gradlew pmdMain pmdTest --no-daemon
+        ./gradlew pmdMain pmdTest -x flywayMigrate -x generateJooq --no-daemon
         echo "✅ PMD passed!"
 
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -62,5 +62,5 @@ spec:
         #!/bin/sh
         set -e
         echo "🐛 Running SpotBugs..."
-        ./gradlew spotbugsMain spotbugsTest --no-daemon
+        ./gradlew spotbugsMain spotbugsTest -x flywayMigrate -x generateJooq --no-daemon
         echo "✅ SpotBugs passed!"
