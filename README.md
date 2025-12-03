@@ -10,7 +10,7 @@
 ## Backend
 
 ### Language & Runtime
-- Java 25
+- Java 21
 
 ### Build Tool
 - Gradle 8.14
