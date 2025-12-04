@@ -13,8 +13,6 @@
   - Singleton Beanのmutableフィールド（全リクエストで共有される）
   - ThreadLocalのクリア忘れ（スレッド再利用時に前の値が残る）
 - ログ出力は `AppLogger` を使用すること（`LoggerFactory.getLogger()` 禁止）
-  - `AppLogger` をDIして、専用メソッド（`logAccess`, `logEmailSend`, `logEventPublish` 等）を呼ぶ
-  - 構造化ログ（JSON形式）で統一されたフォーマットを保証
 - 論理的凝集でなく、機能的凝集を優先すること（カプセル化）
   - 技術的分類（「定数である」「ユーティリティである」）でなく、ビジネス機能・ドメイン・責務（「Cookie管理」「認証」）で分類する
   - 例：Cookie定数とCookie操作を同じCookieManagerクラスに持つ。定数だけを集めたファイルには持たせない
@@ -58,7 +56,7 @@
   - `@KafkaListener` でトピックを購読（groupIdはアプリ名+機能名: `${spring.application.name}-notification`）
   - 1Consumer = 1イベントタイプ（1メソッド）
   - Consumerはイベント受信とログ出力のみ、ビジネスロジックはCommandに委譲
-  - 命名: `{イベント名}{機能名}Consumer`（例: `UserSignedUpNotificationConsumer`）
+  - 命名: `{イベント名}Consumer`（例: `UserSignedUpConsumer`）
 
 #### Job
 - 実行方法: `--spring.main.web-application-type=none --job=jobName --dryRun=true --arg1=value1`
@@ -95,50 +93,59 @@
   - `reconstruct()`で`captureSnapshot()`を呼び、ロード時点の状態を保存
   - 状態変更メソッドではフィールドを直接変更するだけでOK（自動で差分検出）
 
-#### DomainEvent と ModuleBridgeCommand
+#### DomainEvent と CommandEvent
 
 **重要: 用語の使い分け**
-- `DomainEvent` と `ModuleBridgeCommand` は明確に別物として扱う
+- `DomainEvent` と `CommandEvent` は明確に別物として扱う
 - 単独の `event` や `command` という用語は混乱を招くため避ける
 - 変数名・メソッド名には必ずフルネームを使う
 
 | 種類 | 用途 | Payload 定義者 | 命名 |
 |------|------|----------------|------|
 | **DomainEvent** | 事実の通知（〜した） | 発行側 | `XxxEvent` |
-| **ModuleBridgeCommand** | 処理の依頼（〜しろ） | 受信側 | 処理内容を表す名前（`SendEmailInput` 等） |
+| **CommandEvent** | 処理の依頼（〜しろ） | 受信側 | `XxxCommandEventInput` |
+
+**共通の EventMetadata**:
+```java
+public record EventMetadata(UUID eventId, OffsetDateTime eventAt) {
+  public static EventMetadata create() {
+    return new EventMetadata(UUID.randomUUID(), AppClock.nowOffsetDateTime());
+  }
+}
+```
 
 **インターフェース構造（両者で統一）**:
 
 ```java
 // DomainEvent
 public interface DomainEvent {
-  UUID domainEventId();           // 一意識別子
-  OffsetDateTime occurredAt();    // 発生時刻
+  UUID eventId();                    // 一意識別子
+  OffsetDateTime eventAt();          // 発生時刻
   DomainEventName domainEventName(); // イベント名（トピック解決用）
 }
 
-// ModuleBridgeCommand
-public interface ModuleBridgeCommand {
-  UUID moduleBridgeCommandId();   // 一意識別子
-  OffsetDateTime issuedAt();      // 発行時刻
-  ModuleBridgeCommandName moduleBridgeCommandName(); // コマンド名（トピック解決用）
+// CommandEvent
+public interface CommandEvent {
+  UUID eventId();                      // 一意識別子
+  OffsetDateTime eventAt();            // 発行時刻
+  CommandEventName commandEventName(); // コマンド名（トピック解決用）
 }
 ```
 
 **命名の enum**:
 - `features/{feature}/internal/domain/event/{Feature}EventEnum.java` implements `DomainEventName`
-- `features/{feature}/internal/domain/event/{Feature}CommandEnum.java` implements `ModuleBridgeCommandName`
+- `features/{feature}/expose/{Feature}CommandEventEnum.java` implements `CommandEventName`
 
 **DomainEvent 配置**:
 - `features/{feature}/internal/domain/event/XxxEvent.java`
 - 命名: `{ドメインアクション}Event`（例: `UserSignedUpEvent`, `OrderCancelledEvent`）
 - 時刻は`AppClock.nowOffsetDateTime()`を使用（JST）
 
-**ModuleBridgeCommand 配置**:
-- `features/{feature}/expose/XxxInput.java`（受信側モジュールの expose に配置）
+**CommandEvent 配置**:
+- `features/{feature}/expose/XxxCommandEventInput.java`（受信側モジュールの expose に配置）
 - package 名にも `expose` を含める（import 文で可視性が明確になる）
-  - 例: `import com.example.demo.features.notification.expose.SendEmailInput;`
-- 命名: `{処理名}Input`（例: `SendEmailInput`、`ProcessPaymentInput`）
+  - 例: `import com.example.demo.features.notification.expose.SendEmailCommandEventInput;`
+- 命名: `{処理名}CommandEventInput`（例: `SendEmailCommandEventInput`）
 - ※ `XxxCommand` という名前は application 層の Command クラスと混同するため避ける
 
 #### イベント発行パターン
@@ -158,11 +165,10 @@ public interface ModuleBridgeCommand {
   - `@DbRecordUpdateLog` アノテーションでDB更新の監査ログを自動出力
 
 ### sharedモジュール
-- `shared/expose/` 配下のクラスは全featureモジュールから参照可能
-- package 名にも `expose` を含める（import 文で可視性が明確になる）
-  - 例: `import com.example.demo.shared.expose.event.DomainEvent;`
-  - 例: `import com.example.demo.shared.expose.logging.AppLogger;`
-  - 例: `import com.example.demo.shared.expose.config.AppProperties;`
+- `shared/` 配下のクラスは全featureモジュールから参照可能
+- 例: `import com.example.demo.shared.event.DomainEvent;`
+- 例: `import com.example.demo.shared.logging.AppLogger;`
+- 例: `import com.example.demo.shared.config.AppProperties;`
 
 ### エラーハンドリング
 - 各層で専用の例外クラスを使用する
