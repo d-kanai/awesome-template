@@ -6,6 +6,7 @@ import com.example.demo.shared.event.CommandEventName;
 public enum NotificationCommandEventEnum implements CommandEventName {
   SEND_EMAIL("notification.command-event.send-email"),
   SEND_PUSH_NOTIFICATION("notification.command-event.send-push-notification"),
+  SEND_SLACK_NOTIFICATION("notification.command-event.send-slack-notification"),
   ;
 
   private final String value;

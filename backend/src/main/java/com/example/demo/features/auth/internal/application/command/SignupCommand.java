@@ -1,7 +1,7 @@
 package com.example.demo.features.auth.internal.application.command;
 
 import com.example.demo.features.auth.internal.domain.email.welcome.WelcomeEmail;
-import com.example.demo.features.notification.expose.SendEmailCommandEventInput;
+import com.example.demo.features.auth.internal.domain.slack.welcome.WelcomeSlackNotification;
 import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.shared.event.EventPublisher;
@@ -16,18 +16,18 @@ public class SignupCommand {
 
   private final UserRepository userRepository;
   private final EventPublisher kafkaPublisher;
-  private final EventPublisher springPublisher;
   private final WelcomeEmail welcomeEmail;
+  private final WelcomeSlackNotification welcomeSlackNotification;
 
   public SignupCommand(
       final UserRepository userRepository,
       @Qualifier("kafkaEventPublisher") final EventPublisher kafkaPublisher,
-      @Qualifier("springEventPublisher") final EventPublisher springPublisher,
-      final WelcomeEmail welcomeEmail) {
+      final WelcomeEmail welcomeEmail,
+      final WelcomeSlackNotification welcomeSlackNotification) {
     this.userRepository = userRepository;
     this.kafkaPublisher = kafkaPublisher;
-    this.springPublisher = springPublisher;
     this.welcomeEmail = welcomeEmail;
+    this.welcomeSlackNotification = welcomeSlackNotification;
   }
 
   public Output execute(final Input input) {
@@ -37,14 +37,17 @@ public class SignupCommand {
     final User user = User.signup(input.email(), input.password());
     userRepository.insert(user);
 
-    // Domain Event を発行（Kafka + Spring Event 両方）
+    // Domain Event を発行
     kafkaPublisher.publishAllDomainEvents(user.getDomainEvents());
-    springPublisher.publishAllDomainEvents(user.getDomainEvents());
 
-    // Welcome メール送信 CommandEvent を発行（Kafka + Spring Event 両方）
-    final SendEmailCommandEventInput emailContent = welcomeEmail.create(user);
-    kafkaPublisher.publishCommandEvent(emailContent);
-    springPublisher.publishCommandEvent(emailContent);
+    // Welcome メール送信 CommandEvent を発行
+    kafkaPublisher.publishCommandEvent(welcomeEmail.create(user));
+
+    // Slack 通知 CommandEvent を発行（内部運用通知）
+    kafkaPublisher.publishCommandEvent(welcomeSlackNotification.create(user));
+
+    // Note: Push 通知は device token がないため、ここでは送信しない
+    // device token を取得する画面で SendPushNotificationCommandEventInput を発行する
 
     return new Output(user);
   }

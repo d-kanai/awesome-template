@@ -4,20 +4,18 @@ import com.example.demo.features.notification.expose.SendEmailCommandEventInput;
 import com.example.demo.features.notification.internal.application.command.SendEmailCommand;
 import com.example.demo.shared.logging.AppLogger;
 import java.util.Map;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
- * Spring Event による SendEmailCommandEventInput を受信するコンシューマ.
+ * Kafka による SendEmailCommandEventInput を受信するコンシューマ.
  *
  * <p>Command パターン: 他モジュールから「このメールを送れ」という指示を受け取り、そのまま送信する。 メール内容（subject,
  * body）は呼び出し側が決定済みのため、notification module はビジネスロジックを持たない。
- *
- * <p>Spring Event は at-most-once（最大1回）配信のため、idempotency チェック不要。 将来 Kafka に移行する場合は、emailType を使った
- * idempotency チェックを追加する。
  */
 @Component
+@ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = false)
 public class SendEmailConsumer {
 
   private final SendEmailCommand sendEmailCommand;
@@ -28,16 +26,14 @@ public class SendEmailConsumer {
     this.appLogger = appLogger;
   }
 
-  /**
-   * SendEmailCommandEventInput を受信してメール送信を実行.
-   *
-   * <p>トランザクションコミット後に実行される（AFTER_COMMIT）。
-   */
-  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+  @KafkaListener(
+      topics = "demo.notification.command-event.send-email",
+      groupId = "${spring.application.name}-notification",
+      containerFactory = "kafkaListenerContainerFactory")
   public void consume(final SendEmailCommandEventInput command) {
     appLogger.logCommandEventReceive(
         SendEmailConsumer.class,
-        "spring",
+        "kafka",
         command.commandEventName().getValue(),
         Map.of(
             "eventId", command.eventId(),

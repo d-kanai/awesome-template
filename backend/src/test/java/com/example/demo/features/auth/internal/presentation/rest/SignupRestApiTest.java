@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.features.notification.expose.SendEmailCommandEventInput;
+import com.example.demo.features.notification.expose.SendSlackNotificationCommandEventInput;
 import com.example.demo.features.user.internal.domain.event.UserEventEnum;
 import com.example.demo.features.user.internal.domain.event.UserSignedUpEvent;
 import com.example.demo.features.user.internal.domain.model.User;
@@ -61,17 +63,38 @@ class SignupRestApiTest {
         .extracting(User::getEmail, User::getPassword)
         .containsExactly(request.email(), request.password());
 
-    // then event
-    // SignupCommand publishes to both kafka and spring publishers (4 patterns sample)
-    // In tests, both resolve to the same TestEventPublisher, so we get 2 identical events
-    final var events = testEventPublisher.getDomainEventsOfType(UserSignedUpEvent.class);
-    assertThat(events).hasSize(2);
-    assertThat(events.getFirst())
+    // then domain event
+    final var domainEvents = testEventPublisher.getDomainEventsOfType(UserSignedUpEvent.class);
+    assertThat(domainEvents).hasSize(1);
+    assertThat(domainEvents.getFirst())
         .satisfies(
             event -> {
               assertThat(event.userId()).isEqualTo(savedUser.getId().getValue());
               assertThat(event.email()).isEqualTo(request.email());
               assertThat(event.domainEventName()).isEqualTo(UserEventEnum.USER_SIGNED_UP);
+            });
+
+    // then command events (Email + Slack)
+    final var emailEvents =
+        testEventPublisher.getCommandEventsOfType(SendEmailCommandEventInput.class);
+    assertThat(emailEvents).hasSize(1);
+    assertThat(emailEvents.getFirst())
+        .satisfies(
+            event -> {
+              assertThat(event.userId()).isEqualTo(savedUser.getId().getValue());
+              assertThat(event.to()).containsExactly(request.email());
+              assertThat(event.emailType()).isEqualTo("welcome_email");
+            });
+
+    final var slackEvents =
+        testEventPublisher.getCommandEventsOfType(SendSlackNotificationCommandEventInput.class);
+    assertThat(slackEvents).hasSize(1);
+    assertThat(slackEvents.getFirst())
+        .satisfies(
+            event -> {
+              assertThat(event.userId()).isEqualTo(savedUser.getId().getValue());
+              assertThat(event.channel()).isEqualTo("#user-signups");
+              assertThat(event.notificationType()).isEqualTo("welcome_slack");
             });
   }
 }
