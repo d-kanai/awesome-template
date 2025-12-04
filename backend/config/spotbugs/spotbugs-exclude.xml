@@ -27,4 +27,11 @@
   <Match>
     <Bug pattern="CT_CONSTRUCTOR_THROW"/>
   </Match>
+
+  <!-- Exclude UI_INHERITANCE_UNSAFE_GETRESOURCE: EmailTemplate intentionally uses
+       getClass().getResourceAsStream() so subclasses load templates from their own package -->
+  <Match>
+    <Class name="com.example.demo.shared.email.EmailTemplate"/>
+    <Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE"/>
+  </Match>
 </FindBugsFilter>

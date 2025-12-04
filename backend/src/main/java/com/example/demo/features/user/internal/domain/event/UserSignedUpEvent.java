@@ -23,8 +23,7 @@ public record UserSignedUpEvent(EventMetadata metadata, UUID userId, String emai
    * @return 生成されたイベント
    */
   public static UserSignedUpEvent of(final UUID userId, final String email) {
-    return new UserSignedUpEvent(
-        EventMetadata.create("user-service", UUID.randomUUID().toString()), userId, email);
+    return new UserSignedUpEvent(EventMetadata.create(), userId, email);
   }
 
   @Override
@@ -33,12 +32,12 @@ public record UserSignedUpEvent(EventMetadata metadata, UUID userId, String emai
   }
 
   @Override
-  public OffsetDateTime occurredAt() {
-    return metadata.occurredAt();
+  public OffsetDateTime eventAt() {
+    return metadata.eventAt();
   }
 
   @Override
-  public UserEventType eventType() {
-    return UserEventType.USER_SIGNED_UP;
+  public UserEventEnum domainEventName() {
+    return UserEventEnum.USER_SIGNED_UP;
   }
 }

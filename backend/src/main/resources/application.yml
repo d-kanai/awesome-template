@@ -9,7 +9,7 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    locations: classpath:db/migration
+    locations: classpath:migration
     placeholders:
       create_pgcrypto_extension: 'CREATE EXTENSION IF NOT EXISTS "pgcrypto";'
       users_id_uuid_clause: ' DEFAULT gen_random_uuid()'
@@ -46,6 +46,9 @@ app:
     allowed-origins: ${CORS_ALLOWED_ORIGINS}
   kafka:
     enabled: ${KAFKA_ENABLED}
+  email:
+    from: ${EMAIL_FROM}
+    reply-to: ${EMAIL_REPLY_TO}
 
 spring.kafka:
   bootstrap-servers: ${KAFKA_SERVER_URL}

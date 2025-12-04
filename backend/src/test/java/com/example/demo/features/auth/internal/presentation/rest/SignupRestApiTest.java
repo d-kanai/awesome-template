@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.demo.features.user.internal.domain.event.UserEventType;
+import com.example.demo.features.user.internal.domain.event.UserEventEnum;
 import com.example.demo.features.user.internal.domain.event.UserSignedUpEvent;
 import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
@@ -62,14 +62,16 @@ class SignupRestApiTest {
         .containsExactly(request.email(), request.password());
 
     // then event
-    final var events = testEventPublisher.getEventsOfType(UserSignedUpEvent.class);
-    assertThat(events).hasSize(1);
+    // SignupCommand publishes to both kafka and spring publishers (4 patterns sample)
+    // In tests, both resolve to the same TestEventPublisher, so we get 2 identical events
+    final var events = testEventPublisher.getDomainEventsOfType(UserSignedUpEvent.class);
+    assertThat(events).hasSize(2);
     assertThat(events.getFirst())
         .satisfies(
             event -> {
               assertThat(event.userId()).isEqualTo(savedUser.getId().getValue());
               assertThat(event.email()).isEqualTo(request.email());
-              assertThat(event.eventType()).isEqualTo(UserEventType.USER_SIGNED_UP);
+              assertThat(event.domainEventName()).isEqualTo(UserEventEnum.USER_SIGNED_UP);
             });
   }
 }

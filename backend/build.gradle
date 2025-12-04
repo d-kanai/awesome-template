@@ -50,7 +50,11 @@ sourceSets {
     }
 }
 
+// Copy HTML templates from java source (feature-cohesive email templates)
 tasks.named('processResources') {
+    from('src/main/java') {
+        include '**/*.html'
+    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 

@@ -8,16 +8,25 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-/** ユーザー登録イベントを受信し、ウェルカムメールを送信するコンシューマ. */
+/**
+ * Kafka による UserSignedUpEvent を受信するコンシューマ.
+ *
+ * <p>Domain Event パターン: 「ユーザーが登録した」という事実を受け取り、 notification module 側でメール内容を決定して送信する。
+ *
+ * <p>Kafka は at-least-once（最低1回）配信のため、SendWelcomeEmailCommand 内で idempotency チェック（AdvisoryLock +
+ * NotificationHistory）を行う。
+ *
+ * <p>比較: SendEmailConsumer は Command パターン（Spring Event）で、 呼び出し側がメール内容を決定し、idempotency チェック不要。
+ */
 @Component
 @ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = false)
-public class UserSignedUpNotificationConsumer {
+public class UserSignedUpConsumer {
 
-  private static final Logger log = LoggerFactory.getLogger(UserSignedUpNotificationConsumer.class);
+  private static final Logger log = LoggerFactory.getLogger(UserSignedUpConsumer.class);
 
   private final SendWelcomeEmailCommand sendWelcomeEmailCommand;
 
-  public UserSignedUpNotificationConsumer(final SendWelcomeEmailCommand sendWelcomeEmailCommand) {
+  public UserSignedUpConsumer(final SendWelcomeEmailCommand sendWelcomeEmailCommand) {
     this.sendWelcomeEmailCommand = sendWelcomeEmailCommand;
   }
 
@@ -27,7 +36,7 @@ public class UserSignedUpNotificationConsumer {
       containerFactory = "kafkaListenerContainerFactory")
   public void consume(final UserSignedUpEvent event) {
     log.info(
-        "Received UserSignedUpEvent: eventId={}, userId={}, email={}",
+        "Received UserSignedUpEvent: domainEventId={}, userId={}, email={}",
         event.eventId(),
         event.userId(),
         event.email());

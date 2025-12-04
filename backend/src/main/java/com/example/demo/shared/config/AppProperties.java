@@ -1,6 +1,7 @@
 package com.example.demo.shared.config;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -24,6 +25,8 @@ public class AppProperties {
   @Valid @NotNull private Cors cors = new Cors();
 
   @Valid @NotNull private Kafka kafka = new Kafka();
+
+  @Valid @NotNull private EmailConfig email = new EmailConfig();
 
   public Env getEnv() {
     return env;
@@ -55,6 +58,14 @@ public class AppProperties {
 
   public void setKafka(final Kafka kafka) {
     this.kafka = kafka;
+  }
+
+  public EmailConfig getEmail() {
+    return email;
+  }
+
+  public void setEmail(final EmailConfig email) {
+    this.email = email;
   }
 
   public boolean isDev() {
@@ -204,6 +215,30 @@ public class AppProperties {
 
     public boolean isEnabled() {
       return Boolean.TRUE.equals(enabled);
+    }
+  }
+
+  /** メール設定. */
+  public static class EmailConfig {
+
+    @NotBlank @Email private String from;
+
+    @NotBlank @Email private String replyTo;
+
+    public String getFrom() {
+      return from;
+    }
+
+    public void setFrom(final String from) {
+      this.from = from;
+    }
+
+    public String getReplyTo() {
+      return replyTo;
+    }
+
+    public void setReplyTo(final String replyTo) {
+      this.replyTo = replyTo;
     }
   }
 }

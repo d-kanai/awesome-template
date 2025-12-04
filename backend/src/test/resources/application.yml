@@ -6,15 +6,49 @@ spring:
     password:
   flyway:
     enabled: true
-    locations: classpath:db/migration
+    locations: classpath:migration
     placeholders:
       create_pgcrypto_extension: ''
       users_id_uuid_clause: ''
   jooq:
     sql-dialect: H2
 
+server:
+  port: 8080
+  address: 0.0.0.0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: when-authorized
+
+app:
+  env: TEST
+  kafka:
+    enabled: false
+  jwt:
+    secret: test-secret-key-that-is-at-least-256-bits-long-for-hs256
+    expiration-hours: 720
+    cookie:
+      name: accessToken
+      http-only: true
+      secure: false
+      same-site: Lax
+      max-age-seconds: 2592000
+  cors:
+    allowed-origins: http://localhost:3000
+  email:
+    from: noreply@test.example.com
+    reply-to: support@test.example.com
+
 logging:
   level:
     root: WARN
     org.flywaydb.core: WARN
+    com.example.demo: INFO
     org.jooq.tools.LoggerListener: DEBUG

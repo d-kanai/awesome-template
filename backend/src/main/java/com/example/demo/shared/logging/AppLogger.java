@@ -214,6 +214,105 @@ public class AppLogger {
         kv("changes", log.changes()));
   }
 
+  /** イベント発行ログを出力. */
+  public void logEventPublish(
+      final Class<?> clazz,
+      final String transport,
+      final String eventType,
+      final String eventId,
+      final Object details) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.info(
+        "Event published",
+        kv("log_type", "event_publish"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", now()),
+        kv("transport", transport),
+        kv("event_type", eventType),
+        kv("event_id", eventId),
+        kv("details", details));
+  }
+
+  /** イベント発行エラーログを出力. */
+  public void logEventPublishError(
+      final Class<?> clazz,
+      final String transport,
+      final String eventType,
+      final String eventId,
+      final Exception ex) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.error(
+        "Event publish failed",
+        kv("log_type", "event_publish_error"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", now()),
+        kv("transport", transport),
+        kv("event_type", eventType),
+        kv("event_id", eventId),
+        kv("error_type", ex.getClass().getName()),
+        kv("error_message", ex.getMessage()));
+  }
+
+  /** CommandEvent発行ログを出力. */
+  public void logCommandEventPublish(
+      final Class<?> clazz, final String transport, final String eventType, final Object details) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.info(
+        "CommandEvent published",
+        kv("log_type", "command_event_publish"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", now()),
+        kv("transport", transport),
+        kv("event_type", eventType),
+        kv("details", details));
+  }
+
+  /** CommandEvent発行エラーログを出力. */
+  public void logCommandEventPublishError(
+      final Class<?> clazz, final String transport, final String eventType, final Exception ex) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.error(
+        "CommandEvent publish failed",
+        kv("log_type", "command_event_publish_error"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", now()),
+        kv("transport", transport),
+        kv("event_type", eventType),
+        kv("error_type", ex.getClass().getName()),
+        kv("error_message", ex.getMessage()));
+  }
+
+  /** CommandEvent受信ログを出力. */
+  public void logCommandEventReceive(
+      final Class<?> clazz, final String transport, final String eventType, final Object details) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.info(
+        "CommandEvent received",
+        kv("log_type", "command_event_receive"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", now()),
+        kv("transport", transport),
+        kv("event_type", eventType),
+        kv("details", details));
+  }
+
+  /** メール送信ログを出力. */
+  public void logEmailSend(final Class<?> clazz, final Object details) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.info(
+        "Email sent",
+        kv("log_type", "email_send"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", now()),
+        kv("details", details));
+  }
+
   /** DB更新ログ. */
   public record DbUpdateLog(String entity, Object changes) {}
 

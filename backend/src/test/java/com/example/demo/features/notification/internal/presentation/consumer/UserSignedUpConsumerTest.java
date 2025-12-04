@@ -17,10 +17,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
 
+/**
+ * Kafka パターン（Domain Event）のテスト.
+ *
+ * <p>UserSignedUpEvent を受信して SendWelcomeEmailCommand を実行する。 idempotency チェック（AdvisoryLock +
+ * NotificationHistory）が機能することを確認。
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class UserSignedUpNotificationConsumerTest {
+class UserSignedUpConsumerTest {
 
   @Autowired private SendWelcomeEmailCommand sendWelcomeEmailCommand;
 
@@ -32,13 +38,13 @@ class UserSignedUpNotificationConsumerTest {
 
   @Autowired private DSLContext dsl;
 
-  private UserSignedUpNotificationConsumer consumer;
+  private UserSignedUpConsumer consumer;
 
   @BeforeEach
   void setUp() {
     dsl.deleteFrom(NOTIFICATION_HISTORIES).execute();
     userRepository.findAll().forEach(user -> userRepository.deleteById(user.getId()));
-    consumer = new UserSignedUpNotificationConsumer(sendWelcomeEmailCommand);
+    consumer = new UserSignedUpConsumer(sendWelcomeEmailCommand);
   }
 
   @Test

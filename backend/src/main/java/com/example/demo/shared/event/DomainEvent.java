@@ -14,8 +14,8 @@ public interface DomainEvent {
   UUID eventId();
 
   /** イベント発生時刻（JST）. */
-  OffsetDateTime occurredAt();
+  OffsetDateTime eventAt();
 
-  /** イベントタイプ（トピック名解決に使用）. */
-  EventType eventType();
+  /** ドメインイベント名（トピック名解決に使用）. */
+  DomainEventName domainEventName();
 }

@@ -12,6 +12,9 @@
   - 非finalなstatic変数（複数スレッドで共有される）
   - Singleton Beanのmutableフィールド（全リクエストで共有される）
   - ThreadLocalのクリア忘れ（スレッド再利用時に前の値が残る）
+- ログ出力は `AppLogger` を使用すること（`LoggerFactory.getLogger()` 禁止）
+  - `AppLogger` をDIして、専用メソッド（`logAccess`, `logEmailSend`, `logEventPublish` 等）を呼ぶ
+  - 構造化ログ（JSON形式）で統一されたフォーマットを保証
 - 論理的凝集でなく、機能的凝集を優先すること（カプセル化）
   - 技術的分類（「定数である」「ユーティリティである」）でなく、ビジネス機能・ドメイン・責務（「Cookie管理」「認証」）で分類する
   - 例：Cookie定数とCookie操作を同じCookieManagerクラスに持つ。定数だけを集めたファイルには持たせない
@@ -92,16 +95,55 @@
   - `reconstruct()`で`captureSnapshot()`を呼び、ロード時点の状態を保存
   - 状態変更メソッドではフィールドを直接変更するだけでOK（自動で差分検出）
 
-#### DomainEvent
-- 配置: `features/{feature}/internal/domain/event/XxxEvent.java`
-- `DomainEvent` インターフェースを実装
+#### DomainEvent と ModuleBridgeCommand
+
+**重要: 用語の使い分け**
+- `DomainEvent` と `ModuleBridgeCommand` は明確に別物として扱う
+- 単独の `event` や `command` という用語は混乱を招くため避ける
+- 変数名・メソッド名には必ずフルネームを使う
+
+| 種類 | 用途 | Payload 定義者 | 命名 |
+|------|------|----------------|------|
+| **DomainEvent** | 事実の通知（〜した） | 発行側 | `XxxEvent` |
+| **ModuleBridgeCommand** | 処理の依頼（〜しろ） | 受信側 | 処理内容を表す名前（`SendEmailInput` 等） |
+
+**インターフェース構造（両者で統一）**:
+
+```java
+// DomainEvent
+public interface DomainEvent {
+  UUID domainEventId();           // 一意識別子
+  OffsetDateTime occurredAt();    // 発生時刻
+  DomainEventName domainEventName(); // イベント名（トピック解決用）
+}
+
+// ModuleBridgeCommand
+public interface ModuleBridgeCommand {
+  UUID moduleBridgeCommandId();   // 一意識別子
+  OffsetDateTime issuedAt();      // 発行時刻
+  ModuleBridgeCommandName moduleBridgeCommandName(); // コマンド名（トピック解決用）
+}
+```
+
+**命名の enum**:
+- `features/{feature}/internal/domain/event/{Feature}EventEnum.java` implements `DomainEventName`
+- `features/{feature}/internal/domain/event/{Feature}CommandEnum.java` implements `ModuleBridgeCommandName`
+
+**DomainEvent 配置**:
+- `features/{feature}/internal/domain/event/XxxEvent.java`
 - 命名: `{ドメインアクション}Event`（例: `UserSignedUpEvent`, `OrderCancelledEvent`）
-- EVENT_TYPE定数: `{aggregate}.{action}`形式（例: `user.signed_up`, `order.cancelled`）
 - 時刻は`AppClock.nowOffsetDateTime()`を使用（JST）
 
+**ModuleBridgeCommand 配置**:
+- `features/{feature}/expose/XxxInput.java`（受信側モジュールの expose に配置）
+- package 名にも `expose` を含める（import 文で可視性が明確になる）
+  - 例: `import com.example.demo.features.notification.expose.SendEmailInput;`
+- 命名: `{処理名}Input`（例: `SendEmailInput`、`ProcessPaymentInput`）
+- ※ `XxxCommand` という名前は application 層の Command クラスと混同するため避ける
+
 #### イベント発行パターン
-- Entityの状態変更メソッド内で `registerEvent()` を呼ぶ
-- CommandでDB保存後に `eventPublisher.publishAll(entity.getDomainEvents())` を呼ぶ
+- Entityの状態変更メソッド内で `registerDomainEvent()` を呼ぶ
+- CommandでDB保存後に `eventPublisher.publishAllDomainEvents(entity.getDomainEvents())` を呼ぶ
 
 ### infrastructure層
 - Repository命名規則
@@ -116,7 +158,11 @@
   - `@DbRecordUpdateLog` アノテーションでDB更新の監査ログを自動出力
 
 ### sharedモジュール
-- `shared/public/` 配下のクラスは全featureモジュールから参照可能
+- `shared/expose/` 配下のクラスは全featureモジュールから参照可能
+- package 名にも `expose` を含める（import 文で可視性が明確になる）
+  - 例: `import com.example.demo.shared.expose.event.DomainEvent;`
+  - 例: `import com.example.demo.shared.expose.logging.AppLogger;`
+  - 例: `import com.example.demo.shared.expose.config.AppProperties;`
 
 ### エラーハンドリング
 - 各層で専用の例外クラスを使用する
@@ -154,9 +200,9 @@
     - Given: 関連データ 0reset, TestBuilderでデータ準備
     - When: call api
     - Then: assert response & db change & event publish
-- Consumer Test（Commandテスト）
+- Consumer, Job Test
   - API Testと同様、presentationからのテストで、モック禁止・Springコンテキストで本物のRepository使用
   - `@SpringBootTest` + `@AutoConfigureMockMvc` + `@ActiveProfiles("test")`
   - Given: 関連データ 0reset（`dsl.deleteFrom(TABLE).execute()`）、TestBuilderでデータ準備
-  - When: `consumber exec`
+  - When: `consumer|job exec`
   - Then: assert response & db change
