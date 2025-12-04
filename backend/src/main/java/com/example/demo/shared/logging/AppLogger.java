@@ -313,6 +313,18 @@ public class AppLogger {
         kv("details", details));
   }
 
+  /** プッシュ通知送信ログを出力. */
+  public void logPushNotificationSend(final Class<?> clazz, final Object details) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.info(
+        "Push notification sent",
+        kv("log_type", "push_notification_send"),
+        kv("trace_id", requestContext.getTraceId()),
+        kv("env", requestContext.getEnv()),
+        kv("timestamp", now()),
+        kv("details", details));
+  }
+
   /** DB更新ログ. */
   public record DbUpdateLog(String entity, Object changes) {}
 
