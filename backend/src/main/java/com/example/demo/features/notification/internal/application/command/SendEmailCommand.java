@@ -1,10 +1,7 @@
 package com.example.demo.features.notification.internal.application.command;
 
 import com.example.demo.features.notification.expose.SendEmailCommandEventInput;
-import com.example.demo.shared.config.AppProperties;
-import com.example.demo.shared.logging.AppLogger;
-import java.util.Map;
-import java.util.Optional;
+import com.example.demo.features.notification.internal.infrastructure.email.EmailSender;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,34 +15,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class SendEmailCommand {
 
-  private final AppProperties appProperties;
-  private final AppLogger appLogger;
+  private final EmailSender emailSender;
 
-  public SendEmailCommand(final AppProperties appProperties, final AppLogger appLogger) {
-    this.appProperties = appProperties;
-    this.appLogger = appLogger;
+  public SendEmailCommand(final EmailSender emailSender) {
+    this.emailSender = emailSender;
   }
 
   public void execute(final SendEmailCommandEventInput command) {
-    sendEmail(command);
-  }
-
-  private void sendEmail(final SendEmailCommandEventInput command) {
-    final var emailConfig = appProperties.getEmail();
-    final String from = Optional.ofNullable(command.from()).orElse(emailConfig.getFrom());
-    final String replyTo = Optional.ofNullable(command.replyTo()).orElse(emailConfig.getReplyTo());
-
-    // TODO: 実際のメール送信実装（SES, SendGrid など）
-    appLogger.logEmailSend(
-        SendEmailCommand.class,
-        Map.of(
-            "eventId", command.eventId(),
-            "from", from,
-            "replyTo", replyTo,
-            "to", command.to(),
-            "cc", command.cc(),
-            "bcc", command.bcc(),
-            "subject", command.subject(),
-            "emailType", command.emailType()));
+    emailSender.send(
+        command.eventId(),
+        command.to(),
+        command.subject(),
+        command.body(),
+        command.emailType(),
+        command.from(),
+        command.replyTo(),
+        command.cc(),
+        command.bcc());
   }
 }

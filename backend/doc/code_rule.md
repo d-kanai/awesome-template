@@ -98,57 +98,13 @@
 **重要: 用語の使い分け**
 - `DomainEvent` と `CommandEvent` は明確に別物として扱う
 - 単独の `event` や `command` という用語は混乱を招くため避ける
-- 変数名・メソッド名には必ずフルネームを使う
 
-| 種類 | 用途 | Payload 定義者 | 命名 |
-|------|------|----------------|------|
-| **DomainEvent** | 事実の通知（〜した） | 発行側 | `XxxEvent` |
-| **CommandEvent** | 処理の依頼（〜しろ） | 受信側 | `XxxCommandEventInput` |
+| 種類 | 用途 | 購読者数 | Payload 定義者 | 命名 |
+|------|------|----------|----------------|------|
+| **DomainEvent** | 事実の通知（〜した） | 1:N（複数） | 発行側 | `XxxEvent` |
+| **CommandEvent** | 処理の依頼（〜しろ） | 1:1（単一） | 受信側 | `XxxCommandEventInput` |
 
-**共通の EventMetadata**:
-```java
-public record EventMetadata(UUID eventId, OffsetDateTime eventAt) {
-  public static EventMetadata create() {
-    return new EventMetadata(UUID.randomUUID(), AppClock.nowOffsetDateTime());
-  }
-}
-```
-
-**インターフェース構造（両者で統一）**:
-
-```java
-// DomainEvent
-public interface DomainEvent {
-  UUID eventId();                    // 一意識別子
-  OffsetDateTime eventAt();          // 発生時刻
-  DomainEventName domainEventName(); // イベント名（トピック解決用）
-}
-
-// CommandEvent
-public interface CommandEvent {
-  UUID eventId();                      // 一意識別子
-  OffsetDateTime eventAt();            // 発行時刻
-  CommandEventName commandEventName(); // コマンド名（トピック解決用）
-}
-```
-
-**命名の enum**:
-- `features/{feature}/internal/domain/event/{Feature}EventEnum.java` implements `DomainEventName`
-- `features/{feature}/expose/{Feature}CommandEventEnum.java` implements `CommandEventName`
-
-**DomainEvent 配置**:
-- `features/{feature}/internal/domain/event/XxxEvent.java`
-- 命名: `{ドメインアクション}Event`（例: `UserSignedUpEvent`, `OrderCancelledEvent`）
-- 時刻は`AppClock.nowOffsetDateTime()`を使用（JST）
-
-**CommandEvent 配置**:
-- `features/{feature}/expose/XxxCommandEventInput.java`（受信側モジュールの expose に配置）
-- package 名にも `expose` を含める（import 文で可視性が明確になる）
-  - 例: `import com.example.demo.features.notification.expose.SendEmailCommandEventInput;`
-- 命名: `{処理名}CommandEventInput`（例: `SendEmailCommandEventInput`）
-- ※ `XxxCommand` という名前は application 層の Command クラスと混同するため避ける
-
-#### イベント発行パターン
+#### Domainイベント発行パターン
 - Entityの状態変更メソッド内で `registerDomainEvent()` を呼ぶ
 - CommandでDB保存後に `eventPublisher.publishAllDomainEvents(entity.getDomainEvents())` を呼ぶ
 
@@ -161,23 +117,16 @@ public interface CommandEvent {
 - `insert`は`void`、影響行数0なら例外をスロー
 - `update`は`void`、影響行数0なら例外をスロー
 - dirty trackingで変更フィールドのみUPDATE
-  - `RepositoryBase.setUpdateFields(model, record)` でリフレクションベースの自動マッピング
   - `@DbRecordUpdateLog` アノテーションでDB更新の監査ログを自動出力
 
 ### sharedモジュール
 - `shared/` 配下のクラスは全featureモジュールから参照可能
-- 例: `import com.example.demo.shared.event.DomainEvent;`
-- 例: `import com.example.demo.shared.logging.AppLogger;`
-- 例: `import com.example.demo.shared.config.AppProperties;`
 
 ### エラーハンドリング
 - 各層で専用の例外クラスを使用する
   - Application層: `ApplicationLayerException` → 400
   - Domain層: `DomainLayerException` → 400
   - Infrastructure層: `InfraLayerException` → 500
-- `IllegalArgumentException`は使用しない（層が不明確になる）
-- Domain層のValueObjectバリデーションは`DomainLayerException`を使用
-- RestApiでtry-catchしない（GlobalExceptionHandlerに任せる）
 - GlobalExceptionHandlerが全例外を処理
   - `MethodArgumentNotValidException`（Spring @Valid） → 400
   - `ApplicationLayerException` → 400（メッセージをレスポンスに含める）
@@ -191,8 +140,6 @@ public interface CommandEvent {
 - testメソッド名は日本語を体言止めを使う
 - given when thenのコメントを挿入してフェーズを見やすくすること
 - 1 API = 1 テストファイルのため、メソッド名にAPI名のプレフィックスは不要
-  - ○ `正しい認証情報でOKレスポンスを返す`
-  - × `サインイン時_正しい認証情報でOKレスポンスを返す`
 - テストデータ作成には `testsupport/databuilder/` のビルダーを使用
   - `aUser().save()` - デフォルト値で保存
   - `aUser().email("x@example.com").save()` - 値を上書きして保存
@@ -208,7 +155,6 @@ public interface CommandEvent {
     - Then: assert response & db change & event publish
 - Consumer, Job Test
   - API Testと同様、presentationからのテストで、モック禁止・Springコンテキストで本物のRepository使用
-  - `@SpringBootTest` + `@AutoConfigureMockMvc` + `@ActiveProfiles("test")`
   - Given: 関連データ 0reset（`dsl.deleteFrom(TABLE).execute()`）、TestBuilderでデータ準備
   - When: `consumer|job exec`
   - Then: assert response & db change
