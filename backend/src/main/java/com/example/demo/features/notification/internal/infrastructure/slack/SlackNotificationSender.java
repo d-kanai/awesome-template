@@ -1,7 +1,5 @@
 package com.example.demo.features.notification.internal.infrastructure.slack;
 
-import com.example.demo.shared.logging.AppLogger;
-import java.util.Map;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
@@ -13,12 +11,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SlackNotificationSender {
-
-  private final AppLogger appLogger;
-
-  public SlackNotificationSender(final AppLogger appLogger) {
-    this.appLogger = appLogger;
-  }
 
   /**
    * Slack通知を送信する.
@@ -37,12 +29,6 @@ public class SlackNotificationSender {
       @Nullable final UUID userId) {
 
     // TODO: 実際のSlack送信実装（Slack Web API）
-    appLogger.logSlackNotificationSend(
-        SlackNotificationSender.class,
-        Map.of(
-            "eventId", eventId,
-            "channel", channel,
-            "notificationType", notificationType,
-            "userId", userId != null ? userId : "null"));
+    // ログは KafkaConsumerLogging AOP で出力されるため、ここでは省略
   }
 }

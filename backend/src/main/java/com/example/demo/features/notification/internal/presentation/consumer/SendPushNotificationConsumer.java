@@ -1,9 +1,11 @@
 package com.example.demo.features.notification.internal.presentation.consumer;
 
+import static com.example.demo.features.notification.expose.NotificationCommandEventEnum.Values.SEND_PUSH_NOTIFICATION;
+
 import com.example.demo.features.notification.expose.SendPushNotificationCommandEventInput;
 import com.example.demo.features.notification.internal.application.command.SendPushNotificationCommand;
-import com.example.demo.shared.logging.AppLogger;
-import java.util.Map;
+import com.example.demo.shared.kafka.KafkaTopics;
+import com.example.demo.shared.kafka.consumer.KafkaConsumerLogging;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -19,31 +21,18 @@ import org.springframework.stereotype.Component;
 public class SendPushNotificationConsumer {
 
   private final SendPushNotificationCommand sendPushNotificationCommand;
-  private final AppLogger appLogger;
 
   public SendPushNotificationConsumer(
-      final SendPushNotificationCommand sendPushNotificationCommand, final AppLogger appLogger) {
+      final SendPushNotificationCommand sendPushNotificationCommand) {
     this.sendPushNotificationCommand = sendPushNotificationCommand;
-    this.appLogger = appLogger;
   }
 
   @KafkaListener(
-      topics = "demo.notification.command-event.send-push-notification",
+      topics = KafkaTopics.PREFIX + SEND_PUSH_NOTIFICATION,
       groupId = "${spring.application.name}-notification",
       containerFactory = "kafkaListenerContainerFactory")
+  @KafkaConsumerLogging(eventType = SEND_PUSH_NOTIFICATION)
   public void consume(final SendPushNotificationCommandEventInput command) {
-    appLogger.logCommandEventReceive(
-        SendPushNotificationConsumer.class,
-        "kafka",
-        command.commandEventName().getValue(),
-        Map.of(
-            "eventId", command.eventId(),
-            "eventAt", command.eventAt(),
-            "userId", command.userId(),
-            "deviceToken", command.deviceToken(),
-            "title", command.title(),
-            "notificationType", command.notificationType()));
-
     sendPushNotificationCommand.execute(command);
   }
 }

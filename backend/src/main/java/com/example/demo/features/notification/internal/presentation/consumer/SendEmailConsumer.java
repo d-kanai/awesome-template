@@ -1,9 +1,11 @@
 package com.example.demo.features.notification.internal.presentation.consumer;
 
+import static com.example.demo.features.notification.expose.NotificationCommandEventEnum.Values.SEND_EMAIL;
+
 import com.example.demo.features.notification.expose.SendEmailCommandEventInput;
 import com.example.demo.features.notification.internal.application.command.SendEmailCommand;
-import com.example.demo.shared.logging.AppLogger;
-import java.util.Map;
+import com.example.demo.shared.kafka.KafkaTopics;
+import com.example.demo.shared.kafka.consumer.KafkaConsumerLogging;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -19,30 +21,17 @@ import org.springframework.stereotype.Component;
 public class SendEmailConsumer {
 
   private final SendEmailCommand sendEmailCommand;
-  private final AppLogger appLogger;
 
-  public SendEmailConsumer(final SendEmailCommand sendEmailCommand, final AppLogger appLogger) {
+  public SendEmailConsumer(final SendEmailCommand sendEmailCommand) {
     this.sendEmailCommand = sendEmailCommand;
-    this.appLogger = appLogger;
   }
 
   @KafkaListener(
-      topics = "demo.notification.command-event.send-email",
+      topics = KafkaTopics.PREFIX + SEND_EMAIL,
       groupId = "${spring.application.name}-notification",
       containerFactory = "kafkaListenerContainerFactory")
+  @KafkaConsumerLogging(eventType = SEND_EMAIL)
   public void consume(final SendEmailCommandEventInput command) {
-    appLogger.logCommandEventReceive(
-        SendEmailConsumer.class,
-        "kafka",
-        command.commandEventName().getValue(),
-        Map.of(
-            "eventId", command.eventId(),
-            "eventAt", command.eventAt(),
-            "userId", command.userId(),
-            "to", command.to(),
-            "subject", command.subject(),
-            "emailType", command.emailType()));
-
     sendEmailCommand.execute(command);
   }
 }

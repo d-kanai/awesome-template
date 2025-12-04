@@ -20,20 +20,20 @@ public class NotificationHistoryRepositoryImpl
   }
 
   @Override
-  public boolean existsByUserIdAndEventType(final UUID userId, final String eventType) {
+  public boolean existsByEventId(final UUID eventId) {
     return dsl.fetchExists(
         dsl.selectOne()
             .from(NOTIFICATION_HISTORIES)
-            .where(NOTIFICATION_HISTORIES.USER_ID.eq(userId))
-            .and(NOTIFICATION_HISTORIES.EVENT_TYPE.eq(eventType)));
+            .where(NOTIFICATION_HISTORIES.EVENT_ID.eq(eventId)));
   }
 
   @Override
   public void insert(final NotificationHistory history) {
     dsl.insertInto(NOTIFICATION_HISTORIES)
         .set(NOTIFICATION_HISTORIES.ID, history.getId().getValue())
-        .set(NOTIFICATION_HISTORIES.USER_ID, history.getUserId())
+        .set(NOTIFICATION_HISTORIES.EVENT_ID, history.getEventId())
         .set(NOTIFICATION_HISTORIES.EVENT_TYPE, history.getEventType())
+        .set(NOTIFICATION_HISTORIES.USER_ID, history.getUserId())
         .set(NOTIFICATION_HISTORIES.CREATED_AT, history.getCreatedAt())
         .execute();
   }

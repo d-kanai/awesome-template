@@ -1,9 +1,11 @@
 package com.example.demo.features.notification.internal.presentation.consumer;
 
+import static com.example.demo.features.notification.expose.NotificationCommandEventEnum.Values.SEND_SLACK_NOTIFICATION;
+
 import com.example.demo.features.notification.expose.SendSlackNotificationCommandEventInput;
 import com.example.demo.features.notification.internal.application.command.SendSlackNotificationCommand;
-import com.example.demo.shared.logging.AppLogger;
-import java.util.Map;
+import com.example.demo.shared.kafka.KafkaTopics;
+import com.example.demo.shared.kafka.consumer.KafkaConsumerLogging;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -19,30 +21,18 @@ import org.springframework.stereotype.Component;
 public class SendSlackNotificationConsumer {
 
   private final SendSlackNotificationCommand sendSlackNotificationCommand;
-  private final AppLogger appLogger;
 
   public SendSlackNotificationConsumer(
-      final SendSlackNotificationCommand sendSlackNotificationCommand, final AppLogger appLogger) {
+      final SendSlackNotificationCommand sendSlackNotificationCommand) {
     this.sendSlackNotificationCommand = sendSlackNotificationCommand;
-    this.appLogger = appLogger;
   }
 
   @KafkaListener(
-      topics = "demo.notification.command-event.send-slack-notification",
+      topics = KafkaTopics.PREFIX + SEND_SLACK_NOTIFICATION,
       groupId = "${spring.application.name}-notification",
       containerFactory = "kafkaListenerContainerFactory")
+  @KafkaConsumerLogging(eventType = SEND_SLACK_NOTIFICATION)
   public void consume(final SendSlackNotificationCommandEventInput command) {
-    appLogger.logCommandEventReceive(
-        SendSlackNotificationConsumer.class,
-        "kafka",
-        command.commandEventName().getValue(),
-        Map.of(
-            "eventId", command.eventId(),
-            "eventAt", command.eventAt(),
-            "channel", command.channel(),
-            "notificationType", command.notificationType(),
-            "userId", command.userId() != null ? command.userId() : "null"));
-
     sendSlackNotificationCommand.execute(command);
   }
 }

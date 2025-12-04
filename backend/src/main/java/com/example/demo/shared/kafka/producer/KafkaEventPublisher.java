@@ -4,6 +4,7 @@ import com.example.demo.shared.event.CommandEvent;
 import com.example.demo.shared.event.DomainEvent;
 import com.example.demo.shared.event.DomainEventName;
 import com.example.demo.shared.event.EventPublisher;
+import com.example.demo.shared.kafka.KafkaTopics;
 import com.example.demo.shared.logging.AppLogger;
 import java.util.Map;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,9 +22,8 @@ import org.springframework.stereotype.Component;
 public class KafkaEventPublisher implements EventPublisher {
 
   private static final String TRANSPORT = "kafka";
-  private static final String TOPIC_PREFIX = "demo";
-  private static final String USER_EVENTS_TOPIC = "demo.user.events";
-  private static final String DLQ_TOPIC = "demo.dlq";
+  private static final String USER_EVENTS_TOPIC = KafkaTopics.PREFIX + "user.events";
+  private static final String DLQ_TOPIC = KafkaTopics.PREFIX + "dlq";
 
   private final KafkaTemplate<String, Object> kafkaTemplate;
   private final AppLogger appLogger;
@@ -69,7 +69,7 @@ public class KafkaEventPublisher implements EventPublisher {
   public void publishCommandEvent(final CommandEvent event) {
     final String key = event.eventId().toString();
     final String eventName = event.commandEventName().getValue();
-    final String topic = TOPIC_PREFIX + "." + eventName;
+    final String topic = KafkaTopics.PREFIX + eventName;
     kafkaTemplate
         .send(topic, key, event)
         .whenComplete(

@@ -30,8 +30,8 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final UniqueKey<FlywaySchemaHistoryRecord> FLYWAY_SCHEMA_HISTORY_PK = Internal.createUniqueKey(FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, DSL.name("flyway_schema_history_pk"), new TableField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.INSTALLED_RANK }, true);
+    public static final UniqueKey<NotificationHistoriesRecord> NOTIFICATION_HISTORIES_EVENT_ID_KEY = Internal.createUniqueKey(NotificationHistories.NOTIFICATION_HISTORIES, DSL.name("notification_histories_event_id_key"), new TableField[] { NotificationHistories.NOTIFICATION_HISTORIES.EVENT_ID }, true);
     public static final UniqueKey<NotificationHistoriesRecord> NOTIFICATION_HISTORIES_PKEY = Internal.createUniqueKey(NotificationHistories.NOTIFICATION_HISTORIES, DSL.name("notification_histories_pkey"), new TableField[] { NotificationHistories.NOTIFICATION_HISTORIES.ID }, true);
-    public static final UniqueKey<NotificationHistoriesRecord> NOTIFICATION_HISTORIES_USER_ID_EVENT_TYPE_KEY = Internal.createUniqueKey(NotificationHistories.NOTIFICATION_HISTORIES, DSL.name("notification_histories_user_id_event_type_key"), new TableField[] { NotificationHistories.NOTIFICATION_HISTORIES.USER_ID, NotificationHistories.NOTIFICATION_HISTORIES.EVENT_TYPE }, true);
     public static final UniqueKey<UsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_email_key"), new TableField[] { Users.USERS.EMAIL }, true);
     public static final UniqueKey<UsersRecord> USERS_PKEY = Internal.createUniqueKey(Users.USERS, DSL.name("users_pkey"), new TableField[] { Users.USERS.ID }, true);
 

@@ -1,10 +1,6 @@
 package com.example.demo.features.notification.internal.infrastructure.email;
 
-import com.example.demo.shared.config.AppProperties;
-import com.example.demo.shared.logging.AppLogger;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
@@ -16,14 +12,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class EmailSender {
-
-  private final AppProperties appProperties;
-  private final AppLogger appLogger;
-
-  public EmailSender(final AppProperties appProperties, final AppLogger appLogger) {
-    this.appProperties = appProperties;
-    this.appLogger = appLogger;
-  }
 
   /**
    * メールを送信する.
@@ -49,21 +37,8 @@ public class EmailSender {
       final List<String> cc,
       final List<String> bcc) {
 
-    final var emailConfig = appProperties.getEmail();
-    final String actualFrom = Optional.ofNullable(from).orElse(emailConfig.getFrom());
-    final String actualReplyTo = Optional.ofNullable(replyTo).orElse(emailConfig.getReplyTo());
-
     // TODO: 実際のメール送信実装（SES, SendGrid など）
-    appLogger.logEmailSend(
-        EmailSender.class,
-        Map.of(
-            "eventId", eventId,
-            "from", actualFrom,
-            "replyTo", actualReplyTo,
-            "to", to,
-            "cc", cc,
-            "bcc", bcc,
-            "subject", subject,
-            "emailType", emailType));
+    // from/replyTo は null の場合 AppProperties のデフォルト値を使用する
+    // ログは KafkaConsumerLogging AOP で出力されるため、ここでは省略
   }
 }

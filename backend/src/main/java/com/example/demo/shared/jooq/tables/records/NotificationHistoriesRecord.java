@@ -77,6 +77,20 @@ public class NotificationHistoriesRecord extends UpdatableRecordImpl<Notificatio
         return (LocalDateTime) get(3);
     }
 
+    /**
+     * Setter for <code>public.notification_histories.event_id</code>.
+     */
+    public void setEventId(UUID value) {
+        set(4, value);
+    }
+
+    /**
+     * Getter for <code>public.notification_histories.event_id</code>.
+     */
+    public UUID getEventId() {
+        return (UUID) get(4);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -100,13 +114,14 @@ public class NotificationHistoriesRecord extends UpdatableRecordImpl<Notificatio
     /**
      * Create a detached, initialised NotificationHistoriesRecord
      */
-    public NotificationHistoriesRecord(UUID id, UUID userId, String eventType, LocalDateTime createdAt) {
+    public NotificationHistoriesRecord(UUID id, UUID userId, String eventType, LocalDateTime createdAt, UUID eventId) {
         super(NotificationHistories.NOTIFICATION_HISTORIES);
 
         setId(id);
         setUserId(userId);
         setEventType(eventType);
         setCreatedAt(createdAt);
+        setEventId(eventId);
         resetChangedOnNotNull();
     }
 }

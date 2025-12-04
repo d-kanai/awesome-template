@@ -1,7 +1,5 @@
 package com.example.demo.features.notification.internal.infrastructure.push;
 
-import com.example.demo.shared.logging.AppLogger;
-import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
 
@@ -12,12 +10,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class PushNotificationSender {
-
-  private final AppLogger appLogger;
-
-  public PushNotificationSender(final AppLogger appLogger) {
-    this.appLogger = appLogger;
-  }
 
   /**
    * プッシュ通知を送信する.
@@ -38,13 +30,6 @@ public class PushNotificationSender {
       final String notificationType) {
 
     // TODO: 実際のプッシュ通知送信実装（FCM, APNs など）
-    appLogger.logPushNotificationSend(
-        PushNotificationSender.class,
-        Map.of(
-            "eventId", eventId,
-            "userId", userId,
-            "deviceToken", deviceToken,
-            "title", title,
-            "notificationType", notificationType));
+    // ログは KafkaConsumerLogging AOP で出力されるため、ここでは省略
   }
 }

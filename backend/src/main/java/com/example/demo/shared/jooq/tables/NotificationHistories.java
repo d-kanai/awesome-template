@@ -68,7 +68,7 @@ public class NotificationHistories extends TableImpl<NotificationHistoriesRecord
     /**
      * The column <code>public.notification_histories.user_id</code>.
      */
-    public final TableField<NotificationHistoriesRecord, UUID> USER_ID = createField(DSL.name("user_id"), SQLDataType.UUID.nullable(false), this, "");
+    public final TableField<NotificationHistoriesRecord, UUID> USER_ID = createField(DSL.name("user_id"), SQLDataType.UUID, this, "");
 
     /**
      * The column <code>public.notification_histories.event_type</code>.
@@ -79,6 +79,11 @@ public class NotificationHistories extends TableImpl<NotificationHistoriesRecord
      * The column <code>public.notification_histories.created_at</code>.
      */
     public final TableField<NotificationHistoriesRecord, LocalDateTime> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "");
+
+    /**
+     * The column <code>public.notification_histories.event_id</code>.
+     */
+    public final TableField<NotificationHistoriesRecord, UUID> EVENT_ID = createField(DSL.name("event_id"), SQLDataType.UUID.nullable(false), this, "");
 
     private NotificationHistories(Name alias, Table<NotificationHistoriesRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -151,7 +156,7 @@ public class NotificationHistories extends TableImpl<NotificationHistoriesRecord
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_NOTIFICATION_HISTORIES_EVENT_TYPE, Indexes.IDX_NOTIFICATION_HISTORIES_USER_ID);
+        return Arrays.asList(Indexes.IDX_NOTIFICATION_HISTORIES_EVENT_ID);
     }
 
     @Override
@@ -161,7 +166,7 @@ public class NotificationHistories extends TableImpl<NotificationHistoriesRecord
 
     @Override
     public List<UniqueKey<NotificationHistoriesRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.NOTIFICATION_HISTORIES_USER_ID_EVENT_TYPE_KEY);
+        return Arrays.asList(Keys.NOTIFICATION_HISTORIES_EVENT_ID_KEY);
     }
 
     @Override

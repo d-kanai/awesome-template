@@ -1,15 +1,17 @@
 package com.example.demo.shared.kafka.config;
 
+import com.example.demo.shared.logging.AppLogger;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -19,14 +21,14 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.util.backoff.FixedBackOff;
 
 /** Kafkaコンシューマ設定クラス. */
 @Configuration
+@EnableKafka
 @ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "true", matchIfMissing = false)
 public class KafkaConsumerConfig {
-
-  private static final Logger log = LoggerFactory.getLogger(KafkaConsumerConfig.class);
 
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
@@ -51,7 +53,9 @@ public class KafkaConsumerConfig {
   @Bean
   public ProducerFactory<String, Object> dlqProducerFactory() {
     final Map<String, Object> props = new HashMap<>();
-    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
     return new DefaultKafkaProducerFactory<>(props);
   }
 
@@ -65,21 +69,41 @@ public class KafkaConsumerConfig {
   /** エラーハンドラ（DLQ付き）. */
   @Bean
   public DefaultErrorHandler kafkaErrorHandler(
-      final KafkaTemplate<String, Object> dlqKafkaTemplate) {
-    final DeadLetterPublishingRecoverer recoverer =
-        new DeadLetterPublishingRecoverer(dlqKafkaTemplate);
-    // 3回リトライ、1秒間隔
+      final KafkaTemplate<String, Object> dlqKafkaTemplate, final AppLogger appLogger) {
+    final var loggingRecoverer = createLoggingRecoverer(dlqKafkaTemplate, appLogger);
     final DefaultErrorHandler errorHandler =
-        new DefaultErrorHandler(recoverer, new FixedBackOff(1000L, 3));
+        new DefaultErrorHandler(loggingRecoverer, new FixedBackOff(1000L, 3));
     errorHandler.setRetryListeners(
         (record, ex, deliveryAttempt) ->
-            log.warn(
-                "Retry attempt {} for topic={}, partition={}, offset={}",
-                deliveryAttempt,
+            appLogger.logKafkaConsumerRetry(
+                KafkaConsumerConfig.class,
                 record.topic(),
                 record.partition(),
-                record.offset()));
+                record.offset(),
+                deliveryAttempt,
+                ex));
     return errorHandler;
+  }
+
+  /** DLQ送信前にエラーログを出力するRecovererを作成. */
+  private org.springframework.kafka.listener.ConsumerRecordRecoverer createLoggingRecoverer(
+      final KafkaTemplate<String, Object> dlqKafkaTemplate, final AppLogger appLogger) {
+    final DeadLetterPublishingRecoverer dlqRecoverer =
+        new DeadLetterPublishingRecoverer(dlqKafkaTemplate);
+    return (record, ex) -> {
+      appLogger.logKafkaConsumerFailed(
+          KafkaConsumerConfig.class, record.topic(), record.partition(), record.offset(), ex);
+      try {
+        dlqRecoverer.accept(record, ex);
+      } catch (final Exception dlqEx) {
+        appLogger.logKafkaConsumerFailed(
+            KafkaConsumerConfig.class,
+            record.topic() + ".DLT",
+            record.partition(),
+            record.offset(),
+            dlqEx);
+      }
+    };
   }
 
   /** KafkaListenerContainerFactory. */

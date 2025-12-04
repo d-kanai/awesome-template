@@ -25,7 +25,6 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     public static final Index FLYWAY_SCHEMA_HISTORY_S_IDX = Internal.createIndex(DSL.name("flyway_schema_history_s_idx"), FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, new OrderField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.SUCCESS }, false);
-    public static final Index IDX_NOTIFICATION_HISTORIES_EVENT_TYPE = Internal.createIndex(DSL.name("idx_notification_histories_event_type"), NotificationHistories.NOTIFICATION_HISTORIES, new OrderField[] { NotificationHistories.NOTIFICATION_HISTORIES.EVENT_TYPE }, false);
-    public static final Index IDX_NOTIFICATION_HISTORIES_USER_ID = Internal.createIndex(DSL.name("idx_notification_histories_user_id"), NotificationHistories.NOTIFICATION_HISTORIES, new OrderField[] { NotificationHistories.NOTIFICATION_HISTORIES.USER_ID }, false);
+    public static final Index IDX_NOTIFICATION_HISTORIES_EVENT_ID = Internal.createIndex(DSL.name("idx_notification_histories_event_id"), NotificationHistories.NOTIFICATION_HISTORIES, new OrderField[] { NotificationHistories.NOTIFICATION_HISTORIES.EVENT_ID }, false);
     public static final Index IDX_USERS_EMAIL = Internal.createIndex(DSL.name("idx_users_email"), Users.USERS, new OrderField[] { Users.USERS.EMAIL }, false);
 }

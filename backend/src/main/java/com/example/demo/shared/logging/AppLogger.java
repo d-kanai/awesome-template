@@ -286,55 +286,87 @@ public class AppLogger {
         kv("error_message", ex.getMessage()));
   }
 
-  /** CommandEvent受信ログを出力. */
+  /** CommandEvent受信ログを出力（Consumer用、RequestScopeなし）. */
   public void logCommandEventReceive(
       final Class<?> clazz, final String transport, final String eventType, final Object details) {
     final Logger logger = LoggerFactory.getLogger(clazz);
     logger.info(
         "CommandEvent received",
         kv("log_type", "command_event_receive"),
-        kv("trace_id", requestContext.getTraceId()),
-        kv("env", requestContext.getEnv()),
+        kv("env", appProperties.getEnv().name()),
         kv("timestamp", now()),
         kv("transport", transport),
         kv("event_type", eventType),
         kv("details", details));
   }
 
-  /** メール送信ログを出力. */
-  public void logEmailSend(final Class<?> clazz, final Object details) {
+  /** CommandEvent処理完了ログを出力（Consumer用、RequestScopeなし）. */
+  public void logCommandEventFinish(
+      final Class<?> clazz, final String transport, final String eventType, final Object details) {
     final Logger logger = LoggerFactory.getLogger(clazz);
     logger.info(
-        "Email sent",
-        kv("log_type", "email_send"),
-        kv("trace_id", requestContext.getTraceId()),
-        kv("env", requestContext.getEnv()),
+        "CommandEvent finished",
+        kv("log_type", "command_event_finish"),
+        kv("env", appProperties.getEnv().name()),
+        kv("timestamp", now()),
+        kv("transport", transport),
+        kv("event_type", eventType),
+        kv("details", details));
+  }
+
+  /** 冪等性チェックによるスキップログを出力（Consumer用、RequestScopeなし）. */
+  public void logIdempotencySkip(final Class<?> clazz, final Object details) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.info(
+        "Skipped due to idempotency check",
+        kv("log_type", "idempotency_skip"),
+        kv("env", appProperties.getEnv().name()),
         kv("timestamp", now()),
         kv("details", details));
   }
 
-  /** プッシュ通知送信ログを出力. */
-  public void logPushNotificationSend(final Class<?> clazz, final Object details) {
+  /** Kafka Consumerリトライログを出力. */
+  public void logKafkaConsumerRetry(
+      final Class<?> clazz,
+      final String topic,
+      final int partition,
+      final long offset,
+      final int attempt,
+      final Exception ex) {
     final Logger logger = LoggerFactory.getLogger(clazz);
-    logger.info(
-        "Push notification sent",
-        kv("log_type", "push_notification_send"),
-        kv("trace_id", requestContext.getTraceId()),
-        kv("env", requestContext.getEnv()),
+    logger.warn(
+        "Kafka consumer retry",
+        kv("log_type", "kafka_consumer_retry"),
+        kv("env", appProperties.getEnv().name()),
         kv("timestamp", now()),
-        kv("details", details));
+        kv("topic", topic),
+        kv("partition", partition),
+        kv("offset", offset),
+        kv("attempt", attempt),
+        kv("error_type", ex.getClass().getName()),
+        kv("error_message", ex.getMessage()),
+        kv("stacktrace", getStackTraceAsString(ex)));
   }
 
-  /** Slack通知送信ログを出力. */
-  public void logSlackNotificationSend(final Class<?> clazz, final Object details) {
+  /** Kafka Consumer失敗（DLQ送信）ログを出力. */
+  public void logKafkaConsumerFailed(
+      final Class<?> clazz,
+      final String topic,
+      final int partition,
+      final long offset,
+      final Exception ex) {
     final Logger logger = LoggerFactory.getLogger(clazz);
-    logger.info(
-        "Slack notification sent",
-        kv("log_type", "slack_notification_send"),
-        kv("trace_id", requestContext.getTraceId()),
-        kv("env", requestContext.getEnv()),
+    logger.error(
+        "Kafka consumer failed, sending to DLQ",
+        kv("log_type", "kafka_consumer_failed"),
+        kv("env", appProperties.getEnv().name()),
         kv("timestamp", now()),
-        kv("details", details));
+        kv("topic", topic),
+        kv("partition", partition),
+        kv("offset", offset),
+        kv("error_type", ex.getClass().getName()),
+        kv("error_message", ex.getMessage()),
+        kv("stacktrace", getStackTraceAsString(ex)));
   }
 
   /** DB更新ログ. */
