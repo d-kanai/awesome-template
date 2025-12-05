@@ -1,58 +1,52 @@
-# npm/pnpm サプライチェーンセキュリティ対策
+# npm/pnpm サプライチェーンセキュリティ セットアップガイド
 
-## 概要
+## 背景
 
-npmエコシステムにおけるサプライチェーン攻撃（Shai-Hulud 2.0等）への対策をまとめる。
+2025年11月、Shai-Hulud 2.0と呼ばれる大規模なnpmサプライチェーン攻撃が発生。796以上のパッケージが侵害され、週間2000万ダウンロード以上に影響。攻撃は`preinstall`スクリプトを悪用し、認証情報の窃取やマルウェアの自動伝播を行った。
 
-## 導入済みの対策
+## セットアップ手順
 
-### 1. safe-chain
+### 1. safe-chain のインストール
 
-インストール時にマルウェアを検知するツール。
+ダウンロード時にマルウェアを検知するツール。
 
 ```bash
-# インストール確認
-safe-chain --version
-
-# シェル統合確認（~/.zshrcに設定済み）
-source ~/.safe-chain/scripts/init-posix.sh
+npm install -g @aikidosec/safe-chain
+safe-chain setup
+# シェルを再起動
 ```
 
-- `npm`, `pnpm`, `npx`, `pnpx` コマンドが自動的にsafe-chain経由で実行される
-- ダウンロード時にマルウェアをスキャン
+確認:
+```bash
+safe-chain --version
+type pnpm  # "pnpm is a shell function" と表示されればOK
+```
 
-### 2. ignore-scripts=true
+### 2. ignore-scripts の設定
 
 ライフサイクルスクリプト（preinstall, postinstall等）の実行を無効化。
 
 ```bash
-# ~/.npmrc（グローバル設定）
-ignore-scripts=true
+echo "ignore-scripts=true" >> ~/.npmrc
 ```
 
-**ブロックされるスクリプト:**
-- preinstall
-- install
-- postinstall
-- prepublish
-- prepare
-
-**注意:** ネイティブビルドが必要なパッケージ（esbuild, sharp等）は `pnpm rebuild` が必要な場合がある。
-
-### 3. minimum-release-age=2w
-
-新規リリースから2週間経過したパッケージのみインストール可能。
-
+確認:
 ```bash
-# 各プロジェクトの .npmrc
+pnpm config get ignore-scripts  # true
+```
+
+### 3. minimum-release-age の設定
+
+新規リリースから2週間経過したパッケージのみインストール可能にする。
+
+各プロジェクトの `.npmrc` に追加:
+```ini
 minimum-release-age=2w
 ```
 
-攻撃者が悪意あるバージョンを公開しても、2週間の猶予期間中に検知・削除される可能性が高い。
-
 ### 4. バージョン完全固定
 
-package.jsonから `^` と `~` を削除し、完全なバージョン指定に変更。
+package.jsonから `^` と `~` を削除し、lockファイルの実バージョンで固定。
 
 ```json
 // Before
@@ -62,11 +56,34 @@ package.jsonから `^` と `~` を削除し、完全なバージョン指定に�
 "react": "19.1.0"
 ```
 
-意図しないバージョンアップを防止。
+## セキュリティスキャン
 
-## セキュリティスキャンツール
+### 定期スキャン
 
-### ツール比較
+```bash
+# CVE検出（lockファイルベース）
+pnpm audit
+
+# ファイルシステムスキャン（CVE + シークレット検出）
+trivy fs --scanners vuln,secret .
+```
+
+### 手動マルウェアチェック
+
+既知のマルウェアパターンを検索:
+```bash
+grep -r "setup_bun.js\|bun_environment.js" node_modules/
+find node_modules -name "bun_environment.js" -o -name "setup_bun.js"
+```
+
+### 被害パッケージリストとの照合
+
+```bash
+# Shai-Hulud 2.0 被害パッケージCSV
+curl -s "https://raw.githubusercontent.com/wiz-sec-public/wiz-research-iocs/refs/heads/main/reports/shai-hulud-2-packages.csv"
+```
+
+## ツール比較
 
 | ツール | install前 | install済み | lockファイル | マルウェア | CVE | 無料 |
 |--------|:---------:|:-----------:|:------------:|:----------:|:---:|:----:|
@@ -75,61 +92,9 @@ package.jsonから `^` と `~` を削除し、完全なバージョン指定に�
 | trivy | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ |
 | Socket CLI | ✅ | ✅ | ✅ | ✅ | ✅ | △ |
 
-### pnpm audit
-
-既知の脆弱性（CVE）をlockファイルから検出。
-
-```bash
-pnpm audit
-```
-
-### trivy
-
-ファイルシステムスキャン（CVE検出）。
-
-```bash
-trivy fs --scanners vuln,secret .
-```
-
-### Socket CLI（検討中）
-
-唯一、install済みnode_modulesのマルウェアスキャンが可能。
-
-```bash
-npx @socketsecurity/cli scan
-```
-
-## 手動マルウェアチェック
-
-既知のマルウェアパターン（Shai-Hulud等）を手動で検索。
-
-```bash
-# Shai-Huludマルウェアファイル検索
-grep -r "setup_bun.js\|bun_environment.js" node_modules/
-find node_modules -name "bun_environment.js" -o -name "setup_bun.js"
-```
-
-**限界:** 既知のパターンのみ検出可能。新種のマルウェアには対応できない。
-
-## 攻撃情報の確認
-
-### Shai-Hulud 2.0 被害パッケージリスト
-
-```bash
-# Wizの公開CSVから確認
-curl -s "https://raw.githubusercontent.com/wiz-sec-public/wiz-research-iocs/refs/heads/main/reports/shai-hulud-2-packages.csv"
-```
-
-### パッケージの公式修正報告
-
-攻撃されたパッケージの修正状況は、各パッケージのGitHub Issuesで確認。
-
-例: https://github.com/asyncapi/spec-json-schemas/issues/603
-
 ## 依存関係の調査
 
 特定パッケージがなぜ依存に含まれているか確認:
-
 ```bash
 pnpm why <package-name>
 ```
@@ -139,4 +104,4 @@ pnpm why <package-name>
 - [Wiz Blog - Shai-Hulud 2.0](https://www.wiz.io/blog/shai-hulud-2-0-ongoing-supply-chain-attack)
 - [GitLab Advisory Database](https://advisories.gitlab.com/)
 - [Socket.dev](https://socket.dev/)
-- [safe-chain](https://github.com/AikidoSec/safe-chain)
+- [safe-chain GitHub](https://github.com/AikidoSec/safe-chain)
