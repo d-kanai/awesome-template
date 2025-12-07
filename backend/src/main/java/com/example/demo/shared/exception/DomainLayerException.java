@@ -6,4 +6,8 @@ public class DomainLayerException extends RuntimeException {
   public DomainLayerException(final String message) {
     super(message);
   }
+
+  public DomainLayerException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 }

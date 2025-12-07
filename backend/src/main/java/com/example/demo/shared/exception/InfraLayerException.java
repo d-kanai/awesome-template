@@ -6,4 +6,8 @@ public class InfraLayerException extends RuntimeException {
   public InfraLayerException(final String message) {
     super(message);
   }
+
+  public InfraLayerException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 }

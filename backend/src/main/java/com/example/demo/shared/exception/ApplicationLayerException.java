@@ -6,4 +6,8 @@ public class ApplicationLayerException extends RuntimeException {
   public ApplicationLayerException(final String message) {
     super(message);
   }
+
+  public ApplicationLayerException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 }
