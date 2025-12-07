@@ -61,8 +61,6 @@ public class UserVerificationExternalApi {
       appLogger.logExternalApiError(
           UserVerificationExternalApi.class, API_NAME, email, e.getCode(), e.getMessage());
       throw new InfraLayerException("External API call failed: " + e.getMessage(), e);
-    } catch (final InfraLayerException e) {
-      throw e;
     } catch (final Exception e) {
       appLogger.logExternalApiException(UserVerificationExternalApi.class, API_NAME, email, e);
       throw new InfraLayerException("External API call failed: " + e.getMessage(), e);
