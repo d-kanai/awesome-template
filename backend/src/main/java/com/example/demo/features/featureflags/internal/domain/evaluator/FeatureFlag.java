@@ -7,7 +7,7 @@ import com.example.demo.features.featureflags.internal.domain.model.UserContext;
  *
  * <p>各フィーチャーフラグはこのインターフェースを実装し、ユーザーコンテキストに基づいて有効/無効を判定する。
  */
-public interface FeatureFlagEvaluator {
+public interface FeatureFlag {
 
   /**
    * フィーチャーフラグを評価する.

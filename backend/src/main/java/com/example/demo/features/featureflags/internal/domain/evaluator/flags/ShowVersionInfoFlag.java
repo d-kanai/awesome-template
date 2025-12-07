@@ -1,6 +1,6 @@
 package com.example.demo.features.featureflags.internal.domain.evaluator.flags;
 
-import com.example.demo.features.featureflags.internal.domain.evaluator.FeatureFlagEvaluator;
+import com.example.demo.features.featureflags.internal.domain.evaluator.FeatureFlag;
 import com.example.demo.features.featureflags.internal.domain.model.UserContext;
 import com.example.demo.shared.config.AppProperties;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * <p>開発環境・ステージング環境では常に有効。本番環境では特定ユーザーのみ有効。
  */
 @Component
-public class ShowVersionInfoFlag implements FeatureFlagEvaluator {
+public class ShowVersionInfoFlag implements FeatureFlag {
 
   @Override
   public boolean evaluate(final UserContext ctx) {

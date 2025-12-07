@@ -1,6 +1,6 @@
 package com.example.demo.features.featureflags.expose;
 
-import com.example.demo.features.featureflags.internal.domain.evaluator.FeatureFlagEvaluator;
+import com.example.demo.features.featureflags.internal.domain.evaluator.FeatureFlag;
 import com.example.demo.features.featureflags.internal.domain.model.UserContext;
 import com.example.demo.shared.config.AppProperties;
 import java.util.List;
@@ -18,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FindAllFeatureFlagsQuery {
 
-  private final List<FeatureFlagEvaluator> evaluators;
+  private final List<FeatureFlag> evaluators;
   private final AppProperties appProperties;
 
   public FindAllFeatureFlagsQuery(
-      final List<FeatureFlagEvaluator> evaluators, final AppProperties appProperties) {
+      final List<FeatureFlag> evaluators, final AppProperties appProperties) {
     this.evaluators = evaluators;
     this.appProperties = appProperties;
   }
@@ -36,7 +36,7 @@ public class FindAllFeatureFlagsQuery {
     final var ctx = UserContext.current(appProperties);
     final Map<String, Boolean> flags =
         evaluators.stream()
-            .collect(Collectors.toMap(FeatureFlagEvaluator::flagName, e -> e.evaluate(ctx)));
+            .collect(Collectors.toMap(FeatureFlag::flagName, e -> e.evaluate(ctx)));
     return new Output(flags);
   }
 
