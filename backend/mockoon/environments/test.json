@@ -1,0 +1,133 @@
+{
+  "uuid": "test-environment",
+  "lastMigration": 32,
+  "name": "Test Environment - External APIs (Deterministic)",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 3001,
+  "hostname": "0.0.0.0",
+  "folders": [],
+  "routes": [
+    {
+      "uuid": "payment-api-test",
+      "type": "http",
+      "documentation": "Payment API - Deterministic responses for E2E tests",
+      "method": "post",
+      "endpoint": "api/payment",
+      "responses": [
+        {
+          "uuid": "payment-success-test",
+          "body": "{\n  \"transactionId\": \"TXN-TEST-SUCCESS-001\",\n  \"amount\": 99.99,\n  \"status\": \"SUCCESS\",\n  \"responseCode\": \"200\",\n  \"message\": \"Transaction successful\",\n  \"processedAt\": \"2025-01-01T00:00:00Z\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Success (default)",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
+      "uuid": "sms-api-test",
+      "type": "http",
+      "documentation": "SMS API - Deterministic responses for E2E tests",
+      "method": "post",
+      "endpoint": "api/sms",
+      "responses": [
+        {
+          "uuid": "sms-success-test",
+          "body": "{\n  \"messageId\": \"SMS-TEST-SUCCESS-001\",\n  \"to\": \"+1234567890\",\n  \"status\": \"SENT\",\n  \"sentAt\": \"2025-01-01T00:00:00Z\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Success (default)",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "payment-api-test"
+    },
+    {
+      "type": "route",
+      "uuid": "sms-api-test"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "key": "Access-Control-Allow-Methods",
+      "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+    },
+    {
+      "key": "Access-Control-Allow-Headers",
+      "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [],
+  "callbacks": []
+}

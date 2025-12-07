@@ -28,6 +28,10 @@ public class AppProperties {
 
   @Valid @NotNull private EmailConfig email = new EmailConfig();
 
+  @Valid @NotNull private Mockoon mockoon = new Mockoon();
+
+  @Valid @NotNull private ExternalApi externalApi = new ExternalApi();
+
   public Env getEnv() {
     return env;
   }
@@ -66,6 +70,22 @@ public class AppProperties {
 
   public void setEmail(final EmailConfig email) {
     this.email = email;
+  }
+
+  public Mockoon getMockoon() {
+    return mockoon;
+  }
+
+  public void setMockoon(final Mockoon mockoon) {
+    this.mockoon = mockoon;
+  }
+
+  public ExternalApi getExternalApi() {
+    return externalApi;
+  }
+
+  public void setExternalApi(final ExternalApi externalApi) {
+    this.externalApi = externalApi;
   }
 
   public boolean isDev() {
@@ -239,6 +259,68 @@ public class AppProperties {
 
     public void setReplyTo(final String replyTo) {
       this.replyTo = replyTo;
+    }
+  }
+
+  /** Mockoon Mock Server設定. */
+  public static class Mockoon {
+
+    @NotNull private Boolean enabled = false;
+
+    @NotBlank private String adminUrl = "";
+
+    @NotBlank private String apiUrl = "";
+
+    public Boolean getEnabled() {
+      return enabled;
+    }
+
+    public void setEnabled(final Boolean enabled) {
+      this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+      return Boolean.TRUE.equals(enabled);
+    }
+
+    public String getAdminUrl() {
+      return adminUrl;
+    }
+
+    public void setAdminUrl(final String adminUrl) {
+      this.adminUrl = adminUrl;
+    }
+
+    public String getApiUrl() {
+      return apiUrl;
+    }
+
+    public void setApiUrl(final String apiUrl) {
+      this.apiUrl = apiUrl;
+    }
+  }
+
+  /** 外部API設定. */
+  public static class ExternalApi {
+
+    @NotBlank private String paymentUrl = "";
+
+    @NotBlank private String smsUrl = "";
+
+    public String getPaymentUrl() {
+      return paymentUrl;
+    }
+
+    public void setPaymentUrl(final String paymentUrl) {
+      this.paymentUrl = paymentUrl;
+    }
+
+    public String getSmsUrl() {
+      return smsUrl;
+    }
+
+    public void setSmsUrl(final String smsUrl) {
+      this.smsUrl = smsUrl;
     }
   }
 }
