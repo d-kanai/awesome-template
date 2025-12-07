@@ -6,7 +6,7 @@ ROOT_DIR := $(CURDIR)
         backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint backend-check backend-migrate backend-migrate-clean backend-jooq backend-create-migration \
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
         webview-install webview-start webview-lint webview-typecheck webview-ios webview-android \
-        web-install web-dev web-build web-lint web-lint-deps web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-docker-build web-docker-run web-show-routes \
+        web-install web-dev web-build web-lint web-lint-deps web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-e2e-mock web-docker-build web-docker-run web-show-routes \
         tekton-setup tekton-teardown tekton-dashboard tekton-web-ci tekton-backend-ci tekton-logs \
         openapi-client lefthook-install
 
@@ -70,6 +70,7 @@ help:
 	@echo "  make web-ut               # Run web unit tests (Vitest)"
 	@echo "  make web-ut-coverage      # Run web unit tests with coverage"
 	@echo "  make web-e2e              # Run web E2E tests (Playwright + Cucumber)"
+	@echo "  make web-e2e-mock         # Run web E2E tests in mock mode (no backend required)"
 	@echo "  make web-lint-deps        # Check dependency direction (shared → features)"
 	@echo "  make web-show-routes      # Show page transition tree"
 	@echo "  make web-docker-build     # Build web Docker image"
@@ -315,6 +316,9 @@ web-ut-coverage:
 
 web-e2e:
 	cd frontend_web && pnpm test:e2e
+
+web-e2e-mock:
+	cd frontend_web && pnpm test:e2e:mock
 
 web-lint-deps:
 	cd frontend_web && pnpm lint:deps
