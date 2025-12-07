@@ -3,7 +3,7 @@ package com.example.demo.features.customer.auth.internal.application.command;
 import com.example.demo.features.customer.user.expose.ExposedUser;
 import com.example.demo.features.customer.user.expose.SignupUserApi;
 import com.example.demo.shared.infrastructure.externalapi.UserVerificationExternalApi;
-import com.example.demo.shared.infrastructure.externalapi.UserVerificationExternalApi.VerificationResult;
+import com.example.demo.shared.infrastructure.externalapi.UserVerificationExternalApi.VerificationResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,16 +27,16 @@ public class SignupCommand {
   }
 
   public Output execute(final Input input) {
-    // 外部APIでユーザー情報を検証
-    final VerificationResult verificationResult =
+    // 外部APIでユーザー情報を検証 (失敗時は InfraLayerException がスローされる)
+    final VerificationResponse verificationResponse =
         userVerificationExternalApi.execute(input.email(), "Sample User");
 
     // ユーザー登録処理
     final ExposedUser user = signupUserApi.execute(input.email(), input.password());
-    return new Output(user, verificationResult);
+    return new Output(user, verificationResponse);
   }
 
   public record Input(String email, String password) {}
 
-  public record Output(ExposedUser user, VerificationResult verificationResult) {}
+  public record Output(ExposedUser user, VerificationResponse verificationResponse) {}
 }

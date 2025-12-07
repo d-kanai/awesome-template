@@ -13,6 +13,7 @@ import com.example.demo.features.notification.expose.SendSlackNotificationComman
 import com.example.demo.testsupport.ApiTestClient;
 import com.example.demo.testsupport.ApiTestResponse;
 import com.example.demo.testsupport.TestEventPublisher;
+import com.example.demo.testsupport.TestExternalApi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,13 @@ class SignupRestApiTest {
 
   @Autowired private TestEventPublisher testEventPublisher;
 
+  @Autowired private TestExternalApi testExternalApi;
+
   @BeforeEach
   void setUp() {
     userRepository.findAll().forEach(user -> userRepository.deleteById(user.getId()));
     testEventPublisher.clear();
+    testExternalApi.clear();
   }
 
   @Test

@@ -83,9 +83,9 @@ public class SignupRestApi {
           user.email(),
           user.createdAt(),
           user.updatedAt(),
-          result.verificationResult().verified(),
-          result.verificationResult().verificationId(),
-          result.verificationResult().message());
+          result.verificationResponse().verified(),
+          result.verificationResponse().verificationId(),
+          result.verificationResponse().message());
     }
   }
 }
