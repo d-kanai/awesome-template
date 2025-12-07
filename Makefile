@@ -206,8 +206,8 @@ backend-create-migration:
 ###############################################################
 mockoon-start:
 	cd backend && docker-compose up -d mockoon
-	@echo "Mockoon started on http://localhost:3001"
-	@echo "Admin API: http://localhost:3001/__admin"
+	@echo "Mockoon started on http://localhost:3002"
+	@echo "Admin API: http://localhost:3002/__admin"
 
 mockoon-stop:
 	cd backend && docker-compose stop mockoon
@@ -218,11 +218,11 @@ mockoon-logs:
 
 mockoon-dev:
 	@command -v mockoon-cli >/dev/null 2>&1 || (echo "Installing @mockoon/cli globally..." && npm install -g @mockoon/cli)
-	mockoon-cli start --data backend/mockoon/environments/dev.json --port 3001 --watch
+	mockoon-cli start --data backend/mockoon/environments/dev.json --port 3002 --watch
 
 mockoon-test:
 	@command -v mockoon-cli >/dev/null 2>&1 || (echo "Installing @mockoon/cli globally..." && npm install -g @mockoon/cli)
-	mockoon-cli start --data backend/mockoon/environments/test.json --port 3001
+	mockoon-cli start --data backend/mockoon/environments/test.json --port 3002
 
 mockoon-regenerate:
 	@echo "🔄 Regenerating Mockoon from OpenAPI..."
@@ -231,7 +231,7 @@ mockoon-regenerate:
 	mockoon-cli import-openapi \
 		--input backend/openapi/customer-api.json \
 		--output backend/mockoon/environments/generated.json \
-		--port 3001
+		--port 3002
 	@echo "✅ Mockoon regenerated from OpenAPI"
 	@echo "📝 Review: backend/mockoon/environments/generated.json"
 	@echo "🚀 Start: make mockoon-start"
