@@ -43,30 +43,30 @@ featureモジュールは以下の構造を持ち、空ディレクトリには 
 features/{actor}/{module}/
 ├── db/
 │   └── migration/          # Flywayマイグレーション (.keep)
-├── doc/                    # PlantUML等のドキュメント
+├── doc/                    # PlantUML等のドキュメント (.keep)
 ├── expose/                 # 他モジュール公開インターフェース (.keep)
 ├── internal/
 │   ├── application/
-│   │   ├── command/        # 更新系ユースケース
-│   │   └── query/          # 参照系ユースケース
+│   │   ├── command/        # 更新系ユースケース (.keep)
+│   │   └── query/          # 参照系ユースケース (.keep)
 │   ├── domain/
-│   │   ├── model/          # Entity, Aggregate
-│   │   ├── repository/     # Repositoryインターフェース
-│   │   ├── valueobject/    # ValueObject
-│   │   └── event/          # DomainEvent
+│   │   ├── model/          # Entity, Aggregate (.keep)
+│   │   ├── repository/     # Repositoryインターフェース (.keep)
+│   │   ├── valueobject/    # ValueObject (.keep)
+│   │   └── event/          # DomainEvent (.keep)
 │   ├── infrastructure/
 │   │   └── repository/     # Repository実装 (.keep)
 │   └── presentation/
-│       ├── rest/           # REST API
+│       ├── rest/           # REST API (.keep)
 │       ├── job/            # バッチジョブ (.keep)
 │       └── consumer/       # Kafkaコンシューマ (.keep)
 └── package-info.java       # モジュール定義
 ```
 
 **運用ルール**:
-- 空ディレクトリには必ず `.keep` ファイルを配置
+- 全ディレクトリに `.keep` ファイルを配置（ファイルがある場合も含む）
 - 新規モジュール作成時は上記構造を全て作成すること
-- `db/migration`、`expose`、`infrastructure`、`presentation/job`、`presentation/consumer` は初期状態で空になることが多いため `.keep` 必須
+- `.keep` はディレクトリ構造の明示化と、将来のファイル追加場所の可視化が目的
 
 ### Actor別構造
 
