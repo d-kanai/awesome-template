@@ -50,8 +50,8 @@ Spring Modulithを使用してモジュール境界を強制。各モジュー�
         ▼                 ▼                   │
 ┌───────────────┐ ┌───────────────────────┐   │
 │  Actor Shared │ │    Shared Domain      │   │
-│  (customer/   │ │ (notification,         │   │
-│   shared,     │ │  featureflag)          │   │
+│  (customer/   │ │ (notification,        │   │
+│   shared,     │ │  featureflag)         │   │
 │   admin/      │ └───────────┬───────────┘   │
 │   shared)     │             │               │
 └───────┬───────┘             │               │
@@ -60,7 +60,7 @@ Spring Modulithを使用してモジュール境界を強制。各モジュー�
                    ▼                          ▼
               ┌────────────────────────────────┐
               │            shared              │
-              │        (共通インフラ層)         │
+              │        (共通インフラ層)          │
               └────────────────────────────────┘
 ```
 
