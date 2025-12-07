@@ -59,7 +59,7 @@ class GenerateMockoonFromDtoTask extends DefaultTask {
             name: "Generated from DTOs (Auto)",
             endpointPrefix: "",
             latency: 0,
-            port: 3001,
+            port: 3002,
             hostname: "0.0.0.0",
             folders: [],
             routes: [
@@ -197,6 +197,6 @@ class GenerateMockoonFromDtoTask extends DefaultTask {
         println "📝 Next steps:"
         println "  1. Review the generated file"
         println "  2. Start Mockoon: make mockoon-start"
-        println "  3. Test: curl -X POST http://localhost:3001/api/payment -d '{\"amount\":99.99}'"
+        println "  3. Test: curl -X POST http://localhost:3002/api/payment -d '{\"amount\":99.99}'"
     }
 }

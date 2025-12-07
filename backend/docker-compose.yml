@@ -58,12 +58,12 @@ services:
     image: mockoon/cli:latest
     container_name: demo-mockoon
     ports:
-      - "3001:3001"
+      - "3002:3002"
     volumes:
       - ./mockoon/environments:/data:ro
-    command: ["--data", "/data/dev.json", "--port", "3001"]
+    command: ["--data", "/data/dev.json", "--port", "3002"]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/__admin/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:3002/__admin/health"]
       interval: 5s
       timeout: 3s
       retries: 5

@@ -35,8 +35,8 @@ cd backend
 docker-compose up -d mockoon
 ```
 
-- **URL**: http://localhost:3001
-- **Admin API**: http://localhost:3001/__admin
+- **URL**: http://localhost:3002
+- **Admin API**: http://localhost:3002/__admin
 - **環境**: `dev.json` を使用
 
 #### 方法B: CLIで直接起動（ホットリロード有効）
@@ -65,7 +65,7 @@ cd backend && docker-compose stop mockoon
 
 ```bash
 # 成功レスポンス（デフォルト）
-curl -X POST http://localhost:3001/api/payment \
+curl -X POST http://localhost:3002/api/payment \
   -H "Content-Type: application/json" \
   -d '{"amount": 99.99}'
 
@@ -80,12 +80,12 @@ curl -X POST http://localhost:3001/api/payment \
 # }
 
 # 拒否レスポンス
-curl -X POST "http://localhost:3001/api/payment?scenario=declined" \
+curl -X POST "http://localhost:3002/api/payment?scenario=declined" \
   -H "Content-Type: application/json" \
   -d '{"amount": 99.99}'
 
 # タイムアウト（31秒後に504エラー）
-curl -X POST "http://localhost:3001/api/payment?scenario=timeout" \
+curl -X POST "http://localhost:3002/api/payment?scenario=timeout" \
   -H "Content-Type: application/json" \
   -d '{"amount": 99.99}'
 ```
@@ -94,12 +94,12 @@ curl -X POST "http://localhost:3001/api/payment?scenario=timeout" \
 
 ```bash
 # 成功レスポンス
-curl -X POST http://localhost:3001/api/sms \
+curl -X POST http://localhost:3002/api/sms \
   -H "Content-Type: application/json" \
   -d '{"to": "+1234567890", "message": "Hello"}'
 
 # 無効な番号エラー
-curl -X POST "http://localhost:3001/api/sms?scenario=invalid" \
+curl -X POST "http://localhost:3002/api/sms?scenario=invalid" \
   -H "Content-Type: application/json" \
   -d '{"to": "invalid", "message": "Hello"}'
 ```
@@ -113,8 +113,8 @@ curl -X POST "http://localhost:3001/api/sms?scenario=invalid" \
 ```bash
 # backend/.env
 MOCKOON_ENABLED=true
-EXTERNAL_API_PAYMENT_URL=http://localhost:3001/api/payment
-EXTERNAL_API_SMS_URL=http://localhost:3001/api/sms
+EXTERNAL_API_PAYMENT_URL=http://localhost:3002/api/payment
+EXTERNAL_API_SMS_URL=http://localhost:3002/api/sms
 ```
 
 #### Javaコード例
@@ -172,7 +172,7 @@ npm install -g @mockoon/cli
 mockoon-cli import-openapi \
   --input ./openapi/customer-api.json \
   --output ./mockoon/environments/generated.json \
-  --port 3001
+  --port 3002
 
 # ✅ generated.json が自動生成される
 # DTOの @Schema example 値がレスポンスボディに設定される
@@ -184,7 +184,7 @@ mockoon-cli import-openapi \
 # 生成したファイルでMockoon起動
 mockoon-cli start \
   --data ./mockoon/environments/generated.json \
-  --port 3001
+  --port 3002
 
 # または Dockerで
 docker-compose up -d mockoon
@@ -224,7 +224,7 @@ cd backend
 📝 Next steps:
   1. Review the generated file
   2. Start Mockoon: make mockoon-start
-  3. Test: curl -X POST http://localhost:3001/api/payment -d '{"amount":99.99}'
+  3. Test: curl -X POST http://localhost:3002/api/payment -d '{"amount":99.99}'
 ```
 
 #### Step 2: 確認して起動
@@ -234,7 +234,7 @@ cd backend
 cat mockoon/environments/generated-from-dto.json
 
 # Mockoon起動
-mockoon-cli start --data ./mockoon/environments/generated-from-dto.json --port 3001
+mockoon-cli start --data ./mockoon/environments/generated-from-dto.json --port 3002
 ```
 
 #### カスタマイズ方法
@@ -283,7 +283,7 @@ vim backend/mockoon/environments/dev.json
 npx jsonlint backend/mockoon/environments/dev.json
 
 # 起動してテスト
-mockoon-cli start --data ./mockoon/environments/dev.json --port 3001
+mockoon-cli start --data ./mockoon/environments/dev.json --port 3002
 ```
 
 ---
@@ -311,7 +311,7 @@ cd backend
 mockoon-cli import-openapi \
   --input ./openapi/customer-api.json \
   --output ./mockoon/environments/generated.json \
-  --port 3001
+  --port 3002
 
 # または Makefile追加して
 make mockoon-regenerate
@@ -337,7 +337,7 @@ mockoon-regenerate:
 	mockoon-cli import-openapi \
 		--input backend/openapi/customer-api.json \
 		--output backend/mockoon/environments/generated.json \
-		--port 3001
+		--port 3002
 	@echo "✅ Mockoon regenerated from OpenAPI"
 	@echo "📝 Review: backend/mockoon/environments/generated.json"
 	@echo "🚀 Start: make mockoon-start"
@@ -376,7 +376,7 @@ make mockoon-start
 mockoon-cli import-openapi \
   --input ./openapi/customer-api.json \
   --output ./mockoon/environments/generated.json \
-  --port 3001 \
+  --port 3002 \
   --prefix "/api/v1"  # URLプレフィックス追加
 ```
 
@@ -502,7 +502,7 @@ class GenerateMockoonTask extends DefaultTask {
         def mockoonEnv = [
             uuid: "generated-environment",
             name: "Generated from DTOs",
-            port: 3001,
+            port: 3002,
             routes: [
                 [
                     uuid: "payment-api",
@@ -602,11 +602,11 @@ make web-e2e
 ### Mockoonが起動しない
 
 ```bash
-# ポート3001が既に使用されているか確認
-lsof -ti :3001
+# ポート3002が既に使用されているか確認
+lsof -ti :3002
 
 # 使用中のプロセスを終了
-lsof -ti :3001 | xargs kill -9
+lsof -ti :3002 | xargs kill -9
 
 # 再起動
 make mockoon-start
@@ -616,7 +616,7 @@ make mockoon-start
 
 ```bash
 # ヘルスチェック
-curl http://localhost:3001/__admin/health
+curl http://localhost:3002/__admin/health
 
 # Mockoonのログを確認
 make mockoon-logs
