@@ -22,29 +22,27 @@ safe-chain --version
 type pnpm  # "pnpm is a shell function" と表示されればOK
 ```
 
-### 2. ignore-scripts の設定
+### 2. グローバル .npmrc の設定
 
-ライフサイクルスクリプト（preinstall, postinstall等）の実行を無効化。
+ライフサイクルスクリプト無効化と2週間縛りをグローバルに設定。
 
 ```bash
-echo "ignore-scripts=true" >> ~/.npmrc
+cat >> ~/.npmrc << 'EOF'
+ignore-scripts=true
+minimum-release-age=2w
+EOF
 ```
 
 確認:
 ```bash
-pnpm config get ignore-scripts  # true
+pnpm config get ignore-scripts        # true
+pnpm config get minimum-release-age   # 2w
 ```
 
-### 3. minimum-release-age の設定
+- `ignore-scripts=true`: preinstall, postinstall等の実行を無効化
+- `minimum-release-age=2w`: 新規リリースから2週間経過したパッケージのみインストール可能
 
-新規リリースから2週間経過したパッケージのみインストール可能にする。
-
-各プロジェクトの `.npmrc` に追加:
-```ini
-minimum-release-age=2w
-```
-
-### 4. バージョン完全固定
+### 3. バージョン完全固定
 
 package.jsonから `^` と `~` を削除し、lockファイルの実バージョンで固定。
 
