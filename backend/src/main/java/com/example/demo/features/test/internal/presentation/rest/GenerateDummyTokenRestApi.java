@@ -1,7 +1,7 @@
 package com.example.demo.features.test.internal.presentation.rest;
 
 import com.example.demo.shared.config.AppProperties;
-import com.example.demo.shared.jwt.JwtTokenProvider;
+import com.example.demo.shared.security.customer.CustomerJwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,16 +27,17 @@ public class GenerateDummyTokenRestApi {
   /** E2Eテスト用の固定メールアドレス. */
   private static final String E2E_TEST_EMAIL = "e2e-test@example.com";
 
-  private final JwtTokenProvider jwtTokenProvider;
+  private final CustomerJwtTokenProvider customerJwtTokenProvider;
   private final AppProperties appProperties;
 
   public GenerateDummyTokenRestApi(
-      final JwtTokenProvider jwtTokenProvider, final AppProperties appProperties) {
-    this.jwtTokenProvider = jwtTokenProvider;
+      final CustomerJwtTokenProvider customerJwtTokenProvider, final AppProperties appProperties) {
+    this.customerJwtTokenProvider = customerJwtTokenProvider;
     this.appProperties = appProperties;
   }
 
   @Operation(
+      operationId = "generateDummyToken",
       summary = "E2Eテスト用トークン生成",
       description =
           "E2Eテストでauth guardをバイパスするためのダミートークンを生成します。"
@@ -45,7 +46,7 @@ public class GenerateDummyTokenRestApi {
   public ResponseEntity<Output> execute(
       @RequestParam(required = false, defaultValue = "false") final boolean setCookie,
       final HttpServletResponse response) {
-    final String token = jwtTokenProvider.generateToken(E2E_TEST_USER_ID, E2E_TEST_EMAIL);
+    final String token = customerJwtTokenProvider.generateToken(E2E_TEST_USER_ID, E2E_TEST_EMAIL);
 
     if (setCookie) {
       setTestAuthCookie(response, token);

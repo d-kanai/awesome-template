@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
@@ -31,6 +33,9 @@ app:
   env: TEST
   kafka:
     enabled: false
+  email:
+    from: test@example.com
+    reply-to: reply@example.com
   jwt:
     secret: test-secret-key-that-is-at-least-256-bits-long-for-hs256
     expiration-hours: 720

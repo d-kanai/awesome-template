@@ -4,6 +4,7 @@
 package com.example.demo.shared.jooq;
 
 
+import com.example.demo.shared.jooq.tables.Admins;
 import com.example.demo.shared.jooq.tables.FlywaySchemaHistory;
 import com.example.demo.shared.jooq.tables.NotificationHistories;
 import com.example.demo.shared.jooq.tables.PgpArmorHeaders;
@@ -20,6 +21,11 @@ import org.jooq.Result;
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes", "this-escape" })
 public class Tables {
+
+    /**
+     * The table <code>public.admins</code>.
+     */
+    public static final Admins ADMINS = Admins.ADMINS;
 
     /**
      * The table <code>public.flyway_schema_history</code>.

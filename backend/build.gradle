@@ -24,7 +24,7 @@ plugins {
 openApi {
     apiDocsUrl = 'http://localhost:8080/v3/api-docs'
     outputDir = file("$projectDir/openapi")
-    outputFileName = 'openapi.json'
+    outputFileName = 'customer-api.json'
     waitTimeInSeconds = 10
 }
 
@@ -41,8 +41,9 @@ sourceSets {
     main {
         resources {
             srcDirs += [
-                'src/main/java/com/example/demo/features/user/db',
-                'src/main/java/com/example/demo/features/auth/db',
+                'src/main/java/com/example/demo/features/customer/user/db',
+                'src/main/java/com/example/demo/features/customer/auth/db',
+                'src/main/java/com/example/demo/features/admin/auth/db',
                 'src/main/java/com/example/demo/features/notification/db',
                 'src/main/java/com/example/demo/shared/db'
             ]
@@ -154,8 +155,9 @@ flyway {
     baselineOnMigrate = true
     cleanDisabled = false
     locations = [
-        'filesystem:src/main/java/com/example/demo/features/user/db/migration',
-        'filesystem:src/main/java/com/example/demo/features/auth/db/migration',
+        'filesystem:src/main/java/com/example/demo/features/customer/user/db/migration',
+        'filesystem:src/main/java/com/example/demo/features/customer/auth/db/migration',
+        'filesystem:src/main/java/com/example/demo/features/admin/auth/db/migration',
         'filesystem:src/main/java/com/example/demo/features/notification/db/migration',
         'filesystem:src/main/java/com/example/demo/shared/db/migration'
     ]

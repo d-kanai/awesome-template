@@ -22,12 +22,16 @@ import type {
   UseQueryResult
 } from '@tanstack/react-query'
 import type {
+  AdminFindMeResponse,
+  AdminSigninRequest,
+  AdminSigninResponse,
+  ChangeEmailRequest,
+  ChangeEmailResponse,
+  ChangePasswordRequest,
+  ChangePasswordResponse,
   FindAllUsersResponse,
   GenerateDummyTokenParams,
-  GetUserVoicesResponse,
   MeResponse,
-  ProxyRequest,
-  ProxyResponse,
   SetupDataRequest,
   SigninRequest,
   SigninResponse,
@@ -43,147 +47,47 @@ type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
 
 
 /**
- * すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。
- * @summary フィーチャーフラグ取得 (GET)
+ * 認証済みユーザーのパスワードを変更します
+ * @summary パスワード変更
  */
-export type getFeaturesGetResponse = {
-  data: ProxyResponse;
+export type changePasswordResponse = {
+  data: ChangePasswordResponse;
   status: number;
 }
 
-export const getGetFeaturesGetUrl = () => {
+export const getChangePasswordUrl = () => {
 
 
-  return `/featureflags/proxy`
+  return `/v1/customer/users/changePassword`
 }
 
-export const getFeaturesGet = async ( options?: RequestInit): Promise<getFeaturesGetResponse> => {
+export const changePassword = async (changePasswordRequest: ChangePasswordRequest, options?: RequestInit): Promise<changePasswordResponse> => {
   
-  return fetcher<Promise<getFeaturesGetResponse>>(getGetFeaturesGetUrl(),
+  return fetcher<Promise<changePasswordResponse>>(getChangePasswordUrl(),
   {      
     ...options,
-    method: 'GET'
-    
-    
-  }
-);}
-
-
-
-export const getGetFeaturesGetQueryKey = () => {
-    return [`/featureflags/proxy`] as const;
-    }
-
-    
-export const getGetFeaturesGetQueryOptions = <TData = Awaited<ReturnType<typeof getFeaturesGet>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetFeaturesGetQueryKey();
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getFeaturesGet>>> = ({ signal }) => getFeaturesGet({ signal, ...requestOptions });
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData> & { queryKey: QueryKey }
-}
-
-export type GetFeaturesGetQueryResult = NonNullable<Awaited<ReturnType<typeof getFeaturesGet>>>
-export type GetFeaturesGetQueryError = unknown
-
-
-export function useGetFeaturesGet<TData = Awaited<ReturnType<typeof getFeaturesGet>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getFeaturesGet>>,
-          TError,
-          TData
-        > , 'initialData'
-      >, request?: SecondParameter<typeof fetcher>}
-
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey }
-export function useGetFeaturesGet<TData = Awaited<ReturnType<typeof getFeaturesGet>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getFeaturesGet>>,
-          TError,
-          TData
-        > , 'initialData'
-      >, request?: SecondParameter<typeof fetcher>}
-
-  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey }
-export function useGetFeaturesGet<TData = Awaited<ReturnType<typeof getFeaturesGet>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
-
-  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey }
-/**
- * @summary フィーチャーフラグ取得 (GET)
- */
-
-export function useGetFeaturesGet<TData = Awaited<ReturnType<typeof getFeaturesGet>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getFeaturesGet>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
-
-  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-
-  const queryOptions = getGetFeaturesGetQueryOptions(options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
-}
-
-
-
-
-/**
- * すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。
- * @summary フィーチャーフラグ取得 (POST)
- */
-export type getFeaturesPostResponse = {
-  data: ProxyResponse;
-  status: number;
-}
-
-export const getGetFeaturesPostUrl = () => {
-
-
-  return `/featureflags/proxy`
-}
-
-export const getFeaturesPost = async (proxyRequest: ProxyRequest, options?: RequestInit): Promise<getFeaturesPostResponse> => {
-  
-  return fetcher<Promise<getFeaturesPostResponse>>(getGetFeaturesPostUrl(),
-  {      
-    ...options,
-    method: 'POST',
+    method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
     body: JSON.stringify(
-      proxyRequest,)
+      changePasswordRequest,)
   }
 );}
 
 
 
 
-export const getGetFeaturesPostMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getFeaturesPost>>, TError,{data: ProxyRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof getFeaturesPost>>, TError,{data: ProxyRequest}, TContext> => {
+export const getChangePasswordMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changePassword>>, TError,{data: ChangePasswordRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof changePassword>>, TError,{data: ChangePasswordRequest}, TContext> => {
 const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof getFeaturesPost>>, {data: ProxyRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof changePassword>>, {data: ChangePasswordRequest}> = (props) => {
           const {data} = props ?? {};
 
-          return  getFeaturesPost(data,requestOptions)
+          return  changePassword(data,requestOptions)
         }
 
         
@@ -191,23 +95,372 @@ const {mutation: mutationOptions, request: requestOptions} = options ?? {};
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type GetFeaturesPostMutationResult = NonNullable<Awaited<ReturnType<typeof getFeaturesPost>>>
-    export type GetFeaturesPostMutationBody = ProxyRequest
-    export type GetFeaturesPostMutationError = unknown
+    export type ChangePasswordMutationResult = NonNullable<Awaited<ReturnType<typeof changePassword>>>
+    export type ChangePasswordMutationBody = ChangePasswordRequest
+    export type ChangePasswordMutationError = void
 
     /**
- * @summary フィーチャーフラグ取得 (POST)
+ * @summary パスワード変更
  */
-export const useGetFeaturesPost = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof getFeaturesPost>>, TError,{data: ProxyRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+export const useChangePassword = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changePassword>>, TError,{data: ChangePasswordRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
 ): UseMutationResult<
-        Awaited<ReturnType<typeof getFeaturesPost>>,
+        Awaited<ReturnType<typeof changePassword>>,
         TError,
-        {data: ProxyRequest},
+        {data: ChangePasswordRequest},
         TContext
       > => {
 
-      const mutationOptions = getGetFeaturesPostMutationOptions(options);
+      const mutationOptions = getChangePasswordMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+/**
+ * 認証済みユーザーのメールアドレスを変更します
+ * @summary メールアドレス変更
+ */
+export type changeEmailResponse = {
+  data: ChangeEmailResponse;
+  status: number;
+}
+
+export const getChangeEmailUrl = () => {
+
+
+  return `/v1/customer/users/changeEmail`
+}
+
+export const changeEmail = async (changeEmailRequest: ChangeEmailRequest, options?: RequestInit): Promise<changeEmailResponse> => {
+  
+  return fetcher<Promise<changeEmailResponse>>(getChangeEmailUrl(),
+  {      
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      changeEmailRequest,)
+  }
+);}
+
+
+
+
+export const getChangeEmailMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changeEmail>>, TError,{data: ChangeEmailRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof changeEmail>>, TError,{data: ChangeEmailRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof changeEmail>>, {data: ChangeEmailRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  changeEmail(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ChangeEmailMutationResult = NonNullable<Awaited<ReturnType<typeof changeEmail>>>
+    export type ChangeEmailMutationBody = ChangeEmailRequest
+    export type ChangeEmailMutationError = void
+
+    /**
+ * @summary メールアドレス変更
+ */
+export const useChangeEmail = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof changeEmail>>, TError,{data: ChangeEmailRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof changeEmail>>,
+        TError,
+        {data: ChangeEmailRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getChangeEmailMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+/**
+ * 指定した情報で新しいユーザーを登録します。
+ * @summary ユーザー登録
+ */
+export type signupResponse = {
+  data: SignupResponse;
+  status: number;
+}
+
+export const getSignupUrl = () => {
+
+
+  return `/v1/customer/auth/signup`
+}
+
+export const signup = async (signupRequest: SignupRequest, options?: RequestInit): Promise<signupResponse> => {
+  
+  return fetcher<Promise<signupResponse>>(getSignupUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      signupRequest,)
+  }
+);}
+
+
+
+
+export const getSignupMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signup>>, TError,{data: SignupRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof signup>>, TError,{data: SignupRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof signup>>, {data: SignupRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  signup(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SignupMutationResult = NonNullable<Awaited<ReturnType<typeof signup>>>
+    export type SignupMutationBody = SignupRequest
+    export type SignupMutationError = void
+
+    /**
+ * @summary ユーザー登録
+ */
+export const useSignup = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signup>>, TError,{data: SignupRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof signup>>,
+        TError,
+        {data: SignupRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getSignupMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+/**
+ * メールアドレスとパスワードでサインインします。
+ * @summary サインイン
+ */
+export type signinResponse = {
+  data: SigninResponse;
+  status: number;
+}
+
+export const getSigninUrl = () => {
+
+
+  return `/v1/customer/auth/signin`
+}
+
+export const signin = async (signinRequest: SigninRequest, options?: RequestInit): Promise<signinResponse> => {
+  
+  return fetcher<Promise<signinResponse>>(getSigninUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      signinRequest,)
+  }
+);}
+
+
+
+
+export const getSigninMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signin>>, TError,{data: SigninRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof signin>>, TError,{data: SigninRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof signin>>, {data: SigninRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  signin(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SigninMutationResult = NonNullable<Awaited<ReturnType<typeof signin>>>
+    export type SigninMutationBody = SigninRequest
+    export type SigninMutationError = void
+
+    /**
+ * @summary サインイン
+ */
+export const useSignin = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signin>>, TError,{data: SigninRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof signin>>,
+        TError,
+        {data: SigninRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getSigninMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+/**
+ * Admin管理者としてサインインします
+ * @summary Adminサインイン
+ */
+export type adminSigninResponse = {
+  data: AdminSigninResponse;
+  status: number;
+}
+
+export const getAdminSigninUrl = () => {
+
+
+  return `/v1/admin/auth/signin`
+}
+
+export const adminSignin = async (adminSigninRequest: AdminSigninRequest, options?: RequestInit): Promise<adminSigninResponse> => {
+  
+  return fetcher<Promise<adminSigninResponse>>(getAdminSigninUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      adminSigninRequest,)
+  }
+);}
+
+
+
+
+export const getAdminSigninMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminSignin>>, TError,{data: AdminSigninRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminSignin>>, TError,{data: AdminSigninRequest}, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminSignin>>, {data: AdminSigninRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminSignin(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminSigninMutationResult = NonNullable<Awaited<ReturnType<typeof adminSignin>>>
+    export type AdminSigninMutationBody = AdminSigninRequest
+    export type AdminSigninMutationError = void
+
+    /**
+ * @summary Adminサインイン
+ */
+export const useAdminSignin = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminSignin>>, TError,{data: AdminSigninRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof adminSignin>>,
+        TError,
+        {data: AdminSigninRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getAdminSigninMutationOptions(options);
+
+      return useMutation(mutationOptions);
+    }
+    
+/**
+ * 500エラーログのテスト用。意図的に例外を発生させます。
+ * @summary 500エラーを発生
+ */
+export type triggerErrorResponse = {
+  data: void;
+  status: number;
+}
+
+export const getTriggerErrorUrl = () => {
+
+
+  return `/e2e/trigger_error`
+}
+
+export const triggerError = async ( options?: RequestInit): Promise<triggerErrorResponse> => {
+  
+  return fetcher<Promise<triggerErrorResponse>>(getTriggerErrorUrl(),
+  {      
+    ...options,
+    method: 'POST'
+    
+    
+  }
+);}
+
+
+
+
+export const getTriggerErrorMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof triggerError>>, TError,void, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof triggerError>>, TError,void, TContext> => {
+const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof triggerError>>, void> = () => {
+          
+
+          return  triggerError(requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TriggerErrorMutationResult = NonNullable<Awaited<ReturnType<typeof triggerError>>>
+    
+    export type TriggerErrorMutationError = unknown
+
+    /**
+ * @summary 500エラーを発生
+ */
+export const useTriggerError = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof triggerError>>, TError,void, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationResult<
+        Awaited<ReturnType<typeof triggerError>>,
+        TError,
+        void,
+        TContext
+      > => {
+
+      const mutationOptions = getTriggerErrorMutationOptions(options);
 
       return useMutation(mutationOptions);
     }
@@ -428,146 +681,6 @@ export const useCreateData = <TError = unknown,
     }
     
 /**
- * 指定した情報で新しいユーザーを登録します。
- * @summary ユーザー登録
- */
-export type signupResponse = {
-  data: SignupResponse;
-  status: number;
-}
-
-export const getSignupUrl = () => {
-
-
-  return `/auth/signup`
-}
-
-export const signup = async (signupRequest: SignupRequest, options?: RequestInit): Promise<signupResponse> => {
-  
-  return fetcher<Promise<signupResponse>>(getSignupUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      signupRequest,)
-  }
-);}
-
-
-
-
-export const getSignupMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signup>>, TError,{data: SignupRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof signup>>, TError,{data: SignupRequest}, TContext> => {
-const {mutation: mutationOptions, request: requestOptions} = options ?? {};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof signup>>, {data: SignupRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  signup(data,requestOptions)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SignupMutationResult = NonNullable<Awaited<ReturnType<typeof signup>>>
-    export type SignupMutationBody = SignupRequest
-    export type SignupMutationError = void
-
-    /**
- * @summary ユーザー登録
- */
-export const useSignup = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signup>>, TError,{data: SignupRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
-): UseMutationResult<
-        Awaited<ReturnType<typeof signup>>,
-        TError,
-        {data: SignupRequest},
-        TContext
-      > => {
-
-      const mutationOptions = getSignupMutationOptions(options);
-
-      return useMutation(mutationOptions);
-    }
-    
-/**
- * メールアドレスとパスワードでサインインします。
- * @summary サインイン
- */
-export type signinResponse = {
-  data: SigninResponse;
-  status: number;
-}
-
-export const getSigninUrl = () => {
-
-
-  return `/auth/signin`
-}
-
-export const signin = async (signinRequest: SigninRequest, options?: RequestInit): Promise<signinResponse> => {
-  
-  return fetcher<Promise<signinResponse>>(getSigninUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      signinRequest,)
-  }
-);}
-
-
-
-
-export const getSigninMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signin>>, TError,{data: SigninRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof signin>>, TError,{data: SigninRequest}, TContext> => {
-const {mutation: mutationOptions, request: requestOptions} = options ?? {};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof signin>>, {data: SigninRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  signin(data,requestOptions)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type SigninMutationResult = NonNullable<Awaited<ReturnType<typeof signin>>>
-    export type SigninMutationBody = SigninRequest
-    export type SigninMutationError = void
-
-    /**
- * @summary サインイン
- */
-export const useSignin = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof signin>>, TError,{data: SigninRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
-): UseMutationResult<
-        Awaited<ReturnType<typeof signin>>,
-        TError,
-        {data: SigninRequest},
-        TContext
-      > => {
-
-      const mutationOptions = getSigninMutationOptions(options);
-
-      return useMutation(mutationOptions);
-    }
-    
-/**
  * 登録されているすべてのユーザーを取得します。
  * @summary ユーザー一覧を取得
  */
@@ -579,7 +692,7 @@ export type getAllUsersResponse = {
 export const getGetAllUsersUrl = () => {
 
 
-  return `/users`
+  return `/v1/customer/users`
 }
 
 export const getAllUsers = async ( options?: RequestInit): Promise<getAllUsersResponse> => {
@@ -596,7 +709,7 @@ export const getAllUsers = async ( options?: RequestInit): Promise<getAllUsersRe
 
 
 export const getGetAllUsersQueryKey = () => {
-    return [`/users`] as const;
+    return [`/v1/customer/users`] as const;
     }
 
     
@@ -679,7 +792,7 @@ export type meResponse = {
 export const getMeUrl = () => {
 
 
-  return `/auth/me`
+  return `/v1/customer/auth/me`
 }
 
 export const me = async ( options?: RequestInit): Promise<meResponse> => {
@@ -696,7 +809,7 @@ export const me = async ( options?: RequestInit): Promise<meResponse> => {
 
 
 export const getMeQueryKey = () => {
-    return [`/auth/me`] as const;
+    return [`/v1/customer/auth/me`] as const;
     }
 
     
@@ -768,23 +881,23 @@ export function useMe<TData = Awaited<ReturnType<typeof me>>, TError = void>(
 
 
 /**
- * ユーザーの声一覧を取得します。
- * @summary ユーザーの声取得
+ * 認証済みAdminの情報を取得します
+ * @summary 現在のAdmin情報取得
  */
-export type getUserVoicesResponse = {
-  data: GetUserVoicesResponse;
+export type adminMeResponse = {
+  data: AdminFindMeResponse;
   status: number;
 }
 
-export const getGetUserVoicesUrl = () => {
+export const getAdminMeUrl = () => {
 
 
-  return `/user-voices`
+  return `/v1/admin/auth/me`
 }
 
-export const getUserVoices = async ( options?: RequestInit): Promise<getUserVoicesResponse> => {
+export const adminMe = async ( options?: RequestInit): Promise<adminMeResponse> => {
   
-  return fetcher<Promise<getUserVoicesResponse>>(getGetUserVoicesUrl(),
+  return fetcher<Promise<adminMeResponse>>(getAdminMeUrl(),
   {      
     ...options,
     method: 'GET'
@@ -795,67 +908,67 @@ export const getUserVoices = async ( options?: RequestInit): Promise<getUserVoic
 
 
 
-export const getGetUserVoicesQueryKey = () => {
-    return [`/user-voices`] as const;
+export const getAdminMeQueryKey = () => {
+    return [`/v1/admin/auth/me`] as const;
     }
 
     
-export const getGetUserVoicesQueryOptions = <TData = Awaited<ReturnType<typeof getUserVoices>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserVoices>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+export const getAdminMeQueryOptions = <TData = Awaited<ReturnType<typeof adminMe>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminMe>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetUserVoicesQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getAdminMeQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserVoices>>> = ({ signal }) => getUserVoices({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminMe>>> = ({ signal }) => adminMe({ signal, ...requestOptions });
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUserVoices>>, TError, TData> & { queryKey: QueryKey }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminMe>>, TError, TData> & { queryKey: QueryKey }
 }
 
-export type GetUserVoicesQueryResult = NonNullable<Awaited<ReturnType<typeof getUserVoices>>>
-export type GetUserVoicesQueryError = unknown
+export type AdminMeQueryResult = NonNullable<Awaited<ReturnType<typeof adminMe>>>
+export type AdminMeQueryError = void
 
 
-export function useGetUserVoices<TData = Awaited<ReturnType<typeof getUserVoices>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserVoices>>, TError, TData>> & Pick<
+export function useAdminMe<TData = Awaited<ReturnType<typeof adminMe>>, TError = void>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminMe>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getUserVoices>>,
+          Awaited<ReturnType<typeof adminMe>>,
           TError,
           TData
         > , 'initialData'
       >, request?: SecondParameter<typeof fetcher>}
 
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey }
-export function useGetUserVoices<TData = Awaited<ReturnType<typeof getUserVoices>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserVoices>>, TError, TData>> & Pick<
+export function useAdminMe<TData = Awaited<ReturnType<typeof adminMe>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminMe>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getUserVoices>>,
+          Awaited<ReturnType<typeof adminMe>>,
           TError,
           TData
         > , 'initialData'
       >, request?: SecondParameter<typeof fetcher>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey }
-export function useGetUserVoices<TData = Awaited<ReturnType<typeof getUserVoices>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserVoices>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+export function useAdminMe<TData = Awaited<ReturnType<typeof adminMe>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminMe>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey }
 /**
- * @summary ユーザーの声取得
+ * @summary 現在のAdmin情報取得
  */
 
-export function useGetUserVoices<TData = Awaited<ReturnType<typeof getUserVoices>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserVoices>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+export function useAdminMe<TData = Awaited<ReturnType<typeof adminMe>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof adminMe>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
 
   ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
-  const queryOptions = getGetUserVoicesQueryOptions(options)
+  const queryOptions = getAdminMeQueryOptions(options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

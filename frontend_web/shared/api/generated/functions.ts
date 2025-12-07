@@ -6,12 +6,16 @@
  * OpenAPI spec version: 1.0.0
  */
 import type {
+  AdminFindMeResponse,
+  AdminSigninRequest,
+  AdminSigninResponse,
+  ChangeEmailRequest,
+  ChangeEmailResponse,
+  ChangePasswordRequest,
+  ChangePasswordResponse,
   FindAllUsersResponse,
   GenerateDummyTokenParams,
-  GetUserVoicesResponse,
   MeResponse,
-  ProxyRequest,
-  ProxyResponse,
   SetupDataRequest,
   SigninRequest,
   SigninResponse,
@@ -23,57 +27,173 @@ import { fetcher } from '../fetcher';
 
 
 /**
- * すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。
- * @summary フィーチャーフラグ取得 (GET)
+ * 認証済みユーザーのパスワードを変更します
+ * @summary パスワード変更
  */
-export type getFeaturesGetResponse = {
-  data: ProxyResponse;
+export type changePasswordResponse = {
+  data: ChangePasswordResponse;
   status: number;
 }
 
-export const getGetFeaturesGetUrl = () => {
+export const getChangePasswordUrl = () => {
 
 
-  return `/featureflags/proxy`
+  return `/v1/customer/users/changePassword`
 }
 
-export const getFeaturesGet = async ( options?: RequestInit): Promise<getFeaturesGetResponse> => {
+export const changePassword = async (changePasswordRequest: ChangePasswordRequest, options?: RequestInit): Promise<changePasswordResponse> => {
   
-  return fetcher<Promise<getFeaturesGetResponse>>(getGetFeaturesGetUrl(),
+  return fetcher<Promise<changePasswordResponse>>(getChangePasswordUrl(),
   {      
     ...options,
-    method: 'GET'
-    
-    
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      changePasswordRequest,)
   }
 );}
 
 
 
 /**
- * すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。
- * @summary フィーチャーフラグ取得 (POST)
+ * 認証済みユーザーのメールアドレスを変更します
+ * @summary メールアドレス変更
  */
-export type getFeaturesPostResponse = {
-  data: ProxyResponse;
+export type changeEmailResponse = {
+  data: ChangeEmailResponse;
   status: number;
 }
 
-export const getGetFeaturesPostUrl = () => {
+export const getChangeEmailUrl = () => {
 
 
-  return `/featureflags/proxy`
+  return `/v1/customer/users/changeEmail`
 }
 
-export const getFeaturesPost = async (proxyRequest: ProxyRequest, options?: RequestInit): Promise<getFeaturesPostResponse> => {
+export const changeEmail = async (changeEmailRequest: ChangeEmailRequest, options?: RequestInit): Promise<changeEmailResponse> => {
   
-  return fetcher<Promise<getFeaturesPostResponse>>(getGetFeaturesPostUrl(),
+  return fetcher<Promise<changeEmailResponse>>(getChangeEmailUrl(),
+  {      
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      changeEmailRequest,)
+  }
+);}
+
+
+
+/**
+ * 指定した情報で新しいユーザーを登録します。
+ * @summary ユーザー登録
+ */
+export type signupResponse = {
+  data: SignupResponse;
+  status: number;
+}
+
+export const getSignupUrl = () => {
+
+
+  return `/v1/customer/auth/signup`
+}
+
+export const signup = async (signupRequest: SignupRequest, options?: RequestInit): Promise<signupResponse> => {
+  
+  return fetcher<Promise<signupResponse>>(getSignupUrl(),
   {      
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
     body: JSON.stringify(
-      proxyRequest,)
+      signupRequest,)
+  }
+);}
+
+
+
+/**
+ * メールアドレスとパスワードでサインインします。
+ * @summary サインイン
+ */
+export type signinResponse = {
+  data: SigninResponse;
+  status: number;
+}
+
+export const getSigninUrl = () => {
+
+
+  return `/v1/customer/auth/signin`
+}
+
+export const signin = async (signinRequest: SigninRequest, options?: RequestInit): Promise<signinResponse> => {
+  
+  return fetcher<Promise<signinResponse>>(getSigninUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      signinRequest,)
+  }
+);}
+
+
+
+/**
+ * Admin管理者としてサインインします
+ * @summary Adminサインイン
+ */
+export type adminSigninResponse = {
+  data: AdminSigninResponse;
+  status: number;
+}
+
+export const getAdminSigninUrl = () => {
+
+
+  return `/v1/admin/auth/signin`
+}
+
+export const adminSignin = async (adminSigninRequest: AdminSigninRequest, options?: RequestInit): Promise<adminSigninResponse> => {
+  
+  return fetcher<Promise<adminSigninResponse>>(getAdminSigninUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      adminSigninRequest,)
+  }
+);}
+
+
+
+/**
+ * 500エラーログのテスト用。意図的に例外を発生させます。
+ * @summary 500エラーを発生
+ */
+export type triggerErrorResponse = {
+  data: void;
+  status: number;
+}
+
+export const getTriggerErrorUrl = () => {
+
+
+  return `/e2e/trigger_error`
+}
+
+export const triggerError = async ( options?: RequestInit): Promise<triggerErrorResponse> => {
+  
+  return fetcher<Promise<triggerErrorResponse>>(getTriggerErrorUrl(),
+  {      
+    ...options,
+    method: 'POST'
+    
+    
   }
 );}
 
@@ -172,64 +292,6 @@ export const createData = async (setupDataRequest: SetupDataRequest, options?: R
 
 
 /**
- * 指定した情報で新しいユーザーを登録します。
- * @summary ユーザー登録
- */
-export type signupResponse = {
-  data: SignupResponse;
-  status: number;
-}
-
-export const getSignupUrl = () => {
-
-
-  return `/auth/signup`
-}
-
-export const signup = async (signupRequest: SignupRequest, options?: RequestInit): Promise<signupResponse> => {
-  
-  return fetcher<Promise<signupResponse>>(getSignupUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      signupRequest,)
-  }
-);}
-
-
-
-/**
- * メールアドレスとパスワードでサインインします。
- * @summary サインイン
- */
-export type signinResponse = {
-  data: SigninResponse;
-  status: number;
-}
-
-export const getSigninUrl = () => {
-
-
-  return `/auth/signin`
-}
-
-export const signin = async (signinRequest: SigninRequest, options?: RequestInit): Promise<signinResponse> => {
-  
-  return fetcher<Promise<signinResponse>>(getSigninUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      signinRequest,)
-  }
-);}
-
-
-
-/**
  * 登録されているすべてのユーザーを取得します。
  * @summary ユーザー一覧を取得
  */
@@ -241,7 +303,7 @@ export type getAllUsersResponse = {
 export const getGetAllUsersUrl = () => {
 
 
-  return `/users`
+  return `/v1/customer/users`
 }
 
 export const getAllUsers = async ( options?: RequestInit): Promise<getAllUsersResponse> => {
@@ -269,7 +331,7 @@ export type meResponse = {
 export const getMeUrl = () => {
 
 
-  return `/auth/me`
+  return `/v1/customer/auth/me`
 }
 
 export const me = async ( options?: RequestInit): Promise<meResponse> => {
@@ -286,23 +348,23 @@ export const me = async ( options?: RequestInit): Promise<meResponse> => {
 
 
 /**
- * ユーザーの声一覧を取得します。
- * @summary ユーザーの声取得
+ * 認証済みAdminの情報を取得します
+ * @summary 現在のAdmin情報取得
  */
-export type getUserVoicesResponse = {
-  data: GetUserVoicesResponse;
+export type adminMeResponse = {
+  data: AdminFindMeResponse;
   status: number;
 }
 
-export const getGetUserVoicesUrl = () => {
+export const getAdminMeUrl = () => {
 
 
-  return `/user-voices`
+  return `/v1/admin/auth/me`
 }
 
-export const getUserVoices = async ( options?: RequestInit): Promise<getUserVoicesResponse> => {
+export const adminMe = async ( options?: RequestInit): Promise<adminMeResponse> => {
   
-  return fetcher<Promise<getUserVoicesResponse>>(getGetUserVoicesUrl(),
+  return fetcher<Promise<adminMeResponse>>(getAdminMeUrl(),
   {      
     ...options,
     method: 'GET'

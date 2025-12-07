@@ -21,7 +21,10 @@ public class ResetDataRestApi {
     this.resetDatabaseCommand = resetDatabaseCommand;
   }
 
-  @Operation(summary = "DBをリセット", description = "アプリケーションが管理するテーブルからデータをすべて削除します。")
+  @Operation(
+      operationId = "resetData",
+      summary = "DBをリセット",
+      description = "アプリケーションが管理するテーブルからデータをすべて削除します。")
   @PostMapping("/reset_data")
   public ResponseEntity<Void> execute() {
     resetDatabaseCommand.execute();

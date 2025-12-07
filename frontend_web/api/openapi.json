@@ -1,8 +1,8 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.0",
   "info": {
     "title": "Awesome Template API",
-    "description": "Awesome Template バックエンドサービスの API ドキュメントです。",
+    "description": "Awesome Template \u30d0\u30c3\u30af\u30a8\u30f3\u30c9\u30b5\u30fc\u30d3\u30b9\u306e API \u30c9\u30ad\u30e5\u30e1\u30f3\u30c8\u3067\u3059\u3002",
     "version": "1.0.0"
   },
   "servers": [
@@ -13,79 +13,219 @@
   ],
   "tags": [
     {
-      "name": "E2Eテスト支援",
-      "description": "E2Eテストで利用するデータセットアップの補助APIです"
+      "name": "Admin\u8a8d\u8a3c",
+      "description": "Admin\u8a8d\u8a3c\u306b\u95a2\u9023\u3059\u308b\u64cd\u4f5c\u3067\u3059"
     },
     {
-      "name": "認証",
-      "description": "ユーザー認証・登録に関連する操作です"
+      "name": "E2E\u30c6\u30b9\u30c8\u652f\u63f4",
+      "description": "E2E\u30c6\u30b9\u30c8\u3067\u5229\u7528\u3059\u308b\u30c7\u30fc\u30bf\u30bb\u30c3\u30c8\u30a2\u30c3\u30d7\u306e\u88dc\u52a9API\u3067\u3059"
     },
     {
-      "name": "フィーチャーフラグ",
-      "description": "フィーチャーフラグに関連する操作です"
+      "name": "\u8a8d\u8a3c",
+      "description": "\u30e6\u30fc\u30b6\u30fc\u8a8d\u8a3c\u30fb\u767b\u9332\u306b\u95a2\u9023\u3059\u308b\u64cd\u4f5c\u3067\u3059"
     },
     {
-      "name": "ユーザー",
-      "description": "ユーザーを管理するための操作です"
+      "name": "\u30e6\u30fc\u30b6\u30fc",
+      "description": "\u30e6\u30fc\u30b6\u30fc\u7ba1\u7406\u306b\u95a2\u9023\u3059\u308b\u64cd\u4f5c\u3067\u3059"
     },
     {
-      "name": "ユーザーの声",
-      "description": "ユーザーの声に関連する操作です"
+      "name": "\u30e6\u30fc\u30b6\u30fc",
+      "description": "\u30e6\u30fc\u30b6\u30fc\u3092\u7ba1\u7406\u3059\u308b\u305f\u3081\u306e\u64cd\u4f5c\u3067\u3059"
     }
   ],
   "paths": {
-    "/featureflags/proxy": {
-      "get": {
-        "tags": ["フィーチャーフラグ"],
-        "summary": "フィーチャーフラグ取得 (GET)",
-        "description": "すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。",
-        "operationId": "getFeaturesGet",
-        "responses": {
-          "200": {
-            "description": "フィーチャーフラグの取得に成功しました。",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProxyResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["フィーチャーフラグ"],
-        "summary": "フィーチャーフラグ取得 (POST)",
-        "description": "すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。",
-        "operationId": "getFeaturesPost",
+    "/v1/customer/users/changePassword": {
+      "put": {
+        "tags": ["\u30e6\u30fc\u30b6\u30fc"],
+        "summary": "\u30d1\u30b9\u30ef\u30fc\u30c9\u5909\u66f4",
+        "description": "\u8a8d\u8a3c\u6e08\u307f\u30e6\u30fc\u30b6\u30fc\u306e\u30d1\u30b9\u30ef\u30fc\u30c9\u3092\u5909\u66f4\u3057\u307e\u3059",
+        "operationId": "changePassword",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProxyRequest"
+                "$ref": "#/components/schemas/ChangePasswordRequest"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
-            "description": "フィーチャーフラグの取得に成功しました。",
+            "description": "\u30d1\u30b9\u30ef\u30fc\u30c9\u306e\u5909\u66f4\u306b\u6210\u529f\u3057\u307e\u3057\u305f",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProxyResponse"
+                  "$ref": "#/components/schemas/ChangePasswordResponse"
                 }
               }
             }
+          },
+          "400": {
+            "description": "\u30ea\u30af\u30a8\u30b9\u30c8\u304c\u4e0d\u6b63\u3067\u3059"
+          },
+          "401": {
+            "description": "\u8a8d\u8a3c\u304c\u5fc5\u8981\u3067\u3059"
+          }
+        }
+      }
+    },
+    "/v1/customer/users/changeEmail": {
+      "put": {
+        "tags": ["\u30e6\u30fc\u30b6\u30fc"],
+        "summary": "\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u5909\u66f4",
+        "description": "\u8a8d\u8a3c\u6e08\u307f\u30e6\u30fc\u30b6\u30fc\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u3092\u5909\u66f4\u3057\u307e\u3059",
+        "operationId": "changeEmail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeEmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u306e\u5909\u66f4\u306b\u6210\u529f\u3057\u307e\u3057\u305f",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeEmailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "\u30ea\u30af\u30a8\u30b9\u30c8\u304c\u4e0d\u6b63\u3067\u3059"
+          },
+          "401": {
+            "description": "\u8a8d\u8a3c\u304c\u5fc5\u8981\u3067\u3059"
+          }
+        }
+      }
+    },
+    "/v1/customer/auth/signup": {
+      "post": {
+        "tags": ["\u8a8d\u8a3c"],
+        "summary": "\u30e6\u30fc\u30b6\u30fc\u767b\u9332",
+        "description": "\u6307\u5b9a\u3057\u305f\u60c5\u5831\u3067\u65b0\u3057\u3044\u30e6\u30fc\u30b6\u30fc\u3092\u767b\u9332\u3057\u307e\u3059\u3002",
+        "operationId": "signup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u767b\u9332\u306b\u6210\u529f\u3057\u307e\u3057\u305f\u3002",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignupResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "\u30ea\u30af\u30a8\u30b9\u30c8\u30da\u30a4\u30ed\u30fc\u30c9\u304c\u4e0d\u6b63\u3067\u3059\u3002"
+          }
+        }
+      }
+    },
+    "/v1/customer/auth/signin": {
+      "post": {
+        "tags": ["\u8a8d\u8a3c"],
+        "summary": "\u30b5\u30a4\u30f3\u30a4\u30f3",
+        "description": "\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u3068\u30d1\u30b9\u30ef\u30fc\u30c9\u3067\u30b5\u30a4\u30f3\u30a4\u30f3\u3057\u307e\u3059\u3002",
+        "operationId": "signin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SigninRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "\u30b5\u30a4\u30f3\u30a4\u30f3\u306b\u6210\u529f\u3057\u307e\u3057\u305f\u3002",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SigninResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u307e\u305f\u306f\u30d1\u30b9\u30ef\u30fc\u30c9\u304c\u6b63\u3057\u304f\u3042\u308a\u307e\u305b\u3093\u3002"
+          }
+        }
+      }
+    },
+    "/v1/admin/auth/signin": {
+      "post": {
+        "tags": ["Admin\u8a8d\u8a3c"],
+        "summary": "Admin\u30b5\u30a4\u30f3\u30a4\u30f3",
+        "description": "Admin\u7ba1\u7406\u8005\u3068\u3057\u3066\u30b5\u30a4\u30f3\u30a4\u30f3\u3057\u307e\u3059",
+        "operationId": "adminSignin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminSigninRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "\u30b5\u30a4\u30f3\u30a4\u30f3\u306b\u6210\u529f\u3057\u307e\u3057\u305f",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminSigninResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "\u30ea\u30af\u30a8\u30b9\u30c8\u304c\u4e0d\u6b63\u3067\u3059"
+          },
+          "401": {
+            "description": "\u8a8d\u8a3c\u306b\u5931\u6557\u3057\u307e\u3057\u305f"
+          }
+        }
+      }
+    },
+    "/e2e/trigger_error": {
+      "post": {
+        "tags": ["E2E\u30c6\u30b9\u30c8\u652f\u63f4"],
+        "summary": "500\u30a8\u30e9\u30fc\u3092\u767a\u751f",
+        "description": "500\u30a8\u30e9\u30fc\u30ed\u30b0\u306e\u30c6\u30b9\u30c8\u7528\u3002\u610f\u56f3\u7684\u306b\u4f8b\u5916\u3092\u767a\u751f\u3055\u305b\u307e\u3059\u3002",
+        "operationId": "triggerError",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
     },
     "/e2e/reset_data": {
       "post": {
-        "tags": ["E2Eテスト支援"],
-        "summary": "DBをリセット",
-        "description": "アプリケーションが管理するテーブルからデータをすべて削除します。",
+        "tags": ["E2E\u30c6\u30b9\u30c8\u652f\u63f4"],
+        "summary": "DB\u3092\u30ea\u30bb\u30c3\u30c8",
+        "description": "\u30a2\u30d7\u30ea\u30b1\u30fc\u30b7\u30e7\u30f3\u304c\u7ba1\u7406\u3059\u308b\u30c6\u30fc\u30d6\u30eb\u304b\u3089\u30c7\u30fc\u30bf\u3092\u3059\u3079\u3066\u524a\u9664\u3057\u307e\u3059\u3002",
         "operationId": "resetData",
         "responses": {
           "200": {
@@ -96,9 +236,9 @@
     },
     "/e2e/dummy_token": {
       "post": {
-        "tags": ["E2Eテスト支援"],
-        "summary": "E2Eテスト用トークン生成",
-        "description": "E2Eテストでauth guardをバイパスするためのダミートークンを生成します。setCookie=trueの場合、httpOnly Cookieとしても設定します。",
+        "tags": ["E2E\u30c6\u30b9\u30c8\u652f\u63f4"],
+        "summary": "E2E\u30c6\u30b9\u30c8\u7528\u30c8\u30fc\u30af\u30f3\u751f\u6210",
+        "description": "E2E\u30c6\u30b9\u30c8\u3067auth guard\u3092\u30d0\u30a4\u30d1\u30b9\u3059\u308b\u305f\u3081\u306e\u30c0\u30df\u30fc\u30c8\u30fc\u30af\u30f3\u3092\u751f\u6210\u3057\u307e\u3059\u3002setCookie=true\u306e\u5834\u5408\u3001httpOnly Cookie\u3068\u3057\u3066\u3082\u8a2d\u5b9a\u3057\u307e\u3059\u3002",
         "operationId": "generateDummyToken",
         "parameters": [
           {
@@ -127,9 +267,9 @@
     },
     "/e2e/create_data": {
       "post": {
-        "tags": ["E2Eテスト支援"],
-        "summary": "テストデータをセットアップ",
-        "description": "指定されたテーブルにテストデータを1レコード作成します。",
+        "tags": ["E2E\u30c6\u30b9\u30c8\u652f\u63f4"],
+        "summary": "\u30c6\u30b9\u30c8\u30c7\u30fc\u30bf\u3092\u30bb\u30c3\u30c8\u30a2\u30c3\u30d7",
+        "description": "\u6307\u5b9a\u3055\u308c\u305f\u30c6\u30fc\u30d6\u30eb\u306b\u30c6\u30b9\u30c8\u30c7\u30fc\u30bf\u30921\u30ec\u30b3\u30fc\u30c9\u4f5c\u6210\u3057\u307e\u3059\u3002",
         "operationId": "createData",
         "requestBody": {
           "content": {
@@ -148,81 +288,15 @@
         }
       }
     },
-    "/auth/signup": {
-      "post": {
-        "tags": ["認証"],
-        "summary": "ユーザー登録",
-        "description": "指定した情報で新しいユーザーを登録します。",
-        "operationId": "signup",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SignupRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "ユーザーの登録に成功しました。",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SignupResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "リクエストペイロードが不正です。"
-          }
-        }
-      }
-    },
-    "/auth/signin": {
-      "post": {
-        "tags": ["認証"],
-        "summary": "サインイン",
-        "description": "メールアドレスとパスワードでサインインします。",
-        "operationId": "signin",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SigninRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "400": {
-            "description": "メールアドレスまたはパスワードが正しくありません。"
-          },
-          "200": {
-            "description": "サインインに成功しました。",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SigninResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users": {
+    "/v1/customer/users": {
       "get": {
-        "tags": ["ユーザー"],
-        "summary": "ユーザー一覧を取得",
-        "description": "登録されているすべてのユーザーを取得します。",
+        "tags": ["\u30e6\u30fc\u30b6\u30fc"],
+        "summary": "\u30e6\u30fc\u30b6\u30fc\u4e00\u89a7\u3092\u53d6\u5f97",
+        "description": "\u767b\u9332\u3055\u308c\u3066\u3044\u308b\u3059\u3079\u3066\u306e\u30e6\u30fc\u30b6\u30fc\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
         "operationId": "getAllUsers",
         "responses": {
           "200": {
-            "description": "ユーザーの取得に成功しました。",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u53d6\u5f97\u306b\u6210\u529f\u3057\u307e\u3057\u305f\u3002",
             "content": {
               "application/json": {
                 "schema": {
@@ -234,18 +308,15 @@
         }
       }
     },
-    "/auth/me": {
+    "/v1/customer/auth/me": {
       "get": {
-        "tags": ["認証"],
-        "summary": "認証済みユーザー情報取得",
-        "description": "現在認証されているユーザーの情報を取得します。",
+        "tags": ["\u8a8d\u8a3c"],
+        "summary": "\u8a8d\u8a3c\u6e08\u307f\u30e6\u30fc\u30b6\u30fc\u60c5\u5831\u53d6\u5f97",
+        "description": "\u73fe\u5728\u8a8d\u8a3c\u3055\u308c\u3066\u3044\u308b\u30e6\u30fc\u30b6\u30fc\u306e\u60c5\u5831\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
         "operationId": "me",
         "responses": {
-          "401": {
-            "description": "認証されていません。"
-          },
           "200": {
-            "description": "ユーザー情報の取得に成功しました。",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u60c5\u5831\u306e\u53d6\u5f97\u306b\u6210\u529f\u3057\u307e\u3057\u305f\u3002",
             "content": {
               "application/json": {
                 "schema": {
@@ -253,283 +324,355 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "\u8a8d\u8a3c\u3055\u308c\u3066\u3044\u307e\u305b\u3093\u3002"
           }
         }
       }
     },
-    "/user-voices": {
+    "/v1/admin/auth/me": {
       "get": {
-        "tags": ["ユーザーの声"],
-        "summary": "ユーザーの声取得",
-        "description": "ユーザーの声一覧を取得します。",
-        "operationId": "getUserVoices",
+        "tags": ["Admin\u8a8d\u8a3c"],
+        "summary": "\u73fe\u5728\u306eAdmin\u60c5\u5831\u53d6\u5f97",
+        "description": "\u8a8d\u8a3c\u6e08\u307fAdmin\u306e\u60c5\u5831\u3092\u53d6\u5f97\u3057\u307e\u3059",
+        "operationId": "adminMe",
         "responses": {
           "200": {
-            "description": "ユーザーの声の取得に成功しました。",
+            "description": "Admin\u60c5\u5831\u306e\u53d6\u5f97\u306b\u6210\u529f\u3057\u307e\u3057\u305f",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetUserVoicesResponse"
+                  "$ref": "#/components/schemas/AdminFindMeResponse"
                 }
               }
             }
+          },
+          "401": {
+            "description": "\u8a8d\u8a3c\u304c\u5fc5\u8981\u3067\u3059"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },
   "components": {
     "schemas": {
-      "ProxyRequest": {
+      "ChangePasswordRequest": {
         "type": "object",
+        "description": "\u30d1\u30b9\u30ef\u30fc\u30c9\u5909\u66f4\u30ea\u30af\u30a8\u30b9\u30c8",
         "properties": {
-          "userId": {
-            "type": "string"
+          "currentPassword": {
+            "type": "string",
+            "description": "\u73fe\u5728\u306e\u30d1\u30b9\u30ef\u30fc\u30c9",
+            "example": "currentPassword123",
+            "minLength": 1
           },
-          "properties": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
+          "newPassword": {
+            "type": "string",
+            "description": "\u65b0\u3057\u3044\u30d1\u30b9\u30ef\u30fc\u30c9\uff088\u6587\u5b57\u4ee5\u4e0a\uff09",
+            "example": "newPassword456",
+            "minLength": 1
+          }
+        },
+        "required": ["currentPassword", "newPassword"]
+      },
+      "ChangePasswordResponse": {
+        "type": "object",
+        "description": "\u30d1\u30b9\u30ef\u30fc\u30c9\u5909\u66f4\u30ec\u30b9\u30dd\u30f3\u30b9",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "\u30e6\u30fc\u30b6\u30fcID"
+          },
+          "email": {
+            "type": "string",
+            "description": "\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
+            "example": "user@example.com"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "\u66f4\u65b0\u65e5\u6642"
           }
         }
       },
-      "FeatureToggle": {
+      "ChangeEmailRequest": {
         "type": "object",
+        "description": "\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u5909\u66f4\u30ea\u30af\u30a8\u30b9\u30c8",
         "properties": {
-          "name": {
-            "type": "string"
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "\u65b0\u3057\u3044\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
+            "example": "new.email@example.com",
+            "minLength": 1
+          }
+        },
+        "required": ["email"]
+      },
+      "ChangeEmailResponse": {
+        "type": "object",
+        "description": "\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9\u5909\u66f4\u30ec\u30b9\u30dd\u30f3\u30b9",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "\u30e6\u30fc\u30b6\u30fcID"
           },
-          "enabled": {
-            "type": "boolean"
+          "email": {
+            "type": "string",
+            "description": "\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
+            "example": "new.email@example.com"
           },
-          "variant": {
-            "type": "string"
-          },
-          "variantEnabled": {
-            "type": "boolean"
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "\u66f4\u65b0\u65e5\u6642"
           }
         }
       },
-      "ProxyResponse": {
+      "SignupRequest": {
         "type": "object",
+        "description": "\u65b0\u3057\u3044\u30e6\u30fc\u30b6\u30fc\u3092\u767b\u9332\u3059\u308b\u305f\u3081\u306e\u30ea\u30af\u30a8\u30b9\u30c8\u30da\u30a4\u30ed\u30fc\u30c9\u3067\u3059",
         "properties": {
-          "toggles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FeatureToggle"
-            }
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
+            "example": "jane.doe@example.com",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u30d1\u30b9\u30ef\u30fc\u30c9",
+            "example": "SecurePassword123",
+            "minLength": 1
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "SignupResponse": {
+        "type": "object",
+        "description": "\u65b0\u3057\u304f\u4f5c\u6210\u3055\u308c\u305f\u30e6\u30fc\u30b6\u30fc\u3092\u8868\u3057\u307e\u3059",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u4e00\u610f\u306a\u8b58\u5225\u5b50"
+          },
+          "email": {
+            "type": "string",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
+            "example": "jane.doe@example.com"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u4f5c\u6210\u65e5\u6642"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u6700\u7d42\u66f4\u65b0\u65e5\u6642"
+          }
+        }
+      },
+      "SigninRequest": {
+        "type": "object",
+        "description": "\u30e6\u30fc\u30b6\u30fc\u304c\u30b5\u30a4\u30f3\u30a4\u30f3\u3059\u308b\u305f\u3081\u306e\u30ea\u30af\u30a8\u30b9\u30c8\u30da\u30a4\u30ed\u30fc\u30c9\u3067\u3059",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
+            "example": "jane.doe@example.com",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u30d1\u30b9\u30ef\u30fc\u30c9",
+            "example": "SecurePassword123",
+            "minLength": 1
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "SigninResponse": {
+        "type": "object",
+        "description": "\u30b5\u30a4\u30f3\u30a4\u30f3\u3057\u305f\u30e6\u30fc\u30b6\u30fc\u3092\u8868\u3057\u307e\u3059",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u4e00\u610f\u306a\u8b58\u5225\u5b50"
+          },
+          "email": {
+            "type": "string",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
+            "example": "jane.doe@example.com"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "JWT\u8a8d\u8a3c\u30c8\u30fc\u30af\u30f3",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u4f5c\u6210\u65e5\u6642"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u6700\u7d42\u66f4\u65b0\u65e5\u6642"
+          }
+        }
+      },
+      "AdminSigninRequest": {
+        "type": "object",
+        "description": "Admin\u30b5\u30a4\u30f3\u30a4\u30f3\u30ea\u30af\u30a8\u30b9\u30c8",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
+            "example": "admin@example.com",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "description": "\u30d1\u30b9\u30ef\u30fc\u30c9",
+            "example": "adminPassword123",
+            "minLength": 1
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "AdminSigninResponse": {
+        "type": "object",
+        "description": "Admin\u30b5\u30a4\u30f3\u30a4\u30f3\u30ec\u30b9\u30dd\u30f3\u30b9",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Admin ID"
+          },
+          "email": {
+            "type": "string",
+            "description": "\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
+            "example": "admin@example.com"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "\u30a2\u30af\u30bb\u30b9\u30c8\u30fc\u30af\u30f3"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "\u4f5c\u6210\u65e5\u6642"
           }
         }
       },
       "TestTokenResponse": {
         "type": "object",
+        "description": "E2E\u30c6\u30b9\u30c8\u7528\u30c8\u30fc\u30af\u30f3\u306e\u30ec\u30b9\u30dd\u30f3\u30b9\u3067\u3059",
         "properties": {
           "token": {
             "type": "string",
-            "description": "JWTトークン",
+            "description": "JWT\u8a8d\u8a3c\u30c8\u30fc\u30af\u30f3",
             "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
           }
-        },
-        "description": "E2Eテスト用トークン"
+        }
       },
       "SetupDataRequest": {
         "type": "object",
+        "description": "\u30c6\u30b9\u30c8\u30c7\u30fc\u30bf\u30bb\u30c3\u30c8\u30a2\u30c3\u30d7\u306e\u30ea\u30af\u30a8\u30b9\u30c8\u3067\u3059",
         "properties": {
           "table": {
             "type": "string",
-            "description": "テーブル名 (例: user)",
-            "example": "user"
+            "description": "\u30bb\u30c3\u30c8\u30a2\u30c3\u30d7\u5bfe\u8c61\u306e\u30c6\u30fc\u30d6\u30eb\u540d",
+            "example": "users"
           }
-        },
-        "description": "テストデータセットアップリクエスト"
+        }
       },
-      "SignupRequest": {
-        "required": ["email", "password"],
+      "UserListItem": {
         "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "description": "ユーザーのメールアドレス",
-            "example": "jane.doe@example.com"
-          },
-          "password": {
-            "type": "string",
-            "description": "ユーザーのパスワード",
-            "example": "SecurePassword123"
-          }
-        },
-        "description": "新しいユーザーを登録するためのリクエストペイロードです"
-      },
-      "SignupResponse": {
-        "type": "object",
+        "description": "\u4e00\u89a7\u30ec\u30b9\u30dd\u30f3\u30b9\u5185\u306e\u30e6\u30fc\u30b6\u30fc\u60c5\u5831\u3067\u3059",
         "properties": {
           "id": {
             "type": "string",
-            "description": "ユーザーの一意な識別子",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u4e00\u610f\u306a\u8b58\u5225\u5b50"
           },
           "email": {
             "type": "string",
-            "description": "ユーザーのメールアドレス",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
             "example": "jane.doe@example.com"
           },
           "createdAt": {
             "type": "string",
-            "description": "ユーザーの作成日時",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u4f5c\u6210\u65e5\u6642"
           },
           "updatedAt": {
             "type": "string",
-            "description": "ユーザーの最終更新日時",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u6700\u7d42\u66f4\u65b0\u65e5\u6642"
           }
         },
-        "description": "新しく作成されたユーザーを表します"
-      },
-      "SigninRequest": {
-        "required": ["email", "password"],
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "description": "ユーザーのメールアドレス",
-            "example": "jane.doe@example.com"
-          },
-          "password": {
-            "type": "string",
-            "description": "ユーザーのパスワード",
-            "example": "SecurePassword123"
-          }
-        },
-        "description": "ユーザーがサインインするためのリクエストペイロードです"
-      },
-      "SigninResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "ユーザーの一意な識別子",
-            "format": "uuid"
-          },
-          "email": {
-            "type": "string",
-            "description": "ユーザーのメールアドレス",
-            "example": "jane.doe@example.com"
-          },
-          "accessToken": {
-            "type": "string",
-            "description": "JWT認証トークン",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "ユーザーの作成日時",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "ユーザーの最終更新日時",
-            "format": "date-time"
-          }
-        },
-        "description": "サインインしたユーザーを表します"
+        "required": ["createdAt", "email", "id", "updatedAt"]
       },
       "FindAllUsersResponse": {
         "type": "object",
+        "description": "\u767b\u9332\u6e08\u307f\u30e6\u30fc\u30b6\u30fc\u306e\u4e00\u89a7\u3092\u8868\u3057\u307e\u3059",
         "properties": {
           "users": {
             "type": "array",
-            "description": "ユーザーの一覧です",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u4e00\u89a7\u3067\u3059",
             "items": {
-              "$ref": "#/components/schemas/UserListItem"
+              "$ref": "#/components/schemas/UserListItem",
+              "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u4e00\u89a7\u3067\u3059"
             }
           }
-        },
-        "description": "登録済みユーザーの一覧を表します"
-      },
-      "UserListItem": {
-        "required": ["createdAt", "email", "id", "updatedAt"],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "ユーザーの一意な識別子",
-            "format": "uuid"
-          },
-          "email": {
-            "type": "string",
-            "description": "ユーザーのメールアドレス",
-            "example": "jane.doe@example.com"
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "ユーザーの作成日時",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "description": "ユーザーの最終更新日時",
-            "format": "date-time"
-          }
-        },
-        "description": "一覧レスポンス内のユーザー情報です"
+        }
       },
       "MeResponse": {
         "type": "object",
+        "description": "\u8a8d\u8a3c\u6e08\u307f\u30e6\u30fc\u30b6\u30fc\u306e\u60c5\u5831\u3092\u8868\u3057\u307e\u3059",
         "properties": {
           "id": {
             "type": "string",
-            "description": "ユーザーの一意な識別子",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u4e00\u610f\u306a\u8b58\u5225\u5b50"
           },
           "email": {
             "type": "string",
-            "description": "ユーザーのメールアドレス",
+            "description": "\u30e6\u30fc\u30b6\u30fc\u306e\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
             "example": "jane.doe@example.com"
           }
-        },
-        "description": "認証済みユーザーの情報を表します"
+        }
       },
-      "UserVoice": {
-        "required": ["avatarSrc", "description", "quote", "title"],
+      "AdminFindMeResponse": {
         "type": "object",
+        "description": "\u73fe\u5728\u306eAdmin\u60c5\u5831\u30ec\u30b9\u30dd\u30f3\u30b9",
         "properties": {
-          "avatarSrc": {
+          "id": {
             "type": "string",
-            "description": "アバター画像のURL",
-            "example": "/images/avatars/user1.jpg"
+            "format": "uuid",
+            "description": "Admin ID"
           },
-          "title": {
+          "email": {
             "type": "string",
-            "description": "ユーザー名",
-            "example": "田中太郎"
-          },
-          "description": {
-            "type": "string",
-            "description": "役職・所属",
-            "example": "株式会社サンプル CTO"
-          },
-          "quote": {
-            "type": "string",
-            "description": "ユーザーの声（引用）",
-            "example": "このサービスは素晴らしいです。"
+            "description": "\u30e1\u30fc\u30eb\u30a2\u30c9\u30ec\u30b9",
+            "example": "admin@example.com"
           }
-        },
-        "description": "ユーザーの声"
-      },
-      "GetUserVoicesResponse": {
-        "type": "object",
-        "properties": {
-          "userVoices": {
-            "type": "array",
-            "description": "ユーザーの声一覧",
-            "items": {
-              "$ref": "#/components/schemas/UserVoice"
-            }
-          }
-        },
-        "description": "ユーザーの声一覧レスポンス"
+        }
       }
     }
   }

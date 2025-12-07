@@ -3,7 +3,6 @@ package com.example.demo.shared.event;
 import com.example.demo.shared.logging.AppLogger;
 import java.util.Map;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
  * TestEventPublisher が使用されるため無効化される。
  */
 @Component("springEventPublisher")
-@Profile("!test")
 public class SpringEventPublisher implements EventPublisher {
 
   private static final String TRANSPORT = "spring";

@@ -1,0 +1,65 @@
+package com.example.demo.features.customer.auth.internal.presentation.rest;
+
+import static com.example.demo.testsupport.databuilder.UserTestBuilder.aUser;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.example.demo.features.customer.user.internal.domain.model.User;
+import com.example.demo.features.customer.user.internal.domain.repository.UserRepository;
+import com.example.demo.shared.security.customer.CustomerJwtTokenProvider;
+import com.example.demo.testsupport.ApiTestClient;
+import com.example.demo.testsupport.ApiTestResponse;
+import com.example.demo.testsupport.databuilder.UserTestBuilder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.context.ActiveProfiles;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+class FindMeRestApiTest {
+
+  @Autowired private UserRepository userRepository;
+
+  @Autowired private CustomerJwtTokenProvider jwtTokenProvider;
+
+  @Autowired private ApiTestClient apiTestClient;
+
+  @Autowired private UserTestBuilder userTestBuilder;
+
+  @BeforeEach
+  void setUp() {
+    userRepository.findAll().forEach(user -> userRepository.deleteById(user.getId()));
+  }
+
+  @Test
+  void 正しいトークンでユーザー情報を返す() throws Exception {
+    // given db
+    final String email = "john.doe@example.com";
+    final User user = aUser().email(email).save();
+
+    // given token
+    final String token = jwtTokenProvider.generateToken(user.getId().getValue().toString(), email);
+
+    // when
+    final ApiTestResponse response = apiTestClient.getWithAuth("/customer/auth/me", token);
+
+    // then response
+    response
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(user.getId().getValue().toString()))
+        .andExpect(jsonPath("$.email").value(email));
+  }
+
+  @Test
+  void トークンなしでUnauthorizedを返す() throws Exception {
+    // when
+    final ApiTestResponse response = apiTestClient.get("/customer/auth/me");
+
+    // then response
+    response.andExpect(status().isUnauthorized());
+  }
+}
