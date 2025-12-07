@@ -314,6 +314,27 @@ public class AppLogger {
         kv("details", details));
   }
 
+  /** CommandEvent処理エラーログを出力（Consumer用、RequestScopeなし）. */
+  public void logCommandEventError(
+      final Class<?> clazz,
+      final String transport,
+      final String eventType,
+      final Object details,
+      final Exception ex) {
+    final Logger logger = LoggerFactory.getLogger(clazz);
+    logger.error(
+        "CommandEvent failed",
+        kv("log_type", "command_event_error"),
+        kv("env", appProperties.getEnv().name()),
+        kv("timestamp", now()),
+        kv("transport", transport),
+        kv("event_type", eventType),
+        kv("details", details),
+        kv("error_type", ex.getClass().getName()),
+        kv("error_message", ex.getMessage()),
+        kv("stacktrace", getStackTraceAsString(ex)));
+  }
+
   /** 冪等性チェックによるスキップログを出力（Consumer用、RequestScopeなし）. */
   public void logIdempotencySkip(final Class<?> clazz, final Object details) {
     final Logger logger = LoggerFactory.getLogger(clazz);

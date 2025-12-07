@@ -62,8 +62,13 @@ public class JobRunner implements ApplicationRunner {
       return;
     }
 
-    runJob(job, jobName, args);
-    System.exit(0);
+    try {
+      runJob(job, jobName, args);
+      System.exit(0);
+    } catch (final Exception e) {
+      // エラーログは runJob 内で出力済み
+      System.exit(1);
+    }
   }
 
   @SuppressWarnings("unchecked")

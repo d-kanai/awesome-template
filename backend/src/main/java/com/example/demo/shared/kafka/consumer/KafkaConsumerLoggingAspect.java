@@ -41,13 +41,21 @@ public class KafkaConsumerLoggingAspect {
     // command_event_receive ログ
     appLogger.logCommandEventReceive(consumerClass, "kafka", eventType, sanitizedPayload);
 
-    // 実際の処理
-    final Object result = joinPoint.proceed();
+    try {
+      // 実際の処理
+      final Object result = joinPoint.proceed();
 
-    // command_event_finish ログ
-    appLogger.logCommandEventFinish(consumerClass, "kafka", eventType, sanitizedPayload);
+      // command_event_finish ログ
+      appLogger.logCommandEventFinish(consumerClass, "kafka", eventType, sanitizedPayload);
 
-    return result;
+      return result;
+    } catch (final Exception e) {
+      // command_event_error ログ
+      appLogger.logCommandEventError(consumerClass, "kafka", eventType, sanitizedPayload, e);
+
+      // 例外を再スロー（Kafkaのリトライメカニズムに委ねる）
+      throw e;
+    }
   }
 
   /** ログ出力用にペイロードをサニタイズする（長い文字列を切り詰める）. */
