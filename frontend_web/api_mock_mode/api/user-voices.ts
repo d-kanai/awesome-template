@@ -2,7 +2,7 @@
  * Mock data for User Voices API
  */
 
-import type { UserVoice } from "@/shared/api/generated/model";
+import type { UserVoice } from "@/features/home/queries/getUserVoices";
 
 export const mockUserVoices: UserVoice[] = [
   {

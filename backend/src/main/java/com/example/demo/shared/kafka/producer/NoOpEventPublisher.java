@@ -6,7 +6,6 @@ import com.example.demo.shared.event.EventPublisher;
 import com.example.demo.shared.logging.AppLogger;
 import java.util.Map;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
  */
 @Component("kafkaEventPublisher")
 @ConditionalOnProperty(name = "app.kafka.enabled", havingValue = "false", matchIfMissing = true)
-@Profile("!test")
 public class NoOpEventPublisher implements EventPublisher {
 
   private static final String TRANSPORT = "noop";

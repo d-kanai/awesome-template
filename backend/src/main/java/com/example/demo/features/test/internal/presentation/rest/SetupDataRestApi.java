@@ -23,7 +23,10 @@ public class SetupDataRestApi {
     this.setupDataCommand = setupDataCommand;
   }
 
-  @Operation(summary = "テストデータをセットアップ", description = "指定されたテーブルにテストデータを1レコード作成します。")
+  @Operation(
+      operationId = "createData",
+      summary = "テストデータをセットアップ",
+      description = "指定されたテーブルにテストデータを1レコード作成します。")
   @PostMapping("/create_data")
   public ResponseEntity<Void> execute(@RequestBody final Input input) {
     setupDataCommand.execute(new SetupDataCommand.Input(input.table()));

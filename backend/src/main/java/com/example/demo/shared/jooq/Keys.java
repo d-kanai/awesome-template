@@ -4,9 +4,11 @@
 package com.example.demo.shared.jooq;
 
 
+import com.example.demo.shared.jooq.tables.Admins;
 import com.example.demo.shared.jooq.tables.FlywaySchemaHistory;
 import com.example.demo.shared.jooq.tables.NotificationHistories;
 import com.example.demo.shared.jooq.tables.Users;
+import com.example.demo.shared.jooq.tables.records.AdminsRecord;
 import com.example.demo.shared.jooq.tables.records.FlywaySchemaHistoryRecord;
 import com.example.demo.shared.jooq.tables.records.NotificationHistoriesRecord;
 import com.example.demo.shared.jooq.tables.records.UsersRecord;
@@ -29,6 +31,8 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final UniqueKey<AdminsRecord> ADMINS_EMAIL_KEY = Internal.createUniqueKey(Admins.ADMINS, DSL.name("admins_email_key"), new TableField[] { Admins.ADMINS.EMAIL }, true);
+    public static final UniqueKey<AdminsRecord> ADMINS_PKEY = Internal.createUniqueKey(Admins.ADMINS, DSL.name("admins_pkey"), new TableField[] { Admins.ADMINS.ID }, true);
     public static final UniqueKey<FlywaySchemaHistoryRecord> FLYWAY_SCHEMA_HISTORY_PK = Internal.createUniqueKey(FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, DSL.name("flyway_schema_history_pk"), new TableField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.INSTALLED_RANK }, true);
     public static final UniqueKey<NotificationHistoriesRecord> NOTIFICATION_HISTORIES_EVENT_ID_KEY = Internal.createUniqueKey(NotificationHistories.NOTIFICATION_HISTORIES, DSL.name("notification_histories_event_id_key"), new TableField[] { NotificationHistories.NOTIFICATION_HISTORIES.EVENT_ID }, true);
     public static final UniqueKey<NotificationHistoriesRecord> NOTIFICATION_HISTORIES_PKEY = Internal.createUniqueKey(NotificationHistories.NOTIFICATION_HISTORIES, DSL.name("notification_histories_pkey"), new TableField[] { NotificationHistories.NOTIFICATION_HISTORIES.ID }, true);

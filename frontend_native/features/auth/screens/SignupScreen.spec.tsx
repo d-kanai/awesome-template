@@ -49,7 +49,6 @@ describe("SignupScreen", () => {
         updatedAt: "2024-01-02T12:34:56.000Z",
       },
       status: 201,
-      headers: new Headers(),
     };
 
     mockedFetcher.mockResolvedValueOnce(apiResponse);
@@ -69,7 +68,7 @@ describe("SignupScreen", () => {
     await waitFor(
       () => {
         expect(mockedFetcher).toHaveBeenCalledWith(
-          "/auth/signup",
+          "/v1/customer/auth/signup",
           expect.objectContaining({
             method: "POST",
             body: JSON.stringify({

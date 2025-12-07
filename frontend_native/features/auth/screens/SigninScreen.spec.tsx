@@ -50,7 +50,6 @@ describe("SigninScreen", () => {
         updatedAt: "2024-01-02T12:34:56.000Z",
       },
       status: 200,
-      headers: new Headers(),
     };
 
     mockedFetcher.mockResolvedValueOnce(apiResponse);
@@ -70,7 +69,7 @@ describe("SigninScreen", () => {
     await waitFor(
       () => {
         expect(mockedFetcher).toHaveBeenCalledWith(
-          "/auth/signin",
+          "/v1/customer/auth/signin",
           expect.objectContaining({
             method: "POST",
             body: JSON.stringify({

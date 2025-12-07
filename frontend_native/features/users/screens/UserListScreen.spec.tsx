@@ -41,7 +41,6 @@ describe("UserListScreen", () => {
         ],
       },
       status: 200,
-      headers: new Headers(),
     };
 
     mockedFetcher.mockResolvedValueOnce(apiResponse);

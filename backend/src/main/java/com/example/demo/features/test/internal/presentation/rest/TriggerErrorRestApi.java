@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/e2e")
 public class TriggerErrorRestApi {
 
-  @Operation(summary = "500エラーを発生", description = "500エラーログのテスト用。意図的に例外を発生させます。")
+  @Operation(
+      operationId = "triggerError",
+      summary = "500エラーを発生",
+      description = "500エラーログのテスト用。意図的に例外を発生させます。")
   @PostMapping("/trigger_error")
   public ResponseEntity<Void> execute() {
     throw new RuntimeException("Intentional test error for 500 logging verification");

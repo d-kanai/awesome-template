@@ -1,0 +1,21 @@
+# Config files
+package.json
+package-lock.json
+pnpm-lock.yaml
+tsconfig.json
+tsconfig.*.json
+config/**
+
+# Storybook
+.storybook/**
+**/*.stories.tsx
+**/*.stories.ts
+
+# Generated files
+features/shared/api/generated/**
+features/shared/figma_generated/**
+
+# Build artifacts (backup in case .gitignore doesn't work)
+.next/**
+.claude/**
+node_modules/**

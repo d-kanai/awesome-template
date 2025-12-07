@@ -4,6 +4,7 @@
 package com.example.demo.shared.jooq;
 
 
+import com.example.demo.shared.jooq.tables.Admins;
 import com.example.demo.shared.jooq.tables.FlywaySchemaHistory;
 import com.example.demo.shared.jooq.tables.NotificationHistories;
 import com.example.demo.shared.jooq.tables.Users;
@@ -25,6 +26,7 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     public static final Index FLYWAY_SCHEMA_HISTORY_S_IDX = Internal.createIndex(DSL.name("flyway_schema_history_s_idx"), FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, new OrderField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.SUCCESS }, false);
+    public static final Index IDX_ADMINS_EMAIL = Internal.createIndex(DSL.name("idx_admins_email"), Admins.ADMINS, new OrderField[] { Admins.ADMINS.EMAIL }, false);
     public static final Index IDX_NOTIFICATION_HISTORIES_EVENT_ID = Internal.createIndex(DSL.name("idx_notification_histories_event_id"), NotificationHistories.NOTIFICATION_HISTORIES, new OrderField[] { NotificationHistories.NOTIFICATION_HISTORIES.EVENT_ID }, false);
     public static final Index IDX_USERS_EMAIL = Internal.createIndex(DSL.name("idx_users_email"), Users.USERS, new OrderField[] { Users.USERS.EMAIL }, false);
 }

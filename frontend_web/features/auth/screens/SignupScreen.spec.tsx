@@ -70,7 +70,7 @@ describe("SignupScreen - TestC", () => {
       await waitFor(
         () => {
           expect(mockedFetcher).toHaveBeenCalledWith(
-            "/auth/signup",
+            "/v1/customer/auth/signup",
             expect.objectContaining({
               method: "POST",
               body: JSON.stringify({

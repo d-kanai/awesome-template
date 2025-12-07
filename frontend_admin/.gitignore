@@ -1,0 +1,58 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+/playwright-report
+/test-results
+/.playwright
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# screenshots
+*.png
+!public/**/*.png
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+.env
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# API generated
+# features/shared/api/generated/
+
+# Figma design tokens
+# 全てコミット対象（中間ファイルも構造理解のため含める）
+
+# Figma large data files
+design-tokens/figma-components.json
+design-tokens/raw/figma-components-raw.json
+design-tokens/raw/figma-styles-raw.json
+design-tokens/figma-page-*.json
+design-tokens/figma-*-components.json
+design-tokens/figma-*-summary.json

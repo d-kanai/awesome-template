@@ -1,0 +1,211 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ENV: development
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
+        NEXT_PUBLIC_API_MOCK_MODE: "false"
+        NEXT_PUBLIC_API_TIMEOUT_MS: "15000"
+        NEXT_PUBLIC_API_SLOW_THRESHOLD_MS: "3000"
+        ANALYZE: "false"
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - ENV=development
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
+      - NEXT_PUBLIC_API_MOCK_MODE=false
+      - NEXT_PUBLIC_API_TIMEOUT_MS=15000
+      - NEXT_PUBLIC_API_SLOW_THRESHOLD_MS=3000
+      - ANALYZE=false
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📊 Analytics / Observability
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    container_name: clickhouse
+    ports:
+      - "8123:8123"   # HTTP interface
+      - "9000:9000"   # Native interface
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+      - ./clickhouse/init:/docker-entrypoint-initdb.d
+    environment:
+      CLICKHOUSE_DB: logs
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: clickhouse123
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    ports:
+      - "3001:3000"
+    environment:
+      MB_DB_TYPE: h2
+    volumes:
+      - metabase-data:/metabase-data
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  metabase-setup:
+    image: curlimages/curl:latest
+    container_name: metabase-setup
+    depends_on:
+      metabase:
+        condition: service_healthy
+    environment:
+      METABASE_URL: "http://metabase:3000"
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "Admin123!"
+      CLICKHOUSE_HOST: "clickhouse"
+      CLICKHOUSE_PORT: "8123"
+      CLICKHOUSE_DB: "logs"
+      CLICKHOUSE_USER: "default"
+      CLICKHOUSE_PASSWORD: "clickhouse123"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "⏳ Metabase セットアップ開始..."
+
+        # セットアップトークン取得
+        SETUP_TOKEN=$$(curl -s "$$METABASE_URL/api/session/properties" | sed -n 's/.*"setup-token":"\([^"]*\)".*/\1/p')
+
+        if [ -z "$$SETUP_TOKEN" ]; then
+          echo "ℹ️  セットアップ済み。スキップします。"
+          exit 0
+        fi
+
+        echo "🚀 初期セットアップ実行中..."
+        RESPONSE=$$(curl -s -X POST "$$METABASE_URL/api/setup" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "token": "'"$$SETUP_TOKEN"'",
+            "user": {
+              "email": "'"$$ADMIN_EMAIL"'",
+              "password": "'"$$ADMIN_PASSWORD"'",
+              "first_name": "Admin",
+              "last_name": "User",
+              "site_name": "Awesome Template Analytics"
+            },
+            "prefs": {
+              "site_name": "Awesome Template Analytics",
+              "site_locale": "ja",
+              "allow_tracking": false
+            }
+          }')
+
+        SESSION=$$(echo "$$RESPONSE" | sed -n 's/.*"id":"\([^"]*\)".*/\1/p')
+
+        echo "🔌 ClickHouse接続を追加中..."
+        curl -s -X POST "$$METABASE_URL/api/database" \
+          -H "Content-Type: application/json" \
+          -H "X-Metabase-Session: $$SESSION" \
+          -d '{
+            "engine": "clickhouse",
+            "name": "ClickHouse Logs",
+            "details": {
+              "host": "'"$$CLICKHOUSE_HOST"'",
+              "port": '"$$CLICKHOUSE_PORT"',
+              "dbname": "'"$$CLICKHOUSE_DB"'",
+              "user": "'"$$CLICKHOUSE_USER"'",
+              "password": "'"$$CLICKHOUSE_PASSWORD"'",
+              "ssl": false
+            }
+          }'
+
+        # DB ID取得 (ClickHouse Logs)
+        DB_ID=$$(curl -s "$$METABASE_URL/api/database" \
+          -H "X-Metabase-Session: $$SESSION" | sed -n 's/.*"id":\([0-9]*\),"name":"ClickHouse Logs".*/\1/p')
+
+        if [ -z "$$DB_ID" ]; then
+          DB_ID=2
+        fi
+
+        echo "📊 ダッシュボード作成中..."
+
+        # DAU Question作成
+        QUESTION_RESPONSE=$$(curl -s -X POST "$$METABASE_URL/api/card" \
+          -H "Content-Type: application/json" \
+          -H "X-Metabase-Session: $$SESSION" \
+          -d '{
+            "name": "DAU (Daily Active Users)",
+            "display": "line",
+            "dataset_query": {
+              "type": "native",
+              "native": {
+                "query": "SELECT toDate(time) AS date, uniqExact(userId) AS dau FROM logs.app_logs WHERE length(userId) > 0 AND time >= today() - 30 GROUP BY date ORDER BY date",
+                "template-tags": {}
+              },
+              "database": '"$$DB_ID"'
+            },
+            "visualization_settings": {
+              "graph.dimensions": ["date"],
+              "graph.metrics": ["dau"],
+              "graph.x_axis.title_text": "日付",
+              "graph.y_axis.title_text": "ユニークユーザー数"
+            }
+          }')
+
+        QUESTION_ID=$$(echo "$$QUESTION_RESPONSE" | sed -n 's/.*"id":\([0-9]*\).*/\1/p')
+
+        # Dashboard作成
+        DASHBOARD_RESPONSE=$$(curl -s -X POST "$$METABASE_URL/api/dashboard" \
+          -H "Content-Type: application/json" \
+          -H "X-Metabase-Session: $$SESSION" \
+          -d '{
+            "name": "📈 ユーザー分析",
+            "description": "DAUなどのユーザー行動分析ダッシュボード"
+          }')
+
+        DASHBOARD_ID=$$(echo "$$DASHBOARD_RESPONSE" | sed -n 's/.*"id":\([0-9]*\).*/\1/p')
+
+        # カードをダッシュボードに追加
+        if [ -n "$$QUESTION_ID" ] && [ -n "$$DASHBOARD_ID" ]; then
+          curl -s -X PUT "$$METABASE_URL/api/dashboard/$$DASHBOARD_ID" \
+            -H "Content-Type: application/json" \
+            -H "X-Metabase-Session: $$SESSION" \
+            -d '{
+              "dashcards": [{
+                "id": -1,
+                "card_id": '"$$QUESTION_ID"',
+                "row": 0,
+                "col": 0,
+                "size_x": 18,
+                "size_y": 8
+              }]
+            }' > /dev/null
+          echo "✅ DAUダッシュボード作成完了 (ID: $$DASHBOARD_ID)"
+        fi
+
+        echo ""
+        echo "✅ セットアップ完了!"
+        echo "📊 Metabase: http://localhost:3001"
+        echo "📈 ダッシュボード: http://localhost:3001/dashboard/$$DASHBOARD_ID"
+        echo "👤 Email: $$ADMIN_EMAIL"
+        echo "🔑 Password: $$ADMIN_PASSWORD"
+
+volumes:
+  clickhouse-data:
+  metabase-data:

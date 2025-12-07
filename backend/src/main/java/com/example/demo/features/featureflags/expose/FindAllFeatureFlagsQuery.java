@@ -3,6 +3,8 @@ package com.example.demo.features.featureflags.expose;
 import com.example.demo.features.featureflags.internal.domain.evaluator.FeatureFlag;
 import com.example.demo.features.featureflags.internal.domain.model.UserContext;
 import com.example.demo.shared.config.AppProperties;
+import com.example.demo.shared.security.admin.AdminAuthContext;
+import com.example.demo.shared.security.customer.CustomerAuthContext;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,12 +30,34 @@ public class FindAllFeatureFlagsQuery {
   }
 
   /**
-   * すべてのフィーチャーフラグを評価する.
+   * すべてのフィーチャーフラグを評価する（Customer向け）.
    *
    * @return フィーチャーフラグの評価結果
    */
   public Output execute() {
-    final var ctx = UserContext.current(appProperties);
+    final var ctx =
+        new UserContext(
+            CustomerAuthContext.getCurrentUserId(),
+            CustomerAuthContext.getCurrentEmail(),
+            appProperties.getEnv());
+    return evaluateFlags(ctx);
+  }
+
+  /**
+   * すべてのフィーチャーフラグを評価する（Admin向け）.
+   *
+   * @return フィーチャーフラグの評価結果
+   */
+  public Output executeForAdmin() {
+    final var ctx =
+        new UserContext(
+            AdminAuthContext.getCurrentAdminId(),
+            AdminAuthContext.getCurrentEmail(),
+            appProperties.getEnv());
+    return evaluateFlags(ctx);
+  }
+
+  private Output evaluateFlags(final UserContext ctx) {
     final Map<String, Boolean> flags =
         evaluators.stream()
             .collect(Collectors.toMap(FeatureFlag::flagName, e -> e.evaluate(ctx)));

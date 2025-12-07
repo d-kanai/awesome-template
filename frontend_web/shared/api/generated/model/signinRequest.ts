@@ -10,8 +10,14 @@
  * ユーザーがサインインするためのリクエストペイロードです
  */
 export interface SigninRequest {
-  /** ユーザーのメールアドレス */
+  /**
+   * ユーザーのメールアドレス
+   * @minLength 1
+   */
   email: string;
-  /** ユーザーのパスワード */
+  /**
+   * ユーザーのパスワード
+   * @minLength 1
+   */
   password: string;
 }

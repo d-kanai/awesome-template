@@ -33,6 +33,54 @@
 - **UPDATE**: `SELECT FOR UPDATE`（悲観ロック）
 - 特にConsumer, Jobは同時リクエストがされる前提で作ること
 
+## モジュール構造
+
+### ディレクトリ構造と.keepファイル運用
+
+featureモジュールは以下の構造を持ち、空ディレクトリには `.keep` ファイルを配置してGit管理する。
+
+```
+features/{actor}/{module}/
+├── db/
+│   └── migration/          # Flywayマイグレーション (.keep)
+├── doc/                    # PlantUML等のドキュメント (.keep)
+├── expose/                 # 他モジュール公開インターフェース (.keep)
+├── internal/
+│   ├── application/
+│   │   ├── command/        # 更新系ユースケース (.keep)
+│   │   └── query/          # 参照系ユースケース (.keep)
+│   ├── domain/
+│   │   ├── model/          # Entity, Aggregate (.keep)
+│   │   ├── repository/     # Repositoryインターフェース (.keep)
+│   │   ├── valueobject/    # ValueObject (.keep)
+│   │   └── event/          # DomainEvent (.keep)
+│   ├── infrastructure/
+│   │   └── repository/     # Repository実装 (.keep)
+│   └── presentation/
+│       ├── rest/           # REST API (.keep)
+│       ├── job/            # バッチジョブ (.keep)
+│       └── consumer/       # Kafkaコンシューマ (.keep)
+└── package-info.java       # モジュール定義
+```
+
+**運用ルール**:
+- 全ディレクトリに `.keep` ファイルを配置（ファイルがある場合も含む）
+- 新規モジュール作成時は上記構造を全て作成すること
+- `.keep` はディレクトリ構造の明示化と、将来のファイル追加場所の可視化が目的
+
+### Actor別構造
+
+```
+features/
+├── customer/               # Customer向け機能
+│   ├── auth/               # 認証 (signup, signin, me)
+│   └── user/               # ユーザー管理
+├── admin/                  # Admin向け機能
+│   └── auth/               # Admin認証 (signin, me)
+├── notification/           # 共通通知機能
+└── test/                   # E2Eテスト支援
+```
+
 ## code
 
 ### presentation層
