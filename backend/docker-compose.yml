@@ -70,6 +70,16 @@ services:
     environment:
       - MOCKOON_LOG_LEVEL=info
 
+  swagger-ui:
+    image: swaggerapi/swagger-ui:latest
+    container_name: demo-swagger-ui
+    ports:
+      - "8091:8080"
+    volumes:
+      - ./openapi:/openapi:ro
+    environment:
+      SWAGGER_JSON: /openapi/external-api.json
+
 volumes:
   postgres-data:
   kafka-data:
