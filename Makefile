@@ -4,6 +4,7 @@ ROOT_DIR := $(CURDIR)
 .PHONY: help \
         install \
         backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint backend-check backend-migrate backend-migrate-clean backend-jooq backend-create-migration \
+        mockoon-start mockoon-stop mockoon-logs mockoon-dev mockoon-test \
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
         webview-install webview-start webview-lint webview-typecheck webview-ios webview-android \
         web-install web-dev web-build web-lint web-lint-deps web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-e2e-mock web-docker-build web-docker-run web-show-routes \
@@ -36,6 +37,13 @@ help:
 	@echo "  make backend-migrate-clean # Clean Flyway migrations (WARNING: destructive)"
 	@echo "  make backend-jooq         # Generate jOOQ sources"
 	@echo "  make backend-create-migration module=xxx name=yyy # Create new migration file"
+	@echo ""
+	@echo "Mockoon Mock Server:"
+	@echo "  make mockoon-start        # Start Mockoon via Docker Compose (dev environment)"
+	@echo "  make mockoon-stop         # Stop Mockoon container"
+	@echo "  make mockoon-logs         # Show Mockoon logs"
+	@echo "  make mockoon-dev          # Start Mockoon with dev.json (development)"
+	@echo "  make mockoon-test         # Start Mockoon with test.json (E2E testing)"
 	@echo ""
 	@echo "Native:"
 	@echo "  make native-install       # Install native dependencies (pnpm install)"
@@ -191,6 +199,29 @@ backend-jooq:
 # Usage: make backend-create-migration module=user name=create_xxx
 backend-create-migration:
 	cd backend && ./gradlew createMigration -Pmodule=$(module) -PmigrationName=$(name)
+
+###############################################################
+# Mockoon Mock Server
+###############################################################
+mockoon-start:
+	cd backend && docker-compose up -d mockoon
+	@echo "Mockoon started on http://localhost:3001"
+	@echo "Admin API: http://localhost:3001/__admin"
+
+mockoon-stop:
+	cd backend && docker-compose stop mockoon
+	@echo "Mockoon stopped"
+
+mockoon-logs:
+	cd backend && docker-compose logs -f mockoon
+
+mockoon-dev:
+	@command -v mockoon-cli >/dev/null 2>&1 || (echo "Installing @mockoon/cli globally..." && npm install -g @mockoon/cli)
+	mockoon-cli start --data backend/mockoon/environments/dev.json --port 3001 --watch
+
+mockoon-test:
+	@command -v mockoon-cli >/dev/null 2>&1 || (echo "Installing @mockoon/cli globally..." && npm install -g @mockoon/cli)
+	mockoon-cli start --data backend/mockoon/environments/test.json --port 3001
 
 ###############################################################
 # Native

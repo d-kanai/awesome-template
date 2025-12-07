@@ -54,6 +54,22 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
 
+  mockoon:
+    image: mockoon/cli:latest
+    container_name: demo-mockoon
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./mockoon/environments:/data:ro
+    command: ["--data", "/data/dev.json", "--port", "3001"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/__admin/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    environment:
+      - MOCKOON_LOG_LEVEL=info
+
 volumes:
   postgres-data:
   kafka-data:

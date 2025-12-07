@@ -15,7 +15,7 @@ spring:
       users_id_uuid_clause: ' DEFAULT gen_random_uuid()'
 
 server:
-  port: ${PORT:8080}
+  port: ${PORT}
   address: 0.0.0.0
 
 management:
@@ -35,7 +35,7 @@ app:
   env: ${ENV}
   jwt:
     secret: ${JWT_SECRET}
-    expiration-hours: ${JWT_EXPIRATION_HOURS:720}
+    expiration-hours: ${JWT_EXPIRATION_HOURS}
     cookie:
       name: accessToken
       http-only: true
@@ -49,6 +49,13 @@ app:
   email:
     from: ${EMAIL_FROM}
     reply-to: ${EMAIL_REPLY_TO}
+  mockoon:
+    enabled: ${MOCKOON_ENABLED}
+    admin-url: ${MOCKOON_ADMIN_URL}
+    api-url: ${MOCKOON_API_URL}
+  external-api:
+    payment-url: ${EXTERNAL_API_PAYMENT_URL}
+    sms-url: ${EXTERNAL_API_SMS_URL}
 
 spring.kafka:
   bootstrap-servers: ${KAFKA_SERVER_URL}

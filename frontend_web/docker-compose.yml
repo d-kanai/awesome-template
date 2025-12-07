@@ -9,6 +9,8 @@ services:
         NEXT_PUBLIC_API_MOCK_MODE: "false"
         NEXT_PUBLIC_API_TIMEOUT_MS: "15000"
         NEXT_PUBLIC_API_SLOW_THRESHOLD_MS: "3000"
+        NEXT_PUBLIC_MOCKOON_ENABLED: "false"
+        NEXT_PUBLIC_MOCKOON_ADMIN_URL: "http://localhost:3001/__admin"
         ANALYZE: "false"
     ports:
       - "3000:3000"
@@ -19,6 +21,8 @@ services:
       - NEXT_PUBLIC_API_MOCK_MODE=false
       - NEXT_PUBLIC_API_TIMEOUT_MS=15000
       - NEXT_PUBLIC_API_SLOW_THRESHOLD_MS=3000
+      - NEXT_PUBLIC_MOCKOON_ENABLED=false
+      - NEXT_PUBLIC_MOCKOON_ADMIN_URL=http://localhost:3001/__admin
       - ANALYZE=false
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]

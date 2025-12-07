@@ -33,17 +33,23 @@ const clientSchema = z.object({
     .enum(["true", "false"])
     .transform((val) => val === "true"),
 
-  // APIタイムアウト（オプション: ミリ秒、デフォルト30000ms = 30秒）
+  // APIタイムアウト（必須: ミリ秒）
   NEXT_PUBLIC_API_TIMEOUT_MS: z
     .string()
-    .optional()
-    .transform((val) => (val ? Number.parseInt(val, 10) : 30000)),
+    .transform((val) => Number.parseInt(val, 10)),
 
   // Slow Request閾値（必須: ミリ秒）
   // この閾値を超えたリクエストはwarnレベルでログ出力される
   NEXT_PUBLIC_API_SLOW_THRESHOLD_MS: z
     .string()
     .transform((val) => Number.parseInt(val, 10)),
+
+  // Mockoon Mock Server（E2E Testing Support）
+  NEXT_PUBLIC_MOCKOON_ENABLED: z
+    .enum(["true", "false"])
+    .transform((val) => val === "true"),
+
+  NEXT_PUBLIC_MOCKOON_ADMIN_URL: z.string().url(),
 });
 
 /**
@@ -59,6 +65,8 @@ const processEnv = {
   NEXT_PUBLIC_API_TIMEOUT_MS: process.env.NEXT_PUBLIC_API_TIMEOUT_MS,
   NEXT_PUBLIC_API_SLOW_THRESHOLD_MS:
     process.env.NEXT_PUBLIC_API_SLOW_THRESHOLD_MS,
+  NEXT_PUBLIC_MOCKOON_ENABLED: process.env.NEXT_PUBLIC_MOCKOON_ENABLED,
+  NEXT_PUBLIC_MOCKOON_ADMIN_URL: process.env.NEXT_PUBLIC_MOCKOON_ADMIN_URL,
 };
 
 // サーバー環境変数のバリデーション（サーバー側でのみ実行）
