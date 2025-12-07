@@ -71,11 +71,21 @@ public class SignupRestApi {
       @Schema(description = "ユーザーの作成日時", type = "string", format = "date-time")
           LocalDateTime createdAt,
       @Schema(description = "ユーザーの最終更新日時", type = "string", format = "date-time")
-          LocalDateTime updatedAt) {
+          LocalDateTime updatedAt,
+      @Schema(description = "外部API検証結果 (検証済みかどうか)") Boolean verified,
+      @Schema(description = "外部API検証ID") String verificationId,
+      @Schema(description = "外部API検証メッセージ") String verificationMessage) {
 
     public static Output from(final SignupCommand.Output result) {
       final ExposedUser user = result.user();
-      return new Output(user.id(), user.email(), user.createdAt(), user.updatedAt());
+      return new Output(
+          user.id(),
+          user.email(),
+          user.createdAt(),
+          user.updatedAt(),
+          result.verificationResult().verified(),
+          result.verificationResult().verificationId(),
+          result.verificationResult().message());
     }
   }
 }

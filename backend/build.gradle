@@ -19,6 +19,7 @@ plugins {
     id 'com.github.spotbugs' version '6.4.6'
     id 'com.diffplug.spotless' version '6.22.0'
     id 'net.ltgt.errorprone' version '4.1.0'
+    id 'org.openapi.generator' version '7.2.0'
 }
 
 openApi {
@@ -29,6 +30,21 @@ openApi {
     customBootRun {
         args.add('--spring.profiles.active=test')
     }}
+
+// OpenAPI Generator configuration for external API client
+openApiGenerate {
+    generatorName = "java"
+    library = "native"
+    inputSpec = "$projectDir/openapi/external-api.json".toString()
+    outputDir = "$buildDir/generated-external-api".toString()
+    apiPackage = "com.example.demo.shared.infrastructure.externalapi.generated.api"
+    modelPackage = "com.example.demo.shared.infrastructure.externalapi.generated.model"
+    invokerPackage = "com.example.demo.shared.infrastructure.externalapi.generated.client"
+    configOptions = [
+        dateLibrary: "java8",
+        openApiNullable: "false"
+    ]
+}
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -41,6 +57,9 @@ java {
 
 sourceSets {
     main {
+        java {
+            srcDirs += ["$buildDir/generated-external-api/src/main/java"]
+        }
         resources {
             srcDirs += [
                 'src/main/java/com/example/demo/features/customer/user/db',
@@ -101,6 +120,9 @@ dependencies {
 
     // Null safety annotations
     implementation 'org.jspecify:jspecify:1.0.0'
+
+    // javax.annotation for generated code
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
     // Error Prone + NullAway
     errorprone 'com.google.errorprone:error_prone_core:2.36.0'
@@ -174,12 +196,13 @@ flyway {
 
 tasks.named('compileJava') {
     dependsOn tasks.named('generateJooq')
+    dependsOn tasks.named('openApiGenerate')
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.errorprone {
         disableWarningsInGeneratedCode = true
-        excludedPaths = '.*/build/.*|.*/shared/jooq/.*'
+        excludedPaths = '.*/build/.*|.*/shared/jooq/.*|.*/generated-external-api/.*'
         option('NullAway:AnnotatedPackages', 'com.example.demo')
         option('NullAway:ExcludedFieldAnnotations', 'org.springframework.beans.factory.annotation.Autowired,org.springframework.beans.factory.annotation.Value,org.springframework.boot.context.properties.bind.DefaultValue')
         option('NullAway:TreatGeneratedAsUnannotated', 'true')
@@ -253,6 +276,7 @@ checkstyle {
 tasks.withType(Checkstyle).configureEach {
     exclude('**/build/generated-src/**')
     exclude('**/com/example/demo/shared/jooq/**')
+    exclude('**/build/generated-external-api/**')
 }
 
 tasks.named('checkstyleMain').configure {
@@ -287,6 +311,7 @@ pmd {
 tasks.withType(Pmd).configureEach {
     exclude('**/build/generated-src/**')
     exclude('**/com/example/demo/shared/jooq/**')
+    exclude('**/build/generated-external-api/**')
 }
 
 tasks.named('pmdMain').configure {
@@ -323,6 +348,7 @@ spotless {
         } else {
             target 'src/**/*.java'
             targetExclude 'src/main/java/com/example/demo/shared/jooq/**'
+            targetExclude 'build/generated-external-api/**'
         }
         googleJavaFormat('1.17.0')
         removeUnusedImports()

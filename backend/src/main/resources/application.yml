@@ -49,6 +49,8 @@ app:
   email:
     from: ${EMAIL_FROM}
     reply-to: ${EMAIL_REPLY_TO}
+  external-api:
+    base-url: ${EXTERNAL_API_BASE_URL}
 
 spring.kafka:
   bootstrap-servers: ${KAFKA_SERVER_URL}
