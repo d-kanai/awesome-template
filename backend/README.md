@@ -121,19 +121,6 @@ features/{actor}/{module}/
 └── package-info.java       # モジュール定義
 ```
 
-### Actor別構造
-
-```
-features/
-├── customer/               # Customer向け機能
-│   ├── auth/               # 認証 (signup, signin, me)
-│   └── user/               # ユーザー管理
-├── admin/                  # Admin向け機能
-│   └── auth/               # Admin認証 (signin, me)
-├── notification/           # 共通通知機能
-└── test/                   # E2Eテスト支援
-```
-
 ### DBマイグレーション
 
 各モジュールが自身のテーブルを管理。マイグレーションファイルはタイムスタンプ形式で命名。
