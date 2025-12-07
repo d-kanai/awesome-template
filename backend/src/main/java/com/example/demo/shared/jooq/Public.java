@@ -4,6 +4,7 @@
 package com.example.demo.shared.jooq;
 
 
+import com.example.demo.shared.jooq.tables.Admins;
 import com.example.demo.shared.jooq.tables.FlywaySchemaHistory;
 import com.example.demo.shared.jooq.tables.NotificationHistories;
 import com.example.demo.shared.jooq.tables.PgpArmorHeaders;
@@ -33,6 +34,11 @@ public class Public extends SchemaImpl {
      * The reference instance of <code>public</code>
      */
     public static final Public PUBLIC = new Public();
+
+    /**
+     * The table <code>public.admins</code>.
+     */
+    public final Admins ADMINS = Admins.ADMINS;
 
     /**
      * The table <code>public.flyway_schema_history</code>.
@@ -104,6 +110,7 @@ public class Public extends SchemaImpl {
     @Override
     public final List<Table<?>> getTables() {
         return Arrays.asList(
+            Admins.ADMINS,
             FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY,
             NotificationHistories.NOTIFICATION_HISTORIES,
             PgpArmorHeaders.PGP_ARMOR_HEADERS,

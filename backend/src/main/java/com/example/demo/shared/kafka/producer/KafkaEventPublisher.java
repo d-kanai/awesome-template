@@ -2,9 +2,7 @@ package com.example.demo.shared.kafka.producer;
 
 import com.example.demo.shared.event.CommandEvent;
 import com.example.demo.shared.event.DomainEvent;
-import com.example.demo.shared.event.DomainEventName;
 import com.example.demo.shared.event.EventPublisher;
-import com.example.demo.shared.kafka.KafkaTopics;
 import com.example.demo.shared.logging.AppLogger;
 import java.util.Map;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,8 +20,6 @@ import org.springframework.stereotype.Component;
 public class KafkaEventPublisher implements EventPublisher {
 
   private static final String TRANSPORT = "kafka";
-  private static final String USER_EVENTS_TOPIC = KafkaTopics.PREFIX + "user.events";
-  private static final String DLQ_TOPIC = KafkaTopics.PREFIX + "dlq";
 
   private final KafkaTemplate<String, Object> kafkaTemplate;
   private final AppLogger appLogger;
@@ -37,7 +33,7 @@ public class KafkaEventPublisher implements EventPublisher {
 
   @Override
   public void publishDomainEvent(final DomainEvent event) {
-    final String topic = resolveTopicFromEventName(event.domainEventName());
+    final String topic = event.domainEventName().getTopic();
     final String eventNameValue = event.domainEventName().getValue();
     final String eventIdValue = event.eventId().toString();
     kafkaTemplate
@@ -69,7 +65,7 @@ public class KafkaEventPublisher implements EventPublisher {
   public void publishCommandEvent(final CommandEvent event) {
     final String key = event.eventId().toString();
     final String eventName = event.commandEventName().getValue();
-    final String topic = KafkaTopics.PREFIX + eventName;
+    final String topic = event.commandEventName().getTopic();
     kafkaTemplate
         .send(topic, key, event)
         .whenComplete(
@@ -91,12 +87,4 @@ public class KafkaEventPublisher implements EventPublisher {
             });
   }
 
-  private String resolveTopicFromEventName(final DomainEventName eventName) {
-    final String value = eventName.getValue();
-    final String prefix = value.substring(0, value.indexOf('.'));
-    if ("user".equals(prefix)) {
-      return USER_EVENTS_TOPIC;
-    }
-    return DLQ_TOPIC;
-  }
 }

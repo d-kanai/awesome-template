@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -47,6 +48,28 @@ public class KafkaConfig {
   @Bean
   public NewTopic dlqTopic() {
     return TopicBuilder.name("demo.dlq").partitions(1).replicas(1).build();
+  }
+
+  /**
+   * notification CommandEvent トピック群の作成.
+   *
+   * <p>新しいCommandEventを追加した場合、このリストに追加すること。
+   */
+  @Bean
+  public List<NewTopic> notificationCommandEventTopics() {
+    return List.of(
+        TopicBuilder.name("demo.notification.command-event.send-email")
+            .partitions(3)
+            .replicas(1)
+            .build(),
+        TopicBuilder.name("demo.notification.command-event.send-push-notification")
+            .partitions(3)
+            .replicas(1)
+            .build(),
+        TopicBuilder.name("demo.notification.command-event.send-slack-notification")
+            .partitions(3)
+            .replicas(1)
+            .build());
   }
 
   /** KafkaProducerFactoryの設定. */
