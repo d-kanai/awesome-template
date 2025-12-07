@@ -1,4 +1,4 @@
-package com.example.demo.shared.security.admin;
+package com.example.demo.features.admin.shared.security;
 
 import com.example.demo.shared.exception.ApplicationLayerException;
 import com.example.demo.shared.jwt.JwtClaims;

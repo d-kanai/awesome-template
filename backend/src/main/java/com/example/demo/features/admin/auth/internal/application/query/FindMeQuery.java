@@ -1,7 +1,7 @@
 package com.example.demo.features.admin.auth.internal.application.query;
 
+import com.example.demo.features.admin.shared.security.AdminAuthContext;
 import com.example.demo.features.featureflags.expose.FindAllFeatureFlagsQuery;
-import com.example.demo.shared.security.admin.AdminAuthContext;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;

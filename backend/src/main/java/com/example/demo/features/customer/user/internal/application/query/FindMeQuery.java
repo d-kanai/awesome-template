@@ -1,10 +1,10 @@
 package com.example.demo.features.customer.user.internal.application.query;
 
+import com.example.demo.features.customer.shared.security.CustomerAuthContext;
 import com.example.demo.features.customer.user.internal.domain.model.User;
 import com.example.demo.features.customer.user.internal.domain.repository.UserRepository;
 import com.example.demo.features.customer.user.internal.domain.valueobject.UserId;
 import com.example.demo.features.featureflags.expose.FindAllFeatureFlagsQuery;
-import com.example.demo.shared.security.customer.CustomerAuthContext;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

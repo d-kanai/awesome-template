@@ -1,6 +1,6 @@
 package com.example.demo.features.admin.auth.internal.presentation.rest;
 
-import static com.example.demo.shared.constants.ApiPath.ADMIN_AUTH;
+import static com.example.demo.features.admin.auth.internal.presentation.rest.AdminAuthApiPath.BASE;
 
 import com.example.demo.features.admin.auth.internal.application.command.SigninCommand;
 import com.example.demo.features.admin.auth.internal.domain.model.Admin;
@@ -28,8 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Admin認証", description = "Admin認証に関連する操作です")
 @RestController("adminSigninRestApi")
-@RequestMapping(value = ADMIN_AUTH, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = BASE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class SigninRestApi {
+
+  public static final String ENDPOINT = "/signin";
 
   private static final String ADMIN_COOKIE_NAME = "adminAccessToken";
 
@@ -53,7 +55,7 @@ public class SigninRestApi {
     @ApiResponse(responseCode = "400", description = "リクエストが不正です", content = @Content),
     @ApiResponse(responseCode = "401", description = "認証に失敗しました", content = @Content)
   })
-  @PostMapping(value = "/signin", consumes = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = ENDPOINT, consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Output> execute(
       @Valid @RequestBody final Input input, final HttpServletResponse response) {
     final SigninCommand.Output result =

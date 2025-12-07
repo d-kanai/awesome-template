@@ -1,6 +1,6 @@
 package com.example.demo.features.customer.user.internal.presentation.rest;
 
-import static com.example.demo.shared.constants.ApiPath.CUSTOMER_USERS;
+import static com.example.demo.features.customer.user.internal.presentation.rest.CustomerUserApiPath.BASE;
 
 import com.example.demo.features.customer.user.internal.application.query.FindAllUsersQuery;
 import com.example.demo.features.customer.user.internal.domain.model.User;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "ユーザー", description = "ユーザーを管理するための操作です")
 @RestController
-@RequestMapping(value = CUSTOMER_USERS, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = BASE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class FindAllUsersRestApi {
 
   private final FindAllUsersQuery findAllUsersQuery;

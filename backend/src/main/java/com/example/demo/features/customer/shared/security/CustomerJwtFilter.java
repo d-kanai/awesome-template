@@ -1,5 +1,6 @@
-package com.example.demo.shared.security.admin;
+package com.example.demo.features.customer.shared.security;
 
+import com.example.demo.shared.config.AppProperties;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -15,18 +16,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * JWT authentication filter for Admin APIs. Validates tokens and sets authentication context.
+ * JWT authentication filter for Customer APIs. Validates tokens and sets authentication context.
  * Supports both Authorization header (Bearer token) and httpOnly Cookie authentication.
  */
 @Component
-public class AdminJwtFilter extends OncePerRequestFilter {
+public class CustomerJwtFilter extends OncePerRequestFilter {
 
-  private static final String ADMIN_COOKIE_NAME = "adminAccessToken";
+  private final CustomerJwtTokenProvider customerJwtTokenProvider;
+  private final AppProperties appProperties;
 
-  private final AdminJwtTokenProvider adminJwtTokenProvider;
-
-  public AdminJwtFilter(final AdminJwtTokenProvider adminJwtTokenProvider) {
-    this.adminJwtTokenProvider = adminJwtTokenProvider;
+  public CustomerJwtFilter(
+      final CustomerJwtTokenProvider customerJwtTokenProvider, final AppProperties appProperties) {
+    this.customerJwtTokenProvider = customerJwtTokenProvider;
+    this.appProperties = appProperties;
   }
 
   @Override
@@ -36,18 +38,18 @@ public class AdminJwtFilter extends OncePerRequestFilter {
       final FilterChain filterChain)
       throws ServletException, IOException {
 
-    // 1. Try to extract token from Authorization header
+    // 1. Try to extract token from Authorization header (priority for frontend_native)
     String token = extractTokenFromHeader(request);
 
-    // 2. If not found, try to extract token from Cookie
+    // 2. If not found, try to extract token from Cookie (for frontend_web)
     if (token == null) {
       token = extractTokenFromCookie(request);
     }
 
     // 3. Validate token and set authentication context
-    if (token != null && adminJwtTokenProvider.validateToken(token)) {
+    if (token != null && customerJwtTokenProvider.validateToken(token)) {
       // Extract claims from token
-      final var claims = adminJwtTokenProvider.getClaimsFromToken(token);
+      final var claims = customerJwtTokenProvider.getClaimsFromToken(token);
 
       // Create authentication object with JwtClaims as principal
       @SuppressWarnings("NullAway") // Spring Security accepts null for credentials and authorities
@@ -77,7 +79,7 @@ public class AdminJwtFilter extends OncePerRequestFilter {
   }
 
   /**
-   * CookieからAdmin用JWTトークンを抽出する.
+   * CookieからJWTトークンを抽出する.
    *
    * @param request HttpServletRequest
    * @return JWT token or null if not found
@@ -88,8 +90,9 @@ public class AdminJwtFilter extends OncePerRequestFilter {
       return null;
     }
 
+    final String cookieName = appProperties.getJwt().getCookie().getName();
     return Arrays.stream(cookies)
-        .filter(cookie -> ADMIN_COOKIE_NAME.equals(cookie.getName()))
+        .filter(cookie -> cookieName.equals(cookie.getName()))
         .findFirst()
         .map(Cookie::getValue)
         .orElse(null);

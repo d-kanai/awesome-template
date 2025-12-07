@@ -1,10 +1,10 @@
 package com.example.demo.features.customer.user.internal.presentation.rest;
 
-import static com.example.demo.shared.constants.ApiPath.CUSTOMER_USERS;
+import static com.example.demo.features.customer.user.internal.presentation.rest.CustomerUserApiPath.BASE;
 
+import com.example.demo.features.customer.shared.security.CustomerAuthContext;
 import com.example.demo.features.customer.user.internal.application.command.ChangeEmailCommand;
 import com.example.demo.features.customer.user.internal.domain.model.User;
-import com.example.demo.shared.security.customer.CustomerAuthContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,8 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "ユーザー", description = "ユーザー管理に関連する操作です")
 @RestController
-@RequestMapping(value = CUSTOMER_USERS, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = BASE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ChangeEmailRestApi {
+
+  public static final String ENDPOINT = "/changeEmail";
 
   private final ChangeEmailCommand changeEmailCommand;
 
@@ -46,7 +48,7 @@ public class ChangeEmailRestApi {
     @ApiResponse(responseCode = "400", description = "リクエストが不正です", content = @Content),
     @ApiResponse(responseCode = "401", description = "認証が必要です", content = @Content)
   })
-  @PutMapping(value = "/changeEmail", consumes = MediaType.APPLICATION_JSON_VALUE)
+  @PutMapping(value = ENDPOINT, consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Output> execute(@Valid @RequestBody final Input input) {
     final var userId = CustomerAuthContext.getCurrentUserId();
     final ChangeEmailCommand.Output result =

@@ -1,7 +1,7 @@
 package com.example.demo.features.test.internal.presentation.rest;
 
+import com.example.demo.features.customer.shared.security.CustomerJwtTokenProvider;
 import com.example.demo.shared.config.AppProperties;
-import com.example.demo.shared.security.customer.CustomerJwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -2,8 +2,8 @@ package com.example.demo.features.admin.auth.internal.application.command;
 
 import com.example.demo.features.admin.auth.internal.domain.model.Admin;
 import com.example.demo.features.admin.auth.internal.domain.repository.AdminRepository;
+import com.example.demo.features.admin.shared.security.AdminJwtTokenProvider;
 import com.example.demo.shared.exception.ApplicationLayerException;
-import com.example.demo.shared.security.admin.AdminJwtTokenProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

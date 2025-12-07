@@ -1,6 +1,6 @@
 package com.example.demo.features.customer.user.internal.presentation.rest;
 
-import static com.example.demo.shared.constants.ApiPath.CUSTOMER_USERS;
+import static com.example.demo.features.customer.user.internal.presentation.rest.CustomerUserApiPath.BASE;
 
 import com.example.demo.features.customer.user.internal.application.query.FindMeQuery;
 import com.example.demo.features.customer.user.internal.domain.model.User;
@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "ユーザー", description = "ユーザー情報に関連する操作です")
 @RestController
-@RequestMapping(value = CUSTOMER_USERS, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = BASE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class FindMeRestApi {
+
+  public static final String ENDPOINT = "/me";
 
   private final FindMeQuery findMeQuery;
 
@@ -41,7 +43,7 @@ public class FindMeRestApi {
                 schema = @Schema(implementation = Output.class))),
     @ApiResponse(responseCode = "401", description = "認証が必要です。", content = @Content)
   })
-  @GetMapping("/me")
+  @GetMapping(ENDPOINT)
   public ResponseEntity<Output> execute() {
     final FindMeQuery.Output result = findMeQuery.execute();
     return ResponseEntity.ok(Output.from(result));

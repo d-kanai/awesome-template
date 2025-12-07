@@ -1,6 +1,4 @@
-@ApplicationModule(
-    type = ApplicationModule.Type.OPEN,
-    allowedDependencies = {})
+@ApplicationModule(type = ApplicationModule.Type.OPEN)
 package com.example.demo.shared;
 
 import org.springframework.modulith.ApplicationModule;

@@ -1,6 +1,6 @@
 package com.example.demo.features.customer.auth.internal.presentation.rest;
 
-import static com.example.demo.shared.constants.ApiPath.CUSTOMER_AUTH;
+import static com.example.demo.features.customer.auth.internal.presentation.rest.CustomerAuthApiPath.BASE;
 
 import com.example.demo.features.customer.auth.internal.application.command.SigninCommand;
 import com.example.demo.features.customer.user.expose.ExposedUser;
@@ -28,8 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "認証", description = "ユーザー認証・登録に関連する操作です")
 @RestController
-@RequestMapping(value = CUSTOMER_AUTH, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = BASE, produces = MediaType.APPLICATION_JSON_VALUE)
 public class SigninRestApi {
+
+  public static final String ENDPOINT = "/signin";
 
   private final SigninCommand signinCommand;
   private final AppProperties appProperties;
@@ -53,7 +55,7 @@ public class SigninRestApi {
         description = "メールアドレスまたはパスワードが正しくありません。",
         content = @Content)
   })
-  @PostMapping(value = "/signin", consumes = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = ENDPOINT, consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Output> execute(
       @Valid @RequestBody final Input input, final HttpServletResponse response) {
     final SigninCommand.Output result =

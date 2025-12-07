@@ -4,9 +4,9 @@ import static com.example.demo.testsupport.databuilder.UserTestBuilder.aUser;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.features.customer.shared.security.CustomerJwtTokenProvider;
 import com.example.demo.features.customer.user.internal.domain.model.User;
 import com.example.demo.features.customer.user.internal.domain.repository.UserRepository;
-import com.example.demo.shared.security.customer.CustomerJwtTokenProvider;
 import com.example.demo.testsupport.ApiTestClient;
 import com.example.demo.testsupport.ApiTestResponse;
 import com.example.demo.testsupport.databuilder.UserTestBuilder;

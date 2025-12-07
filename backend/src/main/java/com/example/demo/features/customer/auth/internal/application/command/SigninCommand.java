@@ -1,9 +1,9 @@
 package com.example.demo.features.customer.auth.internal.application.command;
 
+import com.example.demo.features.customer.shared.security.CustomerJwtTokenProvider;
 import com.example.demo.features.customer.user.expose.ExposedUser;
 import com.example.demo.features.customer.user.expose.FindUserByEmailApi;
 import com.example.demo.shared.exception.ApplicationLayerException;
-import com.example.demo.shared.security.customer.CustomerJwtTokenProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

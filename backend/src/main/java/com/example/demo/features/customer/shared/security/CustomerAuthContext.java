@@ -1,4 +1,4 @@
-package com.example.demo.shared.security.customer;
+package com.example.demo.features.customer.shared.security;
 
 import com.example.demo.shared.exception.ApplicationLayerException;
 import com.example.demo.shared.jwt.JwtClaims;

@@ -1,6 +1,6 @@
 package com.example.demo.features.admin.auth.internal.presentation.rest;
 
-import static com.example.demo.shared.constants.ApiPath.ADMIN_AUTH;
+import static com.example.demo.features.admin.auth.internal.presentation.rest.AdminAuthApiPath.BASE;
 
 import com.example.demo.features.admin.auth.internal.application.query.FindMeQuery;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Admin認証", description = "Admin認証に関連する操作です")
 @RestController("adminFindMeRestApi")
-@RequestMapping(value = ADMIN_AUTH, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = BASE, produces = MediaType.APPLICATION_JSON_VALUE)
 @SecurityRequirement(name = "bearerAuth")
 public class FindMeRestApi {
+
+  public static final String ENDPOINT = "/me";
 
   private final FindMeQuery findMeQuery;
 
@@ -38,7 +40,7 @@ public class FindMeRestApi {
         content = @Content(schema = @Schema(implementation = Output.class))),
     @ApiResponse(responseCode = "401", description = "認証が必要です", content = @Content)
   })
-  @GetMapping("/me")
+  @GetMapping(ENDPOINT)
   public ResponseEntity<Output> execute() {
     final FindMeQuery.Output result = findMeQuery.execute();
     return ResponseEntity.ok(Output.from(result));
