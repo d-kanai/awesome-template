@@ -45,6 +45,14 @@ app:
   email:
     from: noreply@test.example.com
     reply-to: support@test.example.com
+  mockoon:
+    enabled: false
+    admin-url: http://localhost:3002/__admin
+    api-url: http://localhost:3002
+  external-api:
+    base-url: http://localhost:3002
+    payment-url: http://localhost:3002/api/payment
+    sms-url: http://localhost:3002/api/sms
 
 logging:
   level:
