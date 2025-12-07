@@ -179,7 +179,7 @@ public class AppLogger {
 
   /** 外部APIリクエスト前のログを出力. */
   public void logExternalApiRequest(
-      final Class<?> clazz, final String apiName, final String email, final String name) {
+      final Class<?> clazz, final String apiName, final Object request) {
     final Logger logger = LoggerFactory.getLogger(clazz);
     logger.info(
         "External API request",
@@ -187,64 +187,23 @@ public class AppLogger {
         kv("env", appProperties.getEnv().name()),
         kv("timestamp", now()),
         kv("api_name", apiName),
-        kv("email", email),
-        kv("name", name));
+        kv("request", request));
   }
 
   /** 外部APIレスポンス成功のログを出力. */
-  public void logExternalApiResponse(
-      final Class<?> clazz,
-      final String apiName,
-      final String email,
-      final Boolean verified,
-      final String verificationId) {
+  public void logExternalApiResponse(final Class<?> clazz, final String apiName) {
     final Logger logger = LoggerFactory.getLogger(clazz);
     logger.info(
         "External API response",
         kv("log_type", "external_api_response"),
         kv("env", appProperties.getEnv().name()),
         kv("timestamp", now()),
-        kv("api_name", apiName),
-        kv("email", email),
-        kv("verified", verified),
-        kv("verification_id", verificationId));
-  }
-
-  /** 外部APIレスポンスがnullの場合の警告ログを出力. */
-  public void logExternalApiNullResponse(
-      final Class<?> clazz, final String apiName, final String email) {
-    final Logger logger = LoggerFactory.getLogger(clazz);
-    logger.warn(
-        "External API returned null response",
-        kv("log_type", "external_api_null_response"),
-        kv("env", appProperties.getEnv().name()),
-        kv("timestamp", now()),
-        kv("api_name", apiName),
-        kv("email", email));
-  }
-
-  /** 外部APIエラーのログを出力. */
-  public void logExternalApiError(
-      final Class<?> clazz,
-      final String apiName,
-      final String email,
-      final int statusCode,
-      final String errorMessage) {
-    final Logger logger = LoggerFactory.getLogger(clazz);
-    logger.error(
-        "External API error",
-        kv("log_type", "external_api_error"),
-        kv("env", appProperties.getEnv().name()),
-        kv("timestamp", now()),
-        kv("api_name", apiName),
-        kv("email", email),
-        kv("status_code", statusCode),
-        kv("error_message", errorMessage));
+        kv("api_name", apiName));
   }
 
   /** 外部API例外のログを出力. */
   public void logExternalApiException(
-      final Class<?> clazz, final String apiName, final String email, final Exception ex) {
+      final Class<?> clazz, final String apiName, final Exception ex) {
     final Logger logger = LoggerFactory.getLogger(clazz);
     logger.error(
         "External API exception",
@@ -252,7 +211,6 @@ public class AppLogger {
         kv("env", appProperties.getEnv().name()),
         kv("timestamp", now()),
         kv("api_name", apiName),
-        kv("email", email),
         kv("error_type", ex.getClass().getName()),
         kv("error_message", ex.getMessage()),
         kv("stacktrace", getStackTraceAsString(ex)));

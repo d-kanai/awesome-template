@@ -2,7 +2,6 @@ package com.example.demo.features.customer.auth.internal.infrastructure.external
 
 import com.example.demo.shared.exception.InfraLayerException;
 import com.example.demo.shared.infrastructure.externalapi.generated.api.DefaultApi;
-import com.example.demo.shared.infrastructure.externalapi.generated.client.ApiException;
 import com.example.demo.shared.infrastructure.externalapi.generated.model.VerifyUserRequest;
 import com.example.demo.shared.infrastructure.externalapi.generated.model.VerifyUserResponse;
 import com.example.demo.shared.logging.AppLogger;
@@ -31,38 +30,25 @@ public class UserVerificationExternalApi {
    * @throws InfraLayerException 外部API呼び出しが失敗した場合
    */
   public VerificationResponse execute(final String email, final String name) {
-    appLogger.logExternalApiRequest(UserVerificationExternalApi.class, API_NAME, email, name);
-
     final VerifyUserRequest request = new VerifyUserRequest();
     request.email(email);
     request.name(name);
+
+    appLogger.logExternalApiRequest(UserVerificationExternalApi.class, API_NAME, request);
 
     try {
       final VerifyUserResponse response = externalApi.verifyUser(request);
 
       if (response == null) {
-        appLogger.logExternalApiNullResponse(UserVerificationExternalApi.class, API_NAME, email);
         throw new InfraLayerException("External API returned null response");
       }
 
-      final String verificationId =
-          response.getVerificationId() != null ? response.getVerificationId().toString() : null;
-
-      appLogger.logExternalApiResponse(
-          UserVerificationExternalApi.class,
-          API_NAME,
-          email,
-          response.getVerified(),
-          verificationId);
+      appLogger.logExternalApiResponse(UserVerificationExternalApi.class, API_NAME);
 
       return new VerificationResponse(
-          response.getVerified(), verificationId, response.getMessage());
-    } catch (final ApiException e) {
-      appLogger.logExternalApiError(
-          UserVerificationExternalApi.class, API_NAME, email, e.getCode(), e.getMessage());
-      throw new InfraLayerException("External API call failed: " + e.getMessage(), e);
+          response.getVerified(), response.getVerificationId().toString(), response.getMessage());
     } catch (final Exception e) {
-      appLogger.logExternalApiException(UserVerificationExternalApi.class, API_NAME, email, e);
+      appLogger.logExternalApiException(UserVerificationExternalApi.class, API_NAME, e);
       throw new InfraLayerException("External API call failed: " + e.getMessage(), e);
     }
   }
