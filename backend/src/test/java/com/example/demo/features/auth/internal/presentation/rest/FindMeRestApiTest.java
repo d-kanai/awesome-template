@@ -51,7 +51,9 @@ class FindMeRestApiTest {
     response
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(user.getId().getValue().toString()))
-        .andExpect(jsonPath("$.email").value(email));
+        .andExpect(jsonPath("$.email").value(email))
+        .andExpect(jsonPath("$.featureFlags").exists())
+        .andExpect(jsonPath("$.featureFlags.showVersionInfo").isBoolean());
   }
 
   @Test

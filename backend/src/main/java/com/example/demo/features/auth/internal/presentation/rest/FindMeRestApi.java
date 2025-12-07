@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -47,10 +48,11 @@ public class FindMeRestApi {
   @Schema(name = "MeResponse", description = "認証済みユーザーの情報を表します")
   public record Output(
       @Schema(description = "ユーザーの一意な識別子", type = "string", format = "uuid") UUID id,
-      @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com") String email) {
+      @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com") String email,
+      @Schema(description = "有効な機能フラグ") Map<String, Boolean> featureFlags) {
 
     public static Output from(final FindMeQuery.Output result) {
-      return new Output(result.userId(), result.email());
+      return new Output(result.userId(), result.email(), result.featureFlags());
     }
   }
 }
