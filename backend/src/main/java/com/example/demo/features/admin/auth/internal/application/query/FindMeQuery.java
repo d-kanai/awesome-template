@@ -1,6 +1,8 @@
 package com.example.demo.features.admin.auth.internal.application.query;
 
+import com.example.demo.features.featureflags.expose.FindAllFeatureFlagsQuery;
 import com.example.demo.shared.security.admin.AdminAuthContext;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,10 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FindMeQuery {
 
-  public Output execute() {
-    final var claims = AdminAuthContext.getCurrentClaims();
-    return new Output(UUID.fromString(claims.userId()), claims.email());
+  private final FindAllFeatureFlagsQuery findAllFeatureFlagsQuery;
+
+  public FindMeQuery(final FindAllFeatureFlagsQuery findAllFeatureFlagsQuery) {
+    this.findAllFeatureFlagsQuery = findAllFeatureFlagsQuery;
   }
 
-  public record Output(UUID adminId, String email) {}
+  public Output execute() {
+    final var claims = AdminAuthContext.getCurrentClaims();
+    final var featureFlags = findAllFeatureFlagsQuery.executeForAdmin().flags();
+    return new Output(UUID.fromString(claims.userId()), claims.email(), featureFlags);
+  }
+
+  public record Output(UUID adminId, String email, Map<String, Boolean> featureFlags) {}
 }

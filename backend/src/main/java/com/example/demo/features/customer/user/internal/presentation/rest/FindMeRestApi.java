@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,12 +54,22 @@ public class FindMeRestApi {
       @Schema(description = "ユーザーの作成日時", type = "string", format = "date-time")
           LocalDateTime createdAt,
       @Schema(description = "ユーザーの最終更新日時", type = "string", format = "date-time")
-          LocalDateTime updatedAt) {
+          LocalDateTime updatedAt,
+      @Schema(
+              description = "有効な機能フラグ",
+              type = "object",
+              additionalProperties = Schema.AdditionalPropertiesValue.TRUE,
+              example = "{\"showVersionInfo\": true}")
+          Map<String, Boolean> featureFlags) {
 
     public static Output from(final FindMeQuery.Output result) {
       final User user = result.user();
       return new Output(
-          user.getId().getValue(), user.getEmail(), user.getCreatedAt(), user.getUpdatedAt());
+          user.getId().getValue(),
+          user.getEmail(),
+          user.getCreatedAt(),
+          user.getUpdatedAt(),
+          result.featureFlags());
     }
   }
 }

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,10 +47,16 @@ public class FindMeRestApi {
   @Schema(name = "AdminFindMeResponse", description = "現在のAdmin情報レスポンス")
   public record Output(
       @Schema(description = "Admin ID", type = "string", format = "uuid") UUID id,
-      @Schema(description = "メールアドレス", example = "admin@example.com") String email) {
+      @Schema(description = "メールアドレス", example = "admin@example.com") String email,
+      @Schema(
+              description = "有効な機能フラグ",
+              type = "object",
+              additionalProperties = Schema.AdditionalPropertiesValue.TRUE,
+              example = "{\"showVersionInfo\": true}")
+          Map<String, Boolean> featureFlags) {
 
     public static Output from(final FindMeQuery.Output result) {
-      return new Output(result.adminId(), result.email());
+      return new Output(result.adminId(), result.email(), result.featureFlags());
     }
   }
 }
