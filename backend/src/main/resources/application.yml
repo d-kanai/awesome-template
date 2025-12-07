@@ -51,7 +51,6 @@ app:
     reply-to: ${EMAIL_REPLY_TO}
   mockoon:
     enabled: ${MOCKOON_ENABLED}
-    admin-url: ${MOCKOON_ADMIN_URL}
     api-url: ${MOCKOON_API_URL}
   external-api:
     base-url: ${EXTERNAL_API_BASE_URL}

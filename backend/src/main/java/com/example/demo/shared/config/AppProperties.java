@@ -267,8 +267,6 @@ public class AppProperties {
 
     @NotNull private Boolean enabled = false;
 
-    @NotBlank private String adminUrl = "";
-
     @NotBlank private String apiUrl = "";
 
     public Boolean getEnabled() {
@@ -281,14 +279,6 @@ public class AppProperties {
 
     public boolean isEnabled() {
       return Boolean.TRUE.equals(enabled);
-    }
-
-    public String getAdminUrl() {
-      return adminUrl;
-    }
-
-    public void setAdminUrl(final String adminUrl) {
-      this.adminUrl = adminUrl;
     }
 
     public String getApiUrl() {

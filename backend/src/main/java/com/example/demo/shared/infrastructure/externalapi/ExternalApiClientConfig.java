@@ -1,8 +1,8 @@
 package com.example.demo.shared.infrastructure.externalapi;
 
+import com.example.demo.shared.config.AppProperties;
 import com.example.demo.shared.infrastructure.externalapi.generated.api.DefaultApi;
 import com.example.demo.shared.infrastructure.externalapi.generated.client.ApiClient;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,12 +10,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ExternalApiClientConfig {
 
-  @Value("${app.external-api.base-url}")
-  private String baseUrl;
+  private final AppProperties appProperties;
+
+  public ExternalApiClientConfig(final AppProperties appProperties) {
+    this.appProperties = appProperties;
+  }
 
   @Bean
   public ApiClient externalApiClient() {
     final ApiClient apiClient = new ApiClient();
+    final String baseUrl = resolveBaseUrl();
     apiClient.updateBaseUri(baseUrl);
     return apiClient;
   }
@@ -23,5 +27,12 @@ public class ExternalApiClientConfig {
   @Bean
   public DefaultApi defaultApi(final ApiClient externalApiClient) {
     return new DefaultApi(externalApiClient);
+  }
+
+  private String resolveBaseUrl() {
+    if (appProperties.getMockoon().isEnabled()) {
+      return appProperties.getMockoon().getApiUrl();
+    }
+    return appProperties.getExternalApi().getBaseUrl();
   }
 }

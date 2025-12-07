@@ -47,7 +47,6 @@ app:
     reply-to: support@test.example.com
   mockoon:
     enabled: false
-    admin-url: http://localhost:3002/__admin
     api-url: http://localhost:3002
   external-api:
     base-url: http://localhost:3002
