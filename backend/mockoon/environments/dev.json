@@ -17,7 +17,7 @@
       "responses": [
         {
           "uuid": "verify-user-success",
-          "body": "{\n  \"verified\": true,\n  \"verificationId\": \"{{faker 'string.uuid'}}\",\n  \"message\": \"User verified successfully\"\n}",
+          "body": "{\n  \"verified\": true,\n  \"verificationId\": \"00000000-0000-0000-0000-000000000001\",\n  \"message\": \"User verified successfully\"\n}",
           "latency": 50,
           "statusCode": 200,
           "label": "Success (default)",
@@ -41,7 +41,7 @@
         },
         {
           "uuid": "verify-user-failed",
-          "body": "{\n  \"verified\": false,\n  \"verificationId\": \"{{faker 'string.uuid'}}\",\n  \"message\": \"User verification failed\"\n}",
+          "body": "{\n  \"verified\": false,\n  \"verificationId\": \"00000000-0000-0000-0000-000000000002\",\n  \"message\": \"User verification failed\"\n}",
           "latency": 50,
           "statusCode": 200,
           "label": "Failed (scenario=failed)",
@@ -74,186 +74,12 @@
       ],
       "enabled": true,
       "responseMode": null
-    },
-    {
-      "uuid": "payment-api",
-      "type": "http",
-      "documentation": "Payment API - Success/Failure scenarios",
-      "method": "post",
-      "endpoint": "api/payment",
-      "responses": [
-        {
-          "uuid": "payment-success",
-          "body": "{\n  \"transactionId\": \"TXN-{{faker 'string.uuid'}}\",\n  \"amount\": {{queryParam 'amount' '99.99'}},\n  \"status\": \"SUCCESS\",\n  \"responseCode\": \"200\",\n  \"message\": \"Transaction successful\",\n  \"processedAt\": \"{{now}}\"\n}",
-          "latency": 50,
-          "statusCode": 200,
-          "label": "Success (default)",
-          "headers": [
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            }
-          ],
-          "bodyType": "INLINE",
-          "filePath": "",
-          "databucketID": "",
-          "sendFileAsBody": false,
-          "rules": [],
-          "rulesOperator": "OR",
-          "disableTemplating": false,
-          "fallbackTo404": false,
-          "default": true,
-          "crudKey": "id",
-          "callbacks": []
-        },
-        {
-          "uuid": "payment-declined",
-          "body": "{\n  \"transactionId\": \"TXN-{{faker 'string.uuid'}}\",\n  \"amount\": {{queryParam 'amount' '99.99'}},\n  \"status\": \"DECLINED\",\n  \"responseCode\": \"400\",\n  \"message\": \"Insufficient funds\",\n  \"processedAt\": \"{{now}}\"\n}",
-          "latency": 50,
-          "statusCode": 200,
-          "label": "Declined (scenario=declined)",
-          "headers": [
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            }
-          ],
-          "bodyType": "INLINE",
-          "filePath": "",
-          "databucketID": "",
-          "sendFileAsBody": false,
-          "rules": [
-            {
-              "target": "query",
-              "modifier": "scenario",
-              "value": "declined",
-              "invert": false,
-              "operator": "equals"
-            }
-          ],
-          "rulesOperator": "OR",
-          "disableTemplating": false,
-          "fallbackTo404": false,
-          "default": false,
-          "crudKey": "id",
-          "callbacks": []
-        },
-        {
-          "uuid": "payment-timeout",
-          "body": "{\n  \"error\": \"Gateway timeout\",\n  \"message\": \"Payment processor did not respond in time\"\n}",
-          "latency": 31000,
-          "statusCode": 504,
-          "label": "Timeout (scenario=timeout)",
-          "headers": [
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            }
-          ],
-          "bodyType": "INLINE",
-          "filePath": "",
-          "databucketID": "",
-          "sendFileAsBody": false,
-          "rules": [
-            {
-              "target": "query",
-              "modifier": "scenario",
-              "value": "timeout",
-              "invert": false,
-              "operator": "equals"
-            }
-          ],
-          "rulesOperator": "OR",
-          "disableTemplating": false,
-          "fallbackTo404": false,
-          "default": false,
-          "crudKey": "id",
-          "callbacks": []
-        }
-      ],
-      "enabled": true,
-      "responseMode": null
-    },
-    {
-      "uuid": "sms-api",
-      "type": "http",
-      "documentation": "SMS API - Send SMS message",
-      "method": "post",
-      "endpoint": "api/sms",
-      "responses": [
-        {
-          "uuid": "sms-success",
-          "body": "{\n  \"messageId\": \"SMS-{{faker 'string.uuid'}}\",\n  \"to\": \"{{bodyRaw 'to'}}\",\n  \"status\": \"SENT\",\n  \"sentAt\": \"{{now}}\"\n}",
-          "latency": 50,
-          "statusCode": 200,
-          "label": "Success (default)",
-          "headers": [
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            }
-          ],
-          "bodyType": "INLINE",
-          "filePath": "",
-          "databucketID": "",
-          "sendFileAsBody": false,
-          "rules": [],
-          "rulesOperator": "OR",
-          "disableTemplating": false,
-          "fallbackTo404": false,
-          "default": true,
-          "crudKey": "id",
-          "callbacks": []
-        },
-        {
-          "uuid": "sms-failure",
-          "body": "{\n  \"error\": \"INVALID_NUMBER\",\n  \"message\": \"The phone number is invalid\"\n}",
-          "latency": 50,
-          "statusCode": 400,
-          "label": "Invalid Number (scenario=invalid)",
-          "headers": [
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            }
-          ],
-          "bodyType": "INLINE",
-          "filePath": "",
-          "databucketID": "",
-          "sendFileAsBody": false,
-          "rules": [
-            {
-              "target": "query",
-              "modifier": "scenario",
-              "value": "invalid",
-              "invert": false,
-              "operator": "equals"
-            }
-          ],
-          "rulesOperator": "OR",
-          "disableTemplating": false,
-          "fallbackTo404": false,
-          "default": false,
-          "crudKey": "id",
-          "callbacks": []
-        }
-      ],
-      "enabled": true,
-      "responseMode": null
     }
   ],
   "rootChildren": [
     {
       "type": "route",
       "uuid": "verify-user-api"
-    },
-    {
-      "type": "route",
-      "uuid": "payment-api"
-    },
-    {
-      "type": "route",
-      "uuid": "sms-api"
     }
   ],
   "proxyMode": false,

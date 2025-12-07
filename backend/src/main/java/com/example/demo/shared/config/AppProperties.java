@@ -303,24 +303,14 @@ public class AppProperties {
   /** 外部API設定. */
   public static class ExternalApi {
 
-    @NotBlank private String paymentUrl = "";
+    @NotBlank private String baseUrl = "";
 
-    @NotBlank private String smsUrl = "";
-
-    public String getPaymentUrl() {
-      return paymentUrl;
+    public String getBaseUrl() {
+      return baseUrl;
     }
 
-    public void setPaymentUrl(final String paymentUrl) {
-      this.paymentUrl = paymentUrl;
-    }
-
-    public String getSmsUrl() {
-      return smsUrl;
-    }
-
-    public void setSmsUrl(final String smsUrl) {
-      this.smsUrl = smsUrl;
+    public void setBaseUrl(final String baseUrl) {
+      this.baseUrl = baseUrl;
     }
   }
 }
