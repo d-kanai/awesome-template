@@ -4,8 +4,6 @@ import com.example.demo.features.customer.user.expose.ExposedUser;
 import com.example.demo.features.customer.user.expose.SignupUserApi;
 import com.example.demo.shared.infrastructure.externalapi.UserVerificationExternalApi;
 import com.example.demo.shared.infrastructure.externalapi.UserVerificationExternalApi.VerificationResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class SignupCommand {
-
-  private static final Logger logger = LoggerFactory.getLogger(SignupCommand.class);
 
   private final SignupUserApi signupUserApi;
   private final UserVerificationExternalApi userVerificationExternalApi;
@@ -34,12 +30,6 @@ public class SignupCommand {
     // 外部APIでユーザー情報を検証
     final VerificationResult verificationResult =
         userVerificationExternalApi.execute(input.email(), "Sample User");
-
-    logger.info(
-        "User verification result: email={}, verified={}, verificationId={}",
-        input.email(),
-        verificationResult.verified(),
-        verificationResult.verificationId());
 
     // ユーザー登録処理
     final ExposedUser user = signupUserApi.execute(input.email(), input.password());
