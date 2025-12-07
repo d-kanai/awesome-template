@@ -2,8 +2,8 @@ package com.example.demo.features.customer.auth.internal.application.command;
 
 import com.example.demo.features.customer.user.expose.ExposedUser;
 import com.example.demo.features.customer.user.expose.SignupUserApi;
-import com.example.demo.shared.infrastructure.externalapi.UserVerificationService;
-import com.example.demo.shared.infrastructure.externalapi.UserVerificationService.VerificationResult;
+import com.example.demo.shared.infrastructure.externalapi.UserVerificationExternalApi;
+import com.example.demo.shared.infrastructure.externalapi.UserVerificationExternalApi.VerificationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,19 +21,19 @@ public class SignupCommand {
   private static final Logger logger = LoggerFactory.getLogger(SignupCommand.class);
 
   private final SignupUserApi signupUserApi;
-  private final UserVerificationService userVerificationService;
+  private final UserVerificationExternalApi userVerificationExternalApi;
 
   public SignupCommand(
       final SignupUserApi signupUserApi,
-      final UserVerificationService userVerificationService) {
+      final UserVerificationExternalApi userVerificationExternalApi) {
     this.signupUserApi = signupUserApi;
-    this.userVerificationService = userVerificationService;
+    this.userVerificationExternalApi = userVerificationExternalApi;
   }
 
   public Output execute(final Input input) {
     // 外部APIでユーザー情報を検証
     final VerificationResult verificationResult =
-        userVerificationService.verify(input.email(), "Sample User");
+        userVerificationExternalApi.execute(input.email(), "Sample User");
 
     logger.info(
         "User verification result: email={}, verified={}, verificationId={}",

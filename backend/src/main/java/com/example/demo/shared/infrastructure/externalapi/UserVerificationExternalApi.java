@@ -8,15 +8,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-/** ユーザー検証サービス (外部API連携). */
+/** ユーザー検証外部API (外部API連携). */
 @Service
-public class UserVerificationService {
+public class UserVerificationExternalApi {
 
-  private static final Logger logger = LoggerFactory.getLogger(UserVerificationService.class);
+  private static final Logger logger = LoggerFactory.getLogger(UserVerificationExternalApi.class);
 
   private final DefaultApi externalApi;
 
-  public UserVerificationService(final DefaultApi externalApi) {
+  public UserVerificationExternalApi(final DefaultApi externalApi) {
     this.externalApi = externalApi;
   }
 
@@ -27,7 +27,7 @@ public class UserVerificationService {
    * @param name ユーザーの名前
    * @return 検証結果
    */
-  public VerificationResult verify(final String email, final String name) {
+  public VerificationResult execute(final String email, final String name) {
     logger.info("Verifying user via external API: email={}, name={}", email, name);
 
     final VerifyUserRequest request = new VerifyUserRequest();
