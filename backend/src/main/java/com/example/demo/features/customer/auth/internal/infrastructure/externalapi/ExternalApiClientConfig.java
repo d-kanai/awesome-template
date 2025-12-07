@@ -1,4 +1,4 @@
-package com.example.demo.shared.infrastructure.externalapi;
+package com.example.demo.features.customer.auth.internal.infrastructure.externalapi;
 
 import com.example.demo.shared.infrastructure.externalapi.generated.api.DefaultApi;
 import com.example.demo.shared.infrastructure.externalapi.generated.client.ApiClient;

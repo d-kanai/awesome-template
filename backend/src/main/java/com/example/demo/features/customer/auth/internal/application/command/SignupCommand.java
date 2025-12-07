@@ -1,9 +1,9 @@
 package com.example.demo.features.customer.auth.internal.application.command;
 
+import com.example.demo.features.customer.auth.internal.infrastructure.externalapi.UserVerificationExternalApi;
+import com.example.demo.features.customer.auth.internal.infrastructure.externalapi.UserVerificationExternalApi.VerificationResponse;
 import com.example.demo.features.customer.user.expose.ExposedUser;
 import com.example.demo.features.customer.user.expose.SignupUserApi;
-import com.example.demo.shared.infrastructure.externalapi.UserVerificationExternalApi;
-import com.example.demo.shared.infrastructure.externalapi.UserVerificationExternalApi.VerificationResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
