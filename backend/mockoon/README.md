@@ -142,9 +142,271 @@ public class PaymentService {
 
 ---
 
-## 🔄 DTO → Mockoon 連携方法
+## 🔄 DTO → Mockoon 連携方法（CLI Only - Desktop不要）
 
-### Approach 1: OpenAPI経由（推奨）
+### ⚡ Quick Start: 3つの自動化アプローチ
+
+すべて**CLI/Gradleのみ**で完結します。Mockoon Desktopは不要です。
+
+---
+
+### Approach 1: OpenAPI → Mockoon CLI（最速・推奨）
+
+Mockoon CLIの`import-openapi`コマンドで自動変換。
+
+#### Step 1: OpenAPI生成
+
+```bash
+cd backend
+./gradlew generateOpenApiDocs
+# → backend/openapi/customer-api.json が生成される
+```
+
+#### Step 2: Mockoon CLIでインポート
+
+```bash
+# 初回のみ: @mockoon/cli インストール
+npm install -g @mockoon/cli
+
+# OpenAPIからMockoon環境ファイルを自動生成
+mockoon-cli import-openapi \
+  --input ./openapi/customer-api.json \
+  --output ./mockoon/environments/generated.json \
+  --port 3001
+
+# ✅ generated.json が自動生成される
+# DTOの @Schema example 値がレスポンスボディに設定される
+```
+
+#### Step 3: 起動してテスト
+
+```bash
+# 生成したファイルでMockoon起動
+mockoon-cli start \
+  --data ./mockoon/environments/generated.json \
+  --port 3001
+
+# または Dockerで
+docker-compose up -d mockoon
+```
+
+#### Step 4: Git commit
+
+```bash
+git add mockoon/environments/generated.json
+git commit -m "Generate Mockoon from OpenAPI"
+git push
+```
+
+**メリット:**
+- ✅ **GUI不要** - 完全CLI
+- ✅ **型安全** - DTOとレスポンスが完全一致
+- ✅ **自動同期** - DTO変更時に再生成で即反映
+- ✅ **最速** - 1コマンドで完了
+
+---
+
+### Approach 2: Gradle TaskでDTOから直接生成（カスタマイズ可）
+
+Gradleタスクで**DTOインスタンスを直接JSON化**してMockoon形式に変換。
+
+#### Step 1: Gradleタスク実行
+
+```bash
+cd backend
+./gradlew generateMockoonFromDto
+```
+
+出力:
+```
+✅ Generated Mockoon environment: backend/mockoon/environments/generated-from-dto.json
+
+📝 Next steps:
+  1. Review the generated file
+  2. Start Mockoon: make mockoon-start
+  3. Test: curl -X POST http://localhost:3001/api/payment -d '{"amount":99.99}'
+```
+
+#### Step 2: 確認して起動
+
+```bash
+# 生成されたファイルを確認
+cat mockoon/environments/generated-from-dto.json
+
+# Mockoon起動
+mockoon-cli start --data ./mockoon/environments/generated-from-dto.json --port 3001
+```
+
+#### カスタマイズ方法
+
+`backend/buildSrc/src/main/groovy/GenerateMockoonFromDtoTask.groovy`を編集:
+
+```groovy
+// DTOインスタンスを追加
+def newApiResponse = [
+    id: "NEW-001",
+    name: "Sample",
+    createdAt: "2025-01-01T00:00:00Z"
+]
+
+// ルートに追加
+routes: [
+    // ... 既存ルート
+    [
+        uuid: "new-api",
+        method: "get",
+        endpoint: "api/new",
+        responses: [[
+            body: mapper.writeValueAsString(newApiResponse),
+            statusCode: 200
+        ]]
+    ]
+]
+```
+
+**メリット:**
+- ✅ **完全カスタマイズ可** - エラーケース、シナリオ追加自由
+- ✅ **GUI不要**
+- ✅ **リフレクション対応可** - 将来的に`@Schema`から自動読取可能
+
+---
+
+### Approach 3: 手動JSON編集（既存のdev.json/test.json）
+
+既存の`dev.json`を直接編集する場合。
+
+```bash
+# VSCodeやvimで編集
+vim backend/mockoon/environments/dev.json
+
+# JSONフォーマット検証
+npx jsonlint backend/mockoon/environments/dev.json
+
+# 起動してテスト
+mockoon-cli start --data ./mockoon/environments/dev.json --port 3001
+```
+
+---
+
+### 🔄 DTO変更時のワークフロー（Approach 1推奨）
+
+#### 1. DTOを変更
+
+```java
+public record PaymentResponse(
+    @Schema(example = "TXN-12345") String transactionId,
+    @Schema(example = "199.99") BigDecimal amount,  // ← 変更
+    @Schema(example = "SUCCESS") PaymentStatus status,
+    @Schema(example = "JPY") String currency  // ← 新規追加
+) {}
+```
+
+#### 2. OpenAPI再生成 → Mockoon再生成
+
+```bash
+cd backend
+
+# 1コマンドで完結
+./gradlew generateOpenApiDocs && \
+mockoon-cli import-openapi \
+  --input ./openapi/customer-api.json \
+  --output ./mockoon/environments/generated.json \
+  --port 3001
+
+# または Makefile追加して
+make mockoon-regenerate
+```
+
+#### 3. Git commit
+
+```bash
+git add mockoon/environments/generated.json
+git commit -m "Update Mockoon for PaymentResponse changes"
+```
+
+---
+
+### 🎯 推奨設定（Makefile追加）
+
+`Makefile`に以下を追加すると便利:
+
+```makefile
+# Mockoonセクションに追加
+mockoon-regenerate:
+	cd backend && ./gradlew generateOpenApiDocs
+	mockoon-cli import-openapi \
+		--input backend/openapi/customer-api.json \
+		--output backend/mockoon/environments/generated.json \
+		--port 3001
+	@echo "✅ Mockoon regenerated from OpenAPI"
+	@echo "📝 Review: backend/mockoon/environments/generated.json"
+	@echo "🚀 Start: make mockoon-start"
+```
+
+使い方:
+```bash
+# DTO変更後、1コマンドで再生成
+make mockoon-regenerate
+
+# Mockoon起動
+make mockoon-start
+```
+
+---
+
+### Approach 1 vs 2 vs 3 比較
+
+| 項目 | Approach 1 (OpenAPI CLI) | Approach 2 (Gradle) | Approach 3 (手動) |
+|------|--------------------------|---------------------|-------------------|
+| **GUI必要?** | ❌ 不要 | ❌ 不要 | ❌ 不要 |
+| **自動化** | ⭐⭐⭐⭐⭐ 完全自動 | ⭐⭐⭐⭐ ほぼ自動 | ⭐⭐ 手動 |
+| **型安全** | ✅ DTOと完全一致 | ✅ DTOと完全一致 | ⚠️ 手動保証 |
+| **カスタマイズ** | ⭐⭐⭐ 後から編集 | ⭐⭐⭐⭐⭐ 完全自由 | ⭐⭐⭐⭐⭐ 完全自由 |
+| **速度** | ⚡ 最速（1コマンド） | ⚡ 高速 | 🐢 遅い |
+| **メンテナンス** | ⭐⭐⭐⭐⭐ 超簡単 | ⭐⭐⭐⭐ 簡単 | ⭐⭐ 面倒 |
+| **推奨度** | ✅ **最推奨** | ✅ 高度なカスタマイズ時 | △ 緊急時のみ |
+
+---
+
+### 🛠️ Approach 1 詳細設定
+
+#### OpenAPI → Mockoon変換オプション
+
+```bash
+mockoon-cli import-openapi \
+  --input ./openapi/customer-api.json \
+  --output ./mockoon/environments/generated.json \
+  --port 3001 \
+  --prefix "/api/v1"  # URLプレフィックス追加
+```
+
+#### 生成後のカスタマイズ
+
+生成されたJSONを直接編集してシナリオ追加:
+
+```bash
+# 生成後にエラーシナリオ追加
+vim mockoon/environments/generated.json
+
+# "responses"配列に追加:
+{
+  "uuid": "payment-error",
+  "statusCode": 500,
+  "body": "{\"error\": \"Server error\"}",
+  "rules": [{
+    "target": "query",
+    "modifier": "scenario",
+    "value": "error",
+    "operator": "equals"
+  }]
+}
+```
+
+---
+
+### Approach 1: OpenAPI経由（Desktop版の説明 - 参考用）
+
+**注意: 以下はMockoon Desktopを使う場合の説明です。上記のCLIアプローチを推奨します。**
 
 #### Step 1: DTOにアノテーション追加
 

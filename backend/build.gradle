@@ -393,3 +393,14 @@ tasks.register('createMigration') {
         println "Created: ${migrationFile.path}"
     }
 }
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Mockoon: DTOからMockoon環境ファイルを生成
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+import com.example.demo.buildtasks.GenerateMockoonFromDtoTask
+
+tasks.register('generateMockoonFromDto', GenerateMockoonFromDtoTask) {
+    description = 'Generate Mockoon environment JSON from DTO classes'
+    group = 'mockoon'
+}
