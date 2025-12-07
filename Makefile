@@ -4,7 +4,7 @@ ROOT_DIR := $(CURDIR)
 .PHONY: help \
         install \
         backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint backend-check backend-migrate backend-migrate-clean backend-jooq backend-create-migration \
-        mockoon-start mockoon-stop mockoon-logs mockoon-dev mockoon-test \
+        mockoon-start mockoon-stop mockoon-logs mockoon-dev mockoon-test mockoon-regenerate \
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
         webview-install webview-start webview-lint webview-typecheck webview-ios webview-android \
         web-install web-dev web-build web-lint web-lint-deps web-typecheck web-generate-api web-ut web-ut-coverage web-e2e web-e2e-mock web-docker-build web-docker-run web-show-routes \
@@ -44,6 +44,7 @@ help:
 	@echo "  make mockoon-logs         # Show Mockoon logs"
 	@echo "  make mockoon-dev          # Start Mockoon with dev.json (development)"
 	@echo "  make mockoon-test         # Start Mockoon with test.json (E2E testing)"
+	@echo "  make mockoon-regenerate   # Regenerate Mockoon from OpenAPI (DTO → Mockoon)"
 	@echo ""
 	@echo "Native:"
 	@echo "  make native-install       # Install native dependencies (pnpm install)"
@@ -222,6 +223,18 @@ mockoon-dev:
 mockoon-test:
 	@command -v mockoon-cli >/dev/null 2>&1 || (echo "Installing @mockoon/cli globally..." && npm install -g @mockoon/cli)
 	mockoon-cli start --data backend/mockoon/environments/test.json --port 3001
+
+mockoon-regenerate:
+	@echo "🔄 Regenerating Mockoon from OpenAPI..."
+	cd backend && ./gradlew generateOpenApiDocs
+	@command -v mockoon-cli >/dev/null 2>&1 || (echo "Installing @mockoon/cli globally..." && npm install -g @mockoon/cli)
+	mockoon-cli import-openapi \
+		--input backend/openapi/customer-api.json \
+		--output backend/mockoon/environments/generated.json \
+		--port 3001
+	@echo "✅ Mockoon regenerated from OpenAPI"
+	@echo "📝 Review: backend/mockoon/environments/generated.json"
+	@echo "🚀 Start: make mockoon-start"
 
 ###############################################################
 # Native
