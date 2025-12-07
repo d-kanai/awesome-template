@@ -1,4 +1,4 @@
-package com.example.demo.features.customer.auth.testsupport;
+package com.example.demo.testsupport;
 
 import com.example.demo.shared.infrastructure.externalapi.generated.api.DefaultApi;
 import com.example.demo.shared.infrastructure.externalapi.generated.client.ApiException;
