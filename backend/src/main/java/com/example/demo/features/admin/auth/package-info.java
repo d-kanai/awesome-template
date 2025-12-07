@@ -2,7 +2,7 @@
     displayName = "Admin Auth",
     allowedDependencies = {
       "shared",
-      "features.featureflags",
+      "features.featureflag :: expose",
       "features.admin.shared :: security",
       "features.admin.shared :: api"
     })

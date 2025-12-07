@@ -1,6 +1,6 @@
-package com.example.demo.features.featureflags.internal.domain.evaluator;
+package com.example.demo.features.featureflag.internal.domain.evaluator;
 
-import com.example.demo.features.featureflags.internal.domain.model.UserContext;
+import com.example.demo.features.featureflag.expose.UserContext;
 
 /**
  * フィーチャーフラグ評価インターフェース.

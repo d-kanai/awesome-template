@@ -33,91 +33,105 @@
 
 ## アーキテクチャ
 
-### モジュラーモノリス + DDD風レイヤードアーキテクチャ
+### モジュラーモノリス + Multiアクター + DDD風レイヤードアーキテクチャ
 
 Spring Modulithを使用してモジュール境界を強制。各モジュールは独立したドメインを表現。
 
-> **Note**: 将来に備えて `public/` と `internal/` を分離しているが、現時点では `internal` 同士のアクセスを許容している（`ApplicationModule.Type.OPEN`）。システムが大きくなったら `internal` の公開をやめて整理する。
+### モジュール依存関係ルール
+
+依存方向は**上から下への一方向のみ**許可。逆方向の依存は禁止。
 
 ```
-com.example.demo/
-├── features/           # 機能モジュール群
-│   ├── auth/          # 認証モジュール
-│   ├── user/          # ユーザーモジュール
-│   └── test/          # E2Eテスト支援モジュール
-└── shared/            # 共通コンポーネント（他モジュールに依存しない）
+┌─────────────────────────────────────────────────────────┐
+│                   Actor Module                          │
+│         (customer/auth, customer/user, admin/auth)      │
+└───────┬─────────────────┬───────────────────┬───────────┘
+        │                 │                   │
+        ▼                 ▼                   │
+┌───────────────┐ ┌───────────────────────┐   │
+│  Actor Shared │ │    Shared Domain      │   │
+│  (customer/   │ │ (notification,         │   │
+│   shared,     │ │  featureflag)          │   │
+│   admin/      │ └───────────┬───────────┘   │
+│   shared)     │             │               │
+└───────┬───────┘             │               │
+        │                     │               │
+        └──────────┬──────────┘               │
+                   ▼                          ▼
+              ┌────────────────────────────────┐
+              │            shared              │
+              │        (共通インフラ層)         │
+              └────────────────────────────────┘
 ```
 
-### モジュール依存ルール
+**依存ルール**:
 
-- `shared` は他のモジュールに依存してはならない
-- 各 feature モジュールは `shared` と許可されたモジュールのみに依存可能
-- モジュール間の依存は `package-info.java` で明示的に宣言
+| From | To | 許可 |
+|------|-----|------|
+| Actor Module | Shared Domain | ✅ |
+| Actor Module | Actor Shared（同Actor） | ✅ |
+| Actor Module | shared | ✅ |
+| Actor Shared | shared | ✅ |
+| Shared Domain | shared | ✅ |
+| Shared Domain | Actor Module | ❌ |
+| Shared Domain | Actor Shared | ❌ |
+| Actor Shared | Actor Module | ❌ |
+| Actor Module | 他Actor Module | ❌ |
+| Actor Shared | 他Actor Shared | ❌ |
+| shared | 上位モジュール | ❌ |
 
-```java
-@ApplicationModule(
-    type = ApplicationModule.Type.OPEN,
-    allowedDependencies = {"shared", "features.user"})
-package com.example.demo.features.auth;
-```
+**具体例**:
+- `customer/auth` → `customer/shared` ✅
+- `customer/auth` → `featureflag/expose` ✅
+- `customer/auth` → `shared` ✅
+- `customer/auth` → `admin/auth` ❌（Actor間依存禁止）
+- `customer/shared` → `admin/shared` ❌（Actor間依存禁止）
+- `featureflag` → `customer/shared` ❌（循環依存防止）
+- `notification` → `admin/auth` ❌（循環依存防止）
 
-### 各モジュールのレイヤー構成
+**expose パッケージ**:
+- Shared Domain が外部に公開するインターフェースは `expose/` パッケージに配置
+- Actor Module は Shared Domain の `expose/` パッケージのみ参照可能
 
-```
-features/xxx/
-├── package-info.java      # モジュール設定
-├── public/               # 公開API（他モジュールから参照可能）
-│   └── XxxApi.java
-└── internal/             # 内部実装（他モジュールからアクセス不可）
-    ├── application/
-    │   ├── command/      # 更新系ユースケース
-    │   └── query/        # 参照系ユースケース
-    ├── domain/
-    │   ├── model/        # ドメインモデル
-    │   ├── valueobject/  # 値オブジェクト
-    │   └── repository/   # リポジトリインターフェース
-    ├── infrastructure/
-    │   └── repository/   # リポジトリ実装
-    └── presentation/
-        ├── rest/         # REST API
-        └── job/          # バッチ処理
-```
+### ディレクトリ構造
 
-### モジュール境界の検証
-
-`ModularityTest` で以下を自動検証：
-- モジュール間の不正な依存
-- 循環依存の検出
-- `internal` パッケージへの外部アクセス
-- `shared` が他モジュールに依存していないこと
-
-## プロジェクト構造
+featureモジュールは以下の構造を持つ。
 
 ```
-backend/
-├── src/
-│   ├── main/
-│   │   ├── java/com/example/demo/
-│   │   │   ├── DemoApplication.java
-│   │   │   ├── features/
-│   │   │   │   └── user/
-│   │   │   │       └── db/migration/  # モジュールごとのマイグレーション
-│   │   │   └── shared/
-│   │   │       ├── public/            # 公開コンポーネント
-│   │   │       ├── internal/          # 内部実装（将来用）
-│   │   │       ├── db/migration/      # マイグレーション（将来用）
-│   │   │       └── jooq/              # jOOQ生成コード（Git管理）
-│   │   └── resources/
-│   └── test/
-│       └── java/com/example/demo/
-│           ├── ModularityTest.java
-│           ├── testsupport/
-│           │   └── databuilder/
-│           └── features/
-├── build.gradle
-├── doc/
-│   └── code_rule.md
-└── README.md
+features/{actor}/{module}/
+├── db/
+│   └── migration/          # Flywayマイグレーション
+├── doc/                    # PlantUML等のドキュメント
+├── expose/                 # 他モジュール公開インターフェース
+├── internal/
+│   ├── application/
+│   │   ├── command/        # 更新系ユースケース
+│   │   └── query/          # 参照系ユースケース
+│   ├── domain/
+│   │   ├── model/          # Entity, Aggregate
+│   │   ├── repository/     # Repositoryインターフェース
+│   │   ├── valueobject/    # ValueObject
+│   │   └── event/          # DomainEvent
+│   ├── infrastructure/
+│   │   └── repository/     # Repository実装
+│   └── presentation/
+│       ├── rest/           # REST API
+│       ├── job/            # バッチジョブ
+│       └── consumer/       # Kafkaコンシューマ
+└── package-info.java       # モジュール定義
+```
+
+### Actor別構造
+
+```
+features/
+├── customer/               # Customer向け機能
+│   ├── auth/               # 認証 (signup, signin, me)
+│   └── user/               # ユーザー管理
+├── admin/                  # Admin向け機能
+│   └── auth/               # Admin認証 (signin, me)
+├── notification/           # 共通通知機能
+└── test/                   # E2Eテスト支援
 ```
 
 ### DBマイグレーション
@@ -125,8 +139,8 @@ backend/
 各モジュールが自身のテーブルを管理。マイグレーションファイルはタイムスタンプ形式で命名。
 
 ```
-features/user/db/migration/V20241128000000__create_users_table.sql
-features/auth/db/migration/V20241202120000__create_sessions_table.sql
+features/customer/user/db/migration/V20241128000000__create_users_table.sql
+features/admin/auth/db/migration/V20241202120000__create_admins_table.sql
 ```
 
 ## OpenAPI

@@ -3,7 +3,7 @@
     allowedDependencies = {
       "shared",
       "features.notification :: expose",
-      "features.featureflags",
+      "features.featureflag :: expose",
       "features.customer.shared :: security",
       "features.customer.shared :: api"
     })

@@ -1,4 +1,4 @@
-package com.example.demo.features.featureflags.internal.domain.model;
+package com.example.demo.features.featureflag.expose;
 
 import com.example.demo.shared.config.AppProperties;
 
