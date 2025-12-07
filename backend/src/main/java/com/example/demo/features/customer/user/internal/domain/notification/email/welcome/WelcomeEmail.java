@@ -1,4 +1,4 @@
-package com.example.demo.features.customer.auth.internal.domain.email.welcome;
+package com.example.demo.features.customer.user.internal.domain.notification.email.welcome;
 
 import com.example.demo.features.customer.user.internal.domain.model.User;
 import com.example.demo.features.notification.expose.SendEmailCommandEventInput;

@@ -1,4 +1,4 @@
-package com.example.demo.features.customer.auth.internal.presentation.rest;
+package com.example.demo.features.customer.user.internal.presentation.rest;
 
 import static com.example.demo.testsupport.databuilder.UserTestBuilder.aUser;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -45,7 +45,7 @@ class FindMeRestApiTest {
     final String token = jwtTokenProvider.generateToken(user.getId().getValue().toString(), email);
 
     // when
-    final ApiTestResponse response = apiTestClient.getWithAuth("/customer/auth/me", token);
+    final ApiTestResponse response = apiTestClient.getWithAuth("/customer/users/me", token);
 
     // then response
     response
@@ -57,7 +57,7 @@ class FindMeRestApiTest {
   @Test
   void トークンなしでUnauthorizedを返す() throws Exception {
     // when
-    final ApiTestResponse response = apiTestClient.get("/customer/auth/me");
+    final ApiTestResponse response = apiTestClient.get("/customer/users/me");
 
     // then response
     response.andExpect(status().isUnauthorized());

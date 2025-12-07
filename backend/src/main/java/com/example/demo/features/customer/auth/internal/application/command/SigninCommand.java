@@ -1,7 +1,7 @@
 package com.example.demo.features.customer.auth.internal.application.command;
 
-import com.example.demo.features.customer.user.internal.domain.model.User;
-import com.example.demo.features.customer.user.internal.domain.repository.UserRepository;
+import com.example.demo.features.customer.user.expose.ExposedUser;
+import com.example.demo.features.customer.user.expose.FindUserByEmailApi;
 import com.example.demo.shared.exception.ApplicationLayerException;
 import com.example.demo.shared.security.customer.CustomerJwtTokenProvider;
 import org.springframework.stereotype.Service;
@@ -11,33 +11,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SigninCommand {
 
-  private final UserRepository userRepository;
+  private final FindUserByEmailApi findUserByEmailApi;
   private final CustomerJwtTokenProvider customerJwtTokenProvider;
 
   public SigninCommand(
-      final UserRepository userRepository,
+      final FindUserByEmailApi findUserByEmailApi,
       final CustomerJwtTokenProvider customerJwtTokenProvider) {
-    this.userRepository = userRepository;
+    this.findUserByEmailApi = findUserByEmailApi;
     this.customerJwtTokenProvider = customerJwtTokenProvider;
   }
 
   public Output execute(final Input input) {
-    final User user =
-        userRepository
-            .findByEmail(input.email())
+    final ExposedUser user =
+        findUserByEmailApi
+            .execute(input.email())
             .orElseThrow(() -> new ApplicationLayerException("Invalid email or password"));
 
-    if (!user.getPassword().equals(input.password())) {
+    if (!user.password().equals(input.password())) {
       throw new ApplicationLayerException("Invalid email or password");
     }
 
-    final String token =
-        customerJwtTokenProvider.generateToken(user.getId().getValue().toString(), user.getEmail());
+    final String token = customerJwtTokenProvider.generateToken(user.id().toString(), user.email());
 
     return new Output(user, token);
   }
 
   public record Input(String email, String password) {}
 
-  public record Output(User user, String accessToken) {}
+  public record Output(ExposedUser user, String accessToken) {}
 }

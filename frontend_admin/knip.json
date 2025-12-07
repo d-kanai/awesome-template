@@ -1,0 +1,39 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "include": ["files", "dependencies", "unlisted", "exports"],
+  "ignoreExportsUsedInFile": true,
+  "workspaces": {
+    ".": {
+      "entry": [
+        "app/**/*.{ts,tsx}",
+        "features/**/*.{ts,tsx}",
+        "shared/**/*.{ts,tsx}",
+        "e2e/**/*.{js,ts}"
+      ],
+      "project": ["**/*.{ts,tsx,js,jsx}"],
+      "ignore": [
+        "coverage/**",
+        "**/*.config.{js,ts,cjs,mjs}",
+        "next.config.ts",
+        "tailwind.config.ts",
+        "postcss.config.mjs",
+        "orval.config.ts",
+        "vitest.config.ts",
+        "playwright.config.ts",
+        "cucumber.js",
+        "e2e/steps/*.ts",
+        "shared/api/generated/**",
+        "shared/figma_generated/**",
+        "**/*.stories.tsx",
+        "**/*.figma.tsx",
+        "**/*.figma-raw.tsx"
+      ],
+      "ignoreDependencies": [
+        "openapi-types",
+        "ts-node",
+        "pino-pretty",
+        "@executeautomation/playwright-mcp-server"
+      ]
+    }
+  }
+}

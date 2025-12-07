@@ -3,7 +3,7 @@ package com.example.demo.features.customer.auth.internal.presentation.rest;
 import static com.example.demo.shared.constants.ApiPath.CUSTOMER_AUTH;
 
 import com.example.demo.features.customer.auth.internal.application.command.SignupCommand;
-import com.example.demo.features.customer.user.internal.domain.model.User;
+import com.example.demo.features.customer.user.expose.ExposedUser;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -72,9 +72,8 @@ public class SignupRestApi {
           LocalDateTime updatedAt) {
 
     public static Output from(final SignupCommand.Output result) {
-      final User user = result.user();
-      return new Output(
-          user.getId().getValue(), user.getEmail(), user.getCreatedAt(), user.getUpdatedAt());
+      final ExposedUser user = result.user();
+      return new Output(user.id(), user.email(), user.createdAt(), user.updatedAt());
     }
   }
 }

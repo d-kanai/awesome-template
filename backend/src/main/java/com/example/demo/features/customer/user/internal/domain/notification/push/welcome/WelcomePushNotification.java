@@ -1,4 +1,4 @@
-package com.example.demo.features.customer.auth.internal.domain.push.welcome;
+package com.example.demo.features.customer.user.internal.domain.notification.push.welcome;
 
 import com.example.demo.features.customer.user.internal.domain.model.User;
 import com.example.demo.features.notification.expose.SendPushNotificationCommandEventInput;

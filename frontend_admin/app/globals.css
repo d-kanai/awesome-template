@@ -1,0 +1,287 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Color - Text */
+    --sds-color-text-brand-on-brand-tertiary: #2c2c2c;
+    --sds-color-text-brand-on-brand-secondary: #1e1e1e;
+    --sds-color-text-brand-on-brand: #f5f5f5;
+    --sds-color-text-brand-tertiary: #757575;
+    --sds-color-text-default-default: #1e1e1e;
+    --sds-color-text-default-tertiary: #b3b3b3;
+    --sds-color-text-default-secondary: #757575;
+    --sds-color-text-neutral-default: #303030;
+    --sds-color-text-disabled-default: #b3b3b3;
+    --sds-color-text-disabled-on-disabled: #b3b3b3;
+    --sds-color-text-danger-default: #900b09;
+
+    /* Color - Background */
+    --sds-color-background-default-default: #ffffff;
+    --sds-color-background-default-secondary: #f5f5f5;
+    --sds-color-background-brand-default: #2c2c2c;
+    --sds-color-background-brand-hover: #1e1e1e;
+    --sds-color-background-brand-secondary: #e6e6e6;
+    --sds-color-background-brand-tertiary: #f5f5f5;
+    --sds-color-background-neutral-tertiary: #e3e3e3;
+    --sds-color-background-neutral-tertiary-hover: #cdcdcd;
+    --sds-color-background-disabled-default: #d9d9d9;
+    --sds-color-background-utilities-scrim: #ffffffcc;
+
+    /* Color - Border */
+    --sds-color-border-default-default: #d9d9d9;
+    --sds-color-border-brand-default: #2c2c2c;
+    --sds-color-border-neutral-secondary: #767676;
+    --sds-color-border-disabled-default: #b3b3b3;
+    --sds-color-border-disabled-secondary: #b2b2b2;
+    --sds-color-border-danger-default: #900b09;
+
+    /* Color - Icon */
+    --sds-color-icon-default-tertiary: #b3b3b3;
+    --sds-color-icon-default-default: #1e1e1e;
+    --sds-color-icon-brand-on-brand: #f5f5f5;
+
+    /* Color - Primitives */
+    --sds-color-black-100: #0c0c0d0d;
+    --sds-color-black-200: #0c0c0d1a;
+    --sds-color-slate-200: #e3e3e3;
+
+    /* Typography - Title Hero */
+    --sds-typography-title-hero-size: 72px;
+    --sds-typography-title-hero-font-family: Inter;
+    --sds-typography-title-hero-font-weight: 700;
+
+    /* Typography - Subtitle */
+    --sds-typography-subtitle-size-base: 32px;
+    --sds-typography-subtitle-font-family: Inter;
+    --sds-typography-subtitle-font-weight: 400;
+
+    /* Typography - Body */
+    --sds-typography-body-size-medium: 16px;
+    --sds-typography-body-size-small: 14px;
+    --sds-typography-body-font-family: Inter;
+    --sds-typography-body-font-weight-regular: 400;
+    --sds-typography-body-font-weight-strong: 600;
+
+    /* Typography - Heading */
+    --sds-typography-heading-size-base: 24px;
+    --sds-typography-heading-font-family: Inter;
+    --sds-typography-heading-font-weight: 600;
+
+    /* Typography - Subheading */
+    --sds-typography-subheading-size-medium: 20px;
+    --sds-typography-subheading-font-family: Inter;
+    --sds-typography-subheading-font-weight: 400;
+
+    /* Size - Space */
+    --sds-size-space-050: 2px;
+    --sds-size-space-100: 4px;
+    --sds-size-space-200: 8px;
+    --sds-size-space-300: 12px;
+    --sds-size-space-400: 16px;
+    --sds-size-space-600: 24px;
+    --sds-size-space-800: 32px;
+    --sds-size-space-1200: 48px;
+    --sds-size-space-1600: 64px;
+    --sds-size-space-4000: 160px;
+
+    /* Size - Radius */
+    --sds-size-radius-100: 4px;
+    --sds-size-radius-200: 8px;
+    --sds-size-radius-400: 16px;
+    --sds-size-radius-full: 9999px;
+
+    /* Size - Icon */
+    --sds-size-icon-small: 24px;
+    --sds-size-icon-medium: 32px;
+    --sds-size-icon-large: 40px;
+
+    /* Size - Stroke */
+    --sds-size-stroke-border: 1px;
+
+    /* Size - Depth */
+    --sds-size-depth-0: 0px;
+    --sds-size-depth-100: 4px;
+    --sds-size-depth-400: 16px;
+    --sds-size-depth-800: 32px;
+    --sds-size-depth-negative-100: -4px;
+
+    /* Size - Blur */
+    --sds-size-blur-100: 4px;
+
+    /* Responsive */
+    --sds-responsive-device-width: 1200px;
+    --sds-responsive-border-width: 1px;
+  }
+
+  .dark {
+    /* Dark mode overrides will be added here */
+  }
+}
+
+body {
+  color: var(--sds-color-text-default-default);
+  background: var(--sds-color-background-default-default);
+  font-family: var(--sds-typography-body-font-family), sans-serif;
+  font-size: var(--sds-typography-body-size-medium);
+  font-weight: var(--sds-typography-body-font-weight-regular);
+}
+
+@layer components {
+  /* Typography Styles */
+  .text-body-base {
+    font-family: var(--sds-typography-body-font-family), sans-serif;
+    font-size: var(--sds-typography-body-size-medium);
+    font-weight: var(--sds-typography-body-font-weight-regular);
+    line-height: 1.4;
+  }
+
+  .text-body-base-single-line {
+    font-family: var(--sds-typography-body-font-family), sans-serif;
+    font-size: var(--sds-typography-body-size-medium);
+    font-weight: var(--sds-typography-body-font-weight-regular);
+    line-height: 1;
+  }
+
+  .text-body-small {
+    font-family: var(--sds-typography-body-font-family), sans-serif;
+    font-size: var(--sds-typography-body-size-small);
+    font-weight: var(--sds-typography-body-font-weight-regular);
+    line-height: 1.4;
+  }
+
+  .text-body-strong {
+    font-family: var(--sds-typography-body-font-family), sans-serif;
+    font-size: var(--sds-typography-body-size-medium);
+    font-weight: var(--sds-typography-body-font-weight-strong);
+    line-height: 1.4;
+  }
+
+  .text-heading {
+    font-family: var(--sds-typography-heading-font-family), sans-serif;
+    font-size: var(--sds-typography-heading-size-base);
+    font-weight: var(--sds-typography-heading-font-weight);
+    line-height: 1.2;
+  }
+
+  .text-subtitle {
+    font-family: var(--sds-typography-subtitle-font-family), sans-serif;
+    font-size: var(--sds-typography-subtitle-size-base);
+    font-weight: var(--sds-typography-subtitle-font-weight);
+    line-height: 1.2;
+  }
+
+  .text-title-hero {
+    font-family: var(--sds-typography-title-hero-font-family), sans-serif;
+    font-size: var(--sds-typography-title-hero-size);
+    font-weight: var(--sds-typography-title-hero-font-weight);
+    line-height: 1.2;
+  }
+}
+
+@theme {
+  /* Dark mode */
+  --color-*: initial;
+  --color-text-brand-on-brand-tertiary: var(
+    --sds-color-text-brand-on-brand-tertiary
+  );
+  --color-text-brand-on-brand-secondary: var(
+    --sds-color-text-brand-on-brand-secondary
+  );
+  --color-text-brand-on-brand: var(--sds-color-text-brand-on-brand);
+  --color-text-brand-tertiary: var(--sds-color-text-brand-tertiary);
+  --color-text-default: var(--sds-color-text-default-default);
+  --color-text-default-tertiary: var(--sds-color-text-default-tertiary);
+  --color-text-default-secondary: var(--sds-color-text-default-secondary);
+  --color-text-neutral: var(--sds-color-text-neutral-default);
+  --color-text-disabled-on-disabled: var(--sds-color-text-disabled-on-disabled);
+  --color-background-default: var(--sds-color-background-default-default);
+  --color-background-default-secondary: var(
+    --sds-color-background-default-secondary
+  );
+  --color-background-brand: var(--sds-color-background-brand-default);
+  --color-background-brand-hover: var(--sds-color-background-brand-hover);
+  --color-background-brand-secondary: var(
+    --sds-color-background-brand-secondary
+  );
+  --color-background-brand-tertiary: var(--sds-color-background-brand-tertiary);
+  --color-background-neutral-tertiary: var(
+    --sds-color-background-neutral-tertiary
+  );
+  --color-background-neutral-tertiary-hover: var(
+    --sds-color-background-neutral-tertiary-hover
+  );
+  --color-background-disabled: var(--sds-color-background-disabled-default);
+  --color-background-utilities-scrim: var(
+    --sds-color-background-utilities-scrim
+  );
+  --color-border-default: var(--sds-color-border-default-default);
+  --color-border-brand: var(--sds-color-border-brand-default);
+  --color-border-neutral-secondary: var(--sds-color-border-neutral-secondary);
+  --color-border-disabled: var(--sds-color-border-disabled-default);
+  --color-icon-default-tertiary: var(--sds-color-icon-default-tertiary);
+  --color-icon-default: var(--sds-color-icon-default-default);
+  --color-icon-brand-on-brand: var(--sds-color-icon-brand-on-brand);
+
+  /* Spacing */
+  --spacing-050: var(--sds-size-space-050);
+  --spacing-100: var(--sds-size-space-100);
+  --spacing-200: var(--sds-size-space-200);
+  --spacing-300: var(--sds-size-space-300);
+  --spacing-400: var(--sds-size-space-400);
+  --spacing-600: var(--sds-size-space-600);
+  --spacing-800: var(--sds-size-space-800);
+  --spacing-1200: var(--sds-size-space-1200);
+  --spacing-1600: var(--sds-size-space-1600);
+  --spacing-4000: var(--sds-size-space-4000);
+
+  /* Border radius */
+  --radius-100: var(--sds-size-radius-100);
+  --radius-200: var(--sds-size-radius-200);
+  --radius-400: var(--sds-size-radius-400);
+  --radius-full: var(--sds-size-radius-full);
+
+  /* Font family */
+  --font-family-title: var(--sds-typography-title-hero-font-family), sans-serif;
+  --font-family-subtitle:
+    var(--sds-typography-subtitle-font-family), sans-serif;
+  --font-family-body: var(--sds-typography-body-font-family), sans-serif;
+  --font-family-heading: var(--sds-typography-heading-font-family), sans-serif;
+  --font-family-subheading:
+    var(--sds-typography-subheading-font-family), sans-serif;
+
+  /* Font size */
+  --font-size-title-hero: var(--sds-typography-title-hero-size);
+  --font-size-title-page: var(--sds-typography-title-page-size-base);
+  --font-size-subtitle: var(--sds-typography-subtitle-size-base);
+  --font-size-heading: var(--sds-typography-heading-size-base);
+  --font-size-subheading: var(--sds-typography-subheading-size-medium);
+  --font-size-body-medium: var(--sds-typography-body-size-medium);
+  --font-size-body-small: var(--sds-typography-body-size-small);
+
+  /* Font weight */
+  --font-weight-title-hero: var(--sds-typography-title-hero-font-weight);
+  --font-weight-title-page: var(--sds-typography-title-page-font-weight);
+  --font-weight-subtitle: var(--sds-typography-subtitle-font-weight);
+  --font-weight-heading: var(--sds-typography-heading-font-weight);
+  --font-weight-subheading: var(--sds-typography-subheading-font-weight);
+  --font-weight-body-regular: var(--sds-typography-body-font-weight-regular);
+  --font-weight-body-strong: var(--sds-typography-body-font-weight-strong);
+
+  /* Border width */
+  --border-width: var(--sds-size-stroke-border);
+
+  /* Blur */
+  --blur-100: var(--sds-size-blur-100);
+
+  /* Line height */
+  --line-height-body: 1.4;
+  --line-height-heading: 1.2;
+  --line-height-single: 1;
+
+  /* Icon size */
+  --width-icon-large: var(--sds-size-icon-large);
+  --height-icon-large: var(--sds-size-icon-large);
+}
+
+@source "./**/*.{js,ts,jsx,tsx,mdx}";
+@source "../features/**/*.{js,ts,jsx,tsx,mdx}";

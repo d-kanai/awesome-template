@@ -3,7 +3,7 @@ package com.example.demo.features.customer.auth.internal.presentation.rest;
 import static com.example.demo.shared.constants.ApiPath.CUSTOMER_AUTH;
 
 import com.example.demo.features.customer.auth.internal.application.command.SigninCommand;
-import com.example.demo.features.customer.user.internal.domain.model.User;
+import com.example.demo.features.customer.user.expose.ExposedUser;
 import com.example.demo.shared.config.AppProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -102,13 +102,9 @@ public class SigninRestApi {
           LocalDateTime updatedAt) {
 
     public static Output from(final SigninCommand.Output result) {
-      final User user = result.user();
+      final ExposedUser user = result.user();
       return new Output(
-          user.getId().getValue(),
-          user.getEmail(),
-          result.accessToken(),
-          user.getCreatedAt(),
-          user.getUpdatedAt());
+          user.id(), user.email(), result.accessToken(), user.createdAt(), user.updatedAt());
     }
   }
 }

@@ -1,58 +1,31 @@
 package com.example.demo.features.customer.auth.internal.application.command;
 
-import com.example.demo.features.customer.auth.internal.domain.email.welcome.WelcomeEmail;
-import com.example.demo.features.customer.auth.internal.domain.slack.welcome.WelcomeSlackNotification;
-import com.example.demo.features.customer.user.internal.domain.model.User;
-import com.example.demo.features.customer.user.internal.domain.repository.UserRepository;
-import com.example.demo.shared.event.EventPublisher;
-import com.example.demo.shared.exception.ApplicationLayerException;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.example.demo.features.customer.user.expose.ExposedUser;
+import com.example.demo.features.customer.user.expose.SignupUserApi;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 認証サインアップコマンド.
+ *
+ * <p>userモジュールのSignupUserApiを呼び出してユーザーを登録する。 DomainEvent/CommandEvent発行はuserモジュール内で完結する。
+ */
 @Service
 @Transactional
 public class SignupCommand {
 
-  private final UserRepository userRepository;
-  private final EventPublisher kafkaPublisher;
-  private final WelcomeEmail welcomeEmail;
-  private final WelcomeSlackNotification welcomeSlackNotification;
+  private final SignupUserApi signupUserApi;
 
-  public SignupCommand(
-      final UserRepository userRepository,
-      @Qualifier("kafkaEventPublisher") final EventPublisher kafkaPublisher,
-      final WelcomeEmail welcomeEmail,
-      final WelcomeSlackNotification welcomeSlackNotification) {
-    this.userRepository = userRepository;
-    this.kafkaPublisher = kafkaPublisher;
-    this.welcomeEmail = welcomeEmail;
-    this.welcomeSlackNotification = welcomeSlackNotification;
+  public SignupCommand(final SignupUserApi signupUserApi) {
+    this.signupUserApi = signupUserApi;
   }
 
   public Output execute(final Input input) {
-    if (userRepository.existsByEmail(input.email())) {
-      throw new ApplicationLayerException("Email already exists: " + input.email());
-    }
-    final User user = User.signup(input.email(), input.password());
-    userRepository.insert(user);
-
-    // Domain Event を発行
-    kafkaPublisher.publishAllDomainEvents(user.getDomainEvents());
-
-    // Welcome メール送信 CommandEvent を発行
-    kafkaPublisher.publishCommandEvent(welcomeEmail.create(user));
-
-    // Slack 通知 CommandEvent を発行（内部運用通知）
-    kafkaPublisher.publishCommandEvent(welcomeSlackNotification.create(user));
-
-    // Note: Push 通知は device token がないため、ここでは送信しない
-    // device token を取得する画面で SendPushNotificationCommandEventInput を発行する
-
+    final ExposedUser user = signupUserApi.execute(input.email(), input.password());
     return new Output(user);
   }
 
   public record Input(String email, String password) {}
 
-  public record Output(User user) {}
+  public record Output(ExposedUser user) {}
 }

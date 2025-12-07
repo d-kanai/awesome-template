@@ -1,4 +1,4 @@
-package com.example.demo.features.customer.auth.internal.domain.slack.welcome;
+package com.example.demo.features.customer.user.internal.domain.notification.slack.welcome;
 
 import com.example.demo.features.customer.user.internal.domain.model.User;
 import com.example.demo.features.notification.expose.SendSlackNotificationCommandEventInput;
