@@ -25,7 +25,7 @@ openApi {
     apiDocsUrl = 'http://localhost:8080/v3/api-docs'
     outputDir = file("$projectDir/openapi")
     outputFileName = 'openapi.json'
-    waitTimeInSeconds = 10
+    waitTimeInSeconds = 30
 }
 
 group = 'com.example'

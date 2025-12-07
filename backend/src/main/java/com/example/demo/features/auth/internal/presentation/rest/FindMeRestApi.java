@@ -49,7 +49,12 @@ public class FindMeRestApi {
   public record Output(
       @Schema(description = "ユーザーの一意な識別子", type = "string", format = "uuid") UUID id,
       @Schema(description = "ユーザーのメールアドレス", example = "jane.doe@example.com") String email,
-      @Schema(description = "有効な機能フラグ") Map<String, Boolean> featureFlags) {
+      @Schema(
+              description = "有効な機能フラグ",
+              type = "object",
+              additionalProperties = Schema.AdditionalPropertiesValue.TRUE,
+              example = "{\"showVersionInfo\": true}")
+          Map<String, Boolean> featureFlags) {
 
     public static Output from(final FindMeQuery.Output result) {
       return new Output(result.userId(), result.email(), result.featureFlags());
