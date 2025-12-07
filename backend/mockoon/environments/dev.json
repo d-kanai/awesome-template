@@ -9,6 +9,73 @@
   "folders": [],
   "routes": [
     {
+      "uuid": "verify-user-api",
+      "type": "http",
+      "documentation": "User Verification API",
+      "method": "post",
+      "endpoint": "api/v1/users/verify",
+      "responses": [
+        {
+          "uuid": "verify-user-success",
+          "body": "{\n  \"verified\": true,\n  \"verificationId\": \"{{faker 'string.uuid'}}\",\n  \"message\": \"User verified successfully\"\n}",
+          "latency": 50,
+          "statusCode": 200,
+          "label": "Success (default)",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "verify-user-failed",
+          "body": "{\n  \"verified\": false,\n  \"verificationId\": \"{{faker 'string.uuid'}}\",\n  \"message\": \"User verification failed\"\n}",
+          "latency": 50,
+          "statusCode": 200,
+          "label": "Failed (scenario=failed)",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "query",
+              "modifier": "scenario",
+              "value": "failed",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "enabled": true,
+      "responseMode": null
+    },
+    {
       "uuid": "payment-api",
       "type": "http",
       "documentation": "Payment API - Success/Failure scenarios",
@@ -176,6 +243,10 @@
     }
   ],
   "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "verify-user-api"
+    },
     {
       "type": "route",
       "uuid": "payment-api"
