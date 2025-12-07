@@ -1,0 +1,44 @@
+@startuml
+skinparam backgroundColor #FAFAFA
+
+' ==== note（コメント）: 控えめなグレー ====
+skinparam note {
+  BackgroundColor #F5F5F5
+  BorderColor #BDBDBD
+  FontColor #757575
+}
+
+' ==== actor（外部）: グレー ====
+skinparam actor {
+  BackgroundColor #E0E0E0
+  BorderColor #757575
+  FontColor #424242
+}
+
+' ==== participant デフォルト: Application（青） ====
+skinparam participant {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+  FontColor #0D47A1
+}
+
+actor User
+
+' Presentation（Controller）: オレンジ
+participant FindMeRestApi as Controller #FFE0B2
+
+' Application（Query）: デフォルトの青
+participant FindMeQuery as Query
+
+' Shared（AuthContext）: 紫
+participant AuthContext #E1BEE7
+
+User -> Controller: GET /auth/me
+Controller -> Query: execute()
+
+Query -> AuthContext: getCurrentClaims()
+AuthContext --> Query: claims (userId, email)
+
+Query --> Controller: Output(userId, email)
+Controller --> User: 200 OK
+@enduml

@@ -15,6 +15,9 @@
 
 - APIのIF定義(OPEN API定義)を変更した場合は make openapi-client で定義更新をすること
 - 変更した場合はbackend-utを実行確認すること
+- Command/Query/Consumerを追加・変更した場合は対応するシーケンス図(puml)を更新すること
+  - 配置場所: `features/{module}/doc/{feature}-sequence.puml`
+  - ルール: `backend/doc/puml_rule.md` を参照
 
 ### frontend-native
 

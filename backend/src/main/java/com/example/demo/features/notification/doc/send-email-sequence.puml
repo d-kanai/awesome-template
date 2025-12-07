@@ -1,0 +1,83 @@
+@startuml
+skinparam backgroundColor #FAFAFA
+
+' ==== note（コメント）: 控えめなグレー ====
+skinparam note {
+  BackgroundColor #F5F5F5
+  BorderColor #BDBDBD
+  FontColor #757575
+}
+
+' ==== actor（外部）: グレー ====
+skinparam actor {
+  BackgroundColor #E0E0E0
+  BorderColor #757575
+  FontColor #424242
+}
+
+' ==== database / table: グレー ====
+skinparam database {
+  BackgroundColor #E0E0E0
+  BorderColor #757575
+  FontColor #424242
+}
+
+' ==== queue: グレー ====
+skinparam queue {
+  BackgroundColor #E0E0E0
+  BorderColor #757575
+  FontColor #424242
+}
+
+' ==== participant デフォルト: Application（青） ====
+skinparam participant {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+  FontColor #0D47A1
+}
+
+queue KafkaTopic
+
+' Presentation（Consumer）: オレンジ
+participant SendEmailConsumer as Consumer #FFE0B2
+
+' Application（Command）: デフォルトの青
+participant SendEmailCommand as Command
+
+' Domain: 緑
+participant NotificationHistory as History #C8E6C9
+
+' Infrastructure: 紫
+participant AdvisoryLockService as Lock #E1BEE7
+participant NotificationHistoryRepository as HistoryRepo #E1BEE7
+participant EmailSender #E1BEE7
+
+' Database / External: グレー
+database NotificationHistoryTable as HistoryTable
+participant "SES / SMTP" as EmailService #E0E0E0
+
+KafkaTopic -> Consumer: SendEmailCommandEventInput
+Consumer -> Command: execute(command)
+
+Command -> Lock: acquireLock(eventId)
+note right: トランザクション終了時に自動解放
+
+Command -> HistoryRepo: existsByEventId(eventId)
+HistoryRepo -> HistoryTable: SELECT EXISTS
+HistoryTable --> HistoryRepo: false
+HistoryRepo --> Command: false
+note right: 冪等性チェック\n（既に処理済みならスキップ）
+
+Command -> EmailSender: send(to, subject, body, ...)
+EmailSender -> EmailService: send email
+EmailService --> EmailSender: success
+
+Command -> History: NotificationHistory.create(eventId, emailType, userId)
+History --> Command: history
+
+Command -> HistoryRepo: insert(history)
+HistoryRepo -> HistoryTable: INSERT notification_history
+HistoryTable --> HistoryRepo
+
+Command --> Consumer: void
+@enduml
