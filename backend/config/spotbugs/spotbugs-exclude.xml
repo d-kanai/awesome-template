@@ -5,6 +5,11 @@
     <Package name="~com\.example\.demo\.shared\.jooq.*"/>
   </Match>
 
+  <!-- Exclude OpenAPI generated code -->
+  <Match>
+    <Package name="~com\.example\.demo\.shared\.infrastructure\.externalapi\.generated.*"/>
+  </Match>
+
   <!-- Exclude test support classes -->
   <Match>
     <Package name="~com\.example\.demo\.testsupport.*"/>
