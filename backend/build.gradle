@@ -27,7 +27,7 @@ openApi {
     outputFileName = 'customer-api.json'
     waitTimeInSeconds = 30
     customBootRun {
-        args.add('--spring.profiles.active=openapi')
+        args.add('--spring.profiles.active=test')
     }}
 
 group = 'com.example'
