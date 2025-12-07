@@ -1,0 +1,53 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:openapi;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  flyway:
+    enabled: true
+    locations: classpath:migration
+    placeholders:
+      create_pgcrypto_extension: ''
+      users_id_uuid_clause: ''
+  jooq:
+    sql-dialect: H2
+
+server:
+  port: 8080
+  address: 0.0.0.0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+
+app:
+  env: DEVELOPMENT
+  kafka:
+    enabled: false
+  jwt:
+    secret: openapi-secret-key-that-is-at-least-256-bits-long-for-hs256-algorithm
+    expiration-hours: 720
+    cookie:
+      name: accessToken
+      http-only: true
+      secure: false
+      same-site: Lax
+      max-age-seconds: 2592000
+  cors:
+    allowed-origins: http://localhost:3000
+  email:
+    from: noreply@example.com
+    reply-to: support@example.com
+
+logging:
+  level:
+    root: INFO
+    org.flywaydb.core: WARN
+    com.example.demo: INFO

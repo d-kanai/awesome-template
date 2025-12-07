@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.1.0",
   "info": {
     "title": "Awesome Template API",
     "description": "Awesome Template バックエンドサービスの API ドキュメントです。",
@@ -13,139 +13,32 @@
   ],
   "tags": [
     {
-      "name": "E2Eテスト支援",
-      "description": "E2Eテストで利用するデータセットアップの補助APIです"
-    },
-    {
       "name": "認証",
       "description": "ユーザー認証・登録に関連する操作です"
     },
     {
-      "name": "フィーチャーフラグ",
-      "description": "フィーチャーフラグに関連する操作です"
+      "name": "ユーザー",
+      "description": "ユーザー管理に関連する操作です"
     },
     {
       "name": "ユーザー",
       "description": "ユーザーを管理するための操作です"
-    },
-    {
-      "name": "ユーザーの声",
-      "description": "ユーザーの声に関連する操作です"
     }
   ],
   "paths": {
-    "/featureflags/proxy": {
-      "get": {
+    "/v1/users/changePassword": {
+      "put": {
         "tags": [
-          "フィーチャーフラグ"
+          "ユーザー"
         ],
-        "summary": "フィーチャーフラグ取得 (GET)",
-        "description": "すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。",
-        "operationId": "getFeaturesGet",
-        "responses": {
-          "200": {
-            "description": "フィーチャーフラグの取得に成功しました。",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProxyResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "フィーチャーフラグ"
-        ],
-        "summary": "フィーチャーフラグ取得 (POST)",
-        "description": "すべての有効なフィーチャーフラグを取得します。Unleash Proxy互換のエンドポイントです。",
-        "operationId": "getFeaturesPost",
+        "summary": "パスワード変更",
+        "description": "認証済みユーザーのパスワードを変更します",
+        "operationId": "execute",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProxyRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "フィーチャーフラグの取得に成功しました。",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProxyResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/e2e/reset_data": {
-      "post": {
-        "tags": [
-          "E2Eテスト支援"
-        ],
-        "summary": "DBをリセット",
-        "description": "アプリケーションが管理するテーブルからデータをすべて削除します。",
-        "operationId": "resetData",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/e2e/dummy_token": {
-      "post": {
-        "tags": [
-          "E2Eテスト支援"
-        ],
-        "summary": "E2Eテスト用トークン生成",
-        "description": "E2Eテストでauth guardをバイパスするためのダミートークンを生成します。setCookie=trueの場合、httpOnly Cookieとしても設定します。",
-        "operationId": "generateDummyToken",
-        "parameters": [
-          {
-            "name": "setCookie",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/TestTokenResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/e2e/create_data": {
-      "post": {
-        "tags": [
-          "E2Eテスト支援"
-        ],
-        "summary": "テストデータをセットアップ",
-        "description": "指定されたテーブルにテストデータを1レコード作成します。",
-        "operationId": "createData",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SetupDataRequest"
+                "$ref": "#/components/schemas/ChangePasswordRequest"
               }
             }
           },
@@ -153,19 +46,70 @@
         },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "パスワードの変更に成功しました",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangePasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "リクエストが不正です"
+          },
+          "401": {
+            "description": "認証が必要です"
           }
         }
       }
     },
-    "/auth/signup": {
+    "/v1/users/changeEmail": {
+      "put": {
+        "tags": [
+          "ユーザー"
+        ],
+        "summary": "メールアドレス変更",
+        "description": "認証済みユーザーのメールアドレスを変更します",
+        "operationId": "execute_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeEmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "メールアドレスの変更に成功しました",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeEmailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "リクエストが不正です"
+          },
+          "401": {
+            "description": "認証が必要です"
+          }
+        }
+      }
+    },
+    "/v1/auth/signup": {
       "post": {
         "tags": [
           "認証"
         ],
         "summary": "ユーザー登録",
         "description": "指定した情報で新しいユーザーを登録します。",
-        "operationId": "signup",
+        "operationId": "execute_2",
         "requestBody": {
           "content": {
             "application/json": {
@@ -193,14 +137,14 @@
         }
       }
     },
-    "/auth/signin": {
+    "/v1/auth/signin": {
       "post": {
         "tags": [
           "認証"
         ],
         "summary": "サインイン",
         "description": "メールアドレスとパスワードでサインインします。",
-        "operationId": "signin",
+        "operationId": "execute_3",
         "requestBody": {
           "content": {
             "application/json": {
@@ -212,9 +156,6 @@
           "required": true
         },
         "responses": {
-          "400": {
-            "description": "メールアドレスまたはパスワードが正しくありません。"
-          },
           "200": {
             "description": "サインインに成功しました。",
             "content": {
@@ -224,18 +165,21 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "メールアドレスまたはパスワードが正しくありません。"
           }
         }
       }
     },
-    "/users": {
+    "/v1/users": {
       "get": {
         "tags": [
           "ユーザー"
         ],
         "summary": "ユーザー一覧を取得",
         "description": "登録されているすべてのユーザーを取得します。",
-        "operationId": "getAllUsers",
+        "operationId": "execute_4",
         "responses": {
           "200": {
             "description": "ユーザーの取得に成功しました。",
@@ -250,18 +194,15 @@
         }
       }
     },
-    "/auth/me": {
+    "/v1/auth/me": {
       "get": {
         "tags": [
           "認証"
         ],
         "summary": "認証済みユーザー情報取得",
         "description": "現在認証されているユーザーの情報を取得します。",
-        "operationId": "me",
+        "operationId": "execute_5",
         "responses": {
-          "401": {
-            "description": "認証されていません。"
-          },
           "200": {
             "description": "ユーザー情報の取得に成功しました。",
             "content": {
@@ -271,28 +212,9 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/user-voices": {
-      "get": {
-        "tags": [
-          "ユーザーの声"
-        ],
-        "summary": "ユーザーの声取得",
-        "description": "ユーザーの声一覧を取得します。",
-        "operationId": "getUserVoices",
-        "responses": {
-          "200": {
-            "description": "ユーザーの声の取得に成功しました。",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetUserVoicesResponse"
-                }
-              }
-            }
+          },
+          "401": {
+            "description": "認証されていません。"
           }
         }
       }
@@ -300,97 +222,117 @@
   },
   "components": {
     "schemas": {
-      "ProxyRequest": {
+      "ChangePasswordRequest": {
         "type": "object",
+        "description": "パスワード変更リクエスト",
         "properties": {
-          "userId": {
-            "type": "string"
-          },
-          "properties": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "FeatureToggle": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "enabled": {
-            "type": "boolean"
-          },
-          "variant": {
-            "type": "string"
-          },
-          "variantEnabled": {
-            "type": "boolean"
-          }
-        }
-      },
-      "ProxyResponse": {
-        "type": "object",
-        "properties": {
-          "toggles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FeatureToggle"
-            }
-          }
-        }
-      },
-      "TestTokenResponse": {
-        "type": "object",
-        "properties": {
-          "token": {
+          "currentPassword": {
             "type": "string",
-            "description": "JWTトークン",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            "description": "現在のパスワード",
+            "example": "currentPassword123",
+            "minLength": 1
+          },
+          "newPassword": {
+            "type": "string",
+            "description": "新しいパスワード（8文字以上）",
+            "example": "newPassword456",
+            "minLength": 1
           }
         },
-        "description": "E2Eテスト用トークン"
-      },
-      "SetupDataRequest": {
-        "type": "object",
-        "properties": {
-          "table": {
-            "type": "string",
-            "description": "テーブル名 (例: user)",
-            "example": "user"
-          }
-        },
-        "description": "テストデータセットアップリクエスト"
-      },
-      "SignupRequest": {
         "required": [
-          "email",
-          "password"
-        ],
+          "currentPassword",
+          "newPassword"
+        ]
+      },
+      "ChangePasswordResponse": {
         "type": "object",
+        "description": "パスワード変更レスポンス",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ユーザーID"
+          },
+          "email": {
+            "type": "string",
+            "description": "メールアドレス",
+            "example": "user@example.com"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "更新日時"
+          }
+        }
+      },
+      "ChangeEmailRequest": {
+        "type": "object",
+        "description": "メールアドレス変更リクエスト",
         "properties": {
           "email": {
             "type": "string",
+            "format": "email",
+            "description": "新しいメールアドレス",
+            "example": "new.email@example.com",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "ChangeEmailResponse": {
+        "type": "object",
+        "description": "メールアドレス変更レスポンス",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ユーザーID"
+          },
+          "email": {
+            "type": "string",
+            "description": "メールアドレス",
+            "example": "new.email@example.com"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "更新日時"
+          }
+        }
+      },
+      "SignupRequest": {
+        "type": "object",
+        "description": "新しいユーザーを登録するためのリクエストペイロードです",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
             "description": "ユーザーのメールアドレス",
-            "example": "jane.doe@example.com"
+            "example": "jane.doe@example.com",
+            "minLength": 1
           },
           "password": {
             "type": "string",
             "description": "ユーザーのパスワード",
-            "example": "SecurePassword123"
+            "example": "SecurePassword123",
+            "minLength": 1
           }
         },
-        "description": "新しいユーザーを登録するためのリクエストペイロードです"
+        "required": [
+          "email",
+          "password"
+        ]
       },
       "SignupResponse": {
         "type": "object",
+        "description": "新しく作成されたユーザーを表します",
         "properties": {
           "id": {
             "type": "string",
-            "description": "ユーザーの一意な識別子",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "ユーザーの一意な識別子"
           },
           "email": {
             "type": "string",
@@ -399,44 +341,47 @@
           },
           "createdAt": {
             "type": "string",
-            "description": "ユーザーの作成日時",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "ユーザーの作成日時"
           },
           "updatedAt": {
             "type": "string",
-            "description": "ユーザーの最終更新日時",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "ユーザーの最終更新日時"
           }
-        },
-        "description": "新しく作成されたユーザーを表します"
+        }
       },
       "SigninRequest": {
-        "required": [
-          "email",
-          "password"
-        ],
         "type": "object",
+        "description": "ユーザーがサインインするためのリクエストペイロードです",
         "properties": {
           "email": {
             "type": "string",
+            "format": "email",
             "description": "ユーザーのメールアドレス",
-            "example": "jane.doe@example.com"
+            "example": "jane.doe@example.com",
+            "minLength": 1
           },
           "password": {
             "type": "string",
             "description": "ユーザーのパスワード",
-            "example": "SecurePassword123"
+            "example": "SecurePassword123",
+            "minLength": 1
           }
         },
-        "description": "ユーザーがサインインするためのリクエストペイロードです"
+        "required": [
+          "email",
+          "password"
+        ]
       },
       "SigninResponse": {
         "type": "object",
+        "description": "サインインしたユーザーを表します",
         "properties": {
           "id": {
             "type": "string",
-            "description": "ユーザーの一意な識別子",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "ユーザーの一意な識別子"
           },
           "email": {
             "type": "string",
@@ -450,43 +395,24 @@
           },
           "createdAt": {
             "type": "string",
-            "description": "ユーザーの作成日時",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "ユーザーの作成日時"
           },
           "updatedAt": {
             "type": "string",
-            "description": "ユーザーの最終更新日時",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "ユーザーの最終更新日時"
           }
-        },
-        "description": "サインインしたユーザーを表します"
-      },
-      "FindAllUsersResponse": {
-        "type": "object",
-        "properties": {
-          "users": {
-            "type": "array",
-            "description": "ユーザーの一覧です",
-            "items": {
-              "$ref": "#/components/schemas/UserListItem"
-            }
-          }
-        },
-        "description": "登録済みユーザーの一覧を表します"
+        }
       },
       "UserListItem": {
-        "required": [
-          "createdAt",
-          "email",
-          "id",
-          "updatedAt"
-        ],
         "type": "object",
+        "description": "一覧レスポンス内のユーザー情報です",
         "properties": {
           "id": {
             "type": "string",
-            "description": "ユーザーの一意な識別子",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "ユーザーの一意な識別子"
           },
           "email": {
             "type": "string",
@@ -495,77 +421,59 @@
           },
           "createdAt": {
             "type": "string",
-            "description": "ユーザーの作成日時",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "ユーザーの作成日時"
           },
           "updatedAt": {
             "type": "string",
-            "description": "ユーザーの最終更新日時",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "ユーザーの最終更新日時"
           }
         },
-        "description": "一覧レスポンス内のユーザー情報です"
+        "required": [
+          "createdAt",
+          "email",
+          "id",
+          "updatedAt"
+        ]
+      },
+      "FindAllUsersResponse": {
+        "type": "object",
+        "description": "登録済みユーザーの一覧を表します",
+        "properties": {
+          "users": {
+            "type": "array",
+            "description": "ユーザーの一覧です",
+            "items": {
+              "$ref": "#/components/schemas/UserListItem",
+              "description": "ユーザーの一覧です"
+            }
+          }
+        }
       },
       "MeResponse": {
         "type": "object",
+        "description": "認証済みユーザーの情報を表します",
         "properties": {
           "id": {
             "type": "string",
-            "description": "ユーザーの一意な識別子",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "ユーザーの一意な識別子"
           },
           "email": {
             "type": "string",
             "description": "ユーザーのメールアドレス",
             "example": "jane.doe@example.com"
-          }
-        },
-        "description": "認証済みユーザーの情報を表します"
-      },
-      "UserVoice": {
-        "required": [
-          "avatarSrc",
-          "description",
-          "quote",
-          "title"
-        ],
-        "type": "object",
-        "properties": {
-          "avatarSrc": {
-            "type": "string",
-            "description": "アバター画像のURL",
-            "example": "/images/avatars/user1.jpg"
           },
-          "title": {
+          "featureFlags": {
             "type": "string",
-            "description": "ユーザー名",
-            "example": "田中太郎"
-          },
-          "description": {
-            "type": "string",
-            "description": "役職・所属",
-            "example": "株式会社サンプル CTO"
-          },
-          "quote": {
-            "type": "string",
-            "description": "ユーザーの声（引用）",
-            "example": "このサービスは素晴らしいです。"
-          }
-        },
-        "description": "ユーザーの声"
-      },
-      "GetUserVoicesResponse": {
-        "type": "object",
-        "properties": {
-          "userVoices": {
-            "type": "array",
-            "description": "ユーザーの声一覧",
-            "items": {
-              "$ref": "#/components/schemas/UserVoice"
+            "additionalProperties": true,
+            "description": "有効な機能フラグ",
+            "example": {
+              "showVersionInfo": true
             }
           }
-        },
-        "description": "ユーザーの声一覧レスポンス"
+        }
       }
     }
   }
