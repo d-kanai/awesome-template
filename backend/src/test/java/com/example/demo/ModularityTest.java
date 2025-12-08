@@ -38,42 +38,6 @@ class ModularityTest {
   }
 
   @Test
-  void adminモジュールとcustomerモジュールは相互依存しないことを検証する() {
-    // admin と customer は Actor が異なるため、相互依存禁止
-    modules.stream()
-        .filter(module -> module.getName().startsWith("features.admin"))
-        .forEach(
-            adminModule -> {
-              final var dependencies = adminModule.getDependencies(modules);
-              modules.stream()
-                  .filter(module -> module.getName().startsWith("features.customer"))
-                  .forEach(
-                      customerModule ->
-                          assertThat(dependencies.contains(customerModule.getName()))
-                              .as(
-                                  "%sは%sに依存してはいけない",
-                                  adminModule.getName(), customerModule.getName())
-                              .isFalse());
-            });
-
-    modules.stream()
-        .filter(module -> module.getName().startsWith("features.customer"))
-        .forEach(
-            customerModule -> {
-              final var dependencies = customerModule.getDependencies(modules);
-              modules.stream()
-                  .filter(module -> module.getName().startsWith("features.admin"))
-                  .forEach(
-                      adminModule ->
-                          assertThat(dependencies.contains(adminModule.getName()))
-                              .as(
-                                  "%sは%sに依存してはいけない",
-                                  customerModule.getName(), adminModule.getName())
-                              .isFalse());
-            });
-  }
-
-  @Test
   void モジュールドキュメントを生成する() {
     new Documenter(modules).writeModulesAsPlantUml().writeIndividualModulesAsPlantUml();
   }

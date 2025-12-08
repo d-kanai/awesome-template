@@ -62,9 +62,8 @@ sourceSets {
         }
         resources {
             srcDirs += [
-                'src/main/java/com/example/demo/features/customer/user/db',
-                'src/main/java/com/example/demo/features/customer/auth/db',
-                'src/main/java/com/example/demo/features/admin/auth/db',
+                'src/main/java/com/example/demo/features/authadmin/db',
+                'src/main/java/com/example/demo/features/user/db',
                 'src/main/java/com/example/demo/features/notification/db',
                 'src/main/java/com/example/demo/shared/db'
             ]
@@ -179,9 +178,8 @@ flyway {
     baselineOnMigrate = true
     cleanDisabled = false
     locations = [
-        'filesystem:src/main/java/com/example/demo/features/customer/user/db/migration',
-        'filesystem:src/main/java/com/example/demo/features/customer/auth/db/migration',
-        'filesystem:src/main/java/com/example/demo/features/admin/auth/db/migration',
+        'filesystem:src/main/java/com/example/demo/features/auth/db/migration',
+        'filesystem:src/main/java/com/example/demo/features/user/db/migration',
         'filesystem:src/main/java/com/example/demo/features/notification/db/migration',
         'filesystem:src/main/java/com/example/demo/shared/db/migration'
     ]

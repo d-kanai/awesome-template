@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.demo.features.customer.user.internal.domain.repository.UserRepository;
 import com.example.demo.features.test.internal.application.command.ResetDatabaseCommand;
+import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.testsupport.databuilder.UserTestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

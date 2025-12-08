@@ -1,10 +1,4 @@
-@ApplicationModule(
-    allowedDependencies = {
-      "shared",
-      "features.customer.user :: expose",
-      "features.customer.shared :: security",
-      "features.customer.shared :: api"
-    })
+@ApplicationModule(allowedDependencies = {"shared"})
 package com.example.demo.features.test;
 
 import org.springframework.modulith.ApplicationModule;

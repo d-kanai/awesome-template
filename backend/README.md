@@ -33,101 +33,108 @@
 
 ## アーキテクチャ
 
-### モジュラーモノリス + Multiアクター + DDD風レイヤードアーキテクチャ
+### モジュラーモノリス + Domain First + DDD風レイヤードアーキテクチャ
 
 Spring Modulithを使用してモジュール境界を強制。各モジュールは独立したドメインを表現。
 
-### モジュール依存関係ルール
-
-依存方向は**上から下への一方向のみ**許可。逆方向の依存は禁止。
+### モジュール構成
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                   Actor Module                          │
-│         (customer/auth, customer/user, admin/auth)      │
-└───────┬─────────────────┬───────────────────┬───────────┘
-        │                 │                   │
-        ▼                 ▼                   │
-┌───────────────┐ ┌───────────────────────┐   │
-│  Actor Shared │ │    Shared Domain      │   │
-│  (customer/   │ │ (notification,        │   │
-│   shared,     │ │  featureflag)         │   │
-│   admin/      │ └───────────┬───────────┘   │
-│   shared)     │             │               │
-└───────┬───────┘             │               │
-        │                     │               │
-        └──────────┬──────────┘               │
-                   ▼                          ▼
-              ┌────────────────────────────────┐
-              │            shared              │
-              │        (共通インフラ層)          │
-              └────────────────────────────────┘
+features/
+├── auth/           # 認証ドメイン（Admin/Customer両方）
+├── user/           # ユーザードメイン（Customer向け）
+├── notification/   # 通知ドメイン（横断）
+├── featureflag/    # 機能フラグドメイン（横断）
+└── test/           # テストユーティリティ
+```
+
+### モジュール依存関係
+
+```
+┌───────────────────────────────────────────────────────┐
+│              Feature Modules                          │
+│     (auth, user)                                      │
+└───────────────┬───────────────────────────────────────┘
+                │
+                ▼
+┌───────────────────────────────────────────────────────┐
+│           Shared Modules                              │
+│     (notification, featureflag)                       │
+└───────────────┬───────────────────────────────────────┘
+                │
+                ▼
+┌───────────────────────────────────────────────────────┐
+│              shared                                   │
+│         (共通インフラ層)                                │
+└───────────────────────────────────────────────────────┘
 ```
 
 **依存ルール**:
 
 | From | To | 許可 |
 |------|-----|------|
-| Actor Module | Shared Domain | ✅ |
-| Actor Module | Actor Shared（同Actor） | ✅ |
-| Actor Module | shared | ✅ |
-| Actor Shared | shared | ✅ |
-| Shared Domain | shared | ✅ |
-| Shared Domain | Actor Module | ❌ |
-| Shared Domain | Actor Shared | ❌ |
-| Actor Shared | Actor Module | ❌ |
-| Actor Module | 他Actor Module | ❌ |
-| Actor Shared | 他Actor Shared | ❌ |
+| Feature Module | Shared Module (expose) | ✅ |
+| Feature Module | shared | ✅ |
+| Feature Module | 他Feature Module (expose) | ✅ |
+| Shared Module | shared | ✅ |
 | shared | 上位モジュール | ❌ |
 
-**具体例**:
-- `customer/auth` → `customer/shared` ✅
-- `customer/auth` → `featureflag/expose` ✅
-- `customer/auth` → `shared` ✅
-- `customer/auth` → `admin/auth` ❌（Actor間依存禁止）
-- `customer/shared` → `admin/shared` ❌（Actor間依存禁止）
-- `featureflag` → `customer/shared` ❌（循環依存防止）
-- `notification` → `admin/auth` ❌（循環依存防止）
-
 **expose パッケージ**:
-- Shared Domain が外部に公開するインターフェースは `expose/` パッケージに配置
-- Actor Module は Shared Domain の `expose/` パッケージのみ参照可能
+- 他モジュールに公開するインターフェースは `expose/` パッケージに配置
+- 他モジュールは `expose/` パッケージのみ参照可能
 
 ### ディレクトリ構造
 
 featureモジュールは以下の構造を持つ。
 
 ```
-features/{actor}/{module}/
+features/{domain}/
 ├── db/
-│   └── migration/          # Flywayマイグレーション
-├── doc/                    # PlantUML等のドキュメント
-├── expose/                 # 他モジュール公開インターフェース
-├── internal/
-│   ├── application/
-│   │   ├── command/        # 更新系ユースケース
-│   │   └── query/          # 参照系ユースケース
+│   └── migration/              # Flywayマイグレーション
+├── expose/                     # 他モジュール公開インターフェース
+├── internal/                   # モジュール内部実装（外部アクセス禁止）
 │   ├── domain/
-│   │   ├── model/          # Entity, Aggregate
-│   │   ├── repository/     # Repositoryインターフェース
-│   │   ├── valueobject/    # ValueObject
-│   │   └── event/          # DomainEvent
+│   │   ├── model/              # Entity, Aggregate
+│   │   ├── repository/         # Repositoryインターフェース
+│   │   ├── valueobject/        # ValueObject
+│   │   └── event/              # DomainEvent
+│   ├── application/
+│   │   ├── {actor}/            # Actor別ユースケース
+│   │   │   ├── command/        # 更新系
+│   │   │   └── query/          # 参照系
+│   │   └── command/, query/    # 共通ユースケース
 │   ├── infrastructure/
-│   │   └── repository/     # Repository実装
-│   └── presentation/
-│       ├── rest/           # REST API
-│       ├── job/            # バッチジョブ
-│       └── consumer/       # Kafkaコンシューマ
-└── package-info.java       # モジュール定義
+│   │   ├── {actor}/            # Actor別インフラ
+│   │   └── repository/         # Repository実装
+│   ├── presentation/
+│   │   ├── rest/
+│   │   │   ├── admin/          # Admin向けAPI (/admin/...)
+│   │   │   └── customer/       # Customer向けAPI (/customer/...)
+│   │   ├── job/                # バッチジョブ
+│   │   └── consumer/           # Kafkaコンシューマ
+│   └── security/
+│       ├── admin/              # Admin認証設定
+│       └── customer/           # Customer認証設定
+└── package-info.java           # モジュール定義
 ```
+
+**パッケージ構成**:
+- `expose/`: 他モジュールに公開するインターフェース（@NamedInterface）
+- `internal/`: モジュール内部実装（Spring Modulithが外部アクセスを禁止）
+- `db/`: Flywayマイグレーションファイル
+
+**Actor分離**:
+- REST APIは `internal/presentation/rest/{actor}/` で分離
+- ユースケースは `internal/application/{actor}/` で分離（必要な場合）
+- セキュリティ設定は `internal/security/{actor}/` で分離
 
 ### DBマイグレーション
 
 各モジュールが自身のテーブルを管理。マイグレーションファイルはタイムスタンプ形式で命名。
 
 ```
-features/customer/user/db/migration/V20241128000000__create_users_table.sql
-features/admin/auth/db/migration/V20241202120000__create_admins_table.sql
+features/auth/db/migration/V20251207140309__create_admins_table.sql
+features/user/db/migration/V20241128000000__create_users_table.sql
 ```
 
 ## OpenAPI

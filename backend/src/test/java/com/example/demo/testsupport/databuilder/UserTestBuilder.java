@@ -1,7 +1,7 @@
 package com.example.demo.testsupport.databuilder;
 
-import com.example.demo.features.customer.user.internal.domain.model.User;
-import com.example.demo.features.customer.user.internal.domain.repository.UserRepository;
+import com.example.demo.features.user.internal.domain.model.User;
+import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
