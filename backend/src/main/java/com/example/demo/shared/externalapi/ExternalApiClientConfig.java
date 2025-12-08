@@ -1,8 +1,8 @@
-package com.example.demo.shared.infrastructure.externalapi;
+package com.example.demo.shared.externalapi;
 
 import com.example.demo.shared.config.AppProperties;
-import com.example.demo.shared.infrastructure.externalapi.generated.api.DefaultApi;
-import com.example.demo.shared.infrastructure.externalapi.generated.client.ApiClient;
+import com.example.demo.shared.externalapi.generated.api.DefaultApi;
+import com.example.demo.shared.externalapi.generated.client.ApiClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

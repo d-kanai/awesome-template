@@ -1,7 +1,6 @@
-package com.example.demo.shared.filter;
+package com.example.demo.shared.logging;
 
 import com.example.demo.shared.jwt.JwtClaims;
-import com.example.demo.shared.logging.AppLogger;
 import com.example.demo.shared.logging.AppLogger.AccessLog;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

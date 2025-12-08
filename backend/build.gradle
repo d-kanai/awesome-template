@@ -37,9 +37,9 @@ openApiGenerate {
     library = "native"
     inputSpec = "$projectDir/openapi/external-api.json".toString()
     outputDir = "$buildDir/generated-external-api".toString()
-    apiPackage = "com.example.demo.shared.infrastructure.externalapi.generated.api"
-    modelPackage = "com.example.demo.shared.infrastructure.externalapi.generated.model"
-    invokerPackage = "com.example.demo.shared.infrastructure.externalapi.generated.client"
+    apiPackage = "com.example.demo.shared.externalapi.generated.api"
+    modelPackage = "com.example.demo.shared.externalapi.generated.model"
+    invokerPackage = "com.example.demo.shared.externalapi.generated.client"
     configOptions = [
         dateLibrary: "java8",
         openApiNullable: "false"
@@ -178,7 +178,7 @@ flyway {
     baselineOnMigrate = true
     cleanDisabled = false
     locations = [
-        'filesystem:src/main/java/com/example/demo/features/auth/db/migration',
+        'filesystem:src/main/java/com/example/demo/features/authadmin/db/migration',
         'filesystem:src/main/java/com/example/demo/features/user/db/migration',
         'filesystem:src/main/java/com/example/demo/features/notification/db/migration',
         'filesystem:src/main/java/com/example/demo/shared/db/migration'
@@ -275,6 +275,7 @@ tasks.withType(Checkstyle).configureEach {
     exclude('**/build/generated-src/**')
     exclude('**/com/example/demo/shared/jooq/**')
     exclude('**/build/generated-external-api/**')
+    exclude('**/com/example/demo/shared/externalapi/generated/**')
 }
 
 tasks.named('checkstyleMain').configure {
@@ -310,6 +311,7 @@ tasks.withType(Pmd).configureEach {
     exclude('**/build/generated-src/**')
     exclude('**/com/example/demo/shared/jooq/**')
     exclude('**/build/generated-external-api/**')
+    exclude('**/com/example/demo/shared/externalapi/generated/**')
 }
 
 tasks.named('pmdMain').configure {

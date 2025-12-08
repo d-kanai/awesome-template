@@ -4,7 +4,7 @@ import static com.example.demo.shared.jooq.tables.NotificationHistories.NOTIFICA
 
 import com.example.demo.features.notification.internal.domain.model.NotificationHistory;
 import com.example.demo.features.notification.internal.domain.repository.NotificationHistoryRepository;
-import com.example.demo.shared.infrastructure.RepositoryBase;
+import com.example.demo.shared.db.RepositoryBase;
 import com.example.demo.shared.jooq.tables.records.NotificationHistoriesRecord;
 import java.util.UUID;
 import org.jooq.DSLContext;

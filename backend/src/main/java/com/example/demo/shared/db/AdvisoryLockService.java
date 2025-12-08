@@ -1,4 +1,4 @@
-package com.example.demo.shared.infrastructure;
+package com.example.demo.shared.db;
 
 import static org.jooq.impl.DSL.val;
 

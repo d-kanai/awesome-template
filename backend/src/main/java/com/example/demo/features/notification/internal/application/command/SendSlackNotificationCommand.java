@@ -4,7 +4,7 @@ import com.example.demo.features.notification.expose.SendSlackNotificationComman
 import com.example.demo.features.notification.internal.domain.model.NotificationHistory;
 import com.example.demo.features.notification.internal.domain.repository.NotificationHistoryRepository;
 import com.example.demo.features.notification.internal.infrastructure.slack.SlackNotificationSender;
-import com.example.demo.shared.infrastructure.AdvisoryLockService;
+import com.example.demo.shared.db.AdvisoryLockService;
 import com.example.demo.shared.logging.AppLogger;
 import java.util.Map;
 import org.springframework.stereotype.Service;

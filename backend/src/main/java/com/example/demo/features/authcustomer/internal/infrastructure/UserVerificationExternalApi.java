@@ -1,9 +1,9 @@
 package com.example.demo.features.authcustomer.internal.infrastructure;
 
 import com.example.demo.shared.exception.InfraLayerException;
-import com.example.demo.shared.infrastructure.externalapi.generated.api.DefaultApi;
-import com.example.demo.shared.infrastructure.externalapi.generated.model.VerifyUserRequest;
-import com.example.demo.shared.infrastructure.externalapi.generated.model.VerifyUserResponse;
+import com.example.demo.shared.externalapi.generated.api.DefaultApi;
+import com.example.demo.shared.externalapi.generated.model.VerifyUserRequest;
+import com.example.demo.shared.externalapi.generated.model.VerifyUserResponse;
 import com.example.demo.shared.logging.AppLogger;
 import org.springframework.stereotype.Service;
 

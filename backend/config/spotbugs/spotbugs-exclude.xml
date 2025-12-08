@@ -7,7 +7,7 @@
 
   <!-- Exclude OpenAPI generated code -->
   <Match>
-    <Package name="~com\.example\.demo\.shared\.infrastructure\.externalapi\.generated.*"/>
+    <Package name="~com\.example\.demo\.shared\.externalapi\.generated.*"/>
   </Match>
 
   <!-- Exclude test support classes -->

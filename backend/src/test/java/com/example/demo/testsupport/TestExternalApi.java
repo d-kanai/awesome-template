@@ -1,9 +1,9 @@
 package com.example.demo.testsupport;
 
-import com.example.demo.shared.infrastructure.externalapi.generated.api.DefaultApi;
-import com.example.demo.shared.infrastructure.externalapi.generated.client.ApiException;
-import com.example.demo.shared.infrastructure.externalapi.generated.model.VerifyUserRequest;
-import com.example.demo.shared.infrastructure.externalapi.generated.model.VerifyUserResponse;
+import com.example.demo.shared.externalapi.generated.api.DefaultApi;
+import com.example.demo.shared.externalapi.generated.client.ApiException;
+import com.example.demo.shared.externalapi.generated.model.VerifyUserRequest;
+import com.example.demo.shared.externalapi.generated.model.VerifyUserResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.example.demo.shared.infrastructure;
+package com.example.demo.shared.db;
 
 import com.example.demo.shared.domain.DomainModel;
 import java.lang.reflect.Method;
