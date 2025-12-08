@@ -1,5 +1,6 @@
 package com.example.demo.shared.logging;
 
+import com.example.demo.shared.config.AppProperties;
 import com.example.demo.shared.jwt.JwtClaims;
 import com.example.demo.shared.logging.AppLogger.AccessLog;
 import jakarta.servlet.FilterChain;
@@ -21,8 +22,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.MDC;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -36,15 +39,21 @@ import tools.jackson.databind.node.ObjectNode;
 @Component
 public class AccessLogFilter extends OncePerRequestFilter {
 
+  private static final String TRACE_ID_HEADER = "X-Trace-Id";
   private static final Set<String> SENSITIVE_KEYS = Set.of("password", "authorization");
   private static final int MAX_BODY_CHAR_LENGTH = 4096;
 
   private final ObjectMapper objectMapper;
   private final AppLogger appLogger;
+  private final AppProperties appProperties;
 
-  public AccessLogFilter(final ObjectMapper objectMapper, final AppLogger appLogger) {
+  public AccessLogFilter(
+      final ObjectMapper objectMapper,
+      final AppLogger appLogger,
+      final AppProperties appProperties) {
     this.objectMapper = objectMapper;
     this.appLogger = appLogger;
+    this.appProperties = appProperties;
   }
 
   @Override
@@ -53,23 +62,47 @@ public class AccessLogFilter extends OncePerRequestFilter {
       final HttpServletResponse response,
       final FilterChain filterChain)
       throws ServletException, IOException {
-    final int contentLength = request.getContentLength();
-    final ContentCachingRequestWrapper wrappedRequest =
-        new ContentCachingRequestWrapper(request, contentLength > 0 ? contentLength : 1024);
+    final ContentCachingRequestWrapper wrappedRequest = wrapRequest(request);
     final long startedAt = System.currentTimeMillis();
 
-    // RequestContextを初期化
-    appLogger.initContext(request);
+    setupMdc(request);
+    appLogger.initContext(request); // 後方互換性のため維持
 
     try {
       filterChain.doFilter(wrappedRequest, response);
     } finally {
-      // user_idはSecurityContext設定後に取得できる
-      extractUserId().ifPresent(appLogger::setUserId);
-
-      final long durationMs = System.currentTimeMillis() - startedAt;
-      logAccess(wrappedRequest, response, startedAt, durationMs);
+      finalizeRequest(wrappedRequest, response, startedAt);
     }
+  }
+
+  private ContentCachingRequestWrapper wrapRequest(final HttpServletRequest request) {
+    final int contentLength = request.getContentLength();
+    return new ContentCachingRequestWrapper(request, contentLength > 0 ? contentLength : 1024);
+  }
+
+  private void setupMdc(final HttpServletRequest request) {
+    MDC.put(MdcKeys.TRACE_ID, resolveTraceId(request));
+    MDC.put(MdcKeys.ENV, appProperties.getEnv().name());
+  }
+
+  private void finalizeRequest(
+      final ContentCachingRequestWrapper request,
+      final HttpServletResponse response,
+      final long startedAt) {
+    extractUserId()
+        .ifPresent(
+            userId -> {
+              MDC.put(MdcKeys.USER_ID, userId);
+              appLogger.setUserId(userId); // 後方互換性
+            });
+    logAccess(request, response, startedAt, System.currentTimeMillis() - startedAt);
+    MDC.clear();
+  }
+
+  private String resolveTraceId(final HttpServletRequest request) {
+    return Optional.ofNullable(request.getHeader(TRACE_ID_HEADER))
+        .filter(value -> !value.isBlank())
+        .orElseGet(() -> String.format("%016x", ThreadLocalRandom.current().nextLong()));
   }
 
   private void logAccess(

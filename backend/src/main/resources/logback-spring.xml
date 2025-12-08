@@ -5,6 +5,10 @@
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <jsonGeneratorDecorator class="net.logstash.logback.decorate.PrettyPrintingJsonGeneratorDecorator"/>
+                <!-- MDC フィールドを明示的に含める -->
+                <includeMdcKeyName>trace_id</includeMdcKeyName>
+                <includeMdcKeyName>user_id</includeMdcKeyName>
+                <includeMdcKeyName>env</includeMdcKeyName>
             </encoder>
         </appender>
 
@@ -16,7 +20,12 @@
     <!-- Staging/Production: compact JSON -->
     <springProfile name="staging,production">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <!-- MDC フィールドを明示的に含める -->
+                <includeMdcKeyName>trace_id</includeMdcKeyName>
+                <includeMdcKeyName>user_id</includeMdcKeyName>
+                <includeMdcKeyName>env</includeMdcKeyName>
+            </encoder>
         </appender>
 
         <root level="INFO">
