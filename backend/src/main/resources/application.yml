@@ -55,6 +55,9 @@ app:
   external-api:
     base-url: ${EXTERNAL_API_BASE_URL}
 
+springdoc:
+  writer-with-default-pretty-printer: true
+
 spring.kafka:
   bootstrap-servers: ${KAFKA_SERVER_URL}
   producer:

@@ -2,7 +2,7 @@
 
 ## 概要
 
-モジュラモノリスにおけるモジュール間通信のパターンと、マイクロサービスへの移行を見据えた設計指針。
+モジュラモノリスにおけるモジュール間通信のパターン。
 
 ---
 
@@ -28,8 +28,6 @@ public class OrderService {
   }
 }
 ```
-
-**マイクロサービス移行時**: HTTP/gRPC 呼び出しに置き換え
 
 ---
 
@@ -257,15 +255,9 @@ public void execute(Input input) {
 ## まとめ
 
 ```
-モジュラモノリス
 ├── データ取得: Public API（直接呼び出し）
 ├── 事実の通知: DomainEvent（Kafka, 1:N）
 └── 処理の依頼: CommandEvent（Kafka, 1:1）
-
-マイクロサービス
-├── データ取得: HTTP/gRPC
-├── 事実の通知: DomainEvent（Kafka, 複数 Consumer Group）
-└── 処理の依頼: CommandEvent（Kafka, 単一 Consumer Group）
 ```
 
 ---

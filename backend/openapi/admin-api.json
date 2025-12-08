@@ -1,1 +1,153 @@
-{"openapi":"3.1.0","info":{"title":"Awesome Template API","description":"Awesome Template バックエンドサービスの API ドキュメントです。","version":"1.0.0"},"servers":[{"url":"http://localhost:8080","description":"Generated server url"}],"tags":[{"name":"Admin認証","description":"Admin認証に関連する操作です"}],"paths":{"/v1/admin/auth/signin":{"post":{"tags":["Admin認証"],"summary":"Adminサインイン","description":"Admin管理者としてサインインします","operationId":"adminSignin","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AdminSigninRequest"}}},"required":true},"responses":{"200":{"description":"サインインに成功しました","content":{"application/json":{"schema":{"$ref":"#/components/schemas/AdminSigninResponse"}}}},"400":{"description":"リクエストが不正です"},"401":{"description":"認証に失敗しました"}}}},"/v1/admin/auth/me":{"get":{"tags":["Admin認証"],"summary":"現在のAdmin情報取得","description":"認証済みAdminの情報を取得します","operationId":"adminMe","responses":{"200":{"description":"Admin情報の取得に成功しました","content":{"application/json":{"schema":{"$ref":"#/components/schemas/AdminFindMeResponse"}}}},"401":{"description":"認証が必要です"}},"security":[{"bearerAuth":[]}]}}},"components":{"schemas":{"AdminSigninRequest":{"type":"object","description":"Adminサインインリクエスト","properties":{"email":{"type":"string","format":"email","description":"メールアドレス","example":"admin@example.com","minLength":1},"password":{"type":"string","description":"パスワード","example":"adminPassword123","minLength":1}},"required":["email","password"]},"AdminSigninResponse":{"type":"object","description":"Adminサインインレスポンス","properties":{"id":{"type":"string","format":"uuid","description":"Admin ID"},"email":{"type":"string","description":"メールアドレス","example":"admin@example.com"},"accessToken":{"type":"string","description":"アクセストークン"},"createdAt":{"type":"string","format":"date-time","description":"作成日時"}}},"AdminFindMeResponse":{"type":"object","description":"現在のAdmin情報レスポンス","properties":{"id":{"type":"string","format":"uuid","description":"Admin ID"},"email":{"type":"string","description":"メールアドレス","example":"admin@example.com"},"featureFlags":{"type":"string","additionalProperties":true,"description":"有効な機能フラグ","example":{"showVersionInfo":true}}}}}}}
+{
+  "openapi" : "3.1.0",
+  "info" : {
+    "title" : "Awesome Template API",
+    "description" : "Awesome Template バックエンドサービスの API ドキュメントです。",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "http://localhost:8080",
+    "description" : "Generated server url"
+  } ],
+  "tags" : [ {
+    "name" : "Admin認証",
+    "description" : "Admin認証に関連する操作です"
+  } ],
+  "paths" : {
+    "/v1/admin/auth/signin" : {
+      "post" : {
+        "tags" : [ "Admin認証" ],
+        "summary" : "Adminサインイン",
+        "description" : "Admin管理者としてサインインします",
+        "operationId" : "adminSignin",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AdminSigninRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "サインインに成功しました",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AdminSigninResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "リクエストが不正です"
+          },
+          "401" : {
+            "description" : "認証に失敗しました"
+          }
+        }
+      }
+    },
+    "/v1/admin/auth/me" : {
+      "get" : {
+        "tags" : [ "Admin認証" ],
+        "summary" : "現在のAdmin情報取得",
+        "description" : "認証済みAdminの情報を取得します",
+        "operationId" : "adminMe",
+        "responses" : {
+          "200" : {
+            "description" : "Admin情報の取得に成功しました",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AdminFindMeResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "認証が必要です"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "AdminSigninRequest" : {
+        "type" : "object",
+        "description" : "Adminサインインリクエスト",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "format" : "email",
+            "description" : "メールアドレス",
+            "example" : "admin@example.com",
+            "minLength" : 1
+          },
+          "password" : {
+            "type" : "string",
+            "description" : "パスワード",
+            "example" : "adminPassword123",
+            "minLength" : 1
+          }
+        },
+        "required" : [ "email", "password" ]
+      },
+      "AdminSigninResponse" : {
+        "type" : "object",
+        "description" : "Adminサインインレスポンス",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid",
+            "description" : "Admin ID"
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "メールアドレス",
+            "example" : "admin@example.com"
+          },
+          "accessToken" : {
+            "type" : "string",
+            "description" : "アクセストークン"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "作成日時"
+          }
+        }
+      },
+      "AdminFindMeResponse" : {
+        "type" : "object",
+        "description" : "現在のAdmin情報レスポンス",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid",
+            "description" : "Admin ID"
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "メールアドレス",
+            "example" : "admin@example.com"
+          },
+          "featureFlags" : {
+            "type" : "string",
+            "additionalProperties" : true,
+            "description" : "有効な機能フラグ",
+            "example" : {
+              "showVersionInfo" : true
+            }
+          }
+        }
+      }
+    }
+  }
+}
