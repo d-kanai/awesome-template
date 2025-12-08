@@ -3,7 +3,7 @@ ROOT_DIR := $(CURDIR)
 
 .PHONY: help \
         install \
-        backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint backend-check backend-migrate backend-migrate-clean backend-jooq backend-create-migration \
+        backend-install backend-ut backend-db-refresh backend-run backend-start backend-stop backend-start-test backend-stop-test backend-coverage backend-coverage-open backend-swagger-open backend-clean backend-up backend-down backend-openapi backend-lint backend-check backend-migrate backend-migrate-clean backend-jooq backend-generate-external-api backend-create-migration \
         mockoon-start mockoon-stop mockoon-logs mockoon-dev mockoon-test mockoon-regenerate \
         native-install native-lint native-format native-typecheck native-generate-api native-ut native-prebuild native-run native-ios native-start native-stop native-remove-deadcode native-reset \
         webview-install webview-start webview-lint webview-typecheck webview-ios webview-android \
@@ -36,6 +36,7 @@ help:
 	@echo "  make backend-migrate      # Run Flyway migrations"
 	@echo "  make backend-migrate-clean # Clean Flyway migrations (WARNING: destructive)"
 	@echo "  make backend-jooq         # Generate jOOQ sources"
+	@echo "  make backend-generate-external-api # Generate external API client from OpenAPI spec"
 	@echo "  make backend-create-migration module=xxx name=yyy # Create new migration file"
 	@echo ""
 	@echo "Mockoon Mock Server:"
@@ -196,6 +197,9 @@ backend-migrate-clean:
 
 backend-jooq:
 	cd backend && ./gradlew generateJooq
+
+backend-generate-external-api:
+	cd backend && ./gradlew openApiGenerate
 
 # Usage: make backend-create-migration module=user name=create_xxx
 backend-create-migration:

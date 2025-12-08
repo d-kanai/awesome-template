@@ -41,10 +41,11 @@ Spring Modulithを使用してモジュール境界を強制。各モジュー�
 
 ```
 features/
-├── auth/           # 認証ドメイン（Admin/Customer両方）
-├── user/           # ユーザードメイン（Customer向け）
-├── notification/   # 通知ドメイン（横断）
-├── featureflag/    # 機能フラグドメイン（横断）
+├── authadmin/      # Admin認証ドメイン
+├── authcustomer/   # Customer認証ドメイン
+├── user/           # ユーザードメイン
+├── notification/   # 通知ドメイン
+├── featureflag/    # 機能フラグドメイン
 └── test/           # テストユーティリティ
 ```
 
@@ -53,13 +54,7 @@ features/
 ```
 ┌───────────────────────────────────────────────────────┐
 │              Feature Modules                          │
-│     (auth, user)                                      │
-└───────────────┬───────────────────────────────────────┘
-                │
-                ▼
-┌───────────────────────────────────────────────────────┐
-│           Shared Modules                              │
-│     (notification, featureflag)                       │
+│  (authadmin, authcustomer, user, notification, etc.)  │
 └───────────────┬───────────────────────────────────────┘
                 │
                 ▼
@@ -73,11 +68,9 @@ features/
 
 | From | To | 許可 |
 |------|-----|------|
-| Feature Module | Shared Module (expose) | ✅ |
 | Feature Module | shared | ✅ |
 | Feature Module | 他Feature Module (expose) | ✅ |
-| Shared Module | shared | ✅ |
-| shared | 上位モジュール | ❌ |
+| shared | Feature Module | ❌ |
 
 **expose パッケージ**:
 - 他モジュールに公開するインターフェースは `expose/` パッケージに配置
@@ -104,7 +97,6 @@ features/{domain}/
 │   │   │   └── query/          # 参照系
 │   │   └── command/, query/    # 共通ユースケース
 │   ├── infrastructure/
-│   │   ├── {actor}/            # Actor別インフラ
 │   │   └── repository/         # Repository実装
 │   ├── presentation/
 │   │   ├── rest/
@@ -112,9 +104,6 @@ features/{domain}/
 │   │   │   └── customer/       # Customer向けAPI (/customer/...)
 │   │   ├── job/                # バッチジョブ
 │   │   └── consumer/           # Kafkaコンシューマ
-│   └── security/
-│       ├── admin/              # Admin認証設定
-│       └── customer/           # Customer認証設定
 └── package-info.java           # モジュール定義
 ```
 
@@ -126,14 +115,13 @@ features/{domain}/
 **Actor分離**:
 - REST APIは `internal/presentation/rest/{actor}/` で分離
 - ユースケースは `internal/application/{actor}/` で分離（必要な場合）
-- セキュリティ設定は `internal/security/{actor}/` で分離
 
 ### DBマイグレーション
 
 各モジュールが自身のテーブルを管理。マイグレーションファイルはタイムスタンプ形式で命名。
 
 ```
-features/auth/db/migration/V20251207140309__create_admins_table.sql
+features/authadmin/db/migration/V20251207140309__create_admins_table.sql
 features/user/db/migration/V20241128000000__create_users_table.sql
 ```
 
