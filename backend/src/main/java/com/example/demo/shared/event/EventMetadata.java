@@ -4,6 +4,7 @@ import com.example.demo.shared.logging.MdcKeys;
 import com.example.demo.shared.time.AppClock;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.MDC;
 
 /**
@@ -15,14 +16,11 @@ import org.slf4j.MDC;
  * @param eventAt イベント発生時刻（JST）
  * @param traceId トレースID（リクエスト追跡用）
  */
-public record EventMetadata(UUID eventId, OffsetDateTime eventAt, String traceId) {
+public record EventMetadata(UUID eventId, OffsetDateTime eventAt, @Nullable String traceId) {
 
-  /** メタデータを生成する（MDC から traceId を取得、なければ新規生成）. */
+  /** メタデータを生成する（MDC から traceId を取得）. */
   public static EventMetadata create() {
-    final String traceId = MDC.get(MdcKeys.TRACE_ID);
     return new EventMetadata(
-        UUID.randomUUID(),
-        AppClock.nowOffsetDateTime(),
-        traceId != null ? traceId : UUID.randomUUID().toString());
+        UUID.randomUUID(), AppClock.nowOffsetDateTime(), MDC.get(MdcKeys.TRACE_ID));
   }
 }
