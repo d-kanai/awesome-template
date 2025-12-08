@@ -1,6 +1,6 @@
 package com.example.demo.features.featureflag.expose;
 
-import com.example.demo.features.featureflag.internal.domain.evaluator.FeatureFlag;
+import com.example.demo.features.featureflag.internal.domain.FeatureFlag;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

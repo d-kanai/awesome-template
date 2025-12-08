@@ -1,7 +1,6 @@
-package com.example.demo.features.featureflag.internal.domain.evaluator.flags;
+package com.example.demo.features.featureflag.internal.domain;
 
 import com.example.demo.features.featureflag.expose.UserContext;
-import com.example.demo.features.featureflag.internal.domain.evaluator.FeatureFlag;
 import com.example.demo.shared.config.AppProperties;
 import org.springframework.stereotype.Component;
 

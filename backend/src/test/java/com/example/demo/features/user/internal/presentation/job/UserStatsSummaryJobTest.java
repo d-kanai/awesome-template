@@ -4,6 +4,7 @@ import static com.example.demo.testsupport.databuilder.UserTestBuilder.aUser;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
+import com.example.demo.shared.logging.AppLogger;
 import com.example.demo.testsupport.databuilder.UserTestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ class UserStatsSummaryJobTest {
 
   @Autowired private UserRepository userRepository;
 
+  @Autowired private AppLogger appLogger;
+
   @SuppressWarnings("unused")
   @Autowired
   private UserTestBuilder userTestBuilder;
@@ -28,7 +31,7 @@ class UserStatsSummaryJobTest {
   @BeforeEach
   void setUp() {
     userRepository.findAll().forEach(user -> userRepository.deleteById(user.getId()));
-    job = new UserStatsSummaryJob(userRepository);
+    job = new UserStatsSummaryJob(userRepository, appLogger);
   }
 
   @Test

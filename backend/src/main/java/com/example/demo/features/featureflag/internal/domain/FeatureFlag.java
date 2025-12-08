@@ -1,4 +1,4 @@
-package com.example.demo.features.featureflag.internal.domain.evaluator;
+package com.example.demo.features.featureflag.internal.domain;
 
 import com.example.demo.features.featureflag.expose.UserContext;
 
