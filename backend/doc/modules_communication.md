@@ -193,54 +193,6 @@ Notification Service:
 
 ## 実装方法
 
-### モジュラモノリス（現在）
-
-**Spring ApplicationEvent を使用**
-
-```java
-// Publisher
-@Service
-public class SignupCommand {
-  private final EventPublisher kafkaPublisher;
-  private final EventPublisher springPublisher;
-
-  @Transactional
-  public void execute(Input input) {
-    User user = User.signup(input.email(), input.password());
-    userRepository.insert(user);
-
-    // DomainEvent（分析・監査用）- Kafka + Spring Event 両方
-    kafkaPublisher.publishAllDomainEvents(user.getDomainEvents());
-    springPublisher.publishAllDomainEvents(user.getDomainEvents());
-
-    // CommandEvent（通知用）- Kafka + Spring Event 両方
-    SendEmailCommandEventInput emailCommand = welcomeEmail.create(user);
-    kafkaPublisher.publishCommandEvent(emailCommand);
-    springPublisher.publishCommandEvent(emailCommand);
-  }
-}
-
-// DomainEvent Consumer（複数可）
-@Component
-public class AnalyticsDomainEventConsumer {
-  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-  public void consume(UserSignedUpEvent event) {
-    // 分析データ記録
-  }
-}
-
-// CommandEvent Consumer（単一）
-@Component
-public class SendEmailConsumer {
-  @EventListener
-  public void handle(SendEmailCommandEventInput command) {
-    // メール送信
-  }
-}
-```
-
----
-
 ### EventPublisher インターフェース
 
 ```java
@@ -252,88 +204,8 @@ public interface EventPublisher {
 ```
 
 実装:
-- `SpringEventPublisher` - Spring ApplicationEvent を使用
 - `KafkaEventPublisher` - Kafka を使用
 - `NoOpEventPublisher` - Kafka 無効時のダミー実装
-
----
-
-### マイクロサービス（将来）
-
-**Kafka を使用**
-
-```java
-// Publisher
-@Service
-public class SignupCommand {
-  private final KafkaTemplate<String, Object> kafka;
-
-  public void execute(Input input) {
-    // ... user 作成 ...
-
-    // DomainEvent Topic（複数サービスが購読）
-    kafka.send("demo.user.domain-event", UserSignedUpEvent.of(...));
-
-    // CommandEvent Topic（Notification のみ購読）
-    kafka.send("demo.notification.command-event.send-email", SendEmailCommandEventInput.of(...));
-  }
-}
-```
-
-**Consumer Group による制御**:
-
-```java
-// DomainEvent: サービスごとに別 Group（全員受信）
-@KafkaListener(topics = "demo.user.domain-event", groupId = "analytics-service")
-@KafkaListener(topics = "demo.user.domain-event", groupId = "audit-service")
-
-// CommandEvent: 同一 Group（1つだけ処理）
-@KafkaListener(topics = "demo.notification.command-event.send-email", groupId = "notification-service")
-```
-
----
-
-## Kafka Consumer Group
-
-### 同じ Group = 負荷分散（1人だけ処理）
-
-```
-Topic: notification.command-event.send-email
-     │
-     ▼
-┌─────────────────────────────────┐
-│ Group: "notification-service"   │
-│   ├─ instance 1 ← 処理          │
-│   ├─ instance 2                 │
-│   └─ instance 3                 │
-└─────────────────────────────────┘
-※ 3インスタンス中1つだけが処理
-```
-
-### 違う Group = ブロードキャスト（全員処理）
-
-```
-Topic: user.domain-event
-     │
-     ├──→ Group: "analytics"  → 受信
-     ├──→ Group: "audit"      → 受信
-     └──→ Group: "marketing"  → 受信
-※ 全サービスが同じメッセージを受信
-```
-
----
-
-## 技術選択の指針
-
-| 状況 | 推奨 |
-|------|------|
-| モジュラモノリス、同一プロセス | Spring Event |
-| メッセージを永続化したい | Kafka |
-| 再起動後も処理を継続したい | Kafka |
-| 複数インスタンス間で共有 | Kafka |
-| 外部サービスとの連携 | Kafka |
-
-**原則: YAGNI（必要になるまで Kafka は導入しない）**
 
 ---
 
@@ -343,7 +215,7 @@ Topic: user.domain-event
 
 | 配信保証 | 説明 | Idempotency |
 |----------|------|-------------|
-| **At-most-once** | 最大1回（Spring Event） | 不要 |
+| **At-most-once** | 最大1回 | 不要 |
 | **At-least-once** | 最低1回（Kafka デフォルト） | **必要** |
 | **Exactly-once** | 正確に1回 | 複雑、通常は At-least-once + Idempotency |
 
@@ -382,26 +254,13 @@ public void execute(Input input) {
 
 ---
 
-### Spring Event vs Kafka の選択
-
-| 項目 | Spring Event | Kafka |
-|------|-------------|-------|
-| 配信保証 | At-most-once | At-least-once |
-| Idempotency | 不要 | 必要 |
-| 永続化 | なし | あり |
-| 再起動後 | 消失 | 継続 |
-| 複数インスタンス | 同一プロセス内 | 分散 |
-
----
-
 ## まとめ
 
 ```
 モジュラモノリス
 ├── データ取得: Public API（直接呼び出し）
-├── 事実の通知: DomainEvent（Spring Event, 1:N）
-├── 処理の依頼: CommandEvent（Spring Event, 1:1）
-└── 将来: Kafka に置き換え可能な設計を維持
+├── 事実の通知: DomainEvent（Kafka, 1:N）
+└── 処理の依頼: CommandEvent（Kafka, 1:1）
 
 マイクロサービス
 ├── データ取得: HTTP/gRPC
@@ -420,8 +279,7 @@ shared/event/
 ├── CommandEvent.java          # CommandEvent インターフェース
 ├── CommandEventName.java      # CommandEvent 名のインターフェース
 ├── EventMetadata.java         # 共通メタデータ (eventId, eventAt)
-├── EventPublisher.java        # Publisher インターフェース
-└── SpringEventPublisher.java  # Spring Event 実装
+└── EventPublisher.java        # Publisher インターフェース
 
 features/user/internal/domain/event/
 ├── UserSignedUpEvent.java     # DomainEvent 実装

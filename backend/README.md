@@ -2,6 +2,8 @@
 
 コーディング規約は [doc/code_rule.md](doc/code_rule.md) を参照。
 
+モジュール間通信については [doc/modules_communication.md](doc/modules_communication.md) を参照。
+
 ## 技術スタック
 
 ### コア技術

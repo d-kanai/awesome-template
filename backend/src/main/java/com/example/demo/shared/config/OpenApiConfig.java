@@ -10,11 +10,11 @@ public class OpenApiConfig {
 
   @Bean
   public GroupedOpenApi adminApi() {
-    return GroupedOpenApi.builder().group("admin-api").pathsToMatch("/admin/**").build();
+    return GroupedOpenApi.builder().group("admin-api").pathsToMatch("/v1/admin/**").build();
   }
 
   @Bean
   public GroupedOpenApi customerApi() {
-    return GroupedOpenApi.builder().group("customer-api").pathsToMatch("/customer/**").build();
+    return GroupedOpenApi.builder().group("customer-api").pathsToMatch("/v1/customer/**").build();
   }
 }
