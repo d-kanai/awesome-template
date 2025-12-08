@@ -13,6 +13,11 @@
   - Singleton Beanのmutableフィールド（全リクエストで共有される）
   - ThreadLocalのクリア忘れ（スレッド再利用時に前の値が残る）
 - ログ出力は `AppLogger` を使用すること（`LoggerFactory.getLogger()` 禁止）
+- `@Nullable` 運用を徹底すること
+  - nullを返す可能性があるメソッドには必ず `@Nullable` を付与
+  - nullを受け入れるパラメータには必ず `@Nullable` を付与
+  - `@Nullable` がない = non-null保証（nullを渡さない・返さない）
+  - 使用するアノテーション: `org.jspecify.annotations.Nullable`
 - 論理的凝集でなく、機能的凝集を優先すること（カプセル化）
   - 技術的分類（「定数である」「ユーティリティである」）でなく、ビジネス機能・ドメイン・責務（「Cookie管理」「認証」）で分類する
   - 例：Cookie定数とCookie操作を同じCookieManagerクラスに持つ。定数だけを集めたファイルには持たせない
