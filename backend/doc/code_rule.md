@@ -42,7 +42,7 @@
   - `presentation/job`: バッチジョブ（XxxJob）
 
 #### REST API
-- 1クラス1API1publicメソッド
+- 1クラス 1API 1publicメソッド
   - クラス名 = ユースケース名 + RestApi（例: SignupRestApi, SigninRestApi, FindMeRestApi）
   - CRUDを1つのクラスにまとめない
   - Output.from() メソッドは Command/Query の Output を引数に取ること
@@ -144,7 +144,7 @@
   - `aUser().save()` - デフォルト値で保存
   - `aUser().email("x@example.com").save()` - 値を上書きして保存
   - ビルダーは `@Autowired` でDIし、static import `aUser()` で使用
-- Api in-out Test
+- Api in-out Test (レイヤ・DBモックなし)
   - Query
     - Given: 関連データ 0reset, TestBuilderでデータ準備
     - When: call api

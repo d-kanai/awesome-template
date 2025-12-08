@@ -127,9 +127,14 @@ features/user/db/migration/V20241128000000__create_users_table.sql
 
 ## OpenAPI
 
+Actor別にAPI定義を分割して出力。
+
 - **生成**: `./gradlew generateOpenApiDocs`
-- **出力先**: `openapi/openapi.json`
+- **出力先**:
+  - `openapi/customer-api.json` - Customer向けAPI (`/customer/**`)
+  - `openapi/admin-api.json` - Admin向けAPI (`/admin/**`)
 - **UIアクセス**: `http://localhost:8080/swagger-ui.html`
+  - グループ選択で admin-api / customer-api を切り替え可能
 
 ## テスト戦略
 

@@ -22,14 +22,33 @@ plugins {
     id 'org.openapi.generator' version '7.2.0'
 }
 
+// Default openApi configuration (customer-api)
 openApi {
-    apiDocsUrl = 'http://localhost:8080/v3/api-docs'
+    apiDocsUrl = 'http://localhost:8080/v3/api-docs/customer-api'
     outputDir = file("$projectDir/openapi")
     outputFileName = 'customer-api.json'
     waitTimeInSeconds = 30
     customBootRun {
         args.add('--spring.profiles.active=test')
-    }}
+    }
+}
+
+// Fetch admin-api.json after generateOpenApiDocs (app is still running)
+tasks.named('generateOpenApiDocs').configure {
+    doLast {
+        // Fetch admin-api while the app is still running
+        def adminApiUrl = 'http://localhost:8080/v3/api-docs/admin-api'
+        def adminApiFile = file("$projectDir/openapi/admin-api.json")
+        try {
+            def connection = new URL(adminApiUrl).openConnection()
+            connection.setRequestProperty('Accept', 'application/json')
+            adminApiFile.text = connection.inputStream.text
+            println "Generated: ${adminApiFile.absolutePath}"
+        } catch (Exception e) {
+            println "Warning: Could not fetch admin-api: ${e.message}"
+        }
+    }
+}
 
 // OpenAPI Generator configuration for external API client
 openApiGenerate {
