@@ -4,7 +4,7 @@ import static com.example.demo.features.user.internal.presentation.rest.customer
 
 import com.example.demo.features.user.internal.application.command.ChangePasswordCommand;
 import com.example.demo.features.user.internal.domain.model.User;
-import com.example.demo.shared.security.customer.CustomerAuthContext;
+import com.example.demo.shared.jwt.AuthPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,11 +49,13 @@ public class ChangePasswordRestApi {
     @ApiResponse(responseCode = "401", description = "認証が必要です", content = @Content)
   })
   @PutMapping(value = ENDPOINT, consumes = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Output> execute(@Valid @RequestBody final Input input) {
-    final var userId = CustomerAuthContext.getCurrentUserId();
+  public ResponseEntity<Output> execute(
+      @AuthenticationPrincipal final AuthPrincipal principal,
+      @Valid @RequestBody final Input input) {
     final ChangePasswordCommand.Output result =
         changePasswordCommand.execute(
-            new ChangePasswordCommand.Input(userId, input.currentPassword(), input.newPassword()));
+            new ChangePasswordCommand.Input(
+                principal.userId(), input.currentPassword(), input.newPassword()));
     return ResponseEntity.ok(Output.from(result));
   }
 

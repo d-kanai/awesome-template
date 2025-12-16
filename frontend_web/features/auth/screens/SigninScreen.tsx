@@ -1,4 +1,4 @@
-import { SigninForm } from "../components/SigninForm";
+import { OtpForm } from "../components/OtpForm";
 
 function ScreenContainer({ children }: { children: React.ReactNode }) {
   return (
@@ -22,7 +22,7 @@ function Header() {
   return (
     <div className="mb-[var(--sds-size-space-600,24px)]">
       <h1 className="font-[family-name:var(--sds-typography-heading-font-family,'Inter',sans-serif)] font-[var(--sds-typography-heading-font-weight,600)] text-[length:var(--sds-typography-heading-size-base,24px)] leading-[1.2] tracking-[-0.48px] text-[color:var(--sds-color-text-default-default,#1e1e1e)] text-center">
-        サインイン
+        Signup / Signin
       </h1>
     </div>
   );
@@ -31,7 +31,7 @@ function Header() {
 function Content() {
   return (
     <div>
-      <SigninForm />
+      <OtpForm />
     </div>
   );
 }

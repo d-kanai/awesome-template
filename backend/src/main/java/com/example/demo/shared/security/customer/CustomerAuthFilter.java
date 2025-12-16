@@ -1,6 +1,8 @@
 package com.example.demo.shared.security.customer;
 
+import com.example.demo.shared.auth0.Auth0ClientInterface;
 import com.example.demo.shared.config.AppProperties;
+import com.example.demo.shared.jwt.AuthPrincipal;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -8,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,18 +19,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * JWT authentication filter for Customer APIs. Validates tokens and sets authentication context.
- * Supports both Authorization header (Bearer token) and httpOnly Cookie authentication.
+ * Auth0 token authentication filter for Customer APIs. Validates tokens via Auth0 /userinfo
+ * endpoint and sets authentication context. Supports both Authorization header (Bearer token) and
+ * httpOnly Cookie authentication.
  */
 @Component
-public class CustomerJwtFilter extends OncePerRequestFilter {
+public class CustomerAuthFilter extends OncePerRequestFilter {
 
-  private final CustomerJwtTokenProvider customerJwtTokenProvider;
+  private final Auth0ClientInterface auth0Client;
   private final AppProperties appProperties;
 
-  public CustomerJwtFilter(
-      final CustomerJwtTokenProvider customerJwtTokenProvider, final AppProperties appProperties) {
-    this.customerJwtTokenProvider = customerJwtTokenProvider;
+  public CustomerAuthFilter(
+      final Auth0ClientInterface auth0Client, final AppProperties appProperties) {
+    this.auth0Client = auth0Client;
     this.appProperties = appProperties;
   }
 
@@ -38,37 +42,38 @@ public class CustomerJwtFilter extends OncePerRequestFilter {
       final FilterChain filterChain)
       throws ServletException, IOException {
 
-    // 1. Try to extract token from Authorization header (priority for frontend_native)
-    String token = extractTokenFromHeader(request);
-
-    // 2. If not found, try to extract token from Cookie (for frontend_web)
-    if (token == null) {
-      token = extractTokenFromCookie(request);
+    final String token = extractToken(request);
+    if (token != null) {
+      authenticateWithToken(token, request);
     }
-
-    // 3. Validate token and set authentication context
-    if (token != null && customerJwtTokenProvider.validateToken(token)) {
-      // Extract claims from token
-      final var claims = customerJwtTokenProvider.getClaimsFromToken(token);
-
-      // Create authentication object with JwtClaims as principal
-      @SuppressWarnings("NullAway") // Spring Security accepts null for credentials and authorities
-      final UsernamePasswordAuthenticationToken authentication =
-          new UsernamePasswordAuthenticationToken(claims, null, null);
-      authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-      // Set authentication in security context
-      SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
     filterChain.doFilter(request, response);
+  }
+
+  private @Nullable String extractToken(final HttpServletRequest request) {
+    final String headerToken = extractTokenFromHeader(request);
+    return headerToken != null ? headerToken : extractTokenFromCookie(request);
+  }
+
+  private void authenticateWithToken(final String token, final HttpServletRequest request) {
+    final var userInfo = auth0Client.getUserInfo(token);
+    if (userInfo == null) {
+      return;
+    }
+    final var principal =
+        new AuthPrincipal(userInfo.sub(), userInfo.email(), new Date(), new Date());
+
+    @SuppressWarnings("NullAway") // Spring Security accepts null for credentials and authorities
+    final UsernamePasswordAuthenticationToken authentication =
+        new UsernamePasswordAuthenticationToken(principal, null, null);
+    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 
   /**
    * Authorization headerからBearerトークンを抽出する.
    *
    * @param request HttpServletRequest
-   * @return JWT token or null if not found
+   * @return Access token or null if not found
    */
   private @Nullable String extractTokenFromHeader(final HttpServletRequest request) {
     final String authHeader = request.getHeader("Authorization");
@@ -79,10 +84,10 @@ public class CustomerJwtFilter extends OncePerRequestFilter {
   }
 
   /**
-   * CookieからJWTトークンを抽出する.
+   * Cookieからアクセストークンを抽出する.
    *
    * @param request HttpServletRequest
-   * @return JWT token or null if not found
+   * @return Access token or null if not found
    */
   private @Nullable String extractTokenFromCookie(final HttpServletRequest request) {
     final Cookie[] cookies = request.getCookies();

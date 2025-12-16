@@ -52,6 +52,8 @@ app:
     api-url: http://localhost:9999
   external-api:
     base-url: http://localhost:9999
+  auth0:
+    domain: test.auth0.com
 
 logging:
   level:

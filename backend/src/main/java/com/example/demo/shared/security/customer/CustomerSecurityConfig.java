@@ -17,15 +17,15 @@ public class CustomerSecurityConfig {
   private static final String AUTH_SIGNUP = CustomerApiPath.BASE + "/auth/signup";
   private static final String AUTH_SIGNIN = CustomerApiPath.BASE + "/auth/signin";
 
-  private final CustomerJwtFilter customerJwtFilter;
+  private final CustomerAuthFilter customerAuthFilter;
   private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
   private final CorsConfigurationSource corsConfigurationSource;
 
   public CustomerSecurityConfig(
-      final CustomerJwtFilter customerJwtFilter,
+      final CustomerAuthFilter customerAuthFilter,
       final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
       final CorsConfigurationSource corsConfigurationSource) {
-    this.customerJwtFilter = customerJwtFilter;
+    this.customerAuthFilter = customerAuthFilter;
     this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     this.corsConfigurationSource = corsConfigurationSource;
   }
@@ -56,7 +56,7 @@ public class CustomerSecurityConfig {
                     .authenticated())
         .exceptionHandling(
             exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-        .addFilterBefore(customerJwtFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(customerAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

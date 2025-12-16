@@ -23,10 +23,10 @@ public class AdminFindMeQuery {
   }
 
   public Output execute() {
-    final var claims = AdminAuthContext.getCurrentClaims();
-    final var ctx = new UserContext(claims.userId(), claims.email(), appProperties.getEnv());
+    final var principal = AdminAuthContext.getCurrentPrincipal();
+    final var ctx = new UserContext(principal.userId(), principal.email(), appProperties.getEnv());
     final var featureFlags = findAllFeatureFlagsQuery.execute(ctx).flags();
-    return new Output(UUID.fromString(claims.userId()), claims.email(), featureFlags);
+    return new Output(UUID.fromString(principal.userId()), principal.email(), featureFlags);
   }
 
   public record Output(UUID adminId, String email, Map<String, Boolean> featureFlags) {}

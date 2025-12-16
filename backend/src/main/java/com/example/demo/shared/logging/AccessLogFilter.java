@@ -1,7 +1,7 @@
 package com.example.demo.shared.logging;
 
 import com.example.demo.shared.config.AppProperties;
-import com.example.demo.shared.jwt.JwtClaims;
+import com.example.demo.shared.jwt.AuthPrincipal;
 import com.example.demo.shared.logging.AppLogger.AccessLog;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -220,8 +220,8 @@ public class AccessLogFilter extends OncePerRequestFilter {
     final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication != null && authentication.isAuthenticated()) {
       final Object principal = authentication.getPrincipal();
-      if (principal instanceof JwtClaims claims) {
-        return Optional.ofNullable(claims.userId());
+      if (principal instanceof AuthPrincipal authPrincipal) {
+        return Optional.ofNullable(authPrincipal.userId());
       }
     }
     return Optional.empty();

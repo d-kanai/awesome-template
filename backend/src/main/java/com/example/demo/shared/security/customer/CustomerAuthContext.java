@@ -1,29 +1,29 @@
 package com.example.demo.shared.security.customer;
 
 import com.example.demo.shared.exception.ApplicationLayerException;
-import com.example.demo.shared.jwt.JwtClaims;
+import com.example.demo.shared.jwt.AuthPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public final class CustomerAuthContext {
 
   private CustomerAuthContext() {}
 
-  public static JwtClaims getCurrentClaims() {
+  public static AuthPrincipal getCurrentPrincipal() {
     final var authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null) {
       throw new ApplicationLayerException("Authentication required");
     }
-    if (!(authentication.getPrincipal() instanceof JwtClaims claims)) {
+    if (!(authentication.getPrincipal() instanceof AuthPrincipal principal)) {
       throw new ApplicationLayerException("Invalid authentication principal");
     }
-    return claims;
+    return principal;
   }
 
   public static String getCurrentUserId() {
-    return getCurrentClaims().userId();
+    return getCurrentPrincipal().userId();
   }
 
   public static String getCurrentEmail() {
-    return getCurrentClaims().email();
+    return getCurrentPrincipal().email();
   }
 }

@@ -4,6 +4,7 @@ import static com.example.demo.features.user.internal.presentation.rest.customer
 
 import com.example.demo.features.user.internal.application.query.FindMeQuery;
 import com.example.demo.features.user.internal.domain.model.User;
+import com.example.demo.shared.jwt.AuthPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,8 +46,8 @@ public class FindMeRestApi {
     @ApiResponse(responseCode = "401", description = "認証が必要です。", content = @Content)
   })
   @GetMapping(ENDPOINT)
-  public ResponseEntity<Output> execute() {
-    final FindMeQuery.Output result = findMeQuery.execute();
+  public ResponseEntity<Output> execute(@AuthenticationPrincipal final AuthPrincipal principal) {
+    final FindMeQuery.Output result = findMeQuery.execute(principal.userId(), principal.email());
     return ResponseEntity.ok(Output.from(result));
   }
 

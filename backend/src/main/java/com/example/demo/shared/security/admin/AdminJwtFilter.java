@@ -46,13 +46,13 @@ public class AdminJwtFilter extends OncePerRequestFilter {
 
     // 3. Validate token and set authentication context
     if (token != null && adminJwtTokenProvider.validateToken(token)) {
-      // Extract claims from token
-      final var claims = adminJwtTokenProvider.getClaimsFromToken(token);
+      // Extract principal from token
+      final var principal = adminJwtTokenProvider.getPrincipalFromToken(token);
 
-      // Create authentication object with JwtClaims as principal
+      // Create authentication object with AuthPrincipal
       @SuppressWarnings("NullAway") // Spring Security accepts null for credentials and authorities
       final UsernamePasswordAuthenticationToken authentication =
-          new UsernamePasswordAuthenticationToken(claims, null, null);
+          new UsernamePasswordAuthenticationToken(principal, null, null);
       authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
       // Set authentication in security context

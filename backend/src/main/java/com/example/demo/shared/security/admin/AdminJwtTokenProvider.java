@@ -1,7 +1,7 @@
 package com.example.demo.shared.security.admin;
 
 import com.example.demo.shared.config.AppProperties;
-import com.example.demo.shared.jwt.JwtClaims;
+import com.example.demo.shared.jwt.AuthPrincipal;
 import com.example.demo.shared.time.AppClock;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -31,18 +31,19 @@ public class AdminJwtTokenProvider {
     final Instant now = AppClock.nowInstant();
     final Instant expiration = now.plus(expirationHours, ChronoUnit.HOURS);
 
-    final JwtClaims claims = new JwtClaims(adminId, email, Date.from(now), Date.from(expiration));
+    final AuthPrincipal principal =
+        new AuthPrincipal(adminId, email, Date.from(now), Date.from(expiration));
 
-    return generateToken(claims);
+    return generateToken(principal);
   }
 
-  public String generateToken(final JwtClaims claims) {
+  public String generateToken(final AuthPrincipal principal) {
     return Jwts.builder()
-        .subject(claims.userId())
-        .claim("email", claims.email())
+        .subject(principal.userId())
+        .claim("email", principal.email())
         .claim("type", "admin")
-        .issuedAt(claims.issuedAt())
-        .expiration(claims.expiration())
+        .issuedAt(principal.issuedAt())
+        .expiration(principal.expiration())
         .signWith(secretKey)
         .compact();
   }
@@ -89,15 +90,15 @@ public class AdminJwtTokenProvider {
   }
 
   /**
-   * Extracts JwtClaims from JWT token.
+   * Extracts AuthPrincipal from JWT token.
    *
    * @param token The JWT token.
-   * @return The JwtClaims object containing all claims.
+   * @return The AuthPrincipal object containing all claims.
    */
-  public JwtClaims getClaimsFromToken(final String token) {
+  public AuthPrincipal getPrincipalFromToken(final String token) {
     final Claims claims =
         Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
-    return new JwtClaims(
+    return new AuthPrincipal(
         claims.getSubject(),
         claims.get("email", String.class),
         claims.getIssuedAt(),

@@ -4,7 +4,7 @@ import { AUTH_ROUTES } from "@/features/auth/routes";
 import { HOME_ROUTES } from "@/features/home/routes";
 import { CookieManager } from "@/shared/lib/cookieManager";
 import { generateShortId } from "@/shared/lib/dateTime";
-import { isDev } from "@/shared/lib/env";
+import { env, isDev } from "@/shared/lib/env";
 import { HeaderManager } from "@/shared/lib/headerManager";
 import { proxyLog } from "@/shared/lib/logger";
 
@@ -27,7 +27,7 @@ function buildCspHeader(nonce: string): string {
     `style-src 'self' 'nonce-${nonce}'`,
     "img-src 'self' data: blob:",
     "font-src 'self' data:",
-    "connect-src 'self'",
+    `connect-src 'self' https://${env.NEXT_PUBLIC_AUTH0_DOMAIN}`,
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -40,6 +40,7 @@ const PUBLIC_PATHS = [
   HOME_ROUTES.HOME,
   AUTH_ROUTES.SIGNIN,
   AUTH_ROUTES.SIGNUP,
+  AUTH_ROUTES.CALLBACK, // Auth0 callback endpoint
   "/api/health", // Health check endpoint
   "/api/log/click", // Click event logging endpoint (public for Beacon API)
 ];

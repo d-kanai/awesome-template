@@ -17,6 +17,9 @@ const serverSchema = z.object({
   // ログレベル（オプション: "debug" | "info" | "warn" | "error"）
   // 未設定の場合: development=debug, production/test=info
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).optional(),
+
+  // Auth0 Client Secret（Regular Web Application用、サーバーサイド専用）
+  AUTH0_CLIENT_SECRET: z.string(),
 });
 
 /**
@@ -50,6 +53,10 @@ const clientSchema = z.object({
     .transform((val) => val === "true"),
 
   NEXT_PUBLIC_MOCKOON_ADMIN_URL: z.string().url(),
+
+  // Auth0設定
+  NEXT_PUBLIC_AUTH0_DOMAIN: z.string(), // e.g., "your-tenant.auth0.com"
+  NEXT_PUBLIC_AUTH0_CLIENT_ID: z.string(), // Auth0 Application Client ID
 });
 
 /**
@@ -60,6 +67,7 @@ const processEnv = {
   ENV: process.env.ENV,
   ANALYZE: process.env.ANALYZE,
   LOG_LEVEL: process.env.LOG_LEVEL,
+  AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
   NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
   NEXT_PUBLIC_API_MOCK_MODE: process.env.NEXT_PUBLIC_API_MOCK_MODE,
   NEXT_PUBLIC_API_TIMEOUT_MS: process.env.NEXT_PUBLIC_API_TIMEOUT_MS,
@@ -67,6 +75,8 @@ const processEnv = {
     process.env.NEXT_PUBLIC_API_SLOW_THRESHOLD_MS,
   NEXT_PUBLIC_MOCKOON_ENABLED: process.env.NEXT_PUBLIC_MOCKOON_ENABLED,
   NEXT_PUBLIC_MOCKOON_ADMIN_URL: process.env.NEXT_PUBLIC_MOCKOON_ADMIN_URL,
+  NEXT_PUBLIC_AUTH0_DOMAIN: process.env.NEXT_PUBLIC_AUTH0_DOMAIN,
+  NEXT_PUBLIC_AUTH0_CLIENT_ID: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID,
 };
 
 // サーバー環境変数のバリデーション（サーバー側でのみ実行）

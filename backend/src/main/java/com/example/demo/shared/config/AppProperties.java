@@ -32,6 +32,8 @@ public class AppProperties {
 
   @Valid @NotNull private ExternalApi externalApi = new ExternalApi();
 
+  @Valid @NotNull private Auth0 auth0 = new Auth0();
+
   public Env getEnv() {
     return env;
   }
@@ -86,6 +88,14 @@ public class AppProperties {
 
   public void setExternalApi(final ExternalApi externalApi) {
     this.externalApi = externalApi;
+  }
+
+  public Auth0 getAuth0() {
+    return auth0;
+  }
+
+  public void setAuth0(final Auth0 auth0) {
+    this.auth0 = auth0;
   }
 
   public boolean isDev() {
@@ -301,6 +311,25 @@ public class AppProperties {
 
     public void setBaseUrl(final String baseUrl) {
       this.baseUrl = baseUrl;
+    }
+  }
+
+  /** Auth0設定. */
+  public static class Auth0 {
+
+    @NotBlank private String domain = "";
+
+    public String getDomain() {
+      return domain;
+    }
+
+    public void setDomain(final String domain) {
+      this.domain = domain;
+    }
+
+    /** Auth0 /userinfo エンドポイントのURLを取得. */
+    public String getUserInfoUrl() {
+      return "https://" + domain + "/userinfo";
     }
   }
 }

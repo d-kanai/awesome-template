@@ -6,7 +6,6 @@ import com.example.demo.features.user.internal.domain.model.User;
 import com.example.demo.features.user.internal.domain.repository.UserRepository;
 import com.example.demo.features.user.internal.domain.valueobject.UserId;
 import com.example.demo.shared.config.AppProperties;
-import com.example.demo.shared.security.customer.CustomerAuthContext;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,9 +28,7 @@ public class FindMeQuery {
     this.appProperties = appProperties;
   }
 
-  public Output execute() {
-    final String currentUserId = CustomerAuthContext.getCurrentUserId();
-    final String currentEmail = CustomerAuthContext.getCurrentEmail();
+  public Output execute(final String currentUserId, final String currentEmail) {
     final UserId userId = UserId.fromString(currentUserId);
     final User user = userRepository.findById(userId);
     if (user == null) {
